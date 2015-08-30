@@ -21,6 +21,9 @@
     <ClInclude Include="Source\Tnode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AST.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Prototype.rc">
@@ -29,6 +32,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Tnode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AST.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -98,12 +98,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Source\AST.h" />
     <ClInclude Include="Source\Tnode.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Prototype.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\AST.cpp" />
     <ClCompile Include="Source\Tnode.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
