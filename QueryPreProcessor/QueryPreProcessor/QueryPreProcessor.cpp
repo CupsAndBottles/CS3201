@@ -41,20 +41,20 @@ vector<string> split(const string &s, char delim) {
 */
 
 vector<string> split(const string s, string delim) {
-	std::stringstream stringStream(s);
-	std::string line;
+	stringstream stringStream(s);
+	string line;
 	vector<string> wordVector;
-	while (std::getline(stringStream, line))
+	while (getline(stringStream, line))
 	{
-		std::size_t prev = 0, pos;
-		while ((pos = line.find_first_of(delim, prev)) != std::string::npos)
+		size_t prev = 0, pos;
+		while ((pos = line.find_first_of(delim, prev)) !=string::npos)
 		{
 			if (pos > prev)
 				wordVector.push_back(line.substr(prev, pos - prev));
 			prev = pos + 1;
 		}
 		if (prev < line.length())
-			wordVector.push_back(line.substr(prev, std::string::npos));
+			wordVector.push_back(line.substr(prev, string::npos));
 	}
 	return wordVector;
 }
@@ -70,7 +70,7 @@ EntTable createEntitiesIntoTable(vector<string> v) {
 		//if first vector of line is equals to stmt, assign, while..proceed to add subsequent vectors into entity table
 		if (find(designEntities.begin(), designEntities.end(), wordVector[0]) != designEntities.end()) {
 			//cout << wordVector[0] << endl;
-			for (int i = 1; i < wordVector.size(); i++) {
+			for (size_t i = 1; i<wordVector.size(); i++) {
 				entityTable.add(wordVector[i], wordVector[0]);
 			}
 		}
@@ -79,13 +79,14 @@ EntTable createEntitiesIntoTable(vector<string> v) {
 }
 
 int main() {
-	string s = "stmt s, s1; assign a, a1, a2; while w; if ifstat; procedure p; variable v; constant c; prog_line n, n1, n2;\nSelect a such that Modifies(a, \"y\")";
+	string s = "stmt s, s1; assign a, a1, a2; while w; if ifstat; procedure p; variable v; constant c; prog_line n, n1, n2;\nSelect a such that Modifies (a, \"y\") Pattern a (\"m\", _)";
 	vector<string> v;
 
 	//Create the design-entity(s) by tokenizing string with delimiter ; and \n. Make sure that all subsequent synonyms used in a query are being declared.
 	v = split(s, ";\n");
 	EntTable entityTable = createEntitiesIntoTable(v);
-	/* Entity Table Test */
+
+	/* Entity Table Test 
 	string s1 = entityTable.getType("ifstat");
 	cout << s1 << std::endl;
 	s1 = entityTable.getType("s1");
@@ -97,8 +98,23 @@ int main() {
 	s1 = entityTable.getType("a2");
 	cout << s1 << std::endl;
 	s1 = entityTable.getType("w");
-	cout << s1 << std::endl;
+	cout << s1 << std::endl; */
 
 	//Work on relationship Query. Focusing on the 'Select...' line
+	cout << v.back() << endl;
+	string newS = v.back();
+	vector<string> test = split(newS, "(), ");
+	for (vector<string>::iterator it = test.begin(); it != test.end(); ++it) {
+		cout << *it << endl;
+	}
 
+	//first must be a Select, else error
+
+	//second must be a result-clause synonym (<tuple>, boolean - optional for now), verify synonym, else error
+
+	//followed by suchthat | pattern | (with-optional for now), else error
+	
+		//followed by relationship, else error, if not verify num arguments
+			
+			//followed by (while they are not suchthat or pattern), they are arguments
 }
