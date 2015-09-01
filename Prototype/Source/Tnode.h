@@ -1,8 +1,11 @@
 #pragma once
 
 #include <string>
+#include <iostream>
 #include <vector>
 #define stringify( name ) # name	//for changing enum to string type
+
+using namespace std;
 
 class Tnode
 {
@@ -27,29 +30,34 @@ public:
 		NOTYPE
 	};
 
+	enum Link_Type {
+		PARENT,
+		CHILD
+	};
+
 	Tnode();
 	~Tnode();
 
-	static Tnode * createNode(Tnode * pNode, Tnode * cNode, Tnode * lNode, Tnode * rNode, Type t, std::string n);
+	static Tnode *createNode(Type t, string n);
 
-	static Tnode* createNode(Tnode *pNode, Tnode *cNode, Tnode *lNode, Tnode *rNode, Type t, std::string n, int v);
+	static Tnode *createNode(int v);
+	static bool createLink(Link_Type link, Tnode fromNode, Tnode toNode);
+	void addChild(Tnode c);
 	Tnode getParent();
-	Tnode getChild();
-	Tnode getleftSibling();
-	Tnode getrightSibling();
+	Tnode getChild(int i);
 	Type getType();
-	std::string getName();
+	string getName();
 	int getValue();
+
+	void printNode(); //for debugging
 
 	
 
 private:
 	Tnode *parentNode;
-	Tnode *childNode;
-	Tnode *leftSiblingNode;
-	Tnode *rightSiblingNode;
+	vector<Tnode> childNodeVector;
 	Type type;
-	std::string name;
+	string name;
 	int value;
 
 };

@@ -5,10 +5,8 @@
 Tnode::Tnode()
 {
 	parentNode = NULL;
-	childNode = NULL;
-	leftSiblingNode = NULL;
-	rightSiblingNode = NULL;
 	type = NOTYPE;
+	name = "";
 	value = 0;
 }
 
@@ -16,29 +14,42 @@ Tnode::~Tnode()
 {
 }
 
-Tnode* Tnode::createNode(Tnode *pNode, Tnode *cNode, Tnode *lNode, Tnode *rNode, Type t, std::string n)
+Tnode *Tnode::createNode(Type t, std::string n)
 {
 	Tnode *node = new Tnode;
-	node->parentNode = pNode;
-	node->childNode = cNode;
-	node->leftSiblingNode = lNode;
-	node->rightSiblingNode = rNode;
 	node->type = t;
 	node->name = n;
 	return node;
 }
 
-Tnode* Tnode::createNode(Tnode *pNode, Tnode *cNode, Tnode *lNode, Tnode *rNode, Type t, std::string n, int v)
+Tnode *Tnode::createNode( int v)
 {
 	Tnode *node = new Tnode;
-	node->parentNode = pNode;
-	node->childNode = cNode;
-	node->leftSiblingNode = lNode;
-	node->rightSiblingNode = rNode;
-	node->type = t;
-	node->name = n;
+	node->type = CONSTANT;
 	node->value = v;
 	return node;
+}
+
+bool Tnode::createLink(Link_Type link, Tnode fromNode, Tnode toNode)
+{
+	if (link == PARENT) {
+		toNode.parentNode = &fromNode;
+		fromNode.addChild(toNode);
+		
+	}
+	else if (link == CHILD) {
+		fromNode.parentNode = &toNode;
+		toNode.addChild(fromNode);
+	}
+	else {
+		return false;
+	}
+	return true;
+}
+
+void Tnode::addChild(Tnode c)
+{
+	childNodeVector.push_back(c);
 }
 
 Tnode Tnode::getParent()
@@ -46,19 +57,9 @@ Tnode Tnode::getParent()
 	return *parentNode;
 }
 
-Tnode Tnode::getChild()
+Tnode Tnode::getChild(int i)
 {
-	return *childNode;
-}
-
-Tnode Tnode::getleftSibling()
-{
-	return *leftSiblingNode;
-}
-
-Tnode Tnode::getrightSibling()
-{
-	return *rightSiblingNode;
+	return childNodeVector.at(i);
 }
 
 Tnode::Type Tnode::getType()
@@ -66,7 +67,7 @@ Tnode::Type Tnode::getType()
 	return type;
 }
 
-std::string Tnode::getName()
+string Tnode::getName()
 {
 	return name;
 }
@@ -74,4 +75,29 @@ std::string Tnode::getName()
 int Tnode::getValue()
 {
 	return value;
+}
+
+void Tnode::printNode()
+{
+	cout << "Node name: " << name << endl;
+	cout << "Parent node: ";
+	if (parentNode != NULL) {
+		cout << (*parentNode).getName() << endl;
+	}
+	else {
+		cout << "None" << endl;
+	}
+	cout << "Child node(s): ";
+	if (childNodeVector.size() > 0) {
+		for (unsigned i = 0; i < childNodeVector.size(); i++) {
+			cout << childNodeVector.at(i).getName() << ' ';
+		}
+		cout << "\n";
+	}
+	else {
+		cout << "None" << endl;
+	}
+	cout << "Type: " << stringify(type) << endl;
+	cout << "Value: " << value << endl;
+	
 }
