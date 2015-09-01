@@ -5,6 +5,9 @@
 Tnode::Tnode()
 {
 	parentNode = NULL;
+	childNode = NULL;
+	leftSibNode = NULL;
+	rightSibNode = NULL;
 	type = NOTYPE;
 	name = "";
 	value = 0;
@@ -14,7 +17,7 @@ Tnode::~Tnode()
 {
 }
 
-Tnode *Tnode::createNode(Type t, std::string n)
+Tnode *Tnode::createNode(Type t, string n)
 {
 	Tnode *node = new Tnode;
 	node->type = t;
@@ -22,7 +25,7 @@ Tnode *Tnode::createNode(Type t, std::string n)
 	return node;
 }
 
-Tnode *Tnode::createNode( int v)
+Tnode *Tnode::createNode(int v)
 {
 	Tnode *node = new Tnode;
 	node->type = CONSTANT;
@@ -30,16 +33,19 @@ Tnode *Tnode::createNode( int v)
 	return node;
 }
 
-bool Tnode::createLink(Link_Type link, Tnode fromNode, Tnode toNode)
+bool Tnode::createLink(Link_Type link, Tnode &fromNode, Tnode &toNode)
 {
 	if (link == PARENT) {
 		toNode.parentNode = &fromNode;
-		fromNode.addChild(toNode);
-		
+		fromNode.childNode = &toNode;
 	}
 	else if (link == CHILD) {
 		fromNode.parentNode = &toNode;
-		toNode.addChild(fromNode);
+		toNode.childNode = &fromNode;
+	}
+	else if (link == RIGHTSIB){
+		fromNode.rightSibNode = &toNode;
+		toNode.leftSibNode = &fromNode;
 	}
 	else {
 		return false;
@@ -47,19 +53,24 @@ bool Tnode::createLink(Link_Type link, Tnode fromNode, Tnode toNode)
 	return true;
 }
 
-void Tnode::addChild(Tnode c)
-{
-	childNodeVector.push_back(c);
-}
-
 Tnode Tnode::getParent()
 {
 	return *parentNode;
 }
 
-Tnode Tnode::getChild(int i)
+Tnode Tnode::getChild()
 {
-	return childNodeVector.at(i);
+	return *childNode;
+}
+
+Tnode Tnode::getLeftSib()
+{
+	return *leftSibNode;
+}
+
+Tnode Tnode::getRightSib()
+{
+	return *rightSibNode;
 }
 
 Tnode::Type Tnode::getType()
@@ -87,12 +98,23 @@ void Tnode::printNode()
 	else {
 		cout << "None" << endl;
 	}
-	cout << "Child node(s): ";
-	if (childNodeVector.size() > 0) {
-		for (unsigned i = 0; i < childNodeVector.size(); i++) {
-			cout << childNodeVector.at(i).getName() << ' ';
-		}
-		cout << "\n";
+	cout << "First Child node: ";
+	if (childNode != NULL) {
+		cout << (*childNode).getName() << endl;
+	}
+	else {
+		cout << "None" << endl;
+	}
+	cout << "Left Sibling node: ";
+	if (leftSibNode != NULL) {
+		cout << (*leftSibNode).getName() << endl;
+	}
+	else {
+		cout << "None" << endl;
+	}
+	cout << "Right Sibling node(s): ";
+	if (rightSibNode != NULL) {
+		cout << (*rightSibNode).getName() << endl;
 	}
 	else {
 		cout << "None" << endl;

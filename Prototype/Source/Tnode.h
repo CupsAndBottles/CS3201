@@ -32,7 +32,8 @@ public:
 
 	enum Link_Type {
 		PARENT,
-		CHILD
+		CHILD,
+		RIGHTSIB
 	};
 
 	Tnode();
@@ -41,10 +42,11 @@ public:
 	static Tnode *createNode(Type t, string n);
 
 	static Tnode *createNode(int v);
-	static bool createLink(Link_Type link, Tnode fromNode, Tnode toNode);
-	void addChild(Tnode c);
+	static bool createLink(Link_Type link, Tnode &fromNode, Tnode &toNode);
 	Tnode getParent();
-	Tnode getChild(int i);
+	Tnode getChild();
+	Tnode getLeftSib();
+	Tnode getRightSib();
 	Type getType();
 	string getName();
 	int getValue();
@@ -55,7 +57,9 @@ public:
 
 private:
 	Tnode *parentNode;
-	vector<Tnode> childNodeVector;
+	Tnode *childNode;
+	Tnode *leftSibNode;
+	Tnode *rightSibNode;
 	Type type;
 	string name;
 	int value;
