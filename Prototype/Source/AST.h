@@ -13,11 +13,12 @@ public:
 	ast();
 	~ast();
 
-	Tnode buildAST(vector<string> tokens);
+	void buildAST(vector<string> tokens);
 	string toUpperCase(string s);
 	bool isNum(string &s);
 
 private:
+	Tnode* root;
 	Tnode* program(vector<string> &tokens);
 	Tnode* procedure(vector<string> &tokens, vector<string>::iterator &it);
 	Tnode* stmtLst(vector<string> &tokens, vector<string>::iterator &it);

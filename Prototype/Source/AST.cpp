@@ -4,6 +4,7 @@
 
 ast::ast()
 {
+	root = NULL;
 }
 
 
@@ -11,10 +12,10 @@ ast::~ast()
 {
 }
 
-Tnode ast::buildAST(vector<string> tokens)
+//assume input is of valid SIMPLE language syntax and extra white spaces are removed
+void ast::buildAST(vector<string> tokens)
 {
-	Tnode *root = program(tokens);
-	return *root;
+	root = program(tokens);
 }
 
 Tnode* ast::program(vector<string> &tokens)
