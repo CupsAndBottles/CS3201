@@ -6,6 +6,9 @@
 #include <vector>
 #include <unordered_map>
 #include <sstream>
+#include <algorithm>
+#include <cctype>
+#include "QueryPreProcessor.h"
 
 using namespace std;
 
@@ -16,10 +19,15 @@ class EntTable
 public:
 	void add(string type, string name);
 	string getType(string name);
+	void clear();
 };
 
 void EntTable::add(string name, string type) {
 	entityTable.insert(make_pair(name, type));
+}
+
+void EntTable::clear() {
+	entityTable.clear();
 }
 
 //assume std::string name is existing (will show error if name does not exist in table)
@@ -78,15 +86,20 @@ EntTable createEntitiesIntoTable(vector<string> v) {
 	return entityTable;
 }
 
-int main() {
-	string s = "stmt s, s1; assign a, a1, a2; while w; if ifstat; procedure p; variable v; constant c; prog_line n, n1, n2;\nSelect a such that Modifies (a, \"y\") Pattern a (\"m\", _)";
-	vector<string> v;
+string toLowerCase(string s) {
+	transform(s.begin(), s.end(), s.begin(), ::tolower);
+	return s;
+}
+
+void query(string s) {
+	cout << s << endl; cout << endl;
 
 	//Create the design-entity(s) by tokenizing string with delimiter ; and \n. Make sure that all subsequent synonyms used in a query are being declared.
+	vector<string> v;
 	v = split(s, ";\n");
 	EntTable entityTable = createEntitiesIntoTable(v);
-
-	/* Entity Table Test 
+	cout << "design-entity table done" << endl;
+	/* Entity Table Test
 	string s1 = entityTable.getType("ifstat");
 	cout << s1 << std::endl;
 	s1 = entityTable.getType("s1");
@@ -101,20 +114,99 @@ int main() {
 	cout << s1 << std::endl; */
 
 	//Work on relationship Query. Focusing on the 'Select...' line
-	cout << v.back() << endl;
+	//cout << "Verify line: " + v.back() << endl;
 	string newS = v.back();
-	vector<string> test = split(newS, "(), ");
-	for (vector<string>::iterator it = test.begin(); it != test.end(); ++it) {
-		cout << *it << endl;
+	vector<string> selectCl = split(newS, "(), ");
+	/*for (vector<string>::iterator it = selectCl.begin(); it != selectCl.end(); ++it) {
+	cout << *it << endl;
 	}
+	for (size_t i = 0; i < selectCl.size(); i++) {
+	cout << selectCl.at(i) << endl;
+	}*/
 
 	//first must be a Select, else error
+	if (toLowerCase(selectCl.at(0)).compare("select") == 0) {
+		cout << "'Select' found" << endl;
+		size_t i = 1;
 
-	//second must be a result-clause synonym (<tuple>, boolean - optional for now), verify synonym, else error
+		//second phase must be a result-clause synonym (<tuple>, boolean - optional for now), verify synonym, else error
+		cout << "result-clause: ";
+		while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0)) {
+			cout << selectCl.at(i) + " ";
+			i++;
+		}
+		cout << endl;
+		if (i == 1) {
+			cout << "no 'result-clause' found" << endl;
+		}
 
-	//followed by suchthat | pattern | (with-optional for now), else error
-	
-		//followed by relationship, else error, if not verify num arguments
-			
-			//followed by (while they are not suchthat or pattern), they are arguments
+		//third phase: followed by suchthat | pattern | (with-optional for now), else error
+		while (i < selectCl.size()) {
+			//cout << selectCl.at(i) << endl;
+
+			//find suchthat-cl
+			if (toLowerCase(selectCl.at(i)).compare("such") == 0) {
+				i++;
+				if (toLowerCase(selectCl.at(i)).compare("that") == 0) {
+					i++;
+					cout << "suchthat-cl: ";
+					//extract relCond
+					while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0)) {
+						//VERIFY relCond TBC
+						cout << selectCl.at(i) + " ";
+						i++;
+						if (selectCl.size() == i) {
+							break;
+						}
+					}
+					cout << endl;
+				}
+				else {
+					cout << "found 'such' but no 'that'";
+				}
+
+				//find pattern-cl
+			}
+			else if (toLowerCase(selectCl.at(i)).compare("pattern") == 0) {
+				i++;
+				cout << "pattern-cl: ";
+				//extract patternCond
+				while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0)) {
+					//VERIFY patternCond TBC
+					cout << selectCl.at(i) + " ";
+					i++;
+					if (selectCl.size() == i) {
+						break;
+					}
+				}
+				cout << endl;
+
+				//else nothing found (don't care about with for now)
+			}
+			else {
+				i++;
+				cout << "no suchthat-cl / pattern-cl found" << endl;
+			}
+
+		}
+
+	}
+	else {
+		cout << "no 'Select' found" << endl;
+	}
+
+	//Query Done
+	cout << "Query done" << endl;
+	entityTable.clear();
+}
+
+int main() {
+	string s = "stmt s, s1; assign a, a1, a2; while w; if ifstat; procedure p; variable v; constant c; prog_line n, n1, n2;\nSelect a SuCh that Modifies (a, \"y\") Pattern a (\"m\", _)";
+	query(s);
+	cout << "_______________________________" << endl;
+
+	string s1 = "assign a1; while w; SeleCT a1 patterN a (\"z\", _) such THAT Follows (w, a)";
+	query(s1);
+	cout << "_______________________________" << endl;
+
 }

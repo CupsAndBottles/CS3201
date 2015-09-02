@@ -144,6 +144,9 @@
   <ItemGroup>
     <ClCompile Include="QueryPreProcessor.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="QueryPreProcessor.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
