@@ -16,6 +16,7 @@ public:
 	void buildAST(vector<string> tokens);
 	string toUpperCase(string s);
 	bool isNum(string &s);
+	Tnode getRoot();
 
 private:
 	Tnode* root;

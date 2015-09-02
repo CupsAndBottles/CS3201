@@ -254,3 +254,8 @@ bool ast::isNum(string &s)
 	}
 	return true;
 }
+
+Tnode ast::getRoot()
+{
+	return *root;
+}
