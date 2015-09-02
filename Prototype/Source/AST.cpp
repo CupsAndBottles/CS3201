@@ -28,18 +28,18 @@ Tnode* ast::program(vector<string> &tokens)
 	return root;
 }
 
-//returns first child of program
+//returns procedure node, the first recursion will return topmost node will return first child (i.e. first procedure) of program
 Tnode* ast::procedure(vector<string> &tokens, vector<string>::iterator &it)
 {
 	Tnode *curNode, *nextNode, *curNodeStmtLst;
-	it = match(it, stringify(Tnode::PROCEDURE));
+	match(it, stringify(Tnode::PROCEDURE));
 	curNode = Tnode::createNode(Tnode::PROCEDURE, *it);
 	curNodeStmtLst = Tnode::createNode(Tnode::STMTLST, "");
 	Tnode::createLink(Tnode::PARENT, *curNode, *curNodeStmtLst);
-	it = match(it, *it);
-	it = match(it, "{");
+	match(it, *it);
+	match(it, "{");
 	Tnode::createLink(Tnode::PARENT, *curNodeStmtLst, *stmtLst(tokens, it)); //set stmtLst's first child
-	if (it == tokens.end()) {
+	if (it >= tokens.end()) {
 		return curNode;
 	}
 	else {
@@ -49,13 +49,14 @@ Tnode* ast::procedure(vector<string> &tokens, vector<string>::iterator &it)
 	}
 }
 
-//returns first child of stmtLst
+//return Tnode containing statement type, the first recursion will return first child of current statement list
 Tnode* ast::stmtLst(vector<string> &tokens, vector<string>::iterator &it)
 {
 	Tnode *curNode, *nextNode;
 	curNode = stmt(tokens, it);
-	it = match(it, ";");
+	match(it, ";");
 	if (*it == "}") {
+		match(it, *it);
 		return curNode;
 	}
 	else {
@@ -68,16 +69,20 @@ Tnode* ast::stmtLst(vector<string> &tokens, vector<string>::iterator &it)
 //return Tnode containing statement type
 Tnode* ast::stmt(vector<string> &tokens, vector<string>::iterator &it)
 {
-	Tnode *st, *firstChild;
+	Tnode *st;
 	if (toUpperCase(*it) == "CALL") {
-		it = match(it, stringify(Tnode::STMT_CALL));
+		match(it, stringify(Tnode::STMT_CALL));
 		st = Tnode::createNode(Tnode::STMT_CALL, *it);
 	}
 	else if (toUpperCase(*it) == "WHILE") {
-		st = Tnode::createNode(Tnode::STMT_ASSIGN, "");
+		match(it, stringify(Tnode::STMT_WHILE));
+		st = Tnode::createNode(Tnode::STMT_WHILE, "");
+		Tnode::createLink(Tnode::PARENT, *st, *whileSt(tokens, it));
 	}
 	else if (toUpperCase(*it) == "IF") {
-		st = Tnode::createNode(Tnode::STMT_ASSIGN, "");
+		st = Tnode::createNode(Tnode::STMT_IF, "");
+		match(it, stringify(Tnode::STMT_IF));
+		Tnode::createLink(Tnode::PARENT, *st, *ifSt(tokens, it));
 	}
 	else {
 		st = Tnode::createNode(Tnode::STMT_ASSIGN, "");
@@ -86,15 +91,47 @@ Tnode* ast::stmt(vector<string> &tokens, vector<string>::iterator &it)
 	return st;
 }
 
+//returns first child of while statement i.e. the control variable
+Tnode *ast::whileSt(vector<string> &tokens, vector<string>::iterator &it)
+{
+	Tnode *stLst, *var;
+	var = Tnode::createNode(Tnode::VARIABLE, *it);
+	match(it, *it);
+	stLst = Tnode::createNode(Tnode::STMTLST, "");
+	Tnode::createLink(Tnode::RIGHTSIB, *var, *stLst);
+	match(it, "{");
+	Tnode::createLink(Tnode::PARENT, *stLst, *stmtLst(tokens, it));
+	return var;
+}
+
+//returns first child of if statement i.e. the control variable
+Tnode *ast::ifSt(vector<string> &tokens, vector<string>::iterator &it)
+{
+	Tnode *thenStLst, *elseStLst, *var;
+	var = Tnode::createNode(Tnode::VARIABLE, *it);
+	match(it, *it);
+	match(it, "then");
+	thenStLst = Tnode::createNode(Tnode::STMTLST, "then");
+	Tnode::createLink(Tnode::RIGHTSIB, *var, *thenStLst);
+	match(it, "{");
+	Tnode::createLink(Tnode::PARENT, *thenStLst, *stmtLst(tokens, it));
+	match(it, "else");
+	elseStLst = Tnode::createNode(Tnode::STMTLST, "else");
+	Tnode::createLink(Tnode::RIGHTSIB, *thenStLst, *elseStLst);
+	match(it, "{");
+	Tnode::createLink(Tnode::PARENT, *elseStLst, *stmtLst(tokens, it));
+	return var;
+}
+
 Tnode *ast::assign(vector<string> &tokens, vector<string>::iterator &it)
 {
 	Tnode *var;
 	var = Tnode::createNode(Tnode::VARIABLE, *it);
-	it = match(it, *it);
-	it = match(it, "=");
+	match(it, *it);
+	match(it, "=");
 	vector<string>::iterator exprIt = it;
 	while (*it != ";") { 
-		it = match(it, *it);
+		match(it, *it);
 	}
 	Tnode::createLink(Tnode::RIGHTSIB, *var, *expr(tokens, exprIt, it-1));
 	return var;
@@ -102,7 +139,7 @@ Tnode *ast::assign(vector<string> &tokens, vector<string>::iterator &it)
 
 //start from the back of the expression
 //returns the topmost node in the expression AST (either + or - or term node)
-Tnode * ast::expr(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end)
+Tnode *ast::expr(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end)
 {
 	Tnode *op = NULL, *ex, *t;
 	int brackets = 0;
@@ -139,7 +176,7 @@ Tnode * ast::expr(vector<string> &tokens, vector<string>::iterator start, vector
 }
 
 //returns the topmost node in the term AST (either * or factor node)
-Tnode * ast::term(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end)
+Tnode *ast::term(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end)
 {
 	Tnode *op, *t = NULL, *fac;
 	int brackets = 0;
@@ -169,7 +206,7 @@ Tnode * ast::term(vector<string> &tokens, vector<string>::iterator start, vector
 }
 
 //returns topmost node in the factor AST (either a variable or constant or expresion==> for "()")
-Tnode * ast::factor(vector<string>& tokens, vector<string>::iterator start, vector<string>::iterator end)
+Tnode *ast::factor(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end)
 {
 	Tnode *fac, *ex;
 	if (*start == "(" && *end == ")") {
@@ -187,15 +224,14 @@ Tnode * ast::factor(vector<string>& tokens, vector<string>::iterator start, vect
 	return fac;
 }
 
-vector<string>::iterator ast::match(vector<string>::iterator it, string token)
+void ast::match(vector<string>::iterator &it, string token)
 {
-	if (toUpperCase(*it) == token) {
+	if (toUpperCase(*it) == toUpperCase(token)) {
 		++it;
 	}
 	else {
 		exit(0);
 	}
-	return it;
 }
 
 string ast::toUpperCase(string s)
