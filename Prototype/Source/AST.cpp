@@ -104,10 +104,10 @@ Tnode *ast::assign(vector<string> &tokens, vector<string>::iterator &it)
 //returns the topmost node in the expression AST (either + or - or term node)
 Tnode * ast::expr(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end)
 {
-	Tnode *var, *con, *op = NULL, *ex, *t;
+	Tnode *op = NULL, *ex, *t;
 	int brackets = 0;
 	vector<string>::iterator it = end;
-	while (it >= tokens.begin()) {
+	while (it >= start) {
 		if (*it == ")") {
 			brackets++;
 		}
@@ -141,7 +141,50 @@ Tnode * ast::expr(vector<string> &tokens, vector<string>::iterator start, vector
 //returns the topmost node in the term AST (either * or factor node)
 Tnode * ast::term(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end)
 {
-	return nullptr;
+	Tnode *op, *t = NULL, *fac;
+	int brackets = 0;
+	vector<string>::iterator it = end;
+	while (it >= start) {
+		if (*it == ")") {
+			brackets++;
+		}
+		else if (*it == "(") {
+			brackets--;
+		}
+		if (brackets == 0) {
+			if (*it == "*") {
+				op = Tnode::createNode(Tnode::EXPR_TIMES, "");
+				t = term(tokens, start, it - 1);
+				fac = factor(tokens, it + 1, end);
+				Tnode::createLink(Tnode::PARENT, *op, *t);
+				Tnode::createLink(Tnode::RIGHTSIB, *t, *fac);
+			}
+		}
+		--it;
+	}
+	if (t == NULL) {
+		t = factor(tokens, start, end);
+	}
+	return t;
+}
+
+//returns topmost node in the factor AST (either a variable or constant or expresion==> for "()")
+Tnode * ast::factor(vector<string>& tokens, vector<string>::iterator start, vector<string>::iterator end)
+{
+	Tnode *fac, *ex;
+	if (*start == "(" && *end == ")") {
+		ex = expr(tokens, start+1, end-1);
+		return ex;
+	}
+	else if (start == end) {
+		if (isNum(*start)) {
+			fac = Tnode::createNode(stoi(*start));
+		}
+		else {
+			fac = Tnode::createNode(Tnode::VARIABLE, *start);
+		}
+	}
+	return fac;
 }
 
 vector<string>::iterator ast::match(vector<string>::iterator it, string token)
@@ -162,4 +205,15 @@ string ast::toUpperCase(string s)
 		s[i] = toupper(s[i]);
 	}
 	return s;
+}
+
+bool ast::isNum(string &s)
+{
+	for (unsigned int i = 0; i < s.length(); i++)
+	{
+		if (!isdigit(s[i])) {
+			return false;
+		}
+	}
+	return true;
 }

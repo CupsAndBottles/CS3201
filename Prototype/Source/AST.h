@@ -15,6 +15,7 @@ public:
 
 	Tnode buildAST(vector<string> tokens);
 	string toUpperCase(string s);
+	bool isNum(string &s);
 
 private:
 	Tnode* program(vector<string> &tokens);
@@ -24,6 +25,7 @@ private:
 	Tnode* assign(vector<string> &tokens, vector<string>::iterator &it);
 	Tnode* expr(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end);
 	Tnode* term(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end);
+	Tnode* factor(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end);
 	vector<string>::iterator match(vector<string>::iterator it, string token);
 };
 
