@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include <cstdlib>
+#include <cctype>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -15,7 +16,10 @@ vector<string> split(string str, char delimiter) {
 	string tok;
 
 	while (getline(ss, tok, delimiter)) {
-		split_string.push_back(tok);
+		if (tok.size() > 0) {
+			// Ignore empty tokens resulting from extra whitespace
+			split_string.push_back(tok);
+		}
 	}
 
 	return split_string;
