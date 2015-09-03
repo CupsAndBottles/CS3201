@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "ast.h"
 #include <cstdlib>
 #include <cctype>
 #include <fstream>
@@ -68,6 +69,9 @@ int main()
 		}
 
 		// Create AST
+		ast *a = new ast;
+		(*a).buildAST(tokenized_program);
+		Tnode *root = (*a).getRoot;
 	}
 	else {
 		cout << "There was an error in parsing the program.\n";

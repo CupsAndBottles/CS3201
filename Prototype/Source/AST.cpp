@@ -1,5 +1,15 @@
 #include "ast.h"
 
+int main()
+{
+	vector<string> tokenized_program;
+	// Create AST
+	ast *a = new ast;
+	(*a).buildAST(tokenized_program);
+	Tnode *root = (*a).getRoot;
+
+	return 0;
+}
 
 
 ast::ast()
