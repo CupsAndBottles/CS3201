@@ -1,2 +1,0 @@
-procedure p;
-Select p and p1
