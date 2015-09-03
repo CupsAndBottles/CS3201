@@ -39,30 +39,32 @@ public:
 	Tnode();
 	~Tnode();
 
-	static Tnode *createNode(Type t, string n);
+	static int curStmtNum;
 
+	static Tnode *createNode(Type t, string n);
 	static Tnode *createNode(int v);
 	static bool createLink(Link_Type link, Tnode &fromNode, Tnode &toNode);
-	Tnode getParent();
-	Tnode getChild();
-	Tnode getLeftSib();
-	Tnode getRightSib();
+	Tnode *getParent();
+	Tnode *getFirstChild();
+	Tnode *getLeftSib();
+	Tnode *getRightSib();
 	Type getType();
 	string getName();
 	int getValue();
+	int getStmtNum();
 
 	void printNode(); //for debugging
+	char *enumToString(int enumVal);
 
 	
 
 private:
 	Tnode *parentNode;
-	Tnode *childNode;
+	Tnode *firstChildNode;
 	Tnode *leftSibNode;
 	Tnode *rightSibNode;
 	Type type;
 	string name;
 	int value;
-
 };
 

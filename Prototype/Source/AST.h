@@ -17,6 +17,8 @@ public:
 	string toUpperCase(string s);
 	bool isNum(string &s);
 	Tnode getRoot();
+	void printAST(Tnode &root);
+	void printASTCall(vector<vector<Tnode*>> &nss, vector<Tnode*> s, Tnode *curNode, unsigned int lvl);
 
 private:
 	Tnode* root;

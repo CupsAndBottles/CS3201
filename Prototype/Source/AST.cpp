@@ -1,13 +1,27 @@
 #include "ast.h"
 
+//stub main
 int main()
 {
-	vector<string> tokenized_program;
+	cout << "initilizing..." << endl;
+	vector<string> tokenized_program = //example
+	{ "Procedure", "q", "{", 
+		"if", "x", "then", "{", 
+		"m", "=", "y", "*", "a", "*", "b", ";", 
+		"}", 
+		"else", "{",  
+		"call", "sun", ";", 
+		"}", 
+		"}" };
 	// Create AST
 	ast *a = new ast;
+	cout << "building ast..." << endl;
 	(*a).buildAST(tokenized_program);
-	Tnode *root = (*a).getRoot;
-
+	Tnode *root = &((*a).getRoot());
+	cout << "ast generated." << endl;
+	cout << "printing ast..." << endl;
+	(*a).printAST(*root); ///prints the ast
+	cout << "ast printed." << endl;
 	return 0;
 }
 
@@ -43,7 +57,7 @@ Tnode* ast::program(vector<string> &tokens)
 Tnode* ast::procedure(vector<string> &tokens, vector<string>::iterator &it)
 {
 	Tnode *curNode, *nextNode, *curNodeStmtLst;
-	match(it, stringify(Tnode::PROCEDURE));
+	match(it, stringify(PROCEDURE));
 	curNode = Tnode::createNode(Tnode::PROCEDURE, *it);
 	curNodeStmtLst = Tnode::createNode(Tnode::STMTLST, "");
 	Tnode::createLink(Tnode::PARENT, *curNode, *curNodeStmtLst);
@@ -65,7 +79,9 @@ Tnode* ast::stmtLst(vector<string> &tokens, vector<string>::iterator &it)
 {
 	Tnode *curNode, *nextNode;
 	curNode = stmt(tokens, it);
-	match(it, ";");
+	if ((*curNode).getType() == Tnode::STMT_ASSIGN || (*curNode).getType() == Tnode::STMT_CALL) {
+		match(it, ";");
+	}
 	if (*it == "}") {
 		match(it, *it);
 		return curNode;
@@ -82,17 +98,18 @@ Tnode* ast::stmt(vector<string> &tokens, vector<string>::iterator &it)
 {
 	Tnode *st;
 	if (toUpperCase(*it) == "CALL") {
-		match(it, stringify(Tnode::STMT_CALL));
+		match(it, stringify(CALL));
 		st = Tnode::createNode(Tnode::STMT_CALL, *it);
+		match(it, *it);
 	}
 	else if (toUpperCase(*it) == "WHILE") {
-		match(it, stringify(Tnode::STMT_WHILE));
+		match(it, stringify(WHILE));
 		st = Tnode::createNode(Tnode::STMT_WHILE, "");
 		Tnode::createLink(Tnode::PARENT, *st, *whileSt(tokens, it));
 	}
 	else if (toUpperCase(*it) == "IF") {
 		st = Tnode::createNode(Tnode::STMT_IF, "");
-		match(it, stringify(Tnode::STMT_IF));
+		match(it, stringify(IF));
 		Tnode::createLink(Tnode::PARENT, *st, *ifSt(tokens, it));
 	}
 	else {
@@ -156,6 +173,7 @@ Tnode *ast::expr(vector<string> &tokens, vector<string>::iterator start, vector<
 	int brackets = 0;
 	vector<string>::iterator it = end;
 	while (it >= start) {
+		cout << *it << endl;
 		if (*it == ")") {
 			brackets++;
 		}
@@ -169,6 +187,7 @@ Tnode *ast::expr(vector<string> &tokens, vector<string>::iterator start, vector<
 				t = term(tokens, it + 1, end);
 				Tnode::createLink(Tnode::PARENT, *op, *ex);
 				Tnode::createLink(Tnode::RIGHTSIB, *ex, *t);
+				break;
 			}
 			else if (*it == "-") {
 				op = Tnode::createNode(Tnode::EXPR_MINUS, "");
@@ -176,6 +195,7 @@ Tnode *ast::expr(vector<string> &tokens, vector<string>::iterator start, vector<
 				t = term(tokens, it + 1, end);
 				Tnode::createLink(Tnode::PARENT, *op, *ex);
 				Tnode::createLink(Tnode::RIGHTSIB, *ex, *t);
+				break;
 			}
 		}
 		--it;
@@ -189,7 +209,7 @@ Tnode *ast::expr(vector<string> &tokens, vector<string>::iterator start, vector<
 //returns the topmost node in the term AST (either * or factor node)
 Tnode *ast::term(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end)
 {
-	Tnode *op, *t = NULL, *fac;
+	Tnode *op = NULL, *t = NULL, *fac;
 	int brackets = 0;
 	vector<string>::iterator it = end;
 	while (it >= start) {
@@ -206,12 +226,16 @@ Tnode *ast::term(vector<string> &tokens, vector<string>::iterator start, vector<
 				fac = factor(tokens, it + 1, end);
 				Tnode::createLink(Tnode::PARENT, *op, *t);
 				Tnode::createLink(Tnode::RIGHTSIB, *t, *fac);
+				break;
 			}
 		}
 		--it;
 	}
 	if (t == NULL) {
 		t = factor(tokens, start, end);
+	}
+	if (op != NULL) {
+		return op;
 	}
 	return t;
 }
@@ -220,6 +244,7 @@ Tnode *ast::term(vector<string> &tokens, vector<string>::iterator start, vector<
 Tnode *ast::factor(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end)
 {
 	Tnode *fac, *ex;
+	fac = NULL;
 	if (*start == "(" && *end == ")") {
 		ex = expr(tokens, start+1, end-1);
 		return ex;
@@ -241,6 +266,7 @@ void ast::match(vector<string>::iterator &it, string token)
 		++it;
 	}
 	else {
+		cout << "Exiting..." << *it << " <> " << token << endl;
 		exit(0);
 	}
 }
@@ -268,4 +294,49 @@ bool ast::isNum(string &s)
 Tnode ast::getRoot()
 {
 	return *root;
+}
+
+void ast::printAST(Tnode &root)
+{
+	vector<vector<Tnode*>> notSoSimple;
+	vector<Tnode*> simple;
+	printASTCall(notSoSimple, simple, &root, 0);
+	for (unsigned int i = 2; i < notSoSimple.size(); i++) {
+		simple = vector<Tnode*>();
+		for (unsigned int k = 0; k < notSoSimple.at(i-1).size(); k++) {
+			for (unsigned int j = 0; j < notSoSimple.at(i).size(); j++) {
+				if ((*notSoSimple.at(i).at(j)).getParent() == notSoSimple.at(i - 1).at(k)) {
+					while ((*notSoSimple.at(i).at(j)).getRightSib() != NULL) {
+						simple.push_back(*(notSoSimple.at(i).begin() + j));
+						j++;
+					}
+					simple.push_back(*(notSoSimple.at(i).begin() + j));
+				}
+			}
+		}
+		notSoSimple.at(i) = simple;
+	}
+	for (unsigned int i = 0; i < notSoSimple.size(); i++) {
+		cout << endl << "<---------------------------------------- Level " << i << ": ---------------------------------------->" << endl << endl;
+		for (unsigned int j = 0; j < notSoSimple.at(i).size(); j++) {
+			cout << "Node " << j << ": " << endl;
+			(*notSoSimple.at(i).at(j)).printNode();
+			cout << "\n";
+		}
+	}
+}
+
+void ast::printASTCall(vector<vector<Tnode*>> &nss, vector<Tnode*> s, Tnode *curNode, unsigned int lvl)
+{
+	if (lvl+1 > nss.size()) {
+		nss.push_back(s);
+	}
+	nss.at(lvl).push_back(curNode);
+	if ((*curNode).getRightSib() != NULL) {
+		printASTCall(nss, s, (*curNode).getRightSib(), lvl);
+	}
+	if ((*curNode).getFirstChild() != NULL) {
+		printASTCall(nss, s, (*curNode).getFirstChild(), lvl+1);
+	}
+	return;
 }
