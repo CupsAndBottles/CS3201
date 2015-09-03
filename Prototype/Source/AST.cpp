@@ -173,7 +173,6 @@ Tnode *ast::expr(vector<string> &tokens, vector<string>::iterator start, vector<
 	int brackets = 0;
 	vector<string>::iterator it = end;
 	while (it >= start) {
-		cout << *it << endl;
 		if (*it == ")") {
 			brackets++;
 		}
