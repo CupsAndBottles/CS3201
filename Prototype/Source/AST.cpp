@@ -8,14 +8,18 @@ int main()
 	{ "Procedure", "myProc", "{",
 		"if", "x", "then", "{",
 		"while", "k", "{",
-		"m", "=", "y", "*", "a", "*", "b", ";",
+		"m", "=", "y", "-", "(", "a", "-", "b", ")", ";",
 		"}",
 		"}",
 		"else", "{",
 		"call", "sun", ";",
-		"f", "=", "(", "g", ")", ";",
-		"}", 
-		"}" };
+		"f", "=", "(","(","(", "g", ")",")",")", ";",
+		"}",
+		"}",
+		"Procedure", "2ndproc", "{",
+		"call", "me", ";",
+		"call", "you", ";",
+		"}"};
 	// Create AST
 	ast *a = new ast;
 	cout << "building ast..." << endl;
@@ -271,6 +275,21 @@ void ast::match(vector<string>::iterator &it, string token)
 	}
 }
 
+void ast::printASTCall(vector<vector<Tnode*>>& nss, vector<Tnode*> s, Tnode * curNode, unsigned int lvl)
+{
+	if (lvl + 1 > nss.size()) {
+		nss.push_back(s);
+	}
+	nss.at(lvl).push_back(curNode);
+	if ((*curNode).getRightSib() != NULL) {
+		printASTCall(nss, s, (*curNode).getRightSib(), lvl);
+	}
+	if ((*curNode).getFirstChild() != NULL) {
+		printASTCall(nss, s, (*curNode).getFirstChild(), lvl + 1);
+	}
+	return;
+}
+
 string ast::toUpperCase(string s)
 {
 	for (unsigned int i = 0; i < s.length(); i++)
@@ -324,19 +343,4 @@ void ast::printAST()
 			cout << "\n";
 		}
 	}
-}
-
-void ast::printASTCall(vector<vector<Tnode*>> &nss, vector<Tnode*> s, Tnode *curNode, unsigned int lvl)
-{
-	if (lvl+1 > nss.size()) {
-		nss.push_back(s);
-	}
-	nss.at(lvl).push_back(curNode);
-	if ((*curNode).getRightSib() != NULL) {
-		printASTCall(nss, s, (*curNode).getRightSib(), lvl);
-	}
-	if ((*curNode).getFirstChild() != NULL) {
-		printASTCall(nss, s, (*curNode).getFirstChild(), lvl+1);
-	}
-	return;
 }

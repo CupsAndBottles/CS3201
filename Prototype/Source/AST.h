@@ -18,7 +18,6 @@ public:
 	bool isNum(string &s);
 	Tnode* getRoot();
 	void printAST();
-	void printASTCall(vector<vector<Tnode*>> &nss, vector<Tnode*> s, Tnode *curNode, unsigned int lvl);
 
 private:
 	Tnode* root;
@@ -33,5 +32,6 @@ private:
 	Tnode* term(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end);
 	Tnode* factor(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end);
 	void match(vector<string>::iterator &it, string token);
+	void printASTCall(vector<vector<Tnode*>> &nss, vector<Tnode*> s, Tnode *curNode, unsigned int lvl);
 };
 
