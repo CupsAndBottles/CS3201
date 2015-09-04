@@ -11,12 +11,10 @@ class pkb{
 public:
 	pkb(ast* tree);
 	pkb(string filePath);
-	bool modifies(int stmt, string var);
-	bool uses(int stmt, string var);
 	vector<int> allStmtsThatMod(string var);
-	vector<int> allVarsModdedBy(int stmt);
+	vector<string> allVarsModdedBy(int stmt);
 	vector<int> allStmtsThatUse(string var);
-	vector<int> allVarsUsedBy(int stmt);
+	vector<string> allVarsUsedBy(int stmt);
 
 private:
 	ast* storedAst;
@@ -28,6 +26,8 @@ private:
 	vector<string> usesStmts;
 
 	//helper functions
+	bool modifies(int stmt, string var);
+	bool uses(int stmt, string var);
 	vector<Tnode*> getNodesOfType(Tnode* start, Tnode::Type type);
 	vector<Tnode*>* getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, vector<Tnode*>* results);
 
