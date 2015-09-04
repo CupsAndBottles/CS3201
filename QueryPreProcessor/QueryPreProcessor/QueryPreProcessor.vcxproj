@@ -142,9 +142,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="demo.cpp" />
+    <ClCompile Include="EntityTable.cpp" />
+    <ClCompile Include="QueryObject.cpp" />
     <ClCompile Include="QueryPreProcessor.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="demo.h" />
+    <ClInclude Include="EntityTable.h" />
+    <ClInclude Include="QueryObject.h" />
     <ClInclude Include="QueryPreProcessor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

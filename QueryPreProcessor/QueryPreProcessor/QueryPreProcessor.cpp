@@ -8,33 +8,12 @@
 #include <sstream>
 #include <algorithm>
 #include <cctype>
+
 #include "QueryPreProcessor.h"
+#include "EntityTable.h"
+#include "QueryObject.h"
 
 using namespace std;
-
-class EntTable
-{
-	unordered_multimap<string, string> entityTable;
-
-public:
-	void add(string type, string name);
-	string getType(string name);
-	void clear();
-};
-
-void EntTable::add(string name, string type) {
-	entityTable.insert(make_pair(name, type));
-}
-
-void EntTable::clear() {
-	entityTable.clear();
-}
-
-//assume std::string name is existing (will show error if name does not exist in table)
-string EntTable::getType(string name) {
-	string s = entityTable.find(name)->second;
-	return s;
-}
 
 /* limitations of this tokenizer, can only use 1 delimiter at a time
 vector<string> split(const string &s, char delim) {
@@ -48,7 +27,11 @@ vector<string> split(const string &s, char delim) {
 }
 */
 
-vector<string> split(const string s, string delim) {
+EntTable entityTable;
+vector<string> entityList;
+vector<QueryObject> queryList;
+
+vector<string> QueryPreProcessor::split(string s, string delim) {
 	stringstream stringStream(s);
 	string line;
 	vector<string> wordVector;
@@ -67,8 +50,7 @@ vector<string> split(const string s, string delim) {
 	return wordVector;
 }
 
-EntTable createEntitiesIntoTable(vector<string> v) {
-	EntTable entityTable;
+void QueryPreProcessor::inputEntitiesIntoTable(vector<string> v) {
 	vector<string> designEntities = { "stmt","assign","while","if","procedure","variable","constant","prog_line" };
 
 	/*Find stmt, assign, while... design-entities and put them into entity table*/
@@ -83,39 +65,43 @@ EntTable createEntitiesIntoTable(vector<string> v) {
 			}
 		}
 	}
-	return entityTable;
 }
 
-string toLowerCase(string s) {
+
+string QueryPreProcessor::toLowerCase(string s) {
 	transform(s.begin(), s.end(), s.begin(), ::tolower);
 	return s;
 }
 
-void query(string s) {
+void QueryPreProcessor::addQueryObject(vector<string> temp) {
+	//check that this vector is of size 3
+	if (temp.size() != 3) {
+		cout << "line:196, queryObj does not have 3 arguments" << endl;
+		return;
+	}
+
+	//verify all three arguments are valid
+
+
+	//make into query object
+	QueryObject qo = QueryObject(temp[0], temp[1], temp[2]);
+
+	//add into queryList
+	queryList.push_back(qo);
+}
+
+void QueryPreProcessor::query(string s) {
 	cout << s << endl; cout << endl;
 
 	//Create the design-entity(s) by tokenizing string with delimiter ; and \n. Make sure that all subsequent synonyms used in a query are being declared.
-	vector<string> v;
-	v = split(s, ";\n");
-	EntTable entityTable = createEntitiesIntoTable(v);
+	vector<string> temp;
+	temp = split(s, ";\n");
+	inputEntitiesIntoTable(temp);
 	cout << "design-entity table done" << endl;
-	/* Entity Table Test
-	string s1 = entityTable.getType("ifstat");
-	cout << s1 << std::endl;
-	s1 = entityTable.getType("s1");
-	cout << s1 << std::endl;
-	s1 = entityTable.getType("s");
-	cout << s1 << std::endl;
-	s1 = entityTable.getType("a1");
-	cout << s1 << std::endl;
-	s1 = entityTable.getType("a2");
-	cout << s1 << std::endl;
-	s1 = entityTable.getType("w");
-	cout << s1 << std::endl; */
 
 	//Work on relationship Query. Focusing on the 'Select...' line
 	//cout << "Verify line: " + v.back() << endl;
-	string newS = v.back();
+	string newS = temp.back();
 	vector<string> selectCl = split(newS, "(), ");
 	/*for (vector<string>::iterator it = selectCl.begin(); it != selectCl.end(); ++it) {
 	cout << *it << endl;
@@ -133,7 +119,11 @@ void query(string s) {
 		cout << "result-clause: ";
 		while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0)) {
 			cout << selectCl.at(i) + " ";
+			entityList.push_back(selectCl.at(i));
 			i++;
+			if (selectCl.size() == i) {
+				break;
+			}
 		}
 		cout << endl;
 		if (i == 1) {
@@ -141,6 +131,7 @@ void query(string s) {
 		}
 
 		//third phase: followed by suchthat | pattern | (with-optional for now), else error
+		vector<string> argVector;
 		while (i < selectCl.size()) {
 			//cout << selectCl.at(i) << endl;
 
@@ -152,37 +143,43 @@ void query(string s) {
 					cout << "suchthat-cl: ";
 					//extract relCond
 					while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0)) {
-						//VERIFY relCond TBC
 						cout << selectCl.at(i) + " ";
+						argVector.push_back(selectCl.at(i));
+						//VERIFY relCond TBC
 						i++;
 						if (selectCl.size() == i) {
 							break;
 						}
 					}
+					addQueryObject(argVector);
+					argVector.clear();
 					cout << endl;
 				}
 				else {
 					cout << "found 'such' but no 'that'";
 				}
 
-				//find pattern-cl
 			}
+			//find pattern-cl
 			else if (toLowerCase(selectCl.at(i)).compare("pattern") == 0) {
 				i++;
 				cout << "pattern-cl: ";
 				//extract patternCond
 				while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0)) {
-					//VERIFY patternCond TBC
 					cout << selectCl.at(i) + " ";
+					argVector.push_back(selectCl.at(i));
+					//VERIFY patternCond TBC
 					i++;
 					if (selectCl.size() == i) {
 						break;
 					}
 				}
+				addQueryObject(argVector);
+				argVector.clear();
 				cout << endl;
 
-				//else nothing found (don't care about with for now)
 			}
+			//else nothing found (don't care about 'with' for now)
 			else {
 				i++;
 				cout << "no suchthat-cl / pattern-cl found" << endl;
@@ -197,16 +194,16 @@ void query(string s) {
 
 	//Query Done
 	cout << "Query done" << endl;
-	entityTable.clear();
 }
 
-int main() {
-	string s = "stmt s, s1; assign a, a1, a2; while w; if ifstat; procedure p; variable v; constant c; prog_line n, n1, n2;\nSelect a SuCh that Modifies (a, \"y\") Pattern a (\"m\", _)";
-	query(s);
-	cout << "_______________________________" << endl;
+EntTable QueryPreProcessor::getEntityTable() {
+	return entityTable;
+}
 
-	string s1 = "assign a1; while w; SeleCT a1 patterN a (\"z\", _) such THAT Follows (w, a)";
-	query(s1);
-	cout << "_______________________________" << endl;
+vector<string> QueryPreProcessor::getEntities() {
+	return entityList;
+}
 
+vector<QueryObject> QueryPreProcessor::getQueries() {
+	return queryList;
 }
