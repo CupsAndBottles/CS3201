@@ -48,22 +48,26 @@ void pkb::calculateUses(){
 
 vector<int> allStmtsThatMod(string var){
 	//incomplete
-	return vector<Tnode*>;
+	vector<int> v;
+	return v;
 }
 
 vector<string> allVarsModdedBy(int stmt){
 	//incomplete
-	return vector<Tnode*>;
+	vector<string> v;
+	return v;
 }
 
 vector<int> allStmtsThatUse(string var){
 	//incomplete
-	return vector<Tnode*>;
+	vector<int> v;
+	return v;
 }
 
 vector<string> allVarsUsedBy(int stmt){
 	//incomplete
-	return vector<Tnode*>;
+	vector<string> v;
+	return v;
 }
 
 
