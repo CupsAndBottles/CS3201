@@ -38,10 +38,32 @@ vector<Tnode*>* pkb::getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, vector<
 void pkb::calculateModifies(){
 	ast* tree = this->storedAst;
 	vector<Tnode*> assigns = pkb::getNodesOfType(&tree->getRoot(), Tnode::STMT_ASSIGN);
-		//check variable
-		//update
+	//incomplete
 }
 
 void pkb::calculateUses(){
 	ast* tree = this->storedAst;
+	//incomplete
 }
+
+vector<int> allStmtsThatMod(string var){
+	//incomplete
+	return vector<Tnode*>;
+}
+
+vector<string> allVarsModdedBy(int stmt){
+	//incomplete
+	return vector<Tnode*>;
+}
+
+vector<int> allStmtsThatUse(string var){
+	//incomplete
+	return vector<Tnode*>;
+}
+
+vector<string> allVarsUsedBy(int stmt){
+	//incomplete
+	return vector<Tnode*>;
+}
+
+
