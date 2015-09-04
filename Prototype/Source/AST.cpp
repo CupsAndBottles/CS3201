@@ -291,17 +291,16 @@ bool ast::isNum(string &s)
 	return true;
 }
 
-Tnode ast::getRoot()
+Tnode *ast::getRoot()
 {
-	return *root;
+	return root;
 }
 
 void ast::printAST()
 {
 	vector<vector<Tnode*>> notSoSimple;
 	vector<Tnode*> simple;
-	Tnode root = ((*this).getRoot());
-	printASTCall(notSoSimple, simple, &root, 0);
+	printASTCall(notSoSimple, simple, (*this).root, 0);
 	for (unsigned int i = 2; i < notSoSimple.size(); i++) {
 		simple = vector<Tnode*>();
 		for (unsigned int k = 0; k < notSoSimple.at(i-1).size(); k++) {

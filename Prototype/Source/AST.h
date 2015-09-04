@@ -16,7 +16,7 @@ public:
 	void buildAST(vector<string> tokens);
 	string toUpperCase(string s);
 	bool isNum(string &s);
-	Tnode getRoot();
+	Tnode* getRoot();
 	void printAST();
 	void printASTCall(vector<vector<Tnode*>> &nss, vector<Tnode*> s, Tnode *curNode, unsigned int lvl);
 
