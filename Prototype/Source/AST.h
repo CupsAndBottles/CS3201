@@ -17,12 +17,12 @@ public:
 	string toUpperCase(string s);
 	bool isNum(string &s);
 	Tnode getRoot();
-	void printAST(Tnode &root);
+	void printAST();
 	void printASTCall(vector<vector<Tnode*>> &nss, vector<Tnode*> s, Tnode *curNode, unsigned int lvl);
 
 private:
 	Tnode* root;
-	Tnode* program(vector<string> &tokens);
+	void program(vector<string> &tokens);
 	Tnode* procedure(vector<string> &tokens, vector<string>::iterator &it);
 	Tnode* stmtLst(vector<string> &tokens, vector<string>::iterator &it);
 	Tnode* stmt(vector<string> &tokens, vector<string>::iterator &it);

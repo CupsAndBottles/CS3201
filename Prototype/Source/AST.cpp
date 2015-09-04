@@ -5,22 +5,24 @@ int main()
 {
 	cout << "initilizing..." << endl;
 	vector<string> tokenized_program = //example
-	{ "Procedure", "q", "{", 
-		"if", "x", "then", "{", 
-		"m", "=", "y", "*", "a", "*", "b", ";", 
-		"}", 
-		"else", "{",  
-		"call", "sun", ";", 
+	{ "Procedure", "myProc", "{",
+		"if", "x", "then", "{",
+		"while", "k", "{",
+		"m", "=", "y", "*", "a", "*", "b", ";",
+		"}",
+		"}",
+		"else", "{",
+		"call", "sun", ";",
+		"f", "=", "(", "g", ")", ";",
 		"}", 
 		"}" };
 	// Create AST
 	ast *a = new ast;
 	cout << "building ast..." << endl;
 	(*a).buildAST(tokenized_program);
-	Tnode *root = &((*a).getRoot());
 	cout << "ast generated." << endl;
 	cout << "printing ast..." << endl;
-	(*a).printAST(*root); ///prints the ast
+	(*a).printAST(); ///prints the ast
 	cout << "ast printed." << endl;
 	return 0;
 }
@@ -28,7 +30,7 @@ int main()
 
 ast::ast()
 {
-	root = NULL;
+	this -> root = NULL;
 }
 
 
@@ -39,18 +41,17 @@ ast::~ast()
 //assume input is of valid SIMPLE language syntax and extra white spaces are removed
 void ast::buildAST(vector<string> tokens)
 {
-	root = program(tokens);
+	program(tokens);
 }
 
-Tnode* ast::program(vector<string> &tokens)
+void ast::program(vector<string> &tokens)
 {
 	vector<string>::iterator it = tokens.begin();
-	Tnode *root = NULL;
 	if (root == NULL) {
 		root = Tnode::createNode(Tnode::PROGRAM, *(it+1)); //creates a root node with type:PROGRAM and name of the first procedure
 	}
 	Tnode::createLink(Tnode::PARENT, *root, *procedure(tokens, it));
-	return root;
+	return;
 }
 
 //returns procedure node, the first recursion will return topmost node will return first child (i.e. first procedure) of program
@@ -295,10 +296,11 @@ Tnode ast::getRoot()
 	return *root;
 }
 
-void ast::printAST(Tnode &root)
+void ast::printAST()
 {
 	vector<vector<Tnode*>> notSoSimple;
 	vector<Tnode*> simple;
+	Tnode root = ((*this).getRoot());
 	printASTCall(notSoSimple, simple, &root, 0);
 	for (unsigned int i = 2; i < notSoSimple.size(); i++) {
 		simple = vector<Tnode*>();
