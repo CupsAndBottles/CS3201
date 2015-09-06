@@ -31,7 +31,6 @@ vector<int> pkb::allStmtsThatMod(string var){
 	} catch (const std::out_of_range& oor){
 		return vector<int>();
 	}
-
 }
 
 vector<string> pkb::allVarsModdedBy(int stmt){
@@ -138,7 +137,7 @@ vector<int> pkb::selectAll(Tnode::Type type){
 	return flattenNodeVectorToIntVector(getNodesOfType(root, type));
 }
 
-//return vector of indices that have true values in input vector 
+//return vector of indices that have true values in input vector
 vector<int> flattenBoolVectorToIntVector(vector<bool> inp) {
 	vector<int> results = vector<int>();
 	int len = inp.size();
