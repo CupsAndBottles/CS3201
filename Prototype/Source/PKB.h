@@ -48,6 +48,7 @@ public:
 	vector<int> allBeforeStar(int stmt);
 
 	vector<int> selectAll(Tnode::Type type);
+	vector<int> pattern(Tnode::Type type, string var, string expr);
 
 private:
 	ast* storedAst;
@@ -74,6 +75,9 @@ private:
 	//helper functions
 	bool modifies(int stmt, string var);
 	bool uses(int stmt, string var);
+	vector<int> flattenBoolVectorToIntVector(vector<bool> inp);
+	vector<string> flattenBoolMapToStringVector(unordered_map<string, bool> inp);
+	vector<int> flattenNodeVectorToIntVector(vector<Tnode*> inp);
 	vector<Tnode*> getNodesOfType(Tnode* start, Tnode::Type type);
 	vector<Tnode*>* getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, vector<Tnode*>* results);
 
