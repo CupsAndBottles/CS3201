@@ -11,19 +11,41 @@ class pkb{
 public:
 	pkb(ast* tree);
 	pkb(string filePath);
+
+	bool modifies(int stmt, string var);
 	vector<int> allStmtsThatMod(string var);
 	vector<string> allVarsModdedBy(int stmt);
+
+	bool uses(int stmt, string var);
 	vector<int> allStmtsThatUse(string var);
 	vector<string> allVarsUsedBy(int stmt);
+
+	bool isParent(int stmt, int stmt);
+	vector<int> allParentsOf(int stmt);
+	vector<int> allChildrenOf(int stmt);
+
+	bool follows(int stmt, int stmt);
+	vector<int> allThatFollow(int stmt);
+	vector<int> allBefore(int stmt); //opposite of allThatFollow. so follows (?, stmt)
+
+	vector<int> selectAll(Tnode::Type type);
 
 private:
 	ast* storedAst;
 
-	//use adjacency lists to store relations as a sparse graph is expected. unordered_map for quick reference by hashing variables, and vector for quick reference by statement numbers
+	// use adjacency lists to store relations as a sparse graph is expected.
+	// unordered_map for quick reference by hashing variables,
+	// and vector for quick reference by statement numbers
+
+	// <relation>Vars: adjacency list indexed by vars
+	// <relation>Stmts:  adjacency list indexed by stmt numbers
 	unordered_map<string, int> modifiesVars;
 	vector<string> modifiesStmts;
 	unordered_map<string, int> usesVars;
 	vector<string> usesStmts;
+
+	vector<int> parents;
+	vector<int> children;
 
 	//helper functions
 	bool modifies(int stmt, string var);
