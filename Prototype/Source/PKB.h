@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -20,13 +21,21 @@ public:
 	vector<int> allStmtsThatUse(string var);
 	vector<string> allVarsUsedBy(int stmt);
 
-	bool isParent(int stmt, int stmt);
-	vector<int> allParentsOf(int stmt);
-	vector<int> allChildrenOf(int stmt);
+	bool isParent(int s1, int s2); //returns parent(s1, s2)
+	vector<int> allParentsOf(int stmt); //returns all immediate parents of stmt.
+	vector<int> allChildrenOf(int stmt); //returns all immediate children of stmt;
 
-	bool follows(int stmt, int stmt);
+	bool isParentStar(int s1, int s2); //returns parent*(s1, s2)
+	vector<int> allParentsStarOf(int stmt); //returns immediate and extended parents of stmt;
+	vector<int> allChildrenStarOf(int stmt); //returns immediate and extended parents of stmt;
+
+	bool isFollows(int s1, int s2); //returns follows(s1, s2)
 	vector<int> allThatFollow(int stmt);
 	vector<int> allBefore(int stmt); //opposite of allThatFollow. so follows (?, stmt)
+
+	bool followsStar(int s1, int s2); //returns follows*(s1, s2)
+	vector<int> allThatFollowStar(int stmt);
+	vector<int> allBeforeStar(int stmt);
 
 	vector<int> selectAll(Tnode::Type type);
 
@@ -45,8 +54,12 @@ private:
 	unordered_map<string, vector<bool>> usesVars;
 	vector<unordered_map<string, bool>> usesStmts;
 
-	vector<int> parents;
-	vector<int> children;
+	vector<vector<int>> parents; //index: stmt s, values: stmts that are parents of stmt s
+	vector<vector<int>> children; //index: stmt s, values: stmts that are children of stmt s
+
+	vector<int> follows; //index: stmt s, values: stmts that follow stmt s
+	vector<int> before; //index: stmt s, values: stmts that are before stmt s
+
 
 	//helper functions
 	bool modifies(int stmt, string var);
