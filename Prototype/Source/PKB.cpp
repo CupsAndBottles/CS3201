@@ -12,6 +12,58 @@ pkb::pkb(ast* tree){
 pkb::pkb(string filePath) {
 }
 
+bool pkb::modifies(int stmt, string var){
+	return false;
+}
+
+vector<int> pkb::allStmtsThatMod(string var){
+	return vector<int>();
+}
+
+vector<string> pkb::allVarsModdedBy(int stmt){
+	return vector<string>();
+}
+
+bool pkb::uses(int stmt, string var){
+	return false;
+}
+
+vector<int> pkb::allStmtsThatUse(string var){
+	return vector<int>();
+}
+
+vector<string> pkb::allVarsUsedBy(int stmt){
+	return vector<string>();
+}
+
+bool pkb::isParent(int stmt, int stmt){
+	return false;
+}
+
+vector<int> pkb::allParentsOf(int stmt){
+	return vector<int>();
+}
+
+vector<int> pkb::allChildrenOf(int stmt){
+	return vector<int>();
+}
+
+bool pkb::follows(int stmt, int stmt){
+	return false;
+}
+
+vector<int> pkb::allThatFollow(int stmt){
+	return vector<int>();
+}
+
+vector<int> pkb::allBefore(int stmt){
+	return vector<int>();
+}
+
+vector<int> pkb::selectAll(Tnode::Type type){
+	return vector<int>();
+}
+
 //write pkb to file
 void pkb::updateDBFile() {
 }
@@ -29,7 +81,7 @@ vector<Tnode*>* pkb::getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, vector<
 			results->push_back(curr);
 		}
 		results = pkb::getNodesOfTypeHelper(curr->getRightSib, type, results);
-		return pkb::getNodesOfTypeHelper(curr->getChild, type, results);
+		return pkb::getNodesOfTypeHelper(curr->getFirstChild, type, results);
 	} else {
 		return results;
 	}
@@ -37,7 +89,7 @@ vector<Tnode*>* pkb::getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, vector<
 
 void pkb::calculateModifies(){
 	ast* tree = this->storedAst;
-	vector<Tnode*> assigns = pkb::getNodesOfType(&tree->getRoot(), Tnode::STMT_ASSIGN);
+	vector<Tnode*> assigns = pkb::getNodesOfType(tree->getRoot(), Tnode::STMT_ASSIGN);
 	//incomplete
 }
 
