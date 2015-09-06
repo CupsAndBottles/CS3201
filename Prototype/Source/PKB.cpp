@@ -160,6 +160,7 @@ vector<string> flattenBoolMapToStringVector(unordered_map<string, bool> inp) {
 	return results;
 }
 
+//return vector of statement numbers of the nodes in input vector.
 vector<int> flattenNodeVectorToIntVector(vector<Tnode*> inp) {
 	vector<int> results = vector<int>();
 	for (auto it : inp) {
