@@ -171,9 +171,9 @@ vector<int> flattenNodeVectorToIntVector(vector<Tnode*> inp) {
 
 //return all nodes contained in the subtree of input node with type specified by input.
 vector<Tnode*> pkb::getNodesOfType(Tnode* start, Tnode::Type type){
-	vector<Tnode*> assigns;
-	assigns = *pkb::getNodesOfTypeHelper(start, type, &assigns);
-	return assigns;
+	vector<Tnode*> results;
+	results = *pkb::getNodesOfTypeHelper(start, type, &results);
+	return results;
 }
 
 vector<Tnode*>* pkb::getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, vector<Tnode*>* results){
