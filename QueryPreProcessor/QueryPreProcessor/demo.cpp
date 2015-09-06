@@ -3,17 +3,59 @@
 #include "QueryPreProcessor.h"
 #include "EntityTable.h"
 #include "QueryObject.h"
+#include "SemanticsCheck.h"
+#include "demo.h"
 
 void main() {
 
+	SemanticsCheck sCheck;
 	QueryPreProcessor qpp;
 	string s = "stmt s, s1; assign a, a1, a2; while w; if ifstat; procedure p; variable v; constant c; prog_line n, n1, n2;\nSelect a SuCh that Modifies (a, \"y\") Pattern a (\"m\", _)";
+	//string s = "stmt s, s1; assign a, a1, a2; while w; if ifstat; procedure p; variable v; constant c; prog_line n, n1, n2;\nSelect BOOLEAN such that Modifies(7, \"x\")";
+	//string s = "stmt s, s1; assign a, a1, a2; while w; if ifstat; procedure p; variable v; constant c; prog_line n, n1, n2;\nSelect s such that Modifies(p, \"x\") such that Follows(3, 7)";
+	//string s = "stmt s, s1; assign a, a1, a2; while w; if ifstat; procedure p; variable v; constant c; prog_line n, n1, n2;\nSelect p such that Modifies(p, \"x\") pattern a(\"x\", \"x + 2 * y\")";
+
 	qpp.query(s);
 	cout << "_______________________________" << endl;
-
-
+	
+	/* Semantics Check Test
 	EntTable newET = qpp.getEntityTable();
-	/* Entity Table Test */
+	string s1 = newET.getType("ifstat");
+	cout << s1 << std::endl;
+
+	if (newET.exist("ifstat")) {
+		cout << "ifstat exist" << endl;
+	}
+
+	if (sCheck.isIdent("aaaaaaaaaaaa")) {
+		cout << "isIdent" << endl;
+	}
+
+	if (sCheck.isSynonym("a", newET)) {
+		cout << "isSynonym" << endl;
+	}
+
+	if (sCheck.isStmtRef("_", newET)) {
+		cout << "isStmtRef" << endl;
+	}
+
+	if (sCheck.wrappedInQuotation("\"hello\"")) {
+		cout << "\" and \" exist" << endl;
+	}
+
+	if (sCheck.isEntRef("\"x1\"", newET)) {
+		cout << "isEntRef" << endl;
+	}
+
+	if (sCheck.isSynAssign("a", newET)) {
+		cout << "isSynAssign" << endl;
+	}
+
+	if (sCheck.isExpressionSpec("\"13\"")) {
+		cout << "isExpressionSpec" << endl;
+	} */
+
+	/* Entity Table Test 
 	string s1 = newET.getType("ifstat");
 	cout << s1 << std::endl;
 	s1 = newET.getType("s1");
@@ -42,6 +84,7 @@ void main() {
 		queriesForEvaluator[i].toString();
 	}
 	cout << endl;
+	*/
 
 	/*
 	string s2 = "assign a1; while w; SeleCT a1 patterN a (\"z\", _) such THAT Follows (w, a)";
@@ -51,5 +94,5 @@ void main() {
 	string s3 = "while w; Select w";
 	qpp.query(s3);
 	cout << "_______________________________" << endl;*/
-
+	
 }

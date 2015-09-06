@@ -12,4 +12,5 @@ public:
 	void add(string type, string name);
 	string getType(string name);
 	void clear();
+	bool exist(string name);
 };
