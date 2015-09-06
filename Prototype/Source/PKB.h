@@ -35,14 +35,15 @@ private:
 
 	// use adjacency lists to store relations as a sparse graph is expected.
 	// unordered_map for quick reference by hashing variables,
-	// and vector for quick reference by statement numbers
+	// and vector for quick reference by statement numbers.
+	// note: vectors' 0th indexes are empty; statement numbers are exactly their index.
 
 	// <relation>Vars: adjacency list indexed by vars
 	// <relation>Stmts:  adjacency list indexed by stmt numbers
-	unordered_map<string, int> modifiesVars;
-	vector<string> modifiesStmts;
-	unordered_map<string, int> usesVars;
-	vector<string> usesStmts;
+	unordered_map<string, vector<bool>> modifiesVars;
+	vector<unordered_map<string, bool>> modifiesStmts;
+	unordered_map<string, vector<bool>> usesVars;
+	vector<unordered_map<string, bool>> usesStmts;
 
 	vector<int> parents;
 	vector<int> children;
