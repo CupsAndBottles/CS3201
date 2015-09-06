@@ -17,9 +17,19 @@ public:
 	vector<int> allStmtsThatMod(string var);
 	vector<string> allVarsModdedBy(int stmt);
 
+	//for procedures
+	bool modifies(string p, string var);
+	vector<string> allProceduresThatModify(string var);
+	vector<string> allVarsModdedBy(string p);
+
 	bool uses(int stmt, string var);
 	vector<int> allStmtsThatUse(string var);
 	vector<string> allVarsUsedBy(int stmt);
+
+	//for procedures
+	bool uses(string p, string var);
+	vector<string> allProceduresThatUse(string var);
+	vector<string> allVarsUsedBy(string p);
 
 	bool isParent(int s1, int s2); //returns parent(s1, s2)
 	vector<int> allParentsOf(int stmt); //returns all immediate parents of stmt.
@@ -38,6 +48,7 @@ public:
 	vector<int> allBeforeStar(int stmt);
 
 	vector<int> selectAll(Tnode::Type type);
+	vector<int> pattern(Tnode::Type type, string var, string expr);
 
 private:
 	ast* storedAst;
@@ -64,6 +75,9 @@ private:
 	//helper functions
 	bool modifies(int stmt, string var);
 	bool uses(int stmt, string var);
+	vector<int> flattenBoolVectorToIntVector(vector<bool> inp);
+	vector<string> flattenBoolMapToStringVector(unordered_map<string, bool> inp);
+	vector<int> flattenNodeVectorToIntVector(vector<Tnode*> inp);
 	vector<Tnode*> getNodesOfType(Tnode* start, Tnode::Type type);
 	vector<Tnode*>* getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, vector<Tnode*>* results);
 

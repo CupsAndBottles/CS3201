@@ -31,7 +31,6 @@ vector<int> pkb::allStmtsThatMod(string var){
 	} catch (const std::out_of_range& oor){
 		return vector<int>();
 	}
-
 }
 
 vector<string> pkb::allVarsModdedBy(int stmt){
@@ -138,7 +137,7 @@ vector<int> pkb::selectAll(Tnode::Type type){
 	return flattenNodeVectorToIntVector(getNodesOfType(root, type));
 }
 
-//return vector of indices that have true values in input vector 
+//return vector of indices that have true values in input vector
 vector<int> flattenBoolVectorToIntVector(vector<bool> inp) {
 	vector<int> results = vector<int>();
 	int len = inp.size();
@@ -171,9 +170,9 @@ vector<int> flattenNodeVectorToIntVector(vector<Tnode*> inp) {
 
 //return all nodes contained in the subtree of input node with type specified by input.
 vector<Tnode*> pkb::getNodesOfType(Tnode* start, Tnode::Type type){
-	vector<Tnode*> assigns;
-	assigns = *pkb::getNodesOfTypeHelper(start, type, &assigns);
-	return assigns;
+	vector<Tnode*> results;
+	results = *pkb::getNodesOfTypeHelper(start, type, &results);
+	return results;
 }
 
 vector<Tnode*>* pkb::getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, vector<Tnode*>* results){
