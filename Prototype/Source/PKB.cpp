@@ -8,7 +8,7 @@ pkb::pkb(ast* tree){
 	calculateUses();
 }
 
-//load pkb from fire storage
+//load pkb from file storage
 pkb::pkb(string filePath) {
 }
 
