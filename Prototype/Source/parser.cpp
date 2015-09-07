@@ -7,11 +7,10 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include "SIMPLE_parser.h"
 
 using namespace std;
 
-// Splits a string by a delimiter (evaluateProgram uses whitespace)
+// Splits a string by a delimiter (parseProgram uses whitespace)
 vector<string> split(string str, char delimiter) {
 	vector<string> split_string;
 	stringstream ss(str);
@@ -27,8 +26,9 @@ vector<string> split(string str, char delimiter) {
 	return split_string;
 }
 
-// Parse the program after it is being read in
-vector<string> evaluateProgram(string file) {
+// Parse the program as it is being read in
+// If there is an error, stop reading and terminate
+vector<string> parseProgram(string file) {
 	ifstream fileReader;
 	string line = "";
 	vector<string> temp, tokenized_program;
@@ -42,16 +42,6 @@ vector<string> evaluateProgram(string file) {
 			for (int i = 0; i < temp.size(); i++) {
 				tokenized_program.push_back(temp[i]);
 			}
-		}
-		
-		// Parse the program
-		if (parseProgram(tokenized_program)) {
-			return tokenized_program;
-		}
-		else {
-			// Error parsing program
-			tokenized_program.clear();
-			return tokenized_program;
 		}
 	}
 	else {
@@ -68,7 +58,7 @@ int main()
 
 	cout << "Enter filename and extension.\n";
 	cin >> file;
-	tokenized_program = evaluateProgram(file);
+	tokenized_program = parseProgram(file);
 
 	if (tokenized_program.size() > 0) {
 

@@ -24,7 +24,7 @@
     <ClInclude Include="Source\AST.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Unit Tests\test_ast.h">
+    <ClInclude Include="Source\PKB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -40,7 +40,7 @@
     <ClCompile Include="Source\AST.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Unit Tests\test_ast.cpp">
+    <ClCompile Include="Source\PKB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
