@@ -19,7 +19,7 @@ void pkb::updateDBFile() {
 bool pkb::modifies(int stmt, string var){
 	try{
 		return modifiesStmts.at(stmt).at(var);
-	} catch (const std::out_of_range& oor){
+	} catch (std::out_of_range){
 		return false;
 	}
 }
@@ -28,7 +28,7 @@ vector<int> pkb::allStmtsThatMod(string var){
 	try{
 		vector<bool> results = modifiesVars.at(var);
 		return flattenBoolVectorToIntVector(results);
-	} catch (const std::out_of_range& oor){
+	} catch (std::out_of_range){
 		return vector<int>();
 	}
 }
@@ -36,7 +36,7 @@ vector<int> pkb::allStmtsThatMod(string var){
 vector<string> pkb::allVarsModdedBy(int stmt){
 	try{
 		return flattenBoolMapToStringVector(modifiesStmts.at(stmt));
-	} catch (const std::out_of_range& oor){
+	} catch (std::out_of_range){
 		return vector<string>();
 	}
 }
@@ -44,7 +44,7 @@ vector<string> pkb::allVarsModdedBy(int stmt){
 bool pkb::uses(int stmt, string var){
 	try{
 		return usesStmts.at(stmt).at(var);
-	} catch (const std::out_of_range& oor){
+	} catch (std::out_of_range){
 		return false;
 	}
 }
@@ -52,7 +52,7 @@ bool pkb::uses(int stmt, string var){
 vector<int> pkb::allStmtsThatUse(string var){
 	try{
 		return flattenBoolVectorToIntVector(usesVars.at(var));
-	} catch (const std::out_of_range& oor){
+	} catch (std::out_of_range){
 		return vector<int>();
 	}
 }
@@ -60,7 +60,7 @@ vector<int> pkb::allStmtsThatUse(string var){
 vector<string> pkb::allVarsUsedBy(int stmt){
 	try{
 		return flattenBoolMapToStringVector(usesStmts.at(stmt));
-	} catch (const std::out_of_range& oor){
+	} catch (std::out_of_range){
 		return vector<string>();
 	}
 }
@@ -69,7 +69,7 @@ bool pkb::isParent(int s1, int s2){
 	try{
 		vector<int> parents = children.at(s1);
 		return find(parents.begin(), parents.end(), s2) != parents.end();
-	} catch (const std::out_of_range& oor){
+	} catch (std::out_of_range){
 		return false;
 	}
 }
@@ -77,7 +77,7 @@ bool pkb::isParent(int s1, int s2){
 vector<int> pkb::allParentsOf(int stmt){
 	try{
 		return parents.at(stmt);
-	} catch (const std::out_of_range& oor){
+	} catch (std::out_of_range){
 		return vector<int>();
 	}
 }
@@ -85,7 +85,7 @@ vector<int> pkb::allParentsOf(int stmt){
 vector<int> pkb::allChildrenOf(int stmt){
 	try{
 		return children.at(stmt);
-	} catch (const std::out_of_range& oor){
+	} catch (std::out_of_range){
 		return vector<int>();
 	}
 }
@@ -138,7 +138,7 @@ vector<int> pkb::selectAll(Tnode::Type type){
 }
 
 //return vector of indices that have true values in input vector
-vector<int> flattenBoolVectorToIntVector(vector<bool> inp) {
+vector<int> pkb::flattenBoolVectorToIntVector(vector<bool> inp) {
 	vector<int> results = vector<int>();
 	int len = inp.size();
 	for (int i = 0; i < len; i++) {
@@ -150,7 +150,7 @@ vector<int> flattenBoolVectorToIntVector(vector<bool> inp) {
 }
 
 //return vector of strings that have true values in input unordered map
-vector<string> flattenBoolMapToStringVector(unordered_map<string, bool> inp) {
+vector<string> pkb::flattenBoolMapToStringVector(unordered_map<string, bool> inp) {
 	vector<string> results = vector<string>();
 	for (auto it : inp) {
 		if (it.second) {
@@ -161,7 +161,7 @@ vector<string> flattenBoolMapToStringVector(unordered_map<string, bool> inp) {
 }
 
 //return vector of statement numbers of the nodes in input vector.
-vector<int> flattenNodeVectorToIntVector(vector<Tnode*> inp) {
+vector<int> pkb::flattenNodeVectorToIntVector(vector<Tnode*> inp) {
 	vector<int> results = vector<int>();
 	for (auto it : inp) {
 		results.push_back(it->getStmtNum());
@@ -178,11 +178,11 @@ vector<Tnode*> pkb::getNodesOfType(Tnode* start, Tnode::Type type){
 
 vector<Tnode*>* pkb::getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, vector<Tnode*>* results){
 	if (curr != NULL){
-		if (curr->getType = type){
+		if (curr->getType() == type){
 			results->push_back(curr);
 		}
-		results = pkb::getNodesOfTypeHelper(curr->getRightSib, type, results);
-		return pkb::getNodesOfTypeHelper(curr->getFirstChild, type, results);
+		results = pkb::getNodesOfTypeHelper(curr->getRightSib(), type, results);
+		return pkb::getNodesOfTypeHelper(curr->getFirstChild(), type, results);
 	} else {
 		return results;
 	}
