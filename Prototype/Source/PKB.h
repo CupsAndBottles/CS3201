@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <iostream>
 #include <algorithm>
 
@@ -60,10 +61,10 @@ private:
 
 	// <relation>Vars: adjacency list indexed by vars
 	// <relation>Stmts:  adjacency list indexed by stmt numbers
-	unordered_map<string, vector<bool>> modifiesVars;
-	vector<unordered_map<string, bool>> modifiesStmts;
-	unordered_map<string, vector<bool>> usesVars;
-	vector<unordered_map<string, bool>> usesStmts;
+	unordered_map<string, unordered_set<int>> modifiesVars;
+	unordered_map<int, unordered_set<string>> modifiesStmts;
+	unordered_map<string, unordered_set<int>> usesVars;
+	unordered_map<int, unordered_set<string>> usesStmts;
 
 	vector<vector<int>> parents; //index: stmt s, values: stmts that are parents of stmt s
 	vector<vector<int>> children; //index: stmt s, values: stmts that are children of stmt s
