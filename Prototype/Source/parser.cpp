@@ -1,12 +1,11 @@
 #include "stdafx.h"
-#include "ast.h"
-#include <cstdlib>
 #include <cctype>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <sstream>
 #include <vector>
+#include "SIMPLE_parser.h"
 
 using namespace std;
 
@@ -28,7 +27,7 @@ vector<string> split(string str, char delimiter) {
 
 // Parse the program as it is being read in
 // If there is an error, stop reading and terminate
-vector<string> parseProgram(string file) {
+vector<string> tokenizeProgram(string file) {
 	ifstream fileReader;
 	string line = "";
 	vector<string> temp, tokenized_program;
@@ -51,33 +50,20 @@ vector<string> parseProgram(string file) {
 	return tokenized_program;
 }
 
-int main()
+vector<string> parseSimpleProgram()
 {
 	string file;
 	vector<string> tokenized_program;
 
 	cout << "Enter filename and extension.\n";
 	cin >> file;
-	tokenized_program = parseProgram(file);
 
-	if (tokenized_program.size() > 0) {
-
-		// Temp code
-		cout << "Printing tokenized program\n";
-		for (int i = 0; i < tokenized_program.size(); i++) {
-			cout << tokenized_program[i] << "\n";
-		}
-
-		// Create AST
-		ast *a = new ast;
-		(*a).buildAST(tokenized_program);
-		Tnode *root = (*a).getRoot();
-	}
-	else {
-		cout << "There was an error in parsing the program.\n";
+	tokenized_program = tokenizeProgram(file);
+	if (!parseProgram(tokenized_program)) {
+		// Error parsing the program; return an empty vector
+		tokenized_program.clear();
 	}
 
-	system("pause");
-	return 0;
+	return tokenized_program;
 }
 
