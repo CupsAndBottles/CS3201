@@ -100,6 +100,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="Source\AST.h" />
     <ClInclude Include="Source\PKB.h" />
+    <ClInclude Include="Source\QueryEvaluator.h" />
     <ClInclude Include="Source\Tnode.h" />
   </ItemGroup>
   <ItemGroup>
@@ -112,6 +113,7 @@
     <ClCompile Include="Source\PKB.cpp">
       <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
+    <ClCompile Include="Source\QueryEvaluator.cpp" />
     <ClCompile Include="Source\Tnode.cpp">
       <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
