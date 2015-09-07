@@ -24,6 +24,9 @@
     <ClInclude Include="Source\AST.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Unit Tests\test_ast.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Prototype.rc">
@@ -35,6 +38,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\AST.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit Tests\test_ast.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
