@@ -1,5 +1,6 @@
 #include "ast.h"
 
+/*
 //stub main
 int main()
 {
@@ -30,7 +31,7 @@ int main()
 	cout << "ast printed." << endl;
 	return 0;
 }
-
+*/
 
 ast::ast()
 {
