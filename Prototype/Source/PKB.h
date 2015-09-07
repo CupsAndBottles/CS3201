@@ -76,7 +76,9 @@ private:
 	//helper functions
 	vector<int> flattenBoolVectorToIntVector(vector<bool> inp);
 	vector<string> flattenBoolMapToStringVector(unordered_map<string, bool> inp);
-	vector<int> flattenNodeVectorToIntVector(vector<Tnode*> inp);
+	vector<int> flattenNodeVectorToIntVector(const vector<Tnode*>* inp);
+	vector<int> flattenIntSetToIntVector(const unordered_set<int>* inp);
+	vector<string> flattenStringSetToStringVector(const unordered_set<string>* inp);
 	vector<Tnode*> getNodesOfType(Tnode* start, Tnode::Type type);
 	vector<Tnode*>* getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, vector<Tnode*>* results);
 
