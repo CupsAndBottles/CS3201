@@ -81,6 +81,14 @@ private:
 	vector<Tnode*>* getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, vector<Tnode*>* results);
 
 	void calculateModifies();
+	void calculateModifiesAssigns();
+	void calculateModifiesContainers();
+	void calculateModifiesProcedure();
+	void calculateModifiesCalls();
 	void calculateUses();
+	void calculateUsesAssigns();
+	void calculateUsesContainers();
+	void calculateUsesProcedures();
+	void calculateUsesCalls();
 	void updateDBFile();
 };
