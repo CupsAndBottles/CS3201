@@ -55,6 +55,7 @@ public:
 
 	void printNode(); //for debugging
 	char *enumToString(int enumVal);
+	string toLowerCase(string s);
 
 	
 

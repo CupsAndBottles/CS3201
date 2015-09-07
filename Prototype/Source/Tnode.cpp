@@ -84,7 +84,7 @@ Tnode::Type Tnode::getType()
 
 string Tnode::getName()
 {
-	return name;
+	return toLowerCase(name);
 }
 
 int Tnode::getValue()
@@ -182,4 +182,13 @@ char *Tnode::enumToString(int enumVal)
 	default:
 		return "Not recognized..";
 	}
+}
+
+string Tnode::toLowerCase(string s)
+{
+	for (unsigned int i = 0; i < s.length(); i++)
+	{
+		s[i] = tolower(s[i]);
+	}
+	return s;
 }
