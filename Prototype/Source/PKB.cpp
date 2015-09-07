@@ -18,7 +18,7 @@ void pkb::updateDBFile() {
 
 bool pkb::modifies(int stmt, string var){
 	try{
-		return modifiesStmts.at(stmt).at(var);
+		return modifiesStmts.at(stmt).count(var);
 	} catch (std::out_of_range){
 		return false;
 	}
@@ -26,8 +26,7 @@ bool pkb::modifies(int stmt, string var){
 
 vector<int> pkb::allStmtsThatMod(string var){
 	try{
-		vector<bool> results = modifiesVars.at(var);
-		return flattenBoolVectorToIntVector(results);
+		return flattenIntSetToIntVector(&modifiesVars.at(var));
 	} catch (std::out_of_range){
 		return vector<int>();
 	}
@@ -35,7 +34,7 @@ vector<int> pkb::allStmtsThatMod(string var){
 
 vector<string> pkb::allVarsModdedBy(int stmt){
 	try{
-		return flattenBoolMapToStringVector(modifiesStmts.at(stmt));
+		return flattenStringSetToStringVector(&modifiesStmts.at(stmt));
 	} catch (std::out_of_range){
 		return vector<string>();
 	}
@@ -43,7 +42,7 @@ vector<string> pkb::allVarsModdedBy(int stmt){
 
 bool pkb::uses(int stmt, string var){
 	try{
-		return usesStmts.at(stmt).at(var);
+		return usesStmts.at(stmt).count(var);
 	} catch (std::out_of_range){
 		return false;
 	}
@@ -51,7 +50,7 @@ bool pkb::uses(int stmt, string var){
 
 vector<int> pkb::allStmtsThatUse(string var){
 	try{
-		return flattenBoolVectorToIntVector(usesVars.at(var));
+		return flattenIntSetToIntVector(&usesVars.at(var));
 	} catch (std::out_of_range){
 		return vector<int>();
 	}
@@ -59,7 +58,7 @@ vector<int> pkb::allStmtsThatUse(string var){
 
 vector<string> pkb::allVarsUsedBy(int stmt){
 	try{
-		return flattenBoolMapToStringVector(usesStmts.at(stmt));
+		return flattenStringSetToStringVector(&usesStmts.at(stmt));
 	} catch (std::out_of_range){
 		return vector<string>();
 	}
@@ -134,7 +133,7 @@ vector<int> pkb::allBeforeStar(int stmt)
 
 vector<int> pkb::selectAll(Tnode::Type type){
 	Tnode* root = this->storedAst->getRoot();
-	return flattenNodeVectorToIntVector(getNodesOfType(root, type));
+	return flattenNodeVectorToIntVector(&getNodesOfType(root, type));
 }
 
 //return vector of indices that have true values in input vector
@@ -161,12 +160,20 @@ vector<string> pkb::flattenBoolMapToStringVector(unordered_map<string, bool> inp
 }
 
 //return vector of statement numbers of the nodes in input vector.
-vector<int> pkb::flattenNodeVectorToIntVector(vector<Tnode*> inp) {
+vector<int> pkb::flattenNodeVectorToIntVector(const vector<Tnode*>* inp) {
 	vector<int> results = vector<int>();
-	for (auto it : inp) {
+	for (auto it : *inp) {
 		results.push_back(it->getStmtNum());
 	}
 	return results;
+}
+
+vector<int> pkb::flattenIntSetToIntVector(const unordered_set<int>* inp) {
+	return std::vector<int> (inp->begin(), inp->end());
+}
+
+vector<string> pkb::flattenStringSetToStringVector(const unordered_set<string>* inp) {
+	return std::vector<string> (inp->begin(), inp->end());
 }
 
 //return all nodes contained in the subtree of input node with type specified by input.
@@ -189,12 +196,53 @@ vector<Tnode*>* pkb::getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, vector<
 }
 
 void pkb::calculateModifies(){
+	this->calculateModifiesAssigns();
+	this->calculateModifiesContainers();
+	this->calculateModifiesProcedure();
+	this->calculateModifiesCalls();
+}
+
+void pkb::calculateModifiesAssigns() {
 	ast* tree = this->storedAst;
 	vector<Tnode*> assigns = pkb::getNodesOfType(tree->getRoot(), Tnode::STMT_ASSIGN);
-	//incomplete
+	for (Tnode* node : assigns) {
+		Tnode* var = node->getFirstChild();
+		unordered_set<string> vars = unordered_set<string>();
+	}
+}
+
+void pkb::calculateModifiesContainers() {
+
+}
+
+void pkb::calculateModifiesProcedure() {
+
+}
+
+void pkb::calculateModifiesCalls() {
+
 }
 
 void pkb::calculateUses(){
+
+}
+
+void pkb::calculateUsesAssigns() {
 	ast* tree = this->storedAst;
-	//incomplete
+	vector<Tnode*> assigns = pkb::getNodesOfType(tree->getRoot(), Tnode::STMT_ASSIGN);
+	for (Tnode* node : assigns) {
+
+	}
+}
+
+void pkb::calculateUsesContainers() {
+
+}
+
+void pkb::calculateUsesProcedures() {
+
+}
+
+void pkb::calculateUsesCalls() {
+
 }
