@@ -12,6 +12,8 @@
 #include "QueryPreProcessor.h"
 #include "EntityTable.h"
 #include "QueryObject.h"
+#include "SemanticsCheck.h"
+#include "RelTable.h"
 
 using namespace std;
 
@@ -27,9 +29,11 @@ vector<string> split(const string &s, char delim) {
 }
 */
 
+SemanticsCheck sCheck;
 EntTable entityTable;
 vector<string> entityList;
 vector<QueryObject> queryList;
+RelTable relTable;
 
 vector<string> QueryPreProcessor::split(string s, string delim) {
 	stringstream stringStream(s);
@@ -60,8 +64,10 @@ void QueryPreProcessor::inputEntitiesIntoTable(vector<string> v) {
 		//if first vector of line is equals to stmt, assign, while..proceed to add subsequent vectors into entity table
 		if (find(designEntities.begin(), designEntities.end(), wordVector[0]) != designEntities.end()) {
 			//cout << wordVector[0] << endl;
-			for (size_t i = 1; i<wordVector.size(); i++) {
-				entityTable.add(wordVector[i], wordVector[0]);
+			for (size_t i = 1; i < wordVector.size(); i++) {
+				if (sCheck.isIdent(wordVector[i])) {
+					entityTable.add(wordVector[i], wordVector[0]);
+				}
 			}
 		}
 	}
@@ -73,15 +79,44 @@ string QueryPreProcessor::toLowerCase(string s) {
 	return s;
 }
 
-void QueryPreProcessor::addQueryObject(vector<string> temp) {
+bool QueryPreProcessor::verifySTQuery(vector<string> temp) {
 	//check that this vector is of size 3
 	if (temp.size() != 3) {
-		cout << "line:196, queryObj does not have 3 arguments" << endl;
-		return;
+		cout << "querySTObj does not have 3 arguments" << endl;
+		return false;
 	}
 
-	//verify all three arguments are valid
+	//check first argument
+	vector<string> definedArg = relTable.getArguments(toLowerCase(temp[0]));
+	//check arg1 and arg2
+	if (sCheck.initSemanticsCheck((temp[1]), definedArg[0], entityTable) && sCheck.initSemanticsCheck(temp[2], definedArg[1], entityTable)) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
 
+bool QueryPreProcessor::verifyPatternQuery(vector<string> temp) {
+	//check that this vector is of size 3
+	if (temp.size() != 3) {
+		cout << "queryPatternObj does not have 3 argument:";
+		cout << temp.size() << endl;
+		return false;
+	}
+
+	if (sCheck.isSynAssign(temp[0], entityTable)) {
+		if (sCheck.isEntRef(temp[1], entityTable)) {
+			if (sCheck.isExpressionSpec(temp[2])) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+void QueryPreProcessor::addQueryObject(vector<string> temp) {
 
 	//make into query object
 	QueryObject qo = QueryObject(temp[0], temp[1], temp[2]);
@@ -90,9 +125,47 @@ void QueryPreProcessor::addQueryObject(vector<string> temp) {
 	queryList.push_back(qo);
 }
 
+vector<string> sortTokens(vector<string> temp) {
+	vector<string> newVect;
+	size_t counter;
+	string combine;
+	bool flag = false;
+	for (size_t i = 0; i < temp.size(); i++) {
+		counter = count(temp[i].begin(), temp[i].end(), '\"');
+		if (flag == false) {
+			if (counter != 1) {
+				newVect.push_back(temp[i]);
+			}
+			else {
+				combine = temp[i];
+				flag = true;
+			}
+		}
+		//flag==true
+		else {
+			if (counter != 1) {
+				combine = combine + temp[i];
+				flag = true;
+			}
+			//found the next \"
+			else {
+				combine = combine + temp[i];
+				newVect.push_back(combine);
+				flag = false;
+			}
+		}
+
+	}
+	return newVect;
+}
+
 void QueryPreProcessor::query(string s) {
+	//initialize relationship table
+	relTable.initRelTable();
+
 	cout << s << endl; cout << endl;
 
+	//create design entity table
 	//Create the design-entity(s) by tokenizing string with delimiter ; and \n. Make sure that all subsequent synonyms used in a query are being declared.
 	vector<string> temp;
 	temp = split(s, ";\n");
@@ -102,13 +175,14 @@ void QueryPreProcessor::query(string s) {
 	//Work on relationship Query. Focusing on the 'Select...' line
 	//cout << "Verify line: " + v.back() << endl;
 	string newS = temp.back();
-	vector<string> selectCl = split(newS, "(), ");
+	vector<string> tempSelectCl = split(newS, "(), ");
 	/*for (vector<string>::iterator it = selectCl.begin(); it != selectCl.end(); ++it) {
 	cout << *it << endl;
 	}
 	for (size_t i = 0; i < selectCl.size(); i++) {
 	cout << selectCl.at(i) << endl;
 	}*/
+	vector<string> selectCl = sortTokens(tempSelectCl);
 
 	//first must be a Select, else error
 	if (toLowerCase(selectCl.at(0)).compare("select") == 0) {
@@ -119,7 +193,12 @@ void QueryPreProcessor::query(string s) {
 		cout << "result-clause: ";
 		while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0)) {
 			cout << selectCl.at(i) + " ";
-			entityList.push_back(selectCl.at(i));
+			if (sCheck.isSynonym(selectCl.at(i), entityTable) || (toLowerCase(selectCl.at(i)).compare("boolean") == 0) ) {
+				entityList.push_back(selectCl.at(i));
+			}
+			else {
+				cout << "result - clause invalid" << endl;
+			}
 			i++;
 			if (selectCl.size() == i) {
 				break;
@@ -145,14 +224,18 @@ void QueryPreProcessor::query(string s) {
 					while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0)) {
 						cout << selectCl.at(i) + " ";
 						argVector.push_back(selectCl.at(i));
-						//VERIFY relCond TBC
 						i++;
 						if (selectCl.size() == i) {
 							break;
 						}
 					}
-					addQueryObject(argVector);
-					argVector.clear();
+					if (verifySTQuery(argVector)) {
+						addQueryObject(argVector);
+						argVector.clear();
+					}
+					else {
+						cout << "invalid query" << endl;
+					}
 					cout << endl;
 				}
 				else {
@@ -168,14 +251,18 @@ void QueryPreProcessor::query(string s) {
 				while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0)) {
 					cout << selectCl.at(i) + " ";
 					argVector.push_back(selectCl.at(i));
-					//VERIFY patternCond TBC
 					i++;
 					if (selectCl.size() == i) {
 						break;
 					}
 				}
-				addQueryObject(argVector);
-				argVector.clear();
+				if (verifyPatternQuery(argVector)) {
+					addQueryObject(argVector);
+					argVector.clear();
+				}
+				else {
+					cout << "invalid query" << endl;
+				}
 				cout << endl;
 
 			}
