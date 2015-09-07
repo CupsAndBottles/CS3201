@@ -11,7 +11,7 @@
 
 using namespace std;
 
-// Splits a string by a delimiter (parseProgram uses whitespace)
+// Splits a string by a delimiter (evaluateProgram uses whitespace)
 vector<string> split(string str, char delimiter) {
 	vector<string> split_string;
 	stringstream ss(str);
