@@ -9,12 +9,12 @@ int main()
 	{ "Procedure", "myProc", "{",
 		"if", "x", "then", "{",
 		"while", "k", "{",
-		"m", "=", "y", "-", "(", "a", "-", "b", ")", ";",
+		"k", "=", "y", "-", "(", "a", "-", "x", ")", ";",
 		"}",
 		"}",
 		"else", "{",
 		"call", "sun", ";",
-		"f", "=", "(","(","(", "g", ")",")",")", ";",
+		"f", "=", "(","(","(", "x", ")",")",")", ";",
 		"}",
 		"}",
 		"Procedure", "2ndproc", "{",
@@ -29,6 +29,8 @@ int main()
 	cout << "printing ast..." << endl;
 	(*a).printAST(); ///prints the ast
 	cout << "ast printed." << endl;
+	(*a).printProcTable();
+	(*a).printVarTable();
 	return 0;
 }
 */
@@ -36,6 +38,8 @@ int main()
 ast::ast()
 {
 	this -> root = NULL;
+	this -> procTable = new vector<pair<string, Tnode*>>;
+	this -> varTable = new vector<pair<string, vector<Tnode*>>>;
 }
 
 
@@ -65,6 +69,7 @@ Tnode* ast::procedure(vector<string> &tokens, vector<string>::iterator &it)
 	Tnode *curNode, *nextNode, *curNodeStmtLst;
 	match(it, stringify(PROCEDURE));
 	curNode = Tnode::createNode(Tnode::PROCEDURE, *it);
+	(*procTable).push_back(make_pair(*it, curNode));
 	curNodeStmtLst = Tnode::createNode(Tnode::STMTLST, "");
 	Tnode::createLink(Tnode::PARENT, *curNode, *curNodeStmtLst);
 	match(it, *it);
@@ -129,7 +134,7 @@ Tnode* ast::stmt(vector<string> &tokens, vector<string>::iterator &it)
 Tnode *ast::whileSt(vector<string> &tokens, vector<string>::iterator &it)
 {
 	Tnode *stLst, *var;
-	var = Tnode::createNode(Tnode::VARIABLE, *it);
+	var = createVariable(Tnode::VARIABLE, *it);
 	match(it, *it);
 	stLst = Tnode::createNode(Tnode::STMTLST, "");
 	Tnode::createLink(Tnode::RIGHTSIB, *var, *stLst);
@@ -142,7 +147,7 @@ Tnode *ast::whileSt(vector<string> &tokens, vector<string>::iterator &it)
 Tnode *ast::ifSt(vector<string> &tokens, vector<string>::iterator &it)
 {
 	Tnode *thenStLst, *elseStLst, *var;
-	var = Tnode::createNode(Tnode::VARIABLE, *it);
+	var = createVariable(Tnode::VARIABLE, *it);
 	match(it, *it);
 	match(it, "then");
 	thenStLst = Tnode::createNode(Tnode::STMTLST, "then");
@@ -160,7 +165,7 @@ Tnode *ast::ifSt(vector<string> &tokens, vector<string>::iterator &it)
 Tnode *ast::assign(vector<string> &tokens, vector<string>::iterator &it)
 {
 	Tnode *var;
-	var = Tnode::createNode(Tnode::VARIABLE, *it);
+	var = createVariable(Tnode::VARIABLE, *it);
 	match(it, *it);
 	match(it, "=");
 	vector<string>::iterator exprIt = it;
@@ -259,10 +264,32 @@ Tnode *ast::factor(vector<string> &tokens, vector<string>::iterator start, vecto
 			fac = Tnode::createNode(stoi(*start));
 		}
 		else {
-			fac = Tnode::createNode(Tnode::VARIABLE, *start);
+			fac = createVariable(Tnode::VARIABLE, *start);
 		}
 	}
 	return fac;
+}
+
+Tnode * ast::createVariable(Tnode::Type t, string n)
+{
+	Tnode* varNode;
+	varNode = Tnode::createNode(Tnode::VARIABLE, n);
+	addToVarTable(n, varNode);
+	return varNode;
+}
+
+void ast::addToVarTable(string var, Tnode* varNode)
+{
+	for (unsigned int i = 0; i < (*varTable).size(); i++) {
+		if (get<0>((*varTable).at(i)) == var) {
+			get<1>((*varTable).at(i)).push_back(varNode);
+			return;
+		}
+	}
+	vector<Tnode*> addressList;
+	addressList.push_back(varNode);
+	(*varTable).push_back(make_pair(var, addressList));
+	return;
 }
 
 void ast::match(vector<string>::iterator &it, string token)
@@ -316,6 +343,16 @@ Tnode *ast::getRoot()
 	return root;
 }
 
+vector<pair<string, Tnode*>>* ast::getProcTable()
+{
+	return procTable;
+}
+
+vector<pair<string, vector<Tnode*>>>* ast::getVarTable()
+{
+	return varTable;
+}
+
 void ast::printAST()
 {
 	vector<vector<Tnode*>> notSoSimple;
@@ -343,5 +380,28 @@ void ast::printAST()
 			(*notSoSimple.at(i).at(j)).printNode();
 			cout << "\n";
 		}
+	}
+}
+
+void ast::printProcTable()
+{
+	cout << endl << "<---------------------------------------- Procedure Table: ---------------------------------------->" << endl << endl;
+	for (vector<pair<string, Tnode*>>::iterator i = (*procTable).begin(); i != (*procTable).end(); i++) {
+		cout << "Index :" << (i - (*procTable).begin()) << ", Name: " << (*i).first << ", Address: <" << (*i).second << ">" << endl;
+	}
+}
+
+void ast::printVarTable()
+{
+	cout << endl << "<---------------------------------------- Variable Table: ---------------------------------------->" << endl << endl;
+	for (vector<pair<string, vector<Tnode*>>>::iterator i = (*varTable).begin(); i != (*varTable).end(); i++) {
+		cout << "Index :" << (i - (*varTable).begin()) << ", Name: " << (*i).first << ", Address(es): ";
+		for (vector<Tnode*>::iterator j = (*i).second.begin(); j != (*i).second.end(); j++) {
+			cout << "<" << (*j) << ">";
+			if (j < (*i).second.end() - 1) {
+				cout << ", ";
+			}
+		}
+		cout << "\n";
 	}
 }
