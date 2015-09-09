@@ -99,7 +99,15 @@
   <ItemGroup>
     <ClInclude Include="resource.h" />
     <ClInclude Include="Source\AST.h" />
+    <ClInclude Include="Source\demo.h" />
+    <ClInclude Include="Source\EntityTable.h" />
+    <ClInclude Include="Source\parser.h" />
     <ClInclude Include="Source\PKB.h" />
+    <ClInclude Include="Source\QueryEvaluator.h" />
+    <ClInclude Include="Source\QueryObject.h" />
+    <ClInclude Include="Source\QueryPreProcessor.h" />
+    <ClInclude Include="Source\SIMPLE_parser.h" />
+    <ClInclude Include="Source\SIMPLE_rules.h" />
     <ClInclude Include="Source\Tnode.h" />
   </ItemGroup>
   <ItemGroup>
@@ -109,9 +117,18 @@
     <ClCompile Include="Source\AST.cpp">
       <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
+    <ClCompile Include="Source\demo.cpp" />
+    <ClCompile Include="Source\EntityTable.cpp" />
+    <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\parser.cpp" />
     <ClCompile Include="Source\PKB.cpp">
       <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
+    <ClCompile Include="Source\QueryEvaluator.cpp" />
+    <ClCompile Include="Source\QueryObject.cpp" />
+    <ClCompile Include="Source\QueryPreProcessor.cpp" />
+    <ClCompile Include="Source\SIMPLE_parser.cpp" />
+    <ClCompile Include="Source\SIMPLE_rules.cpp" />
     <ClCompile Include="Source\Tnode.cpp">
       <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
