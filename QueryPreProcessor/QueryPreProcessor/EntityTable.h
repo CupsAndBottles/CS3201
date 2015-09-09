@@ -9,7 +9,7 @@ class EntTable
 	unordered_multimap<string, string> entityTable;
 
 public:
-	void add(string type, string name);
+	void add(string name, string type);
 	string getType(string name);
 	void clear();
 	bool exist(string name);

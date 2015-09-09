@@ -7,6 +7,7 @@
 #include <sstream>
 #include <algorithm>
 #include <cctype>
+#include <regex>
 
 #include "EntityTable.h"
 #include "QueryObject.h"
@@ -29,7 +30,7 @@ public:
 	vector<QueryObject> getQueries();
 
 private:
-
+	vector<string> checkForBracketsAndComma(vector<string> argVector);
 	void addQueryObject(vector<string> temp);
 	string toLowerCase(string s);
 	void inputEntitiesIntoTable(vector<string> v);

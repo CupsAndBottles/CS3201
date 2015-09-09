@@ -1,16 +1,20 @@
-#include <iostream>
-
 #include "QueryPreProcessor.h"
 #include "EntityTable.h"
 #include "QueryObject.h"
 #include "SemanticsCheck.h"
 #include "demo.h"
 
+using namespace std;
+
 void main() {
 
 	//SemanticsCheck sCheck;
 	QueryPreProcessor qpp;
-	string s = "stmt s, s1; assign a, a1, a2; while w; if ifstat; procedure p; variable v; constant c; prog_line n, n1, n2;\nSelect a SuCh that Modifies (a, \"y\") and Pattern a (\"m\", _)";
+	string s = "procedure p; assign a; Select p such that Modifies(p, \"x\") and pattern a(_, \"2\")";
+	//string s = "assign a, a1; Select a such that pattern a1(\"x\", _) and Modifies(a, \"x\")"; Queries01.36
+	//string s = "assign a, a1, a2; Select a such that Modifies(a1, \"x\") and Uses(a2, \"x\") and pattern a(\"x\", _)"; Queries01.37
+	//string s = "assign a; Select a such that Parent*(1, 2)";
+	//string s = "stmt s, s1; assign a, a1, a2; while w; if ifstat; procedure p; variable v; constant c; prog_line n, n1, n2;\nSelect a SuCh that Modifies (a, \"y\") and Pattern a (\"m\", _)";
 	//string s = "Select a SuCh that Modifies (a, \"y\") and Pattern a (\"m\", _)";
 	//string s = "stmt s, s1; assign a, a1, a2; while w; if ifstat; procedure p; variable v; constant c; prog_line n, n1, n2;\nSelect BOOLEAN such that Modifies(7, \"x\")";
 	//string s = "stmt s, s1; assign a, a1, a2; while w; if ifstat; procedure p; variable v; constant c; prog_line n, n1, n2;\nSelect s such that Modifies(p, \"x\") such that Follows(3, 7)";
@@ -19,6 +23,11 @@ void main() {
 	bool isQueryValid = qpp.query(s);
 	cout << "_______________________________" << endl;
 	
+	/*Brackets Comma check
+	vector<string> tempV = { "a(", "abd, afg", ")" };
+	bool b;
+	b= qpp.checkForBracketsAndComma(tempV); */
+
 	/* Semantics Check Test
 	EntTable newET = qpp.getEntityTable();
 	string s1 = newET.getType("ifstat");

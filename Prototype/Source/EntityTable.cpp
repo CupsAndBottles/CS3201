@@ -1,6 +1,4 @@
 #include "EntityTable.h"
-#include <unordered_map>
-#include <string>
 
 void EntTable::add(string name, string type) {
 	entityTable.insert(make_pair(name, type));
@@ -10,9 +8,22 @@ void EntTable::clear() {
 	entityTable.clear();
 }
 
-//assume std::string name is existing (will show error if name does not exist in table)
 string EntTable::getType(string name) {
-	string s = entityTable.find(name)->second;
-	return s;
+	if (exist(name)) {
+		string s = entityTable.find(name)->second;
+		return s;
+	}
+	else {
+		string s = "non-existant";
+		return s;
+	}
 }
 
+bool EntTable::exist(string name) {
+	if (entityTable.find(name) != entityTable.end()) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}

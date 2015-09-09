@@ -1,8 +1,4 @@
 #include "QueryObject.h"
-#include <string>
-#include <iostream>
-
-using namespace std;
 
 QueryObject::QueryObject(string s1, string s2, string s3) {
 	arg1 = s1;
