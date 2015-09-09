@@ -33,17 +33,34 @@ stmt s;
 Select s such that Follows(s, 2)
 1
 5000
-8 - comment
-
+8 - Test for invalid Follows
+variable v;
+Select v such that Follows("First", "Second")
+invalid
 5000
 9 - Test if Follows considers statements in different nesting level
 procedure p;
 Select p such that Follows(6, 7)
 none
 5000
-10 - Test if Follows* considered all stmt lists in the same nesting level 
+10 - Test basic function of Follows*
+stmt s;
+Select s such that Follows*(s, 6)
+4, 5 
+5000
+11 - Test if Follows* considered all stmt lists in the same nesting level 
 stmt s;
 Select s such that Follows*(s, 15)
 4, 5, 6, 10, 13, 14
 5000
-11 - 
+12 - Test if Follows* considers statements in different nesting level
+procedure p;
+Select p such that Follows*(4, 9)
+none
+5000
+13 - Test basic function of Modifies
+variable v;
+Select v such that Modifies(1, v)
+x
+5000
+14 - 
