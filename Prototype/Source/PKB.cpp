@@ -320,8 +320,8 @@ void pkb::calculateRelations(Tnode* currNode, vector<Tnode*> parents) {
 		updateUses(parents, currNode->getFirstChild());	// uses conditional variable
 		calculateRelations(currNode->getFirstChild()->getRightSib()->getFirstChild(), parents); // first statement in then stmtLst
 	} else if (isCall(currNode)){
-		parents.push_back(currNode);	
-		Tnode* callee = getCallee(currNode); 
+		parents.push_back(currNode);
+		Tnode* callee = getCallee(currNode);
 		updateCalls(parents, callee); // calls procedure
 		calculateRelations(callee, parents);
 	} else if (isAssigns(currNode)) {
@@ -370,8 +370,8 @@ vector<Tnode*>* pkb::getVarConsFromExpr(Tnode* expr, vector<Tnode*>* results) {
 	}
 }
 
-void pkb::updateUses(Tnode* n, Tnode* usee) {
-	
+void pkb::updateUses(Tnode* user, Tnode* usee) {
+	updater(pkb::USE, user->getStmtNum(), usee->getName());
 }
 
 void pkb::updateModifies(vector<Tnode*> modders, Tnode* modded) {
@@ -383,7 +383,46 @@ void pkb::updateModifies(vector<Tnode*> modders, Tnode* modded) {
 }
 
 void pkb::updateModifies(Tnode* modder, Tnode* modded) {
+	updater(pkb::MODIFY, modder->getStmtNum(), modded->getName());
+}
 
+void pkb::updater(pkb::Relation rel, int stmtNum, string strName) {
+	unordered_map<int, unordered_set<string>>* relInt;
+	unordered_map<string, unordered_set<int>>* relStr;
+	switch(rel){
+		case MODIFY:
+			relInt = &this->modifiesStmts;
+			relStr = &this->modifiesVars;
+			break;
+		case USE:
+			relInt = &this->usesStmts;
+			relStr = &this->usesVars;
+			break;
+		case CALL:
+			relInt = &this->callsStmts;
+			relStr = &this->callsProcs;
+			break;
+	}
+
+	//update relation indexed by stmtNum
+	unordered_set<string> vars = unordered_set<string>();
+	try {
+		vars = relInt->at(stmtNum);
+		vars.insert(strName);
+	} catch (out_of_range){
+		vars.insert(strName);
+		relInt->insert({stmtNum, vars});
+	}
+
+	//update relation indexed by strName
+	unordered_set<int> stmts = unordered_set<int>();
+	try {
+		stmts = relStr->at(strName);
+		stmts.insert(stmtNum);
+	} catch (out_of_range){
+		stmts.insert(stmtNum);
+		relStr->insert({strName, stmts});
+	}
 }
 
 void pkb::updateCalls(vector<Tnode*> callers, Tnode* callee) {
@@ -395,5 +434,5 @@ void pkb::updateCalls(vector<Tnode*> callers, Tnode* callee) {
 }
 
 void pkb::updateCalls(Tnode* caller, Tnode* callee) {
-
+	updater(pkb::CALL, caller->getStmtNum(), callee->getName());
 }

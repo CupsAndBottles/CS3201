@@ -110,6 +110,7 @@ private:
 	Tnode * getParentNode(Tnode * node);
 	Tnode * getSPAParent(Tnode * node);
 	void calculateRelations(Tnode * currNode, vector<Tnode*> parents);
+	void pkb::updater(pkb::Relation rel, int stmtNum, string strName);
 	void updateUses(const vector<Tnode*> users, Tnode * used);
 	vector<Tnode*>* getVarConsFromExpr(Tnode * expr, vector<Tnode*>* results);
 	void updateUses(Tnode * n, Tnode * used);
