@@ -56,8 +56,8 @@ private:
 	ast* storedAst;
 
 	// use adjacency lists to store relations as a sparse graph is expected.
-	// unordered_map for quick reference by hashing variables,
-	// and vector for quick reference by statement numbers.
+	// unordered_map for quick reference by hashing variables and statement numbers,
+	// and unordered_set for additionally ensuring no duplicates.
 	// note: vectors' 0th indexes are empty; statement numbers are exactly their index.
 
 	// <relation>Vars: adjacency list indexed by vars
