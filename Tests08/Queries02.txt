@@ -103,3 +103,47 @@ assign a;
 Select a pattern a(_, "z+x*y")
 none
 5000
+22 - Combine Modifies and pattern
+procedure p;
+Select p such that Modifies(p, "x") with pattern a("x", "x+2*y")
+Second
+5000
+23 - Combine Modifies and Follows
+stmt s;
+Select s such that Modifies(p, "x") such that Follows(3, 7)
+7
+5000
+24 - Combine Modifies and Parent
+stmt s;
+Select s such that Parent(s, 6) with Modifies(s, "i")
+none
+5000
+25 - Combine Uses and Parent
+stmt s;
+Select s such that Parent(s, 6) with Uses(s, "i")
+3
+5000
+26 - Combine Uses and pattern with same assignment stmt
+assign a; variable v;
+Select a such that Uses(a, "x") and pattern a(v, _)
+
+5000
+27 - Combine Uses and pattern with different assignment stmt and variables
+assign a, a1, a2; variable v1, v2;
+Select a such that Uses(a2, v2) and pattern a1(v1, _)
+
+5000
+28 - Combine Uses and pattern with different assignment stmt and variables variation
+assign a, a1; variable v, v1;
+Select a such that Uses(a, v) and pattern a1(v1, _)
+
+5000
+29 - Combine Uses and pattern
+assign a, a1; variable v;
+Select a such that Uses(a, v) and pattern a1(v, _)
+
+5000
+30
+31
+
+
