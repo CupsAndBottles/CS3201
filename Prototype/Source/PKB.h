@@ -15,6 +15,12 @@ public:
 	pkb(ast* tree);
 	pkb(string filePath);
 
+	enum Relation {
+		MODIFY,
+		CALL,
+		USE
+	};
+
 	bool modifies(int stmt, string var);
 	vector<int> allStmtsThatMod(string var);
 	vector<string> allVarsModdedBy(int stmt);
@@ -66,6 +72,8 @@ private:
 	unordered_map<int, unordered_set<string>> modifiesStmts;
 	unordered_map<string, unordered_set<int>> usesVars;
 	unordered_map<int, unordered_set<string>> usesStmts;
+	unordered_map<string, unordered_set<int>> callsProcs;
+	unordered_map<int, unordered_set<string>> callsStmts;
 
 	vector<vector<int>> parents; //index: stmt s, values: stmts that are parents of stmt s
 	vector<vector<int>> children; //index: stmt s, values: stmts that are children of stmt s
