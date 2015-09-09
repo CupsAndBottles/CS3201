@@ -1,0 +1,49 @@
+1 - Test basic function of Parent
+stmt s;
+Select s such that Parent(s, 7)
+6
+5000
+2 - Test if Parent considers same nesting level
+stmt s, s1;
+Select s such that Parent(s1, 3) with s1.stmt# = 2
+none
+5000
+3 - Test if Parent considers different nesting level in if/else statement
+stmt s1; variable v;
+Select v such that Parent(s1, 12) with s1.stmt# = 10
+x, y, z, i, v
+5000
+4 - Test basic function of Parent*
+variable v;
+Select v such that Parent*(s, 9) with s.stmt# = 6
+none
+5000
+5 - Test if Parent* considers different container statements
+stmt s, s1;
+Select s such that Parent*(s, 11) with s.stmt# = 6
+none
+5000
+6 - Test if Parent* considers a TRUE Parent
+stmt s;
+Select s such that Parent*(s, 12)
+10
+5000
+7 - Test basic function of Follows
+stmt s;
+Select s such that Follows(s, 2)
+1
+5000
+8 - comment
+
+5000
+9 - Test if Follows considers statements in different nesting level
+procedure p;
+Select p such that Follows(6, 7)
+none
+5000
+10 - Test if Follows* considered all stmt lists in the same nesting level 
+stmt s;
+Select s such that Follows*(s, 15)
+4, 5, 6, 10, 13, 14
+5000
+11 - 
