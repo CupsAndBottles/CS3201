@@ -9,7 +9,9 @@
 using namespace std;
 
 vector<string> split(string str, char delimiter);
-vector<string> tokenizeProgram(string file);
+vector<string> splitByDelimiter(vector<string> original, char delimiter);
+vector<string> splitByDelimiters(vector<string> program);
+vector<string> readProgram(string file);
 vector<string> parseSimpleProgram();
 
 #endif

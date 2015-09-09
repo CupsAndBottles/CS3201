@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -18,6 +19,7 @@ int main() {
 		for (int i = 0; i < tokenized_program.size(); i++) {
 			cout << tokenized_program[i] << "\n";
 		}
+		cout << "End of tokenized program\n";
 
 		// Construct an AST
 		ast *a = new ast;
@@ -33,6 +35,6 @@ int main() {
 		cout << "There was an error in parsing the program.\n";
 	}
 	
-	system("pause");
+	system("PAUSE");
 	return 0;
 }

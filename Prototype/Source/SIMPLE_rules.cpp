@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -14,7 +15,6 @@ bool isInteger(string token) {
 		return true;
 	}
 	else {
-		cout << token << " is not a valid integer.\n";
 		return false;
 	}
 }
@@ -27,7 +27,6 @@ bool isName(string token) {
 	ss << token[0];
 	ss >> temp;
 	if (isInteger(temp)) {
-		cout << token << " starts with an integer and is an invalid name.\n";
 		return false;
 	}
 
@@ -36,7 +35,6 @@ bool isName(string token) {
 		return true;
 	}
 	else {
-		cout << token << " is not a valid name.\n";
 		return false;
 	}
 }

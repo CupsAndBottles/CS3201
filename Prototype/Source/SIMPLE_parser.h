@@ -4,11 +4,16 @@
 #define SIMPLE_parser
 
 #include <string>
+#include <vector>
 
 using namespace std;
 
-
-bool parseProcedure(vector<string> program, int index);
-bool parseProgram(vector<string> program); 
+bool endOfProgram();
+bool parseExpression();
+bool parseAssign();
+bool parseWhile();
+bool parseStmtList();
+bool parseProcedure();
+vector<string> parseProgram(vector<string> program); 
 
 #endif
