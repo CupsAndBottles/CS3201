@@ -1,5 +1,6 @@
 #pragma once
 #include "EntityTable.h"
+#include <algorithm>
 #include <string>
 #include <iostream>
 

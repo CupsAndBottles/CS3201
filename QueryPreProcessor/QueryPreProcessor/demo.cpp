@@ -8,14 +8,15 @@
 
 void main() {
 
-	SemanticsCheck sCheck;
+	//SemanticsCheck sCheck;
 	QueryPreProcessor qpp;
-	string s = "stmt s, s1; assign a, a1, a2; while w; if ifstat; procedure p; variable v; constant c; prog_line n, n1, n2;\nSelect a SuCh that Modifies (a, \"y\") Pattern a (\"m\", _)";
+	string s = "stmt s, s1; assign a, a1, a2; while w; if ifstat; procedure p; variable v; constant c; prog_line n, n1, n2;\nSelect a SuCh that Modifies (a, \"y\") and Pattern a (\"m\", _)";
+	//string s = "Select a SuCh that Modifies (a, \"y\") and Pattern a (\"m\", _)";
 	//string s = "stmt s, s1; assign a, a1, a2; while w; if ifstat; procedure p; variable v; constant c; prog_line n, n1, n2;\nSelect BOOLEAN such that Modifies(7, \"x\")";
 	//string s = "stmt s, s1; assign a, a1, a2; while w; if ifstat; procedure p; variable v; constant c; prog_line n, n1, n2;\nSelect s such that Modifies(p, \"x\") such that Follows(3, 7)";
 	//string s = "stmt s, s1; assign a, a1, a2; while w; if ifstat; procedure p; variable v; constant c; prog_line n, n1, n2;\nSelect p such that Modifies(p, \"x\") pattern a(\"x\", \"x + 2 * y\")";
 
-	qpp.query(s);
+	bool isQueryValid = qpp.query(s);
 	cout << "_______________________________" << endl;
 	
 	/* Semantics Check Test

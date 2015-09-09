@@ -1,6 +1,7 @@
 #ifndef QueryObject_HEADER
 #define QueryObject_HEADER
 #include <string>
+#include <iostream>
 
 using namespace std;
 
