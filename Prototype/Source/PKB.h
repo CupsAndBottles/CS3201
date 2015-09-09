@@ -6,6 +6,7 @@
 #include <unordered_set>
 #include <iostream>
 #include <algorithm>
+#include <stack>
 
 using namespace std;
 
@@ -74,6 +75,19 @@ private:
 
 
 	//helper functions
+	bool isContainer(Tnode*);
+	bool isCall(Tnode * node);
+	bool isStmtLst(Tnode * node);
+	bool isProcedure(Tnode * node);
+	bool isWhile(Tnode * node);
+	bool isIf(Tnode * node);
+	bool isAssigns(Tnode * node);
+	bool isProgram(Tnode * node);
+	bool isLastChild(Tnode * node);
+	bool isExpr(Tnode * node);
+	bool isVariable(Tnode * node);
+	bool isConstant(Tnode * node);
+	bool containsContainer(Tnode * node);
 	vector<int> flattenBoolVectorToIntVector(vector<bool> inp);
 	vector<string> flattenBoolMapToStringVector(unordered_map<string, bool> inp);
 	vector<int> flattenNodeVectorToIntVector(const vector<Tnode*>* inp);
@@ -82,15 +96,17 @@ private:
 	vector<Tnode*> getNodesOfType(Tnode* start, Tnode::Type type);
 	vector<Tnode*>* getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, vector<Tnode*>* results);
 
-	void calculateModifies();
-	void calculateModifiesAssigns();
-	void calculateModifiesContainers();
-	void calculateModifiesProcedure();
-	void calculateModifiesCalls();
-	void calculateUses();
-	void calculateUsesAssigns();
-	void calculateUsesContainers();
-	void calculateUsesProcedures();
-	void calculateUsesCalls();
 	void updateDBFile();
+	Tnode * getCallee(Tnode * node);
+	Tnode * getProcNode(string procName);
+	Tnode * getParentNode(Tnode * node);
+	Tnode * getSPAParent(Tnode * node);
+	void calculateRelations(Tnode * currNode, vector<Tnode*> parents);
+	void updateUses(const vector<Tnode*> users, Tnode * used);
+	vector<Tnode*>* getVarConsFromExpr(Tnode * expr, vector<Tnode*>* results);
+	void updateUses(Tnode * n, Tnode * used);
+	void updateModifies(vector<Tnode*> modders, Tnode * modded);
+	void updateModifies(Tnode * modder, Tnode * modded);
+	void updateCalls(vector<Tnode*> callers, Tnode * callee);
+	void updateCalls(Tnode * caller, Tnode * callee);
 };
