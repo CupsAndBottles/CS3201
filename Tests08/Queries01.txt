@@ -80,33 +80,49 @@ assign a;
 Select a such that pattern a(_, "y+d")
 4
 5000
-18 - Test for Parent
+18 - Test for definition of Parent
 stmt s;
-Select s such that Pa
+Select s such that Parent(1, s)
+none
 5000
-19 - Test for Parent
-
+19 - Meaningless Testing for Parent
+procedure p; stmt s;
+Select p such that Parent(p, s) with s.stmt# = 10
+none
 5000
-20 - Test for Parent
-
+20 - Meaningless Testing for Parent
+prog_line n1, n2; stmt s;
+Select s such that Parent(n1, n2) with n1.progline# = 3
+none
 5000
-21 - Test for Parent*
-
+21 - Test for definition of Parent*
+stmt s;
+Select s such that Parent*(s, 2)
+none
 5000
-22 - Test for Parent*
-
+22 - Meaningless Testing for Parent*
+assign a;
+Select a such that Parent*(1, 2)
+none
 5000
-23 - Test for Parent*
-
+23 - Meaningless Testing for Parent*
+variable v;
+Select v such that Parent*(6, 7)
 5000
-24 - Test for Uses
-
+24 - Test for definition Uses
+assign a
+Select a such that Uses(a, "x")
+3, 4, 10
 5000
-25 - Test for Uses
-
+25 - Test for Invalid Uses
+variable v;
+Select v such that Uses(x, v)
+invalid
 5000
-26 - Test for Uses
-
+26 - Test for Uses in calls
+call call;
+Select call such that Uses(call, "d")
+9
 5000
 27 - Test for invalid Follows and Modifies 
 prog_line n;
@@ -140,8 +156,8 @@ none
 5000
 33 - Test for Uses and pattern
 assign a; variable v;
-Select a, v such that Uses(a, v) and pattern a(v, "d-j")
-11, j
+Select <a, v> such that Uses(a, v) and pattern a(v, "d-j")
+<11, j>
 5000
 34 - Test for Modifies and pattern
 procedure p; assign a;
@@ -159,8 +175,12 @@ Select a such that pattern a1("x", _) and Modifies(a, "x")
 1, 5, 7
 5000
 37 - Test for Modifies, Uses and pattern
-
+assign a, a1, a2;
+Select a such that Modifies(a1, "x") and Uses(a2, "x") and pattern a("x", _)
+none
 5000
 38 - Test for Parent, Uses and pattern
-
+stmt s;
+Select s such that Uses(s, "d") and pattern a(_,"d+2") and Parent(s, 6)
+none
 5000
