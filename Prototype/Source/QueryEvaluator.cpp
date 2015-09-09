@@ -47,7 +47,7 @@ string QueryEvaluator::intToString(int value) {
 
 vector<string> QueryEvaluator::integerVectorToString(vector<int> arr) {
 	vector<string> tempArr;
-	for (int i = 0; i < arr.size; i++) {
+	for (int i = 0; i < arr.size(); i++) {
 		tempArr.push_back(intToString(arr.at(i)));
 	}
 	return tempArr;
@@ -83,5 +83,5 @@ void meaninglessClauses() {
 }
 
 vector<vector<string>> queryResults() {
-	return nullptr;
+	return vector<vector<string>>();
 }
