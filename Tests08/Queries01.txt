@@ -1,0 +1,186 @@
+1 - Test if all variables can be returned
+variable v;
+Select v
+x, y, z, d, i, j
+5000
+2 - Test if all procedures can be returned
+procedure p;
+Select p 
+Index, Example
+5000
+3 - Test if first stmt of program is a follower
+stmt s;
+Select s such that Follows(s, 1)
+none
+5000
+4 - Test if first stmt of program is a follower
+stmt s;
+Select s such that Follows*(s, 1)
+none
+5000
+5 - Test definition of Follows
+stmt s;
+Select s such that Follows(s, 4)
+3
+6 - Test definition of Follows*
+stmt s;
+Select s such that Follows*(s, 4)
+5000
+7 - Test if first stmt of a procedure follows last stmt of the previous procedure
+stmt s;
+Select s such that Follows(s, 7)
+none
+5000
+8 - Test if first stmt of a procedure follows last stmt of the previous procedure
+stmt s;
+Select s such that Follows*(s, 7)
+none
+9 - Test basic definition of Modifies
+assign a;
+Select a such that Modifies(a, "x")
+1, 5, 7
+5000
+10 - Test for non-existent modified variable
+assign a; 
+Select a such that Modifies(a, "q")
+none
+5000
+11 - Test for modified variable, but in another procedure
+assign a
+Select a such that Modifies("Example", "d")
+none
+5000
+12 - Test if a procedure has modified variables
+procedure p;
+Select p such that Modifies(p, "x")
+Index, Example
+5000
+13 - Test for modified variables in a procedure
+variable v;
+Select v such that Modifies("Index", v)
+x, y, z, d
+5000
+14 - Test for modified variables in a call stmt
+stmt s, s1; variable v;
+Select s such that Modifies(s1, v) with s1.stmt = 9
+x, y, z, d
+5000
+15 - Test for pattern in LHS assignment
+prog_line n; assign a;
+Select n such that pattern a(_, "d+2")
+6
+5000
+16 - Test for pattern in RHS assignment
+assign a;
+Select a such that pattern a("x", _)
+1, 5, 7
+5000
+17 - Test for pattern in long RHS assignments
+assign a;
+Select a such that pattern a(_, "y+d")
+4
+5000
+18 - Test for definition of Parent
+stmt s;
+Select s such that Parent(1, s)
+none
+5000
+19 - Meaningless Testing for Parent
+procedure p; stmt s;
+Select p such that Parent(p, s) with s.stmt# = 10
+none
+5000
+20 - Meaningless Testing for Parent
+prog_line n1, n2; stmt s;
+Select s such that Parent(n1, n2) with n1.progline# = 3
+none
+5000
+21 - Test for definition of Parent*
+stmt s;
+Select s such that Parent*(s, 2)
+none
+5000
+22 - Meaningless Testing for Parent*
+assign a;
+Select a such that Parent*(1, 2)
+none
+5000
+23 - Meaningless Testing for Parent*
+variable v;
+Select v such that Parent*(6, 7)
+5000
+24 - Test for definition Uses
+assign a
+Select a such that Uses(a, "x")
+3, 4, 10
+5000
+25 - Test for Invalid Uses
+variable v;
+Select v such that Uses(x, v)
+invalid
+5000
+26 - Test for Uses in calls
+call call;
+Select call such that Uses(call, "d")
+9
+5000
+27 - Test for invalid Follows and Modifies 
+prog_line n;
+Select n such that Follows(n, 4) and Modifies(n, "d")
+invalid query
+5000
+28 - Test for valid Follows and Modifies
+assign a;
+Select a such that Modifies(a, "j") and Follows(a, 8)
+7
+5000
+29 - Test for Follows and Modifies
+variable v
+Select v such that Follows(s1, s2) and Modifies (s1, v) with s1.stmt# = 10 and s2.stmt# = 11
+i
+5000
+30 - Test for Uses and pattern
+assign a; variable v;
+Select a such that Uses(a, "x") and pattern a(v, _)
+3, 4, 10
+5000
+31 - Test for Uses and pattern
+assign a, a1, a2;
+Select a such that Uses(a2, "y") and pattern a1("d", _)
+3
+5000
+32 - Test for Uses and pattern
+assign a, a1; 
+Select a such that Uses(a, "x") and pattern a1("x", _)
+none
+5000
+33 - Test for Uses and pattern
+assign a; variable v;
+Select <a, v> such that Uses(a, v) and pattern a(v, "d-j")
+<11, j>
+5000
+34 - Test for Modifies and pattern
+procedure p; assign a;
+Select p such that Modifies(p, "x") and pattern a(_, "2")
+Index
+5000
+35 - Test for Modifies and pattern
+call c; assign a; stmt s;
+Select c such that Modifies(s, "x") and pattern a("x", _)
+9
+5000
+36 - Test for Modifies and pattern
+assign a, a1;
+Select a such that pattern a1("x", _) and Modifies(a, "x")
+1, 5, 7
+5000
+37 - Test for Modifies, Uses and pattern
+assign a, a1, a2;
+Select a such that Modifies(a1, "x") and Uses(a2, "x") and pattern a("x", _)
+none
+5000
+38 - Test for Parent, Uses and pattern
+stmt s;
+Select s such that Uses(s, "d") and pattern a(_,"d+2") and Parent(s, 6)
+none
+5000
