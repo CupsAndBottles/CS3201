@@ -35,7 +35,7 @@ private:
 	string toLowerCase(string s);
 	void inputEntitiesIntoTable(vector<string> v);
 	vector<string> split(string s, string delim);
-	bool verifySTQuery(vector<string> temp);
+	bool verifySuchThatQuery(vector<string> temp);
 	bool verifyPatternQuery(vector<string> temp);
 	vector<string> mergeQuotations(vector<string> temp);
 	vector<string> removeAndTokens(vector<string> temp);

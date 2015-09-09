@@ -64,7 +64,7 @@ string QueryPreProcessor::toLowerCase(string s) {
 	return s;
 }
 
-bool QueryPreProcessor::verifySTQuery(vector<string> temp) {
+bool QueryPreProcessor::verifySuchThatQuery(vector<string> temp) {
 	//check that this vector is of size 3
 	if (temp.size() != 3) {
 		cout << "querySTObj does not have 3 arguments" << endl;
@@ -277,7 +277,7 @@ bool QueryPreProcessor::query(string s) {
 					}
 					queryVector = checkForBracketsAndComma(argVector);
 					if (!queryVector.empty()) {
-						if (verifySTQuery(queryVector)) {
+						if (verifySuchThatQuery(queryVector)) {
 							addQueryObject(queryVector);
 							queryVector.clear();
 							argVector.clear();
