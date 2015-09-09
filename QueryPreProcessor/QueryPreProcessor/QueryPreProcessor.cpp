@@ -68,6 +68,7 @@ bool QueryPreProcessor::verifySTQuery(vector<string> temp) {
 	//check that this vector is of size 3
 	if (temp.size() != 3) {
 		cout << "querySTObj does not have 3 arguments" << endl;
+		cout << temp[0] + temp[1] << endl;
 		return false;
 	}
 
@@ -147,6 +148,49 @@ vector<string> QueryPreProcessor::mergeQuotations(vector<string> temp) {
 	return newVect;
 }
 
+//takes in rel-clause / pattern-clause to check for ( , ) format before returning a vector of 3 arguments in a form rel, arg1, arg2
+vector<string> QueryPreProcessor::checkForBracketsAndComma(vector<string> argVector) {
+
+	string mergedString;
+	for (size_t i = 0; i < argVector.size(); i++) {
+		mergedString = mergedString + argVector[i];
+	}
+
+	// matches delimiters or consecutive non-delimiters
+	regex e("([,()]|[^,()]+)");
+
+	regex_iterator<string::iterator> start(mergedString.begin(), mergedString.end(), e);
+	regex_iterator<string::iterator> end;
+
+	vector<string> checkVector;
+	while (start != end) {
+		string it = start->str();
+		checkVector.push_back(it);
+		//cout << it << endl;
+		++start;
+	}
+	
+	argVector.clear();
+	if (checkVector.size() == 6) {
+		if (checkVector[1].compare("(") == 0 && checkVector[3].compare(",") == 0 && checkVector[5].compare(")") == 0) {
+			argVector.push_back(checkVector[0]);
+			argVector.push_back(checkVector[2]);
+			argVector.push_back(checkVector[4]);
+			cout << "brackets and commas in place" << endl;
+		}
+		else {
+			cout << "missing brackets or commas" << endl;
+		}
+	}
+	else {
+		cout << "num arguments invalid: missing brackets or commas" << endl;
+	}
+
+	checkVector.clear();
+	mergedString.erase();
+	return argVector;
+}
+
 vector<string> QueryPreProcessor::removeAndTokens(vector<string> temp) {
 	vector<string> newVect;
 	for (size_t i = 0; i < temp.size(); i++) {
@@ -173,7 +217,7 @@ bool QueryPreProcessor::query(string s) {
 	//Work on relationship Query. Focusing on the 'Select...' line
 	//cout << "Verify line: " + v.back() << endl;
 	string newS = temp.back();
-	vector<string> tempSelectCl = split(newS, "(), ");
+	vector<string> tempSelectCl = split(newS, " ");
 	/*for (vector<string>::iterator it = selectCl.begin(); it != selectCl.end(); ++it) {
 	cout << *it << endl;
 	}
@@ -212,6 +256,7 @@ bool QueryPreProcessor::query(string s) {
 
 		//third phase: followed by suchthat | pattern | (with-optional for now), else error
 		vector<string> argVector;
+		vector<string> queryVector;
 		while (i < selectCl.size()) {
 			//cout << selectCl.at(i) << endl;
 
@@ -230,16 +275,26 @@ bool QueryPreProcessor::query(string s) {
 							break;
 						}
 					}
-					if (verifySTQuery(argVector)) {
-						addQueryObject(argVector);
-						argVector.clear();
+					queryVector = checkForBracketsAndComma(argVector);
+					if (!queryVector.empty()) {
+						if (verifySTQuery(queryVector)) {
+							addQueryObject(queryVector);
+							queryVector.clear();
+							argVector.clear();
+						}
+						else {
+							cout << "invalid such that query" << endl;
+							queryVector.clear();
+							argVector.clear();
+							return false;
+						}
 					}
 					else {
-						argVector.clear();
 						cout << "invalid such that query" << endl;
+						queryVector.clear();
+						argVector.clear();
 						return false;
 					}
-					cout << endl;
 				}
 				else {
 					cout << "found 'such' but no 'that'";
@@ -260,17 +315,26 @@ bool QueryPreProcessor::query(string s) {
 						break;
 					}
 				}
-				if (verifyPatternQuery(argVector)) {
-					addQueryObject(argVector);
-					argVector.clear();
+				queryVector = checkForBracketsAndComma(argVector);
+				if (!queryVector.empty()) {
+					if (verifyPatternQuery(queryVector)) {
+						addQueryObject(queryVector);
+						queryVector.clear();
+						argVector.clear();
+					}
+					else {
+						cout << "invalid pattern query" << endl;
+						queryVector.clear();
+						argVector.clear();
+						return false;
+					}
 				}
 				else {
-					argVector.clear();
 					cout << "invalid pattern query" << endl;
+					queryVector.clear();
+					argVector.clear();
 					return false;
 				}
-				cout << endl;
-
 			}
 			//else nothing found (don't care about 'with' for now)
 			else {

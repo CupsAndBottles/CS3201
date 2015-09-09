@@ -15,6 +15,12 @@ public:
 	pkb(ast* tree);
 	pkb(string filePath);
 
+	enum Relation {
+		MODIFY,
+		CALL,
+		USE
+	};
+
 	bool modifies(int stmt, string var);
 	vector<int> allStmtsThatMod(string var);
 	vector<string> allVarsModdedBy(int stmt);
@@ -56,8 +62,8 @@ private:
 	ast* storedAst;
 
 	// use adjacency lists to store relations as a sparse graph is expected.
-	// unordered_map for quick reference by hashing variables,
-	// and vector for quick reference by statement numbers.
+	// unordered_map for quick reference by hashing variables and statement numbers,
+	// and unordered_set for additionally ensuring no duplicates.
 	// note: vectors' 0th indexes are empty; statement numbers are exactly their index.
 
 	// <relation>Vars: adjacency list indexed by vars
@@ -66,6 +72,8 @@ private:
 	unordered_map<int, unordered_set<string>> modifiesStmts;
 	unordered_map<string, unordered_set<int>> usesVars;
 	unordered_map<int, unordered_set<string>> usesStmts;
+	unordered_map<string, unordered_set<int>> callsProcs;
+	unordered_map<int, unordered_set<string>> callsStmts;
 
 	vector<vector<int>> parents; //index: stmt s, values: stmts that are parents of stmt s
 	vector<vector<int>> children; //index: stmt s, values: stmts that are children of stmt s
@@ -102,6 +110,7 @@ private:
 	Tnode * getParentNode(Tnode * node);
 	Tnode * getSPAParent(Tnode * node);
 	void calculateRelations(Tnode * currNode, vector<Tnode*> parents);
+	void pkb::updater(pkb::Relation rel, int stmtNum, string strName);
 	void updateUses(const vector<Tnode*> users, Tnode * used);
 	vector<Tnode*>* getVarConsFromExpr(Tnode * expr, vector<Tnode*>* results);
 	void updateUses(Tnode * n, Tnode * used);

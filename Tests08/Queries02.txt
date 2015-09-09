@@ -1,0 +1,149 @@
+1 - Test basic function of Parent
+stmt s;
+Select s such that Parent(s, 7)
+6
+5000
+2 - Test if Parent considers same nesting level
+stmt s, s1;
+Select s such that Parent(s1, 3) with s1.stmt# = 2
+none
+5000
+3 - Test if Parent considers different nesting level in if/else statement
+stmt s1; variable v;
+Select v such that Parent(s1, 12) with s1.stmt# = 10
+x, y, z, i, v
+5000
+4 - Test basic function of Parent*
+variable v;
+Select v such that Parent*(s, 9) with s.stmt# = 6
+none
+5000
+5 - Test if Parent* considers different container statements
+stmt s, s1;
+Select s such that Parent*(s, 11) with s.stmt# = 6
+none
+5000
+6 - Test if Parent* considers a TRUE Parent
+stmt s;
+Select s such that Parent*(s, 12)
+10
+5000
+7 - Test basic function of Follows
+stmt s;
+Select s such that Follows(s, 2)
+1
+5000
+8 - Test for invalid Follows
+variable v;
+Select v such that Follows("First", "Second")
+invalid
+5000
+9 - Test if Follows considers statements in different nesting level
+procedure p;
+Select p such that Follows(6, 7)
+none
+5000
+10 - Test basic function of Follows*
+stmt s;
+Select s such that Follows*(s, 6)
+4, 5 
+5000
+11 - Test if Follows* considered all stmt lists in the same nesting level 
+stmt s;
+Select s such that Follows*(s, 15)
+4, 5, 6, 10, 13, 14
+5000
+12 - Test if Follows* considers statements in different nesting level
+procedure p;
+Select p such that Follows*(4, 9)
+none
+5000
+13 - Test basic function of Modifies
+variable v;
+Select v such that Modifies(1, v)
+x
+5000
+14 - Test if Modifies recognizes container statement, in this case it is "if" statement
+variable v;
+Select v such that Modifies(7, v)
+x
+5000
+15 - Test if Modifies recognizes all variables modified in procedure "First"
+variable v;
+Select v such that Modifies("First", v)
+x, z, i, y, v
+5000
+16 - Test basic function of Uses
+stmt s;
+Select s such that Uses(s, "x")
+7, 10, 11, 13, 15
+5000
+17 - Test if Uses considers container statements
+while w;
+Select w such that Uses(w, "i")
+3
+5000
+18 - Test if Uses considers procedures
+procedure p;
+Select p such that Uses(p,"i")
+Second
+5000
+19 - Test basic function of Pattern
+assign a;
+Select a pattern a(_, "x*y+z")
+15
+5000
+20 - Test if Pattern recognizes sub expressions/underscores
+assign a;
+Select a pattern a(_, _"x*y"_)
+15
+5000
+21 - Test if Pattern recognizes left associativity
+assign a;
+Select a pattern a(_, "z+x*y")
+none
+5000
+22 - Combine Modifies and pattern
+procedure p;
+Select p such that Modifies(p, "x") with pattern a("x", "x+2*y")
+Second
+5000
+23 - Combine Modifies and Follows
+stmt s;
+Select s such that Modifies(p, "x") such that Follows(3, 7)
+7
+5000
+24 - Combine Modifies and Parent
+stmt s;
+Select s such that Parent(s, 6) with Modifies(s, "i")
+none
+5000
+25 - Combine Uses and Parent
+stmt s;
+Select s such that Parent(s, 6) with Uses(s, "i")
+3
+5000
+26 - Combine Uses and pattern with same assignment stmt
+assign a; variable v;
+Select a such that Uses(a, "x") and pattern a(v, _)
+
+5000
+27 - Combine Uses and pattern with different assignment stmt and variables
+assign a, a1, a2; variable v1, v2;
+Select a such that Uses(a2, v2) and pattern a1(v1, _)
+
+5000
+28 - Combine Uses and pattern with different assignment stmt and variables variation
+assign a, a1; variable v, v1;
+Select a such that Uses(a, v) and pattern a1(v1, _)
+
+5000
+29 - Combine Uses and pattern
+assign a, a1; variable v;
+Select a such that Uses(a, v) and pattern a1(v, _)
+
+5000
+30
+31
+
+
