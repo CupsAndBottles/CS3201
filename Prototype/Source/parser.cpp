@@ -19,9 +19,9 @@ vector<string> split(string str, char delimiter) {
 	// Convert the delimiter from a char to a string.
 	s2 << delimiter;
 	s2 >> delim_string;
-
+	
 	// Insert non-whitespace delimiters into the correct position
-	if (delim_string != " ") {
+	if ((delim_string != " ") && (delimiter != '\t')) {
 		if (str == delim_string) {
 			split_string.push_back(delim_string);
 			return split_string;
@@ -32,7 +32,7 @@ vector<string> split(string str, char delimiter) {
 	}
 	
 	while (getline(ss, tok, delimiter)) {
-		if (counter > 0 && delimiter != ' ') {
+		if ((counter > 0) && (delimiter != ' ') && (delimiter != '\t')) {
 			// Insert non-whitespace delimiters into the correct position
 			split_string.push_back(delim_string);
 		}
@@ -79,6 +79,7 @@ vector<string> splitByDelimiters(vector<string> program) {
 	program = splitByDelimiter(program, '-');
 	program = splitByDelimiter(program, '*');
 	program = splitByDelimiter(program, '/');
+	program = splitByDelimiter(program, '\t');
 
 	return program;
 }
