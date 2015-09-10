@@ -19,9 +19,9 @@ vector<string> split(string str, char delimiter) {
 	// Convert the delimiter from a char to a string.
 	s2 << delimiter;
 	s2 >> delim_string;
-	
+
 	// Insert non-whitespace delimiters into the correct position
-	if ((delim_string != " ") && (delimiter != '\t')) {
+	if ((delimiter != ' ') && (delimiter != '\t')) {
 		if (str == delim_string) {
 			split_string.push_back(delim_string);
 			return split_string;
@@ -45,7 +45,7 @@ vector<string> split(string str, char delimiter) {
 	}
 
 	// Insert non-whitespace delimiters into the correct position
-	if (str[str.size() - 1] == delimiter) {
+	if ((str.size() > 0) && (str[str.size() - 1] == delimiter)) {
 		split_string.push_back(delim_string);
 	}
 
@@ -55,7 +55,7 @@ vector<string> split(string str, char delimiter) {
 vector<string> splitByDelimiter(vector<string> original, char delimiter) {
 	vector<string> temp;
 	vector<string> final;
-
+	cout << "splitting by " << delimiter << "\n";
 	for (int i = 0; i < original.size(); i++) {
 		temp = split(original[i], delimiter);
 
@@ -114,8 +114,9 @@ vector<string> parseSimpleProgram()
 	cin >> file;
 
 	program = readProgram(file);
+	cout << "tokenizing program\n";
 	tokenized_program = splitByDelimiters(program);
-
+	cout << "tokenized program\n";
 	if (parseProgram(tokenized_program).size() == 0) {
 		// Error parsing the program; return an empty vector
 		tokenized_program.clear();
