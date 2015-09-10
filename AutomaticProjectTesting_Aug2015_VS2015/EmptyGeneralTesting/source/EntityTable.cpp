@@ -1,6 +1,4 @@
 #include "EntityTable.h"
-#include <unordered_map>
-#include <string>
 
 void EntTable::add(string name, string type) {
 	entityTable.insert(make_pair(name, type));

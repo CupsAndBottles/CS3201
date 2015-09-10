@@ -2,10 +2,7 @@
 
 pkb::pkb(ast* tree){
 	storedAst = tree;
-	cout << "Calculating relation 'modifies'...\n";
-	calculateModifies();
-	cout << "Calculating relation 'uses'\n";
-	calculateUses();
+	calculateRelations(this->storedAst->getRoot(), vector<Tnode*>());
 }
 
 //load pkb from file storage
@@ -195,54 +192,247 @@ vector<Tnode*>* pkb::getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, vector<
 	}
 }
 
-void pkb::calculateModifies(){
-	this->calculateModifiesAssigns();
-	this->calculateModifiesContainers();
-	this->calculateModifiesProcedure();
-	this->calculateModifiesCalls();
+bool pkb::isContainer(Tnode* node){
+	Tnode::Type type = node->getType();
+	return type == Tnode::STMT_WHILE || type == Tnode::STMT_IF;
 }
 
-void pkb::calculateModifiesAssigns() {
-	ast* tree = this->storedAst;
-	vector<Tnode*> assigns = pkb::getNodesOfType(tree->getRoot(), Tnode::STMT_ASSIGN);
-	for (Tnode* node : assigns) {
-		Tnode* var = node->getFirstChild();
-		unordered_set<string> vars = unordered_set<string>();
+bool pkb::isCall(Tnode* node){
+	return node->getType() == Tnode::STMT_CALL;
+}
+
+bool pkb::isStmtLst(Tnode* node){
+	return node->getType() == Tnode::STMTLST;
+}
+
+bool pkb::isProcedure(Tnode* node){
+	return node->getType() == Tnode::PROCEDURE;
+}
+
+bool pkb::isWhile(Tnode* node){
+	return node->getType() == Tnode::STMT_WHILE;
+}
+
+bool pkb::isIf(Tnode* node){
+	return node->getType() == Tnode::STMT_IF;
+}
+
+bool pkb::isAssigns(Tnode* node){
+	return node->getType() == Tnode::STMT_ASSIGN;
+}
+
+bool pkb::isProgram(Tnode* node){
+	return node->getType() == Tnode::PROGRAM;
+}
+
+bool pkb::isLastChild(Tnode* node){
+	return node->getRightSib() == NULL;
+}
+
+bool pkb::isExpr(Tnode* node){
+	return node->getType() == Tnode::EXPR_PLUS || node->getType() == Tnode::EXPR_MINUS || node->getType() == Tnode::EXPR_TIMES;
+}
+
+bool pkb::isVariable(Tnode* node) {
+	return node->getType() == Tnode::VARIABLE;
+}
+
+bool pkb::isConstant(Tnode* node) {
+	return node->getType() == Tnode::CONSTANT;
+}
+
+bool pkb::containsContainer(Tnode* node) {
+	Tnode* condVar = node->getFirstChild();
+	Tnode* stmtLst = condVar->getRightSib();
+	Tnode* currStmt = stmtLst->getFirstChild();
+	bool foundContainer = false;
+	bool searchedElse = false;
+	while (!isLastChild(currStmt) && !foundContainer) {
+		if (isContainer(currStmt)) {
+			return true;
+		} else if (isLastChild(currStmt) && !searchedElse) {
+			if (stmtLst->getRightSib() != NULL) {
+				searchedElse = false;
+				currStmt = stmtLst->getRightSib();
+			} else {
+				return false;
+			}
+		} else {
+			Tnode* nextSib = currStmt->getRightSib();
+			if (nextSib == NULL) {
+				return false;
+			} else {
+				currStmt = nextSib;
+			}
+		}
+	}
+	return foundContainer;
+}
+
+Tnode* pkb::getCallee(Tnode* node){
+	return getProcNode(node->getName());
+}
+
+Tnode* pkb::getProcNode(string procName){
+	vector<pair<string, Tnode*>>* procTable = this->storedAst->getProcTable();
+	auto it = find_if(procTable->begin(),
+		procTable->end(),
+		[procName](pair<string, Tnode*> p)->bool {return procName.compare(p.second->getName())==0;});
+	return it->second;
+}
+
+Tnode* pkb::getParentNode(Tnode* node){
+	if (node->getParent() == NULL){
+		Tnode* currNode = node->getLeftSib();
+		while (currNode->getParent()==NULL){
+			currNode = currNode->getLeftSib();
+		}
+		return getParentNode(currNode);
+	} else {
+		return node->getParent();
 	}
 }
 
-void pkb::calculateModifiesContainers() {
-
-}
-
-void pkb::calculateModifiesProcedure() {
-
-}
-
-void pkb::calculateModifiesCalls() {
-
-}
-
-void pkb::calculateUses(){
-
-}
-
-void pkb::calculateUsesAssigns() {
-	ast* tree = this->storedAst;
-	vector<Tnode*> assigns = pkb::getNodesOfType(tree->getRoot(), Tnode::STMT_ASSIGN);
-	for (Tnode* node : assigns) {
-
+Tnode* pkb::getSPAParent(Tnode* node) {
+	Tnode* parent = getParentNode(node);
+	if (isStmtLst(parent)) {
+		return getSPAParent(parent);
+	} else if (isProcedure(parent) || isProgram(parent)) {
+		return NULL;
+	} else {
+		return parent;
 	}
 }
 
-void pkb::calculateUsesContainers() {
-
+void pkb::calculateRelations(Tnode* currNode, vector<Tnode*> parents) {
+	if (isProgram(currNode)) {
+		parents.push_back(currNode);
+		calculateRelations(currNode->getFirstChild(), parents);
+	} else if (isProcedure(currNode)){
+		parents.push_back(currNode);
+		calculateRelations(currNode->getFirstChild(), parents); // get first statement in procedure
+	} else if (isWhile(currNode)){
+		parents.push_back(currNode);
+		updateUses(parents, currNode->getFirstChild());	// uses conditional variable
+		calculateRelations(currNode->getFirstChild()->getRightSib()->getFirstChild(), parents); // first statement in while
+	} else if (isIf(currNode)){
+		parents.push_back(currNode);
+		updateUses(parents, currNode->getFirstChild());	// uses conditional variable
+		calculateRelations(currNode->getFirstChild()->getRightSib()->getFirstChild(), parents); // first statement in then stmtLst
+	} else if (isCall(currNode)){
+		parents.push_back(currNode);
+		Tnode* callee = getCallee(currNode);
+		updateCalls(parents, callee); // calls procedure
+		calculateRelations(callee, parents);
+	} else if (isAssigns(currNode)) {
+		parents.push_back(currNode);
+		Tnode* assignLeft = currNode->getFirstChild();
+		updateModifies(parents, assignLeft);
+		updateUses(parents, assignLeft->getRightSib());
+	}
+	if (isLastChild(currNode)){
+		currNode = parents.back();
+		parents.pop_back();
+		Tnode* nextNode = currNode->getRightSib();
+		if (nextNode!=NULL) {
+			calculateRelations(nextNode, parents);
+		}
+	}
 }
 
-void pkb::calculateUsesProcedures() {
-
+void pkb::updateUses(const vector<Tnode*> users, Tnode* used){
+	if (isExpr(used)) {
+		vector<Tnode*> varCons = vector<Tnode*>();
+		varCons = *getVarConsFromExpr(used, &varCons);
+		for (Tnode* vc : varCons) {
+			updateUses(users, vc);
+		}
+	} else {
+		for (Tnode* n : users) {
+			if (!isProgram(n)) {
+				updateUses(n, used);
+			}
+		}
+	}
 }
 
-void pkb::calculateUsesCalls() {
+vector<Tnode*>* pkb::getVarConsFromExpr(Tnode* expr, vector<Tnode*>* results) {
+	if (expr == NULL) {
+		return results;
+	} else if (isVariable(expr) || isConstant(expr)) {
+		results->push_back(expr);
+		return results;
+	} else if (isExpr(expr)){
+		Tnode* leftChild = expr->getFirstChild();
+		Tnode* rightChild = leftChild->getRightSib();
+		results = getVarConsFromExpr(leftChild, results);
+		return getVarConsFromExpr(rightChild, results);
+	}
+}
 
+void pkb::updateUses(Tnode* user, Tnode* usee) {
+	updater(pkb::USE, user->getStmtNum(), usee->getName());
+}
+
+void pkb::updateModifies(vector<Tnode*> modders, Tnode* modded) {
+	for (Tnode* n : modders) {
+		if (!isProgram(n)) {
+			updateModifies(n, modded);
+		}
+	}
+}
+
+void pkb::updateModifies(Tnode* modder, Tnode* modded) {
+	updater(pkb::MODIFY, modder->getStmtNum(), modded->getName());
+}
+
+void pkb::updater(pkb::Relation rel, int stmtNum, string strName) {
+	unordered_map<int, unordered_set<string>>* relInt;
+	unordered_map<string, unordered_set<int>>* relStr;
+	switch(rel){
+		case MODIFY:
+			relInt = &this->modifiesStmts;
+			relStr = &this->modifiesVars;
+			break;
+		case USE:
+			relInt = &this->usesStmts;
+			relStr = &this->usesVars;
+			break;
+		case CALL:
+			relInt = &this->callsStmts;
+			relStr = &this->callsProcs;
+			break;
+	}
+
+	//update relation indexed by stmtNum
+	unordered_set<string> vars = unordered_set<string>();
+	try {
+		vars = relInt->at(stmtNum);
+		vars.insert(strName);
+	} catch (out_of_range){
+		vars.insert(strName);
+		relInt->insert({stmtNum, vars});
+	}
+
+	//update relation indexed by strName
+	unordered_set<int> stmts = unordered_set<int>();
+	try {
+		stmts = relStr->at(strName);
+		stmts.insert(stmtNum);
+	} catch (out_of_range){
+		stmts.insert(stmtNum);
+		relStr->insert({strName, stmts});
+	}
+}
+
+void pkb::updateCalls(vector<Tnode*> callers, Tnode* callee) {
+	for (Tnode* n : callers) {
+		if (isProcedure(n)) {
+			updateCalls(n, callee);
+		}
+	}
+}
+
+void pkb::updateCalls(Tnode* caller, Tnode* callee) {
+	updater(pkb::CALL, caller->getStmtNum(), callee->getName());
 }

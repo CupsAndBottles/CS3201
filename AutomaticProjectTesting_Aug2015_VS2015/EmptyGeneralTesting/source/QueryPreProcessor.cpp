@@ -1,21 +1,6 @@
 #pragma once
 
-#include <stdio.h>
-#include <iostream>
-#include <string>
-#include <vector>
-#include <unordered_map>
-#include <sstream>
-#include <algorithm>
-#include <cctype>
-
 #include "QueryPreProcessor.h"
-#include "EntityTable.h"
-#include "QueryObject.h"
-#include "SemanticsCheck.h"
-#include "RelTable.h"
-
-using namespace std;
 
 /* limitations of this tokenizer, can only use 1 delimiter at a time
 vector<string> split(const string &s, char delim) {
@@ -57,7 +42,7 @@ vector<string> QueryPreProcessor::split(string s, string delim) {
 void QueryPreProcessor::inputEntitiesIntoTable(vector<string> v) {
 	vector<string> designEntities = { "stmt","assign","while","if","procedure","variable","constant","prog_line" };
 
-	/*Find stmt, assign, while... design-entities and put them into entity table*/
+	//Find stmt, assign, while... design-entities and put them into entity table
 	for (vector<string>::iterator it = v.begin(); it != v.end(); ++it) {
 		string line = *it;
 		vector<string> wordVector = split(line, " ,");
@@ -79,10 +64,11 @@ string QueryPreProcessor::toLowerCase(string s) {
 	return s;
 }
 
-bool QueryPreProcessor::verifySTQuery(vector<string> temp) {
+bool QueryPreProcessor::verifySuchThatQuery(vector<string> temp) {
 	//check that this vector is of size 3
 	if (temp.size() != 3) {
 		cout << "querySTObj does not have 3 arguments" << endl;
+		cout << temp[0] + temp[1] << endl;
 		return false;
 	}
 
@@ -93,6 +79,7 @@ bool QueryPreProcessor::verifySTQuery(vector<string> temp) {
 		return true;
 	}
 	else {
+		cout << "relationship arguments mismatch" << endl;
 		return false;
 	}
 }
@@ -101,7 +88,7 @@ bool QueryPreProcessor::verifyPatternQuery(vector<string> temp) {
 	//check that this vector is of size 3
 	if (temp.size() != 3) {
 		cout << "queryPatternObj does not have 3 argument:";
-		cout << temp.size() << endl;
+		cout << temp[3] << endl;
 		return false;
 	}
 
@@ -113,6 +100,7 @@ bool QueryPreProcessor::verifyPatternQuery(vector<string> temp) {
 		}
 	}
 
+	cout << "pattern arguments mismatch" << endl;
 	return false;
 }
 
@@ -125,7 +113,8 @@ void QueryPreProcessor::addQueryObject(vector<string> temp) {
 	queryList.push_back(qo);
 }
 
-vector<string> sortTokens(vector<string> temp) {
+//Helps to group quotation expressions into one token e.g. "x + y + z" -> "x+y+z"
+vector<string> QueryPreProcessor::mergeQuotations(vector<string> temp) {
 	vector<string> newVect;
 	size_t counter;
 	string combine;
@@ -159,7 +148,60 @@ vector<string> sortTokens(vector<string> temp) {
 	return newVect;
 }
 
-void QueryPreProcessor::query(string s) {
+//takes in rel-clause / pattern-clause to check for ( , ) format before returning a vector of 3 arguments in a form rel, arg1, arg2
+vector<string> QueryPreProcessor::checkForBracketsAndComma(vector<string> argVector) {
+
+	string mergedString;
+	for (size_t i = 0; i < argVector.size(); i++) {
+		mergedString = mergedString + argVector[i];
+	}
+
+	// matches delimiters or consecutive non-delimiters
+	regex e("([,()]|[^,()]+)");
+
+	regex_iterator<string::iterator> start(mergedString.begin(), mergedString.end(), e);
+	regex_iterator<string::iterator> end;
+
+	vector<string> checkVector;
+	while (start != end) {
+		string it = start->str();
+		checkVector.push_back(it);
+		//cout << it << endl;
+		++start;
+	}
+	
+	argVector.clear();
+	if (checkVector.size() == 6) {
+		if (checkVector[1].compare("(") == 0 && checkVector[3].compare(",") == 0 && checkVector[5].compare(")") == 0) {
+			argVector.push_back(checkVector[0]);
+			argVector.push_back(checkVector[2]);
+			argVector.push_back(checkVector[4]);
+			cout << "brackets and commas in place" << endl;
+		}
+		else {
+			cout << "missing brackets or commas" << endl;
+		}
+	}
+	else {
+		cout << "num arguments invalid: missing brackets or commas" << endl;
+	}
+
+	checkVector.clear();
+	mergedString.erase();
+	return argVector;
+}
+
+vector<string> QueryPreProcessor::removeAndTokens(vector<string> temp) {
+	vector<string> newVect;
+	for (size_t i = 0; i < temp.size(); i++) {
+		if (toLowerCase(temp[i]) != "and") {
+			newVect.push_back(temp[i]);
+		}
+	}
+	return newVect;
+}
+
+bool QueryPreProcessor::query(string s) {
 	//initialize relationship table
 	relTable.initRelTable();
 
@@ -170,26 +212,27 @@ void QueryPreProcessor::query(string s) {
 	vector<string> temp;
 	temp = split(s, ";\n");
 	inputEntitiesIntoTable(temp);
-	cout << "design-entity table done" << endl;
+	cout << "parsed design-entities into table" << endl;
 
 	//Work on relationship Query. Focusing on the 'Select...' line
 	//cout << "Verify line: " + v.back() << endl;
 	string newS = temp.back();
-	vector<string> tempSelectCl = split(newS, "(), ");
+	vector<string> tempSelectCl = split(newS, " ");
 	/*for (vector<string>::iterator it = selectCl.begin(); it != selectCl.end(); ++it) {
 	cout << *it << endl;
 	}
 	for (size_t i = 0; i < selectCl.size(); i++) {
 	cout << selectCl.at(i) << endl;
 	}*/
-	vector<string> selectCl = sortTokens(tempSelectCl);
+	vector<string> tempSelectCl2 = removeAndTokens(tempSelectCl);
+	vector<string> selectCl = mergeQuotations(tempSelectCl2);
 
-	//first must be a Select, else error
+	//first must be a Select, else return false
 	if (toLowerCase(selectCl.at(0)).compare("select") == 0) {
 		cout << "'Select' found" << endl;
 		size_t i = 1;
 
-		//second phase must be a result-clause synonym (<tuple>, boolean - optional for now), verify synonym, else error
+		//second phase must be a result-clause synonym (<tuple>, boolean - optional for now), verify synonym, else false
 		cout << "result-clause: ";
 		while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0)) {
 			cout << selectCl.at(i) + " ";
@@ -197,7 +240,8 @@ void QueryPreProcessor::query(string s) {
 				entityList.push_back(selectCl.at(i));
 			}
 			else {
-				cout << "result - clause invalid" << endl;
+				cout << "result-clause not declared" << endl;
+				return false;
 			}
 			i++;
 			if (selectCl.size() == i) {
@@ -206,11 +250,13 @@ void QueryPreProcessor::query(string s) {
 		}
 		cout << endl;
 		if (i == 1) {
-			cout << "no 'result-clause' found" << endl;
+			cout << "no result-clause found" << endl;
+			return false;
 		}
 
 		//third phase: followed by suchthat | pattern | (with-optional for now), else error
 		vector<string> argVector;
+		vector<string> queryVector;
 		while (i < selectCl.size()) {
 			//cout << selectCl.at(i) << endl;
 
@@ -229,17 +275,30 @@ void QueryPreProcessor::query(string s) {
 							break;
 						}
 					}
-					if (verifySTQuery(argVector)) {
-						addQueryObject(argVector);
-						argVector.clear();
+					queryVector = checkForBracketsAndComma(argVector);
+					if (!queryVector.empty()) {
+						if (verifySuchThatQuery(queryVector)) {
+							addQueryObject(queryVector);
+							queryVector.clear();
+							argVector.clear();
+						}
+						else {
+							cout << "invalid such that query" << endl;
+							queryVector.clear();
+							argVector.clear();
+							return false;
+						}
 					}
 					else {
-						cout << "invalid query" << endl;
+						cout << "invalid such that query" << endl;
+						queryVector.clear();
+						argVector.clear();
+						return false;
 					}
-					cout << endl;
 				}
 				else {
 					cout << "found 'such' but no 'that'";
+					return false;
 				}
 
 			}
@@ -256,15 +315,26 @@ void QueryPreProcessor::query(string s) {
 						break;
 					}
 				}
-				if (verifyPatternQuery(argVector)) {
-					addQueryObject(argVector);
-					argVector.clear();
+				queryVector = checkForBracketsAndComma(argVector);
+				if (!queryVector.empty()) {
+					if (verifyPatternQuery(queryVector)) {
+						addQueryObject(queryVector);
+						queryVector.clear();
+						argVector.clear();
+					}
+					else {
+						cout << "invalid pattern query" << endl;
+						queryVector.clear();
+						argVector.clear();
+						return false;
+					}
 				}
 				else {
-					cout << "invalid query" << endl;
+					cout << "invalid pattern query" << endl;
+					queryVector.clear();
+					argVector.clear();
+					return false;
 				}
-				cout << endl;
-
 			}
 			//else nothing found (don't care about 'with' for now)
 			else {
@@ -277,10 +347,12 @@ void QueryPreProcessor::query(string s) {
 	}
 	else {
 		cout << "no 'Select' found" << endl;
+		return false;
 	}
 
 	//Query Done
-	cout << "Query done" << endl;
+	cout << "Query is valid" << endl;
+	return true;
 }
 
 EntTable QueryPreProcessor::getEntityTable() {

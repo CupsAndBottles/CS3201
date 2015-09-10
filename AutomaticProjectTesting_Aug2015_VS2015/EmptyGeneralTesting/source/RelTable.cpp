@@ -1,7 +1,4 @@
 #include "RelTable.h"
-#include <unordered_map>
-#include <string>
-#include <iostream>
 
 void RelTable::initRelTable() {
 

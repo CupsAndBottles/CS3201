@@ -1,11 +1,4 @@
 #include "SemanticsCheck.h"
-#include "EntityTable.h"
-#include <algorithm>
-
-#include <string>
-#include <iostream>
-
-using namespace std;
 
 bool SemanticsCheck::isLetter(char c)
 {
@@ -93,7 +86,7 @@ bool SemanticsCheck::isStmtRef(string s, EntTable et) {
 }
 
 bool SemanticsCheck::wrappedInQuotation(string s) {
-	int i = s.length();
+	size_t i = s.length();
 	if ((s[0] == '\"') && (s[i-1] == '\"')) {
 		return true;
 	}
@@ -103,7 +96,7 @@ bool SemanticsCheck::wrappedInQuotation(string s) {
 }
 
 bool SemanticsCheck::wrappedInUnderscore(string s) {
-	int i = s.length();
+	size_t i = s.length();
 	if ((s[0] == '_') && (s[i - 1] == '_')) {
 		return true;
 	}

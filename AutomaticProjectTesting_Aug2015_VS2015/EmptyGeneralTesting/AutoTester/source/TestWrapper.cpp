@@ -18,7 +18,15 @@ TestWrapper::TestWrapper() {
 // method for parsing the SIMPLE source
 void TestWrapper::parse(std::string filename) {
 	// call your parser to do the parsing
-  // ...rest of your code...
+    // ...rest of your code...
+	ast* AST = new ast();
+	vector<string> tokenized_program = parseSimpleProgram();
+	(*AST).buildAST(tokenized_program);
+	Tnode* root = (*AST).getRoot();
+	cout << "Successfully constructed AST.\n";
+
+	pkb pkb = new pkb(AST);
+	cout << "Successfully constructed PKB.\n";
 }
 
 // method to evaluating a query

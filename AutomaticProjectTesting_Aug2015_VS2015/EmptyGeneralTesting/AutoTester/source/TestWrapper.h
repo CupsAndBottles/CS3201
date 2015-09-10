@@ -7,6 +7,22 @@
 
 // include your other headers here
 #include "AbstractWrapper.h"
+#include <cstdlib>
+#include <iostream>
+#include <string>
+#include <vector>
+#include "AST.h"
+#include "EntityTable.h"
+#include "Parser.h"
+#include "PKB.h"
+#include "QueryEvaluator.h"
+#include "QueryPreProcessor.h"
+#include "QueryObject.h"
+#include "RelTable.h"
+#include "SemanticsCheck.h"
+#include "SIMPLEParser.h"
+#include "SIMPLERules.h"
+#include "Tnode.h"
 
 class TestWrapper : public AbstractWrapper {
  public:
