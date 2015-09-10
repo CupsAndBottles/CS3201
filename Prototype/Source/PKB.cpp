@@ -136,11 +136,9 @@ vector<int> pkb::selectStmts(Tnode::Type type){
 vector<string> selectStrs(Tnode::Type type){
 	return vector<string>();
 }
+
 vector<int> patternStmts(Tnode::Type type, string var, string expr){
 	return vector<int>();
-}
-vector<string> patternStrs(Tnode::Type type, string var, string expr){
-	return vector<string>();
 }
 
 //return vector of indices that have true values in input vector

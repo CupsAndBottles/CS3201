@@ -58,7 +58,6 @@ public:
 	vector<int> selectStmts(Tnode::Type type);
 	vector<string> selectStrs(Tnode::Type type);
 	vector<int> patternStmts(Tnode::Type type, string var, string expr);
-	vector<string> patternStrs(Tnode::Type type, string var, string expr);
 
 private:
 	ast* storedAst;
