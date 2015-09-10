@@ -4,7 +4,7 @@
 #include <sstream>
 #include <regex>
 #include <vector>
-#include "SIMPLE_rules.h"
+#include "SIMPLERules.h"
 
 using namespace std;
 

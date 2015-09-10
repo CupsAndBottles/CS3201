@@ -3,8 +3,8 @@
 #include <string>
 #include <regex>
 #include <vector>
-#include "SIMPLE_parser.h"
-#include "SIMPLE_rules.h"
+#include "SIMPLEParser.h"
+#include "SIMPLERules.h"
 
 using namespace std;
 

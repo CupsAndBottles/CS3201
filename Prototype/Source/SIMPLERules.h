@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef SIMPLE_rules
-#define SIMPLE_rules
+#ifndef SIMPLERules
+#define SIMPLERules
 
 #include <string>
 

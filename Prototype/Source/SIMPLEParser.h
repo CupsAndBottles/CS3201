@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef SIMPLE_parser
-#define SIMPLE_parser
+#ifndef SIMPLEParser
+#define SIMPLEParser
 
 #include <string>
 #include <vector>

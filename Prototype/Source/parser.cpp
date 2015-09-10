@@ -5,7 +5,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include "SIMPLE_parser.h"
+#include "SIMPLEParser.h"
 
 using namespace std;
 

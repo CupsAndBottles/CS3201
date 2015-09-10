@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef parser
-#define parser
+#ifndef Parser
+#define Parser
 
 #include <string>
 #include <vector>
