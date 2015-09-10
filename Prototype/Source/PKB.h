@@ -55,8 +55,10 @@ public:
 	vector<int> allThatFollowStar(int stmt);
 	vector<int> allBeforeStar(int stmt);
 
-	vector<int> selectAll(Tnode::Type type);
-	vector<int> pattern(Tnode::Type type, string var, string expr);
+	vector<int> selectStmts(Tnode::Type type);
+	vector<string> selectStrs(Tnode::Type type);
+	vector<int> patternStmts(Tnode::Type type, string var, string expr);
+	vector<string> patternStrs(Tnode::Type type, string var, string expr);
 
 private:
 	ast* storedAst;
@@ -75,12 +77,8 @@ private:
 	unordered_map<string, unordered_set<int>> callsProcs;
 	unordered_map<int, unordered_set<string>> callsStmts;
 
-	vector<vector<int>> parents; //index: stmt s, values: stmts that are parents of stmt s
-	vector<vector<int>> children; //index: stmt s, values: stmts that are children of stmt s
-
 	vector<int> follows; //index: stmt s, values: stmts that follow stmt s
 	vector<int> before; //index: stmt s, values: stmts that are before stmt s
-
 
 	//helper functions
 	bool isContainer(Tnode*);
