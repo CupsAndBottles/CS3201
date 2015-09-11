@@ -15,7 +15,7 @@ public:
 	bool parseProgram(vector<string> program);
 
 private:
-	vector<string> tokenized_program;
+	vector<string> tokenizedProgram;
 	int index;
 
 	bool endOfProgram();

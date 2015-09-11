@@ -17,35 +17,35 @@ Parser::Parser() {
 
 // Splits a string by a delimiter
 vector<string> Parser::split(string str, char delimiter) {
-	vector<string> split_string;
+	vector<string> splitString;
 	stringstream ss(str),s2;
-	string tok,delim_string;
+	string tok,delimString;
 	int counter = 0;
 
 	// Convert the delimiter from a char to a string.
 	s2 << delimiter;
-	s2 >> delim_string;
+	s2 >> delimString;
 
 	// Insert non-whitespace delimiters into the correct position
 	if ((delimiter != ' ') && (delimiter != '\t')) {
-		if (str == delim_string) {
-			split_string.push_back(delim_string);
-			return split_string;
+		if (str == delimString) {
+			splitString.push_back(delimString);
+			return splitString;
 		}
 		else if (str[0] == delimiter) {
-			split_string.push_back(delim_string);
+			splitString.push_back(delimString);
 		}
 	}
 	
 	while (getline(ss, tok, delimiter)) {
 		if ((counter > 0) && (delimiter != ' ') && (delimiter != '\t')) {
 			// Insert non-whitespace delimiters into the correct position
-			split_string.push_back(delim_string);
+			splitString.push_back(delimString);
 		}
 
 		if (tok.size() > 0) {
 			// Ignore empty tokens resulting from extra whitespace
-			split_string.push_back(tok);
+			splitString.push_back(tok);
 			counter++;
 		}
 	}
@@ -55,10 +55,10 @@ vector<string> Parser::split(string str, char delimiter) {
 		&& (str[str.size() - 1] == delimiter) 
 		&& (delimiter != ' ') 
 		&& (delimiter != '\t')) {
-		split_string.push_back(delim_string);
+		splitString.push_back(delimString);
 	}
 
-	return split_string;
+	return splitString;
 }
 
 vector<string> Parser::splitByDelimiter(vector<string> original, char delimiter) {
@@ -121,9 +121,9 @@ vector<string> Parser::parseSimpleProgram(string file)
 	program = readProgram(file);
 	tokenized_program = splitByDelimiters(program);
 
-	simpleParser *simple_parser = new simpleParser();
+	simpleParser *parser = new simpleParser();
 
-	if (!(*simple_parser).parseProgram(tokenized_program)) {
+	if (!(*parser).parseProgram(tokenized_program)) {
 		// Error parsing the program; return an empty vector
 		tokenized_program.clear();
 	}
