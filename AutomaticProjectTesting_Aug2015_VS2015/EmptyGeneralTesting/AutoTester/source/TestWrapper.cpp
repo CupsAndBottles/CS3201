@@ -19,20 +19,25 @@ TestWrapper::TestWrapper() {
 void TestWrapper::parse(std::string filename) {
 	// call your parser to do the parsing
     // ...rest of your code...
-	ast* AST = new ast();
-	vector<string> tokenized_program = parseSimpleProgram();
+	vector<string> tokenized_program = parseSimpleProgram(filename);
+
+	ast *AST = new ast();
 	(*AST).buildAST(tokenized_program);
-	Tnode* root = (*AST).getRoot();
+	Tnode *root = (*AST).getRoot();
 	cout << "Successfully constructed AST.\n";
 
-	pkb pkb = new pkb(AST);
+	pkb *pkb = new pkb(*AST);
 	cout << "Successfully constructed PKB.\n";
+
+
 }
 
 // method to evaluating a query
 void TestWrapper::evaluate(std::string query, std::list<std::string>& results){
 // call your evaluator to evaluate the query here
   // ...code to evaluate query...
+
+
 
   // store the answers to the query in the results list (it is initially empty)
   // each result must be a string.

@@ -15,78 +15,78 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\source\AST.h">
+    <ClInclude Include="..\Source\AST.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\EntityTable.h">
+    <ClInclude Include="..\Source\EntityTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\Parser.h">
+    <ClInclude Include="..\Source\Parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\PKB.h">
+    <ClInclude Include="..\Source\PKB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\QueryEvaluator.h">
+    <ClInclude Include="..\Source\QueryEvaluator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\QueryObject.h">
+    <ClInclude Include="..\Source\QueryObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\QueryPreProcessor.h">
+    <ClInclude Include="..\Source\QueryPreProcessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\RelTable.h">
+    <ClInclude Include="..\Source\RelTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\SemanticsCheck.h">
+    <ClInclude Include="..\Source\SemanticsCheck.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\SIMPLEParser.h">
+    <ClInclude Include="..\Source\SIMPLEParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\SIMPLERules.h">
+    <ClInclude Include="..\Source\SIMPLERules.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\Tnode.h">
+    <ClInclude Include="..\Source\Tnode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\source\AST.cpp">
+    <ClCompile Include="..\Source\AST.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\EntityTable.cpp">
+    <ClCompile Include="..\Source\EntityTable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\Parser.cpp">
+    <ClCompile Include="..\Source\Parser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\PKB.cpp">
+    <ClCompile Include="..\Source\PKB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\QueryEvaluator.cpp">
+    <ClCompile Include="..\Source\QueryEvaluator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\QueryObject.cpp">
+    <ClCompile Include="..\Source\QueryObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\QueryPreProcessor.cpp">
+    <ClCompile Include="..\Source\QueryPreProcessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\RelTable.cpp">
+    <ClCompile Include="..\Source\RelTable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\SemanticsCheck.cpp">
+    <ClCompile Include="..\Source\SemanticsCheck.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\SIMPLEParser.cpp">
+    <ClCompile Include="..\Source\SIMPLEParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\SIMPLERules.cpp">
+    <ClCompile Include="..\Source\SIMPLERules.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\Tnode.cpp">
+    <ClCompile Include="..\Source\Tnode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

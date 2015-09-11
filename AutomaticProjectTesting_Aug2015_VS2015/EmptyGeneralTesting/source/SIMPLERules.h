@@ -13,5 +13,6 @@ bool isVarName(string token);
 bool isProcName(string token);
 bool isConstValue(string token);
 bool isFactor(string token);
+bool isOperator(string token);
 
 #endif

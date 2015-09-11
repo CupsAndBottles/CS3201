@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include "Parser.h"
 #include "SIMPLEParser.h"
 
 using namespace std;
@@ -20,7 +21,7 @@ vector<string> split(string str, char delimiter) {
 	s2 >> delim_string;
 
 	// Insert non-whitespace delimiters into the correct position
-	if (delim_string != " ") {
+	if ((delimiter != ' ') && (delimiter != '\t')) {
 		if (str == delim_string) {
 			split_string.push_back(delim_string);
 			return split_string;
@@ -31,7 +32,7 @@ vector<string> split(string str, char delimiter) {
 	}
 	
 	while (getline(ss, tok, delimiter)) {
-		if (counter > 0 && delimiter != ' ') {
+		if ((counter > 0) && (delimiter != ' ') && (delimiter != '\t')) {
 			// Insert non-whitespace delimiters into the correct position
 			split_string.push_back(delim_string);
 		}
@@ -44,7 +45,7 @@ vector<string> split(string str, char delimiter) {
 	}
 
 	// Insert non-whitespace delimiters into the correct position
-	if (str[str.size() - 1] == delimiter) {
+	if ((str.size() > 0) && (str[str.size() - 1] == delimiter)) {
 		split_string.push_back(delim_string);
 	}
 
@@ -54,7 +55,7 @@ vector<string> split(string str, char delimiter) {
 vector<string> splitByDelimiter(vector<string> original, char delimiter) {
 	vector<string> temp;
 	vector<string> final;
-
+	cout << "splitting by " << delimiter << "\n";
 	for (int i = 0; i < original.size(); i++) {
 		temp = split(original[i], delimiter);
 
@@ -78,6 +79,7 @@ vector<string> splitByDelimiters(vector<string> program) {
 	program = splitByDelimiter(program, '-');
 	program = splitByDelimiter(program, '*');
 	program = splitByDelimiter(program, '/');
+	program = splitByDelimiter(program, '\t');
 
 	return program;
 }
@@ -103,21 +105,23 @@ vector<string> readProgram(string file) {
 	return program;
 }
 
-vector<string> parseSimpleProgram()
+vector<string> parseSimpleProgram(string file)
 {
-	string file;
+	//string file;
 	vector<string> program, tokenized_program;
 
-	cout << "Enter filename and extension.\n";
-	cin >> file;
+	//cout << "Enter filename and extension.\n";
+	//cin >> file;
 
 	program = readProgram(file);
+	cout << "tokenizing program\n";
 	tokenized_program = splitByDelimiters(program);
-
-	/*if (parseProgram(tokenized_program).size() == 0) {
+	cout << "tokenized program\n";
+	if (parseProgram(tokenized_program).size() == 0) {
 		// Error parsing the program; return an empty vector
 		tokenized_program.clear();
-	}*/
+	}
 
 	return tokenized_program;
 }
+
