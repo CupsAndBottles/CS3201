@@ -10,10 +10,7 @@ void main() {
 
 	//SemanticsCheck sCheck;
 	QueryPreProcessor qpp;
-	string s = "assign a; Select a such that Modifies(\"Example\", \"d\")";
-	//string s = "assign a;     Select a such that Uses(a, \"x\")";
-	//string s = "variable v; Select v such that Uses(x, v)";
-	//string s = "procedure p; assign a; Select p such that Modifies(p, \"x\") and pattern a(_, \"2\")";
+	string s = "procedure p; assign a; Select p such that Modifies(p, \"x\") and pattern a(_, \"2\")";
 	//string s = "assign a, a1; Select a such that pattern a1(\"x\", _) and Modifies(a, \"x\")"; Queries01.36
 	//string s = "assign a, a1, a2; Select a such that Modifies(a1, \"x\") and Uses(a2, \"x\") and pattern a(\"x\", _)"; Queries01.37
 	//string s = "assign a; Select a such that Parent*(1, 2)";
@@ -29,7 +26,7 @@ void main() {
 	/*Brackets Comma check
 	vector<string> tempV = { "a(", "abd, afg", ")" };
 	bool b;
-	b= qpp.checkForBracketsAndComma(tempV); */ 
+	b= qpp.checkForBracketsAndComma(tempV); */
 
 	/* Semantics Check Test
 	EntTable newET = qpp.getEntityTable();
