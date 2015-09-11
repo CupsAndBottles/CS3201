@@ -6,7 +6,7 @@
 
 // User-defined headers
 #include "ast.h"
-#include "parser.h"
+#include "Parser.h"
 #include "pkb.h"
 
 // Main control of all components is here.
