@@ -84,11 +84,17 @@ Tnode* pkb::getNodeWithStmt(Tnode* anchorNode, int stmtNum){
 
 	int nodeStmtNum = anchorNode->getStmtNum();
 	if (nodeStmtNum == -1){
-		// program, procedure, statement lists, expressions, variables, constants
-
+		if (isProgram(anchorNode) || isProcedure(anchorNode) || isStmtLst(anchorNode)){
+			return getNodeWithStmt(anchorNode->getFirstChild(), stmtNum);
+		} else {
+			//expressions, variables, constants
+			return NULL;
+		}
 	} else if (nodeStmtNum == stmtNum){
 		return anchorNode;
 	} else if (nodeStmtNum > stmtNum){
+		Tnode* parent = getSPAParent(anchorNode);
+		
 		// get node with nodeStmtNum - 1 or a parent node with stmtNum < nodeStmtNum
 	} else if (nodeStmtNum < stmtNum){
 		// iterate down right sibs
@@ -101,6 +107,11 @@ Tnode* pkb::getNodeWithStmt(Tnode* anchorNode, int stmtNum){
 	// incomplete
 	return NULL;
 }
+
+Tnode* pkb::getNodeWithStmt(int stmtNum){
+	return getNodeWithStmt(this->storedAst->getRoot(), stmtNum);
+}
+
 
 vector<int> pkb::getAllParentsOf(int stmt){
 	Tnode* node = getNodeWithStmt(stmt);

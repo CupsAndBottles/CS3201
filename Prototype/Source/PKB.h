@@ -62,6 +62,7 @@ public:
 	vector<int> selectStmts(Tnode::Type type);
 	vector<string> selectStrs(Tnode::Type type);
 	vector<int> patternStmts(Tnode::Type type, string var, string expr);
+	void setAst(ast * tree);
 
 private:
 	ast* storedAst;
@@ -107,7 +108,6 @@ private:
 	Tnode* pkb::getNodeWithStmt(int stmtNum);
 
 	void updateDBFile();
-	void setAst(ast * tree);
 	Tnode * getCallee(Tnode * node);
 	Tnode * getProcNode(string procName);
 	Tnode * getParentNode(Tnode * node);
