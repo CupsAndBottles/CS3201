@@ -16,7 +16,7 @@ QueryEvaluator::QueryEvaluator(pkb* storePkb) {
 }
 
 //Autotester test driver function
-list<string> QueryEvaluator::evaluate (string query) {
+list<string> QueryEvaluator::getResults (string query) {
 	list<string> output;
 	if (preprocessor.query(query)) {
 		getQueryData();
@@ -106,7 +106,7 @@ vector<string> QueryEvaluator:: modify(string leftArgument, string rightArgument
 	vector<string> output;
 	if (stringEqual(select, leftArgument) && isDoubleQuote(rightArgument)) { //RHS is variable
 		if(declaration.getType(leftArgument).compare("procedure")==0){
-			output=database->allProceduresThatModify(rightArgument);//string
+			output=database->allProceduresThatModify(removeQuotes(rightArgument));//string
 			return output;
 		}
 		else {
@@ -114,6 +114,7 @@ vector<string> QueryEvaluator:: modify(string leftArgument, string rightArgument
 			temp= database->allStmtsThatMod(rightArgument);//int
 			return output = integerVectorToString(temp);
 		}
+		return output;
 	}
 
 	else if(stringEqual(select,leftArgument) && declaration.getType(rightArgument).compare("variable")==0){
@@ -133,14 +134,16 @@ vector<string> QueryEvaluator:: modify(string leftArgument, string rightArgument
 			}
 			return output;
 		}
+		return output;
 	}
 	else if (stringEqual(select, rightArgument) && stringEqual(select,"variable")) {
 		if (isNumericString(leftArgument)) {
 			return output= database->allVarsModdedBy(stoi(leftArgument)); //convert string to int
 		}
 		else if (isDoubleQuote(leftArgument)) {
-			return output= database->allVarsModdedBy(leftArgument);//"procedure", quoted p
+			return output= database->allVarsModdedBy(removeQuotes(leftArgument));//"procedure", quoted p
 		}
+		return output;
 	}
 	else {
 		return output; //non handled cases or error.
@@ -152,7 +155,7 @@ vector<string> QueryEvaluator:: uses(string leftArgument, string rightArgument) 
 	vector<string> output;
 	if (stringEqual(select, leftArgument) && isDoubleQuote(rightArgument)) { //RHS is variable
 		if (declaration.getType(leftArgument).compare("procedure") == 0) {
-			output = database->allProceduresThatUse(rightArgument);//string
+			output = database->allProceduresThatUse(removeQuotes(rightArgument));//string
 			return output;
 		}
 		else {
@@ -160,6 +163,7 @@ vector<string> QueryEvaluator:: uses(string leftArgument, string rightArgument) 
 			temp = database->allStmtsThatUse(rightArgument);//int
 			return output = integerVectorToString(temp);
 		}
+		return output;
 	}
 
 	else if (stringEqual(select, leftArgument) && declaration.getType(rightArgument).compare("variable") == 0) {
@@ -179,14 +183,16 @@ vector<string> QueryEvaluator:: uses(string leftArgument, string rightArgument) 
 			}
 			return output;
 		}
+		return output;
 	}
 	else if (stringEqual(select, rightArgument) && stringEqual(select, "variable")) {
 		if (isNumericString(leftArgument)) {
 			return output = database->allVarsUsedBy(stoi(leftArgument)); //convert string to int
 		}
 		else if (isDoubleQuote(leftArgument)) {
-			return output = database->allVarsUsedBy(leftArgument);//"procedure", quoted p
+			return output = database->allVarsUsedBy(removeQuotes(leftArgument));//"procedure", quoted p
 		}
+		return output;
 	}
 	else {
 		return output; //non handled cases or error.
@@ -196,7 +202,7 @@ vector<string> QueryEvaluator:: parent(string leftArgument, string rightArgument
 	string select = getSelectClause();
 	vector<string> output;
 	if (stringEqual(select, leftArgument) && isNumericString(rightArgument)) {
-		vector<int> temp=database->allParentsOf(stoi(rightArgument));
+		vector<int> temp=database->getAllParentsOf(stoi(rightArgument));
 		return output = integerVectorToString(temp);
 	}
 	else if (stringEqual(select, rightArgument) && isNumericString(leftArgument)) {
@@ -257,8 +263,9 @@ vector<string> QueryEvaluator:: followT(string leftArgument, string rightArgumen
 vector<string> QueryEvaluator::PatternClause(string type, string leftArgument, string rightArgument) {
 	vector<string> output;
 	if (declaration.getType(type).compare("assign")) {
-		if (isDoubleQuote(leftArgument)) {
-			vector<int> temp=database->patternStmts(Tnode::STMT_ASSIGN, leftArgument, rightArgument);
+		if (isDoubleQuote(leftArgument) || stringEqual("_",leftArgument)) {
+			//pattern a("x",'_')
+			vector<int> temp=database->patternStmts(Tnode::STMT_ASSIGN, removeQuotes(leftArgument), rightArgument);
 			return output = integerVectorToString(temp);
 		}
 		else if (declaration.getType(leftArgument).compare("variable")) {
@@ -276,7 +283,9 @@ vector<string> QueryEvaluator::PatternClause(string type, string leftArgument, s
 				//do union-join, select v pattern a(v,'_');
 				return output;
 			}
+			return output;
 		}
+		return output;
 	}
 	else {
 		return output;
@@ -361,6 +370,12 @@ bool QueryEvaluator::isDoubleQuote(string s) {
 }
 void QueryEvaluator::displayQuery(string results) {
 	cout << results << endl;
+}
+
+string QueryEvaluator::removeQuotes(string s) {
+	string temp = s;
+	s.erase(remove(s.begin(), s.end(), '\"'), s.end());
+	return temp;
 }
 
 
