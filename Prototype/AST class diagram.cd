@@ -18,12 +18,12 @@
       <Compartment Name="Nested Types" Collapsed="false" />
     </Compartments>
     <NestedTypes>
-      <Enum Name="Tnode::Type">
+      <Enum Name="Tnode::Type" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>Source\Tnode.h</NewMemberFileName>
         </TypeIdentifier>
       </Enum>
-      <Enum Name="Tnode::Link_Type">
+      <Enum Name="Tnode::Link_Type" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>Source\Tnode.h</NewMemberFileName>
         </TypeIdentifier>
@@ -34,13 +34,13 @@
       <FileName>Source\Tnode.h</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
+      <Field Name="parentNode" />
       <Field Name="firstChildNode" />
       <Field Name="leftSibNode" />
-      <Field Name="parentNode" />
       <Field Name="rightSibNode" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="std::vector&lt;_Ty, _Alloc&gt;">
+  <Class Name="std::vector&lt;_Ty, _Alloc&gt;" Collapsed="true">
     <Position X="7" Y="1.25" Width="3" />
     <NestedTypes>
       <Typedef Name="std::vector&lt;_Ty, _Alloc&gt;::reference" Collapsed="true">
