@@ -1,37 +1,37 @@
 procedure kitkat {
-1.	x = 1;
-2.	if x then {
-3.		y = 10;
-4.		while y {
-5.			z = x + y;
-6.			d = z * 0;
-7.			if d then {
-8.				y = y + 1;	
+	x = 1;
+	if x then {
+		y = 10;
+		while y {
+			z = x + y;
+			d = z * 0;
+			if d then {
+				y = y + 1;	
 			} else {
-9.				y = y - 1;
+				y = y - 1;
 			}
-10.			y = y -2;
+			y = y -2;
 		}
-11.		x = 2;
+		x = 2;
 	} else {
-12.		z = d * 2;
+		z = d * 2;
 	}
-13.	x = z + 3;
-14.	call water;
+	x = z + 3;
+	call water;
 }
 
 procedure snickers {
-15.	i = 1;
-16.	if i then {
-17.		call kitkat;
+	i = 1;
+	if i then {
+		call kitkat;
 	} else {
-18.		call water;
+		call water;
 	}
 }
 
 procedure water {
-19.	q = 8;
-20.	while q {
-21.		q = q - 1;
+	q = 8;
+	while q {
+		q = q - 1;
 	}
 }

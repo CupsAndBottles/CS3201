@@ -17,7 +17,6 @@ procedure Second {
 	z = z+x+i;
 	y=z+2;
 	x=x*y+z;}
-}
 
 procedure Third { 
 	z = 5;
