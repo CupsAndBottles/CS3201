@@ -1,5 +1,9 @@
 #include "PKB.h"
 
+pkb::pkb(){
+	storedAst = NULL;
+}
+
 pkb::pkb(ast* tree){
 	storedAst = tree;
 	calculateRelations(this->storedAst->getRoot(), vector<Tnode*>());
@@ -11,6 +15,11 @@ pkb::pkb(string filePath) {
 
 //write pkb to file
 void pkb::updateDBFile() {
+}
+
+void pkb::setAst(ast* tree){
+	this->storedAst = tree;
+	calculateRelations(this->storedAst->getRoot(), vector<Tnode*>());
 }
 
 bool pkb::modifies(int stmt, string var){
@@ -106,7 +115,7 @@ vector<Tnode*>* pkb::getAllParentsOf(Tnode* node, vector<Tnode*>* parents) {
 	Tnode* parent = getSPAParent(node);
 	if (parent == NULL) {
 		return parents;
-	} else { 
+	} else {
 		parents->push_back(parent);
 		return getAllParentsOf(parent, parents);
 	}

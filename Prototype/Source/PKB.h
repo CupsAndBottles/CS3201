@@ -12,6 +12,7 @@ using namespace std;
 
 class pkb{
 public:
+	pkb();
 	pkb(ast* tree);
 	pkb(string filePath);
 
@@ -106,6 +107,7 @@ private:
 	Tnode* pkb::getNodeWithStmt(int stmtNum);
 
 	void updateDBFile();
+	void setAst(ast * tree);
 	Tnode * getCallee(Tnode * node);
 	Tnode * getProcNode(string procName);
 	Tnode * getParentNode(Tnode * node);
