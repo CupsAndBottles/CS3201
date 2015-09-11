@@ -3,6 +3,7 @@
 #include <vector>
 #include <stdio.h>
 #include <sstream>
+#include <algorithm>
 
 #include "QueryPreProcessor.h"
 #include "EntityTable.h"
@@ -22,7 +23,7 @@ class QueryEvaluator
 public:
 	QueryEvaluator(pkb* storePkb);
 
-	list<string> evaluate(string output);
+	list<string> getResults(string output);
 
 	void getQueryData();
 	vector<vector<string>> queryResults();
@@ -43,6 +44,8 @@ public:
 	vector<string> integerVectorToString(vector<int> vector);
 	bool isDoubleQuote(string s);
 	void displayQuery(string results);
+
+	string removeQuotes(string s);
 
 private:
 	pkb* database;
