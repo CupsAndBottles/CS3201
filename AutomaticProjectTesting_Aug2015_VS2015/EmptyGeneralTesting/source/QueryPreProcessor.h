@@ -29,6 +29,7 @@ public:
 	vector<string> getEntities();
 	vector<QueryObject> getQueries();
 	void clearAll();
+	//void printSCL(vector<string> s);
 
 private:
 	vector<string> checkForBracketsAndComma(vector<string> argVector);

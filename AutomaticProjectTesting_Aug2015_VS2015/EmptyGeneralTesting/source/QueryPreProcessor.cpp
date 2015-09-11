@@ -176,14 +176,14 @@ vector<string> QueryPreProcessor::checkForBracketsAndComma(vector<string> argVec
 			argVector.push_back(checkVector[0]);
 			argVector.push_back(checkVector[2]);
 			argVector.push_back(checkVector[4]);
-			cout << "brackets and commas in place" << endl;
+			//cout << "brackets and commas in place" << endl;
 		}
 		else {
 			cout << "missing brackets or commas" << endl;
 		}
 	}
 	else {
-		cout << "num arguments invalid: missing brackets or commas" << endl;
+		cout << "num arguments invalid (or) missing brackets/commas" << endl;
 	}
 
 	checkVector.clear();
@@ -205,14 +205,14 @@ bool QueryPreProcessor::query(string s) {
 	//initialize relationship table
 	relTable.initRelTable();
 
-	cout << s << endl; cout << endl;
+	//cout << s << endl; cout << endl;
 
 	//create design entity table
 	//Create the design-entity(s) by tokenizing string with delimiter ; and \n. Make sure that all subsequent synonyms used in a query are being declared.
 	vector<string> temp;
 	temp = split(s, ";\n");
 	inputEntitiesIntoTable(temp);
-	cout << "parsed design-entities into table" << endl;
+	//cout << "parsed design-entities into table" << endl;
 
 	//Work on relationship Query. Focusing on the 'Select...' line
 	//cout << "Verify line: " + v.back() << endl;
@@ -229,13 +229,13 @@ bool QueryPreProcessor::query(string s) {
 
 	//first must be a Select, else return false
 	if (toLowerCase(selectCl.at(0)).compare("select") == 0) {
-		cout << "'Select' found" << endl;
+		//cout << "'Select' found" << endl;
 		size_t i = 1;
 
 		//second phase must be a result-clause synonym (<tuple>, boolean - optional for now), verify synonym, else false
-		cout << "result-clause: ";
+		//cout << "result-clause: ";
 		while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0)) {
-			cout << selectCl.at(i) + " ";
+			//cout << selectCl.at(i) + " ";
 			if (sCheck.isSynonym(selectCl.at(i), entityTable) || (toLowerCase(selectCl.at(i)).compare("boolean") == 0) ) {
 				entityList.push_back(selectCl.at(i));
 			}
@@ -248,7 +248,7 @@ bool QueryPreProcessor::query(string s) {
 				break;
 			}
 		}
-		cout << endl;
+		//cout << endl;
 		if (i == 1) {
 			cout << "no result-clause found" << endl;
 			return false;
@@ -265,10 +265,10 @@ bool QueryPreProcessor::query(string s) {
 				i++;
 				if (toLowerCase(selectCl.at(i)).compare("that") == 0) {
 					i++;
-					cout << "suchthat-cl: ";
+					//cout << "suchthat-cl: ";
 					//extract relCond
 					while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0)) {
-						cout << selectCl.at(i) + " ";
+						//cout << selectCl.at(i) + " ";
 						argVector.push_back(selectCl.at(i));
 						i++;
 						if (selectCl.size() == i) {
@@ -354,6 +354,14 @@ bool QueryPreProcessor::query(string s) {
 	cout << "Query is valid" << endl;
 	return true;
 }
+
+/*
+void QueryPreProcessor::printSCL(vector<string> s) {
+	for (size_t i = 0; i < s.size(); i++) {
+		cout << s.at(i);
+	}
+	cout << endl;
+}*/
 
 EntTable QueryPreProcessor::getEntityTable() {
 	return entityTable;
