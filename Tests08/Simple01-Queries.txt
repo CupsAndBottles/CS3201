@@ -22,9 +22,11 @@ none
 stmt s;
 Select s such that Follows(s, 4)
 3
+5000
 6 - Test definition of Follows*
 stmt s;
 Select s such that Follows*(s, 4)
+3
 5000
 7 - Test if first stmt of a procedure follows last stmt of the previous procedure
 stmt s;
@@ -35,6 +37,7 @@ none
 stmt s;
 Select s such that Follows*(s, 7)
 none
+5000
 9 - Test basic definition of Modifies
 assign a;
 Select a such that Modifies(a, "x")
@@ -55,7 +58,7 @@ procedure p;
 Select p such that Modifies(p, "x")
 Index, Example
 5000
-13 - Test for smtRef definition using Modifies
+13 - Test for stmtRef definition using Modifies
 variable v;
 Select v such that Modifies("Index", v)
 none
@@ -67,17 +70,17 @@ x, y, z, d
 5000
 15 - Test for pattern in LHS assignment
 prog_line n; assign a;
-Select n such that pattern a(_, "d+2")
+Select n pattern a(_, "d+2")
 6
 5000
 16 - Test for pattern in RHS assignment
 assign a;
-Select a such that pattern a("x", _)
+Select a pattern a("x", _)
 1, 5, 7
 5000
 17 - Test for pattern in long RHS assignments
 assign a;
-Select a such that pattern a(_, "y+d")
+Select a pattern a(_, "y+d")
 4
 5000
 18 - Test for definition of Parent
@@ -108,6 +111,7 @@ none
 23 - Meaningless Testing for Parent*
 variable v;
 Select v such that Parent*(6, 7)
+none
 5000
 24 - Test for definition Uses
 assign a
@@ -181,6 +185,6 @@ none
 5000
 38 - Test for Parent and pattern
 stmt s;
-Select s such that pattern a(_,"d+2") and Parent(s, 6)
+Select s pattern a(_,"d+2") and such that Parent(s, 6)
 none
 5000
