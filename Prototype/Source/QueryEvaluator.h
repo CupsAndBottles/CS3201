@@ -22,6 +22,8 @@ class QueryEvaluator
 public:
 	QueryEvaluator(pkb* storePkb);
 
+	list<string> evaluate(string output);
+
 	void getQueryData();
 	vector<vector<string>> queryResults();
 	list<string> finalResult(vector<vector<string>> store);
