@@ -13,6 +13,7 @@ volatile bool TestWrapper::GlobalStop = false;
 TestWrapper::TestWrapper() {
   // create any objects here as instance variables of this class
   // as well as any initialization required for your spa program
+	pkb thepkb = pkb();
 }
 
 // method for parsing the SIMPLE source
@@ -22,13 +23,12 @@ void TestWrapper::parse(std::string filename) {
 	vector<string> tokenized_program = parseSimpleProgram(filename);
 
 	ast *AST = new ast();
-	(*AST).buildAST(tokenized_program);
-	Tnode *root = (*AST).getRoot();
+	AST->buildAST(tokenized_program);
+	Tnode *root = AST->getRoot();
 	cout << "Successfully constructed AST.\n";
 
-	pkb *pkb = new pkb(*AST);
+	thepkb.setAst(AST);
 	cout << "Successfully constructed PKB.\n";
-
 
 }
 
@@ -36,8 +36,7 @@ void TestWrapper::parse(std::string filename) {
 void TestWrapper::evaluate(std::string query, std::list<std::string>& results){
 // call your evaluator to evaluate the query here
   // ...code to evaluate query...
-
-
+	QueryEvaluator qe;
 
   // store the answers to the query in the results list (it is initially empty)
   // each result must be a string.

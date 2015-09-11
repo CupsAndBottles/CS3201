@@ -12,6 +12,7 @@ using namespace std;
 
 class pkb{
 public:
+	pkb();
 	pkb(ast* tree);
 	pkb(string filePath);
 
@@ -39,8 +40,11 @@ public:
 	vector<string> allProceduresThatUse(string var);
 	vector<string> allVarsUsedBy(string p);
 
-	bool isParent(int s1, int s2); //returns parent(s1, s2)
-	vector<int> allParentsOf(int stmt); //returns all immediate parents of stmt.
+	bool isParent(int s1, int s2);
+	Tnode * getNodeWithStmt(Tnode * anchorNode, int stmtNum);
+	//returns parent(s1, s2)
+	vector<int> getAllParentsOf(int stmt); //returns all immediate parents of stmt.
+	vector<Tnode*>* getAllParentsOf(Tnode * node, vector<Tnode*>* parents);
 	vector<int> allChildrenOf(int stmt); //returns all immediate children of stmt;
 
 	bool isParentStar(int s1, int s2); //returns parent*(s1, s2)
@@ -58,6 +62,7 @@ public:
 	vector<int> selectStmts(Tnode::Type type);
 	vector<string> selectStrs(Tnode::Type type);
 	vector<int> patternStmts(Tnode::Type type, string var, string expr);
+	void setAst(ast * tree);
 
 private:
 	ast* storedAst;
@@ -100,6 +105,7 @@ private:
 	vector<string> flattenStringSetToStringVector(const unordered_set<string>* inp);
 	vector<Tnode*> getNodesOfType(Tnode* start, Tnode::Type type);
 	vector<Tnode*>* getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, vector<Tnode*>* results);
+	Tnode* pkb::getNodeWithStmt(int stmtNum);
 
 	void updateDBFile();
 	Tnode * getCallee(Tnode * node);
