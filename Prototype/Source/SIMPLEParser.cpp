@@ -8,7 +8,7 @@
 
 using namespace std;
 
-simpleRules *simple_rules = new simpleRules();
+simpleRules *rules = new simpleRules();
 
 simpleParser::simpleParser() {
 	this -> index = 0;
@@ -26,13 +26,13 @@ bool simpleParser::parseExpression() {
 
 	string token = tokenized_program[index];
 
-	if ((*simple_rules).isFactor(token)) {
+	if ((*rules).isFactor(token)) {
 		index += 1;
 		if (tokenized_program[index] == ";") {
 			return true;
 		}
 		// Make sure we don't have consecutive factors.
-		else if (!(*simple_rules).isFactor(tokenized_program[index-2])) {
+		else if (!(*rules).isFactor(tokenized_program[index-2])) {
 			parseExpression();
 		}
 		else {
@@ -40,9 +40,9 @@ bool simpleParser::parseExpression() {
 			return false;
 		}
 	}
-	else if ((*simple_rules).isOperator(token)) {
+	else if ((*rules).isOperator(token)) {
 		// Make sure we don't have consecutive operators
-		if (!(*simple_rules).isOperator(tokenized_program[index - 1])) {
+		if (!(*rules).isOperator(tokenized_program[index - 1])) {
 			index += 1;
 			return parseExpression();
 		}
@@ -65,7 +65,7 @@ bool simpleParser::parseAssign() {
 
 	string token = tokenized_program[index];
 
-	if (!(*simple_rules).isName(token)) {
+	if (!(*rules).isName(token)) {
 		cout << "Assign statement does not have a valid variable name.\n";
 		return false;
 	}
@@ -106,7 +106,7 @@ bool simpleParser::parseIf() {
 
 	string token = tokenized_program[index];
 
-	if (!(*simple_rules).isVarName(token)) {
+	if (!(*rules).isVarName(token)) {
 		cout << "Invalid variable name in If statement.\n";
 		return false;
 	}
@@ -182,7 +182,7 @@ bool simpleParser::parseWhile() {
 	string token = tokenized_program[index];
 	string next_token = tokenized_program[index + 1];
 
-	if ((*simple_rules).isName(token) && next_token == "{") {
+	if ((*rules).isName(token) && next_token == "{") {
 		index += 2;
 
 		if (!parseStmtList()) {
@@ -213,7 +213,7 @@ bool simpleParser::parseCall() {
 
 	string token = tokenized_program[index];
 	string next_token = tokenized_program[index + 1];
-	if ((*simple_rules).isProcName(token) && next_token == ";") {
+	if ((*rules).isProcName(token) && next_token == ";") {
 		index += 2;
 		return true;
 	}
@@ -268,7 +268,7 @@ bool simpleParser::parseProcedure() {
 	string token = tokenized_program[index];
 	string next_token = tokenized_program[index + 1];
 
-	if((*simple_rules).isName(token) && next_token == "{"){
+	if((*rules).isName(token) && next_token == "{"){
 		index += 2;
 
 		if (!parseStmtList()) {
