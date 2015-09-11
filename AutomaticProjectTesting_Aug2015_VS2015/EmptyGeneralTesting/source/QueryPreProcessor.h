@@ -1,5 +1,10 @@
 #pragma once
 #include <stdio.h>
+#include "EntityTable.h"
+#include "QueryObject.h"
+#include "SemanticsCheck.h"
+#include "RelTable.h"
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -8,11 +13,6 @@
 #include <algorithm>
 #include <cctype>
 #include <regex>
-
-#include "EntityTable.h"
-#include "QueryObject.h"
-#include "SemanticsCheck.h"
-#include "RelTable.h"
 
 using namespace std;
 

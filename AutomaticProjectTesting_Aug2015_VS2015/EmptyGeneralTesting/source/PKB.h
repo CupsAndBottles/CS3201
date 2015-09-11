@@ -1,5 +1,9 @@
+#ifndef PKB_HEADER
+#define PKB_HEADER
+
 #include "AST.h"
 #include "Tnode.h"
+
 #include <vector>
 #include <string>
 #include <unordered_map>
@@ -122,3 +126,5 @@ private:
 	void updateCalls(vector<Tnode*> callers, Tnode * callee);
 	void updateCalls(Tnode * caller, Tnode * callee);
 };
+
+#endif

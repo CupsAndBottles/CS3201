@@ -1,9 +1,9 @@
 #pragma once
+#include "Tnode.h"
 
 #include <vector>
 #include <string>
 #include <algorithm>
-#include "Tnode.h"
 
 using namespace std;
 

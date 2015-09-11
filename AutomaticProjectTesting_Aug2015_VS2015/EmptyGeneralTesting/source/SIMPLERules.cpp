@@ -1,14 +1,19 @@
+#include "SIMPLERules.h"
+
 #include <iostream>
 #include <string>
 #include <sstream>
 #include <regex>
 #include <vector>
-#include "SIMPLERules.h"
 
 using namespace std;
 
+simpleRules::simpleRules() {
+
+}
+
 // Defines a valid integer in SIMPLE.
-bool isInteger(string token) {
+bool simpleRules::isInteger(string token) {
 	regex integer("[0-9]+");
 	if (regex_match(token, integer)) {
 		return true;
@@ -19,7 +24,7 @@ bool isInteger(string token) {
 }
 
 // Defines a valid name in SIMPLE.
-bool isName(string token) {
+bool simpleRules::isName(string token) {
 	// Check that the first character isn't a digit
 	string temp;
 	stringstream ss;
@@ -39,7 +44,7 @@ bool isName(string token) {
 }
 
 // Defines a valid variable name in SIMPLE.
-bool isVarName(string token) {
+bool simpleRules::isVarName(string token) {
 	if (isName(token)) {
 		return true;
 	}
@@ -49,7 +54,7 @@ bool isVarName(string token) {
 }
 
 // Defines a valid procedure name in SIMPLE.
-bool isProcName(string token) {
+bool simpleRules::isProcName(string token) {
 	if (isName(token)) {
 		return true;
 	}
@@ -59,7 +64,7 @@ bool isProcName(string token) {
 }
 
 // Defines a valid constant value in SIMPLE.
-bool isConstValue(string token) {
+bool simpleRules::isConstValue(string token) {
 	if (isInteger(token)) {
 		return true;
 	}
@@ -69,7 +74,7 @@ bool isConstValue(string token) {
 }
 
 // Defines a valid factor in SIMPLE.
-bool isFactor(string token) {
+bool simpleRules::isFactor(string token) {
 	if (isVarName(token) || isConstValue(token)) {
 		return true;
 	}
@@ -78,7 +83,7 @@ bool isFactor(string token) {
 	}
 }
 
-bool isOperator(string token) {
+bool simpleRules::isOperator(string token) {
 	if (token == "+"
 		|| token == "-"
 		|| token == "*"

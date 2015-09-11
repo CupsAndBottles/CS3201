@@ -1,35 +1,38 @@
+#include "SIMPLEParser.h"
+#include "SIMPLERules.h"
+
 #include <iostream>
 #include <string>
 #include <regex>
 #include <vector>
-#include "SIMPLEParser.h"
-#include "SIMPLERules.h"
 
 using namespace std;
 
-vector<string> tokenized_program; // Stores the SIMPLE program
-int index = 0;					  // Keeps track of the tokens in tokenized_program
+simpleRules *simple_rules = new simpleRules();
 
-bool endOfProgram() {
+simpleParser::simpleParser() {
+	this -> index = 0;
+}
+
+bool simpleParser::endOfProgram() {
 	return index >= tokenized_program.size() - 1;
 }
 
-bool parseExpression() {
+bool simpleParser::parseExpression() {
 	if (endOfProgram()) {
 		cout << "End of program reached while attempting to parse expression.\n";
 		return false;
 	}
 
-	cout << "parsing expression\n";
 	string token = tokenized_program[index];
-	cout << "checking " << token << "is factor\n";
-	if (isFactor(token)) {
+
+	if ((*simple_rules).isFactor(token)) {
 		index += 1;
 		if (tokenized_program[index] == ";") {
 			return true;
 		}
 		// Make sure we don't have consecutive factors.
-		else if (!isFactor(tokenized_program[index-2])) {
+		else if (!(*simple_rules).isFactor(tokenized_program[index-2])) {
 			parseExpression();
 		}
 		else {
@@ -37,9 +40,9 @@ bool parseExpression() {
 			return false;
 		}
 	}
-	else if (isOperator(token)) {
+	else if ((*simple_rules).isOperator(token)) {
 		// Make sure we don't have consecutive operators
-		if (!isOperator(tokenized_program[index - 1])) {
+		if (!(*simple_rules).isOperator(tokenized_program[index - 1])) {
 			index += 1;
 			return parseExpression();
 		}
@@ -54,23 +57,21 @@ bool parseExpression() {
 	}
 }
 
-bool parseAssign() {
+bool simpleParser::parseAssign() {
 	if (endOfProgram()) {
 		cout << "End of program reached while attempting to parse assign statement.\n";
 		return false;
 	}
 
-	cout << "parsing Assignment\n";
 	string token = tokenized_program[index];
-	cout << "checking " << token << "is name\n";
-	if (!isName(token)) {
+
+	if (!(*simple_rules).isName(token)) {
 		cout << "Assign statement does not have a valid variable name.\n";
 		return false;
 	}
 
 	index += 1;
 	token = tokenized_program[index];
-	cout << "checking " << token << "is =\n";
 
 	if (token != "="){
 		cout << "Assign statement does not have an equal sign.\n";
@@ -81,7 +82,7 @@ bool parseAssign() {
 
 	if (parseExpression()) {
 		token = tokenized_program[index];
-		cout << "checking " << token << "is ;\n";
+
 		if (token == ";") {
 			index += 1;
 			return true;
@@ -97,7 +98,82 @@ bool parseAssign() {
 	}
 }
 
-bool parseWhile() {
+bool simpleParser::parseIf() {
+	if (endOfProgram()) {
+		cout << "End of program reached while attempting to parse If statement.\n";
+		return false;
+	}
+
+	string token = tokenized_program[index];
+
+	if (!(*simple_rules).isVarName(token)) {
+		cout << "Invalid variable name in If statement.\n";
+		return false;
+	}
+
+	index += 1;
+	token = tokenized_program[index];
+
+	if (token != "then") {
+		cout << "If statement has no Then keyword.\n";
+		return false;
+	}
+
+	index += 1;
+	token = tokenized_program[index];
+
+	if (token != "{") {
+		cout << "If statement has no opening brace.\n";
+		return false;
+	}
+
+	index += 1;
+
+	if (!parseStmtList()) {
+		return false;
+	}
+
+	token = tokenized_program[index];
+
+	if (token != "}") {
+		cout << "If statement has no closing brace.\n";
+		return false;
+	}
+
+	index += 1;
+	token = tokenized_program[index];
+
+	if (token != "else") {
+		cout << "If Statement has no Else part.\n";
+		return false;
+	}
+
+	index += 1;
+	token = tokenized_program[index];
+
+	if (token != "{") {
+		cout << "If statement has no opening brace.\n";
+		return false;
+	}
+
+	index += 1;
+
+	if (!parseStmtList()) {
+		return false;
+	}
+
+	token = tokenized_program[index];
+
+	if (token != "}") {
+		cout << "If statement has no closing brace.\n";
+		return false;
+	}
+
+	index += 1;
+	return true;
+}
+
+bool simpleParser::parseWhile() {
 	if (endOfProgram()) {
 		cout << "End of program reached while attempting to parse while statement.\n";
 		return false;
@@ -106,7 +182,7 @@ bool parseWhile() {
 	string token = tokenized_program[index];
 	string next_token = tokenized_program[index + 1];
 
-	if (isName(token) && next_token == "{") {
+	if ((*simple_rules).isName(token) && next_token == "{") {
 		index += 2;
 
 		if (!parseStmtList()) {
@@ -129,17 +205,15 @@ bool parseWhile() {
 	}
 }
 
-bool parseCall() {
+bool simpleParser::parseCall() {
 	if (endOfProgram()) {
 		cout << "End of program reached while attempting to parse call statement.\n";
 		return false;
 	}
 
-	cout << "parsing call statement\n";
-
 	string token = tokenized_program[index];
 	string next_token = tokenized_program[index + 1];
-	if (isProcName(token) && next_token == ";") {
+	if ((*simple_rules).isProcName(token) && next_token == ";") {
 		index += 2;
 		return true;
 	}
@@ -149,14 +223,16 @@ bool parseCall() {
 	}
 }
 
-bool parseStmt() {
-	cout << "parsingStmt\n";
-	cout << "checking " << tokenized_program[index] << "\n";
+bool simpleParser::parseStmt() {
 	string token = tokenized_program[index];
 
 	if (token == "while") {
 		index += 1;
 		return parseWhile();
+	}
+	else if (token == "if") {
+		index += 1;
+		return parseIf();
 	}
 	else if (token == "call") {
 		index += 1;
@@ -168,11 +244,8 @@ bool parseStmt() {
 }
 
 // Keep parsing statements until closing brace of procedure is encountered.
-bool parseStmtList() {
+bool simpleParser::parseStmtList() {
 	if (parseStmt()) {
-		cout << "Successfully parsed statement.\n";
-		cout << "checking " << tokenized_program[index] << "\n";
-
 		if (tokenized_program[index] == "}") {
 			return true;
 		}
@@ -186,17 +259,16 @@ bool parseStmtList() {
 	}
 }
 
-bool parseProcedure() {
+bool simpleParser::parseProcedure() {
 	if (endOfProgram()) {
 		cout << "End of program reached while attempting to parse procedure.\n";
 		return false;
 	}
-	cout << "parsing procedure\n";
+
 	string token = tokenized_program[index];
 	string next_token = tokenized_program[index + 1];
-	cout << "checking " << token << "is name\n";
 
-	if(isName(token) && next_token == "{"){
+	if((*simple_rules).isName(token) && next_token == "{"){
 		index += 2;
 
 		if (!parseStmtList()) {
@@ -208,7 +280,6 @@ bool parseProcedure() {
 
 		if (tokenized_program[index] == "}") {
 			index += 1;
-			cout << "end of procedure\n";
 			return true;
 		}
 		else {
@@ -222,10 +293,9 @@ bool parseProcedure() {
 	}
 }
 
-// Returns a fully tokenized program, or an empty vector if there are errors.
-vector<string> parseProgram(vector<string> program) {
+bool simpleParser::parseProgram(vector<string> program) {
 	tokenized_program = program;
-	
+
 	while (!endOfProgram()) {
 		string token = program[index];
 
@@ -235,19 +305,15 @@ vector<string> parseProgram(vector<string> program) {
 			if (!parseProcedure()) {
 				cout << "Error parsing procedure.\n";
 				tokenized_program.clear();
-				break;
+				return false;
 			};
-
-			cout << "checking there is another procedure\n";
-			cout << "index is " << index << "\n";
-			cout << "program size is " << program.size() << "\n";
 		}
 		else {
 			cout << "Cannot continue parsing because no procedure was found.\n";
 			tokenized_program.clear();
-			break;
+			return false;
 		}
 	}
 
-	return tokenized_program;
+	return true;
 }

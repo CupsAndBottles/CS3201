@@ -29,6 +29,8 @@ class TestWrapper : public AbstractWrapper {
   // destructor
   ~TestWrapper();
   
+  pkb* pkbPointer;
+
   // method for parsing the SIMPLE source
   virtual void parse(std::string filename);
   

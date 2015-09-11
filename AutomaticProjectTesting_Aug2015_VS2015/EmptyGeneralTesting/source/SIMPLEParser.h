@@ -8,14 +8,25 @@
 
 using namespace std;
 
-bool endOfProgram();
-bool parseExpression();
-bool parseAssign();
-bool parseWhile();
-bool parseCall();
-bool parseStmt();
-bool parseStmtList();
-bool parseProcedure();
-vector<string> parseProgram(vector<string> program); 
+class simpleParser 
+{
+public:
+	simpleParser();
+	bool parseProgram(vector<string> program);
+
+private:
+	vector<string> tokenized_program;
+	int index;
+
+	bool endOfProgram();
+	bool parseExpression();
+	bool parseAssign();
+	bool parseWhile();
+	bool parseIf();
+	bool parseCall();
+	bool parseStmt();
+	bool parseStmtList();
+	bool parseProcedure();
+};
 
 #endif

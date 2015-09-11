@@ -1,15 +1,18 @@
-#pragma once
-#include <string>
-#include <vector>
-#include <stdio.h>
-#include <sstream>
-#include <algorithm>
+//#pragma once
+#ifndef QueryEvaluator_HEADER
+#define QueryEvaluator_HEADER
 
+#include <stdio.h>
 #include "QueryPreProcessor.h"
 #include "EntityTable.h"
 #include "QueryObject.h"
 #include "PKB.h"
 #include "Tnode.h"
+
+#include <string>
+#include <vector>
+#include <sstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -23,7 +26,7 @@ class QueryEvaluator
 public:
 	QueryEvaluator(pkb* storePkb);
 
-	list<string> getResults(string output);
+	list<string> getResults(string input);
 
 	void getQueryData();
 	vector<vector<string>> queryResults();
@@ -50,3 +53,5 @@ public:
 private:
 	pkb* database;
 };
+
+#endif
