@@ -12,6 +12,8 @@ bool endOfProgram();
 bool parseExpression();
 bool parseAssign();
 bool parseWhile();
+bool parseCall();
+bool parseStmt();
 bool parseStmtList();
 bool parseProcedure();
 vector<string> parseProgram(vector<string> program); 
