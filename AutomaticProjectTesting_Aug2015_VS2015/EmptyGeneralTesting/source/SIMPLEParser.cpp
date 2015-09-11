@@ -11,21 +11,35 @@ vector<string> tokenized_program; // Stores the SIMPLE program
 int index = 0;					  // Keeps track of the tokens in tokenized_program
 
 bool endOfProgram() {
-	return index == tokenized_program.size() - 1;
+	return index >= tokenized_program.size() - 1;
 }
 
 bool parseExpression() {
+	if (endOfProgram()) {
+		cout << "End of program reached while attempting to parse expression.\n";
+		return false;
+	}
+
+	cout << "parsing expression\n";
 	string token = tokenized_program[index];
+	cout << "checking " << token << "is factor\n";
 	if (isFactor(token)) {
 		index += 1;
-		return true;
+		if (tokenized_program[index] == ";") {
+			return true;
+		}
+		// Make sure we don't have consecutive factors.
+		else if (!isFactor(tokenized_program[index-2])) {
+			parseExpression();
+		}
+		else {
+			cout << "Invalid expression: Consecutive factors.\n";
+			return false;
+		}
 	}
-	else if (token == "+"
-			|| token == "-"
-			|| token == "*"
-			|| token == "/") {
+	else if (isOperator(token)) {
 		// Make sure we don't have consecutive operators
-		if (isFactor(tokenized_program[index - 1])) {
+		if (!isOperator(tokenized_program[index - 1])) {
 			index += 1;
 			return parseExpression();
 		}
@@ -41,7 +55,14 @@ bool parseExpression() {
 }
 
 bool parseAssign() {
+	if (endOfProgram()) {
+		cout << "End of program reached while attempting to parse assign statement.\n";
+		return false;
+	}
+
+	cout << "parsing Assignment\n";
 	string token = tokenized_program[index];
+	cout << "checking " << token << "is name\n";
 	if (!isName(token)) {
 		cout << "Assign statement does not have a valid variable name.\n";
 		return false;
@@ -49,6 +70,7 @@ bool parseAssign() {
 
 	index += 1;
 	token = tokenized_program[index];
+	cout << "checking " << token << "is =\n";
 
 	if (token != "="){
 		cout << "Assign statement does not have an equal sign.\n";
@@ -59,6 +81,7 @@ bool parseAssign() {
 
 	if (parseExpression()) {
 		token = tokenized_program[index];
+		cout << "checking " << token << "is ;\n";
 		if (token == ";") {
 			index += 1;
 			return true;
@@ -69,6 +92,7 @@ bool parseAssign() {
 		}
 	}
 	else {
+		cout << "Assign statement does not have a right-hand assignment.\n";
 		return false;
 	}
 }
@@ -105,10 +129,38 @@ bool parseWhile() {
 	}
 }
 
+bool parseCall() {
+	if (endOfProgram()) {
+		cout << "End of program reached while attempting to parse call statement.\n";
+		return false;
+	}
+
+	cout << "parsing call statement\n";
+
+	string token = tokenized_program[index];
+	string next_token = tokenized_program[index + 1];
+	if (isProcName(token) && next_token == ";") {
+		index += 2;
+		return true;
+	}
+	else {
+		cout << "Invalid call statement.\n";
+		return false;
+	}
+}
+
 bool parseStmt() {
-	if (tokenized_program[index] == "while") {
+	cout << "parsingStmt\n";
+	cout << "checking " << tokenized_program[index] << "\n";
+	string token = tokenized_program[index];
+
+	if (token == "while") {
 		index += 1;
 		return parseWhile();
+	}
+	else if (token == "call") {
+		index += 1;
+		return parseCall();
 	}
 	else {
 		return parseAssign();
@@ -118,7 +170,10 @@ bool parseStmt() {
 // Keep parsing statements until closing brace of procedure is encountered.
 bool parseStmtList() {
 	if (parseStmt()) {
-		if (!endOfProgram() && tokenized_program[index] == "}") {
+		cout << "Successfully parsed statement.\n";
+		cout << "checking " << tokenized_program[index] << "\n";
+
+		if (tokenized_program[index] == "}") {
 			return true;
 		}
 		else {
@@ -136,9 +191,10 @@ bool parseProcedure() {
 		cout << "End of program reached while attempting to parse procedure.\n";
 		return false;
 	}
-	
+	cout << "parsing procedure\n";
 	string token = tokenized_program[index];
 	string next_token = tokenized_program[index + 1];
+	cout << "checking " << token << "is name\n";
 
 	if(isName(token) && next_token == "{"){
 		index += 2;
@@ -148,8 +204,11 @@ bool parseProcedure() {
 			return false;
 		}
 
+		cout << "successfully parsed stmtlist\n";
+
 		if (tokenized_program[index] == "}") {
 			index += 1;
+			cout << "end of procedure\n";
 			return true;
 		}
 		else {
@@ -166,10 +225,11 @@ bool parseProcedure() {
 // Returns a fully tokenized program, or an empty vector if there are errors.
 vector<string> parseProgram(vector<string> program) {
 	tokenized_program = program;
-	string token = program[0];
 	
 	while (!endOfProgram()) {
-		if (token.find("procedure") != string::npos) {
+		string token = program[index];
+
+		if (token == "procedure") {
 			index += 1;
 
 			if (!parseProcedure()) {
@@ -177,6 +237,10 @@ vector<string> parseProgram(vector<string> program) {
 				tokenized_program.clear();
 				break;
 			};
+
+			cout << "checking there is another procedure\n";
+			cout << "index is " << index << "\n";
+			cout << "program size is " << program.size() << "\n";
 		}
 		else {
 			cout << "Cannot continue parsing because no procedure was found.\n";

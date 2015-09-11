@@ -12,6 +12,7 @@ using namespace std;
 
 class pkb{
 public:
+	pkb();
 	pkb(ast* tree);
 	pkb(string filePath);
 
@@ -39,8 +40,11 @@ public:
 	vector<string> allProceduresThatUse(string var);
 	vector<string> allVarsUsedBy(string p);
 
-	bool isParent(int s1, int s2); //returns parent(s1, s2)
-	vector<int> allParentsOf(int stmt); //returns all immediate parents of stmt.
+	bool isParent(int s1, int s2);
+	Tnode * getNodeWithStmt(Tnode * anchorNode, int stmtNum);
+	//returns parent(s1, s2)
+	vector<int> getAllParentsOf(int stmt); //returns all immediate parents of stmt.
+	vector<Tnode*>* getAllParentsOf(Tnode * node, vector<Tnode*>* parents);
 	vector<int> allChildrenOf(int stmt); //returns all immediate children of stmt;
 
 	bool isParentStar(int s1, int s2); //returns parent*(s1, s2)
@@ -55,8 +59,10 @@ public:
 	vector<int> allThatFollowStar(int stmt);
 	vector<int> allBeforeStar(int stmt);
 
-	vector<int> selectAll(Tnode::Type type);
-	vector<int> pattern(Tnode::Type type, string var, string expr);
+	vector<int> selectStmts(Tnode::Type type);
+	vector<string> selectStrs(Tnode::Type type);
+	vector<int> patternStmts(Tnode::Type type, string var, string expr);
+	void setAst(ast * tree);
 
 private:
 	ast* storedAst;
@@ -75,12 +81,8 @@ private:
 	unordered_map<string, unordered_set<int>> callsProcs;
 	unordered_map<int, unordered_set<string>> callsStmts;
 
-	vector<vector<int>> parents; //index: stmt s, values: stmts that are parents of stmt s
-	vector<vector<int>> children; //index: stmt s, values: stmts that are children of stmt s
-
 	vector<int> follows; //index: stmt s, values: stmts that follow stmt s
 	vector<int> before; //index: stmt s, values: stmts that are before stmt s
-
 
 	//helper functions
 	bool isContainer(Tnode*);
@@ -103,6 +105,7 @@ private:
 	vector<string> flattenStringSetToStringVector(const unordered_set<string>* inp);
 	vector<Tnode*> getNodesOfType(Tnode* start, Tnode::Type type);
 	vector<Tnode*>* getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, vector<Tnode*>* results);
+	Tnode* pkb::getNodeWithStmt(int stmtNum);
 
 	void updateDBFile();
 	Tnode * getCallee(Tnode * node);

@@ -28,6 +28,7 @@ public:
 	EntTable getEntityTable();
 	vector<string> getEntities();
 	vector<QueryObject> getQueries();
+	void clearAll();
 
 private:
 	vector<string> checkForBracketsAndComma(vector<string> argVector);

@@ -77,3 +77,15 @@ bool isFactor(string token) {
 		return false;
 	}
 }
+
+bool isOperator(string token) {
+	if (token == "+"
+		|| token == "-"
+		|| token == "*"
+		|| token == "/") {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
