@@ -20,6 +20,8 @@ class QueryEvaluator
 	EntTable declaration;
 
 public:
+	QueryEvaluator(pkb* storePkb);
+
 	void getQueryData();
 	vector<vector<string>> queryResults();
 	list<string> finalResult(vector<vector<string>> store);
@@ -39,4 +41,7 @@ public:
 	vector<string> integerVectorToString(vector<int> vector);
 	bool isDoubleQuote(string s);
 	void displayQuery(string results);
+
+private:
+	pkb* database;
 };
