@@ -46,6 +46,21 @@ vector<string> pkb::allVarsModdedBy(int stmt){
 	}
 }
 
+bool pkb::modifies(string p, string var)
+{
+	return false;
+}
+
+vector<string> pkb::allProceduresThatModify(string var)
+{
+	return vector<string>();
+}
+
+vector<string> pkb::allVarsModdedBy(string p)
+{
+	return vector<string>();
+}
+
 bool pkb::uses(int stmt, string var){
 	try{
 		return usesStmts.at(stmt).count(var);
@@ -68,6 +83,21 @@ vector<string> pkb::allVarsUsedBy(int stmt){
 	} catch (std::out_of_range){
 		return vector<string>();
 	}
+}
+
+bool pkb::uses(string p, string var)
+{
+	return false;
+}
+
+vector<string> pkb::allProceduresThatUse(string var)
+{
+	return vector<string>();
+}
+
+vector<string> pkb::allVarsUsedBy(string p)
+{
+	return vector<string>();
 }
 
 bool pkb::isParent(int s1, int s2){
@@ -94,8 +124,12 @@ Tnode* pkb::getNodeWithStmt(Tnode* anchorNode, int stmtNum){
 		return anchorNode;
 	} else if (nodeStmtNum > stmtNum){
 		Tnode* parent = getSPAParent(anchorNode);
-		
 		// get node with nodeStmtNum - 1 or a parent node with stmtNum < nodeStmtNum
+		if (parent->getLeftSib() != NULL){
+			// parent node with stmtNum < nodeStmtNum
+			//incomplete
+			return NULL;
+		}
 	} else if (nodeStmtNum < stmtNum){
 		// iterate down right sibs
 		// if lastChild, jump to next parent
@@ -184,11 +218,11 @@ vector<int> pkb::selectStmts(Tnode::Type type){
 	return flattenNodeVectorToIntVector(&getNodesOfType(root, type));
 }
 
-vector<string> selectStrs(Tnode::Type type){
+vector<string> pkb::selectStrs(Tnode::Type type){
 	return vector<string>();
 }
 
-vector<int> patternStmts(Tnode::Type type, string var, string expr){
+vector<int> pkb::patternStmts(Tnode::Type type, string var, string expr){
 	return vector<int>();
 }
 
