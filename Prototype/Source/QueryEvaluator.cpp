@@ -14,6 +14,24 @@ EntTable declaration;
 QueryEvaluator::QueryEvaluator(pkb* storePkb) {
 	database = storePkb;
 }
+
+//Autotester test driver function
+list<string> QueryEvaluator::evaluate (string query) {
+	list<string> output;
+	if (preprocessor.query(query)) {
+		getQueryData();
+		vector<vector<string>> temp;
+		temp = queryResults();
+		output = finalResult(temp);
+		preprocessor.clearAll();
+		return output;
+	}
+	else {
+		return output;
+	}
+}
+
+//get data
 void QueryEvaluator:: getQueryData() {
 	getSelect = preprocessor.getEntities();
 	conditionClause = preprocessor.getQueries();
@@ -77,6 +95,8 @@ vector<string> QueryEvaluator:: processCondition(string condition,string leftArg
 		return followT(leftArgument, rightArgument);
 	}
 	else {
+		//precondition: preprocessor return syntactically correct and condition==assignment synoymn
+		//todo: best to separate 
 		return PatternClause(condition, leftArgument, rightArgument);
 	}
 
