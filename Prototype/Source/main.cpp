@@ -6,20 +6,16 @@
 
 // User-defined headers
 #include "ast.h"
-#include "Parser.h"
+#include "parser.h"
 #include "pkb.h"
 
 // Main control of all components is here.
 int main() {
-	 vector<string> tokenized_program = parseSimpleProgram();
+	parser *parse = new parser();
+	vector<string> tokenized_program = (*parse).parseSimpleProgram();
 
 	if (tokenized_program.size() > 0) {
-		// Temp code
-		cout << "Printing tokenized program\n";
-		for (int i = 0; i < tokenized_program.size(); i++) {
-			cout << tokenized_program[i] << "\n";
-		}
-		cout << "End of tokenized program\n";
+		cout << "Successfully parsed SIMPLE program.\n";
 
 		// Construct an AST
 		ast *a = new ast;

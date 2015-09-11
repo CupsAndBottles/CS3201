@@ -5,12 +5,18 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include "parser.h"
 #include "SIMPLEParser.h"
+#include "SIMPLERules.h"
 
 using namespace std;
 
+parser::parser() {
+
+}
+
 // Splits a string by a delimiter
-vector<string> split(string str, char delimiter) {
+vector<string> parser::split(string str, char delimiter) {
 	vector<string> split_string;
 	stringstream ss(str),s2;
 	string tok,delim_string;
@@ -45,17 +51,20 @@ vector<string> split(string str, char delimiter) {
 	}
 
 	// Insert non-whitespace delimiters into the correct position
-	if ((str.size() > 0) && (str[str.size() - 1] == delimiter)) {
+	if ((str.size() > 0) 
+		&& (str[str.size() - 1] == delimiter) 
+		&& (delimiter != ' ') 
+		&& (delimiter != '\t')) {
 		split_string.push_back(delim_string);
 	}
 
 	return split_string;
 }
 
-vector<string> splitByDelimiter(vector<string> original, char delimiter) {
+vector<string> parser::splitByDelimiter(vector<string> original, char delimiter) {
 	vector<string> temp;
 	vector<string> final;
-	cout << "splitting by " << delimiter << "\n";
+
 	for (int i = 0; i < original.size(); i++) {
 		temp = split(original[i], delimiter);
 
@@ -67,7 +76,7 @@ vector<string> splitByDelimiter(vector<string> original, char delimiter) {
 	return final;
 }
 
-vector<string> splitByDelimiters(vector<string> program) {
+vector<string> parser::splitByDelimiters(vector<string> program) {
 	program = splitByDelimiter(program, ' ');
 	program = splitByDelimiter(program, '=');
 	program = splitByDelimiter(program, ';');
@@ -86,7 +95,7 @@ vector<string> splitByDelimiters(vector<string> program) {
 
 // Parse the program as it is being read in
 // If there is an error, stop reading and terminate
-vector<string> readProgram(string file) {
+vector<string> parser::readProgram(string file) {
 	ifstream fileReader;
 	string line = "";
 	vector<string> temp, program;
@@ -105,7 +114,7 @@ vector<string> readProgram(string file) {
 	return program;
 }
 
-vector<string> parseSimpleProgram()
+vector<string> parser::parseSimpleProgram()
 {
 	string file;
 	vector<string> program, tokenized_program;
@@ -114,10 +123,11 @@ vector<string> parseSimpleProgram()
 	cin >> file;
 
 	program = readProgram(file);
-	cout << "tokenizing program\n";
 	tokenized_program = splitByDelimiters(program);
-	cout << "tokenized program\n";
-	if (parseProgram(tokenized_program).size() == 0) {
+
+	simpleParser *simple_parser = new simpleParser();
+
+	if (!(*simple_parser).parseProgram(tokenized_program)) {
 		// Error parsing the program; return an empty vector
 		tokenized_program.clear();
 	}
