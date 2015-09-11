@@ -62,28 +62,59 @@ vector<string> pkb::allVarsUsedBy(int stmt){
 }
 
 bool pkb::isParent(int s1, int s2){
-	try{
-		vector<int> parents = children.at(s1);
-		return find(parents.begin(), parents.end(), s2) != parents.end();
-	} catch (std::out_of_range){
-		return false;
+	Tnode* s2Node = getNodeWithStmt(s2);
+	Tnode* s2Parent = getSPAParent(s2Node);
+	return s2Parent->getStmtNum() == s1;
+}
+
+// searches AST and returns node with statement number stmtNum if found, NULL if not.
+Tnode* pkb::getNodeWithStmt(Tnode* anchorNode, int stmtNum){
+	if (anchorNode == NULL){
+		return NULL;
+	}
+
+	int nodeStmtNum = anchorNode->getStmtNum();
+	if (nodeStmtNum == -1){
+		// program, procedure, statement lists, expressions, variables, constants
+
+	} else if (nodeStmtNum == stmtNum){
+		return anchorNode;
+	} else if (nodeStmtNum > stmtNum){
+		// get node with nodeStmtNum - 1 or a parent node with stmtNum < nodeStmtNum
+	} else if (nodeStmtNum < stmtNum){
+		// iterate down right sibs
+		// if lastChild, jump to next parent
+	} else {
+		// not found
+		return NULL;
+	}
+
+	// incomplete
+	return NULL;
+}
+
+vector<int> pkb::getAllParentsOf(int stmt){
+	Tnode* node = getNodeWithStmt(stmt);
+	if (node != NULL) {
+		return flattenNodeVectorToIntVector(getAllParentsOf(node, &vector<Tnode*>()));
+	} else {
+		return vector<int>();
 	}
 }
 
-vector<int> pkb::allParentsOf(int stmt){
-	try{
-		return parents.at(stmt);
-	} catch (std::out_of_range){
-		return vector<int>();
+vector<Tnode*>* pkb::getAllParentsOf(Tnode* node, vector<Tnode*>* parents) {
+	Tnode* parent = getSPAParent(node);
+	if (parent == NULL) {
+		return parents;
+	} else { 
+		parents->push_back(parent);
+		return getAllParentsOf(parent, parents);
 	}
 }
 
 vector<int> pkb::allChildrenOf(int stmt){
-	try{
-		return children.at(stmt);
-	} catch (std::out_of_range){
-		return vector<int>();
-	}
+	// incomplete
+	return vector<int>();
 }
 
 bool pkb::isParentStar(int s1, int s2)
