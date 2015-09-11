@@ -40,7 +40,7 @@ void QueryEvaluator:: getQueryData() {
 
 vector<vector<string>> QueryEvaluator:: queryResults() {
 	vector<vector<string>> store;//todo precondition: make a check so that no same synonyms
-	for (int i = 0; i < conditionClause.size(); i++) {
+	for (size_t i = 0; i < conditionClause.size(); i++) {
 		QueryObject temp = conditionClause.at(i);
 		string condition = temp.getFirst();
 		string leftArgument = temp.getSecond();
@@ -52,14 +52,14 @@ vector<vector<string>> QueryEvaluator:: queryResults() {
 }
 list<string> QueryEvaluator::finalResult(vector<vector<string>> store) {
 	list<string> output; 
-	for (int i = 0; i < selectResult.size(); i++) {
+	for (size_t i= 0; i < selectResult.size(); i++) {
 		int count=0;
-		for (int j = 0; j < store.size(); j++) {
+		for (size_t j = 0; j < store.size(); j++) {
 			bool isFound = false;
-			for (int k = 0; k < store.at(j).size(); j++) {
+			for (size_t k = 0; k < store.at(j).size(); j++) {
 				string compare = store.at(j).at(k);
 				if (stringEqual(selectResult.at(i), compare)) {
-					isFound == true;
+					isFound = true;
 				}
 			}
 			if (isFound) {
@@ -127,7 +127,7 @@ vector<string> QueryEvaluator:: modify(string leftArgument, string rightArgument
 		}
 		else {
 			for (int i = 0; selectResult.size(); i++) {
-				if (database->allVarsModdedBy(selectResult.at(i)).empty == false) { //(stmts)int
+				if (database->allVarsModdedBy(selectResult.at(i)).empty() == false) { //(stmts)int
 					output.push_back(selectResult.at(i)+"");
 				}
 			}
@@ -173,7 +173,7 @@ vector<string> QueryEvaluator:: uses(string leftArgument, string rightArgument) 
 		}
 		else {
 			for (int i = 0; selectResult.size(); i++) {
-				if (database->allVarsUsedBy(selectResult.at(i)).empty == false) { //(stmts)int
+				if (database->allVarsUsedBy(selectResult.at(i)).empty() == false) { //(stmts)int
 					output.push_back(selectResult.at(i) + "");
 				}
 			}
@@ -264,9 +264,9 @@ vector<string> QueryEvaluator::PatternClause(string type, string leftArgument, s
 		else if (declaration.getType(leftArgument).compare("variable")) {
 			string select = getSelectClause();
 			if (stringEqual(select, leftArgument)) {
-				for (int i = 0; i < selectResult.size(); i++) {
+				for (size_t i = 0; i < selectResult.size(); i++) {
 					vector<int> temp = database->patternStmts(Tnode::STMT_ASSIGN, selectResult.at(i), rightArgument);
-					if (!temp.empty) {
+					if (!temp.empty()) {
 						output.push_back(selectResult.at(i));
 					}
 				}
@@ -317,8 +317,8 @@ void QueryEvaluator:: recordSelectClause() {
 
 //helper functions
 bool QueryEvaluator::isNumericString(string s) {
-	for (int i = 0; i < s.size(); i++) {
-		if (isdigit(s.at[i]) == false) {
+	for (size_t i = 0; i < s.size(); i++) {
+		if (isdigit(s[i]) == false) {
 			return false;
 		}
 	}
@@ -340,11 +340,12 @@ bool QueryEvaluator::stringEqual(string s,string match) {
 
 string QueryEvaluator::intToString(int value) {
 	string temp = to_string(value);
+	return temp;
 }
 
 vector<string> QueryEvaluator::integerVectorToString(vector<int> arr) {
 	vector<string> tempArr;
-	for (int i = 0; i < arr.size(); i++) {
+	for (size_t i = 0; i < arr.size(); i++) {
 		tempArr.push_back(intToString(arr.at(i)));
 	}
 	return tempArr;
