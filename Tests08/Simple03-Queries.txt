@@ -1,0 +1,6 @@
+1 - Test if SPA tool returns all if and while statements
+if ifstat; while w;
+Select ifstat, w
+2, 4, 7, 16, 20
+5000
+2 - 
