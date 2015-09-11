@@ -366,3 +366,9 @@ vector<string> QueryPreProcessor::getEntities() {
 vector<QueryObject> QueryPreProcessor::getQueries() {
 	return queryList;
 }
+
+void QueryPreProcessor::clearAll() {
+	entityTable.clear();
+	entityList.clear();
+	queryList.clear();
+}

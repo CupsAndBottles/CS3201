@@ -11,32 +11,32 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\source\AST.h" />
-    <ClInclude Include="..\source\EntityTable.h" />
-    <ClInclude Include="..\source\Parser.h" />
-    <ClInclude Include="..\source\PKB.h" />
-    <ClInclude Include="..\source\QueryEvaluator.h" />
-    <ClInclude Include="..\source\QueryObject.h" />
-    <ClInclude Include="..\source\QueryPreProcessor.h" />
-    <ClInclude Include="..\source\RelTable.h" />
-    <ClInclude Include="..\source\SemanticsCheck.h" />
-    <ClInclude Include="..\source\SIMPLEParser.h" />
-    <ClInclude Include="..\source\SIMPLERules.h" />
-    <ClInclude Include="..\source\Tnode.h" />
+    <ClInclude Include="..\Source\AST.h" />
+    <ClInclude Include="..\Source\EntityTable.h" />
+    <ClInclude Include="..\Source\Parser.h" />
+    <ClInclude Include="..\Source\PKB.h" />
+    <ClInclude Include="..\Source\QueryEvaluator.h" />
+    <ClInclude Include="..\Source\QueryObject.h" />
+    <ClInclude Include="..\Source\QueryPreProcessor.h" />
+    <ClInclude Include="..\Source\RelTable.h" />
+    <ClInclude Include="..\Source\SemanticsCheck.h" />
+    <ClInclude Include="..\Source\SIMPLEParser.h" />
+    <ClInclude Include="..\Source\SIMPLERules.h" />
+    <ClInclude Include="..\Source\Tnode.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\source\AST.cpp" />
-    <ClCompile Include="..\source\EntityTable.cpp" />
-    <ClCompile Include="..\source\Parser.cpp" />
-    <ClCompile Include="..\source\PKB.cpp" />
-    <ClCompile Include="..\source\QueryEvaluator.cpp" />
-    <ClCompile Include="..\source\QueryObject.cpp" />
-    <ClCompile Include="..\source\QueryPreProcessor.cpp" />
-    <ClCompile Include="..\source\RelTable.cpp" />
-    <ClCompile Include="..\source\SemanticsCheck.cpp" />
-    <ClCompile Include="..\source\SIMPLEParser.cpp" />
-    <ClCompile Include="..\source\SIMPLERules.cpp" />
-    <ClCompile Include="..\source\Tnode.cpp" />
+    <ClCompile Include="..\Source\AST.cpp" />
+    <ClCompile Include="..\Source\EntityTable.cpp" />
+    <ClCompile Include="..\Source\Parser.cpp" />
+    <ClCompile Include="..\Source\PKB.cpp" />
+    <ClCompile Include="..\Source\QueryEvaluator.cpp" />
+    <ClCompile Include="..\Source\QueryObject.cpp" />
+    <ClCompile Include="..\Source\QueryPreProcessor.cpp" />
+    <ClCompile Include="..\Source\RelTable.cpp" />
+    <ClCompile Include="..\Source\SemanticsCheck.cpp" />
+    <ClCompile Include="..\Source\SIMPLEParser.cpp" />
+    <ClCompile Include="..\Source\SIMPLERules.cpp" />
+    <ClCompile Include="..\Source\Tnode.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{DC21A1EA-D2C6-4D14-A2B4-E025B64BDE81}</ProjectGuid>
