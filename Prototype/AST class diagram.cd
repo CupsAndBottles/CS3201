@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ClassDiagram MajorVersion="1" MinorVersion="1">
+<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access" MembersFormat="FullSignature">
   <Class Name="ast">
-    <Position X="0.5" Y="1.25" Width="2.25" />
+    <Position X="0.5" Y="3.75" Width="6.5" />
     <TypeIdentifier>
       <HashCode>AAAAAgCIAAAEQAAJAAAhIABAAAgYAiAAg0AQAigAAAM=</HashCode>
       <FileName>Source\AST.h</FileName>
@@ -13,7 +13,7 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="Tnode">
-    <Position X="4" Y="1.25" Width="2.25" />
+    <Position X="8" Y="3.75" Width="4.5" />
     <Compartments>
       <Compartment Name="Nested Types" Collapsed="false" />
     </Compartments>
@@ -41,84 +41,7 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="std::vector&lt;_Ty, _Alloc&gt;" Collapsed="true">
-    <Position X="7" Y="1.25" Width="3" />
-    <NestedTypes>
-      <Typedef Name="std::vector&lt;_Ty, _Alloc&gt;::reference" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vector</NewMemberFileName>
-        </TypeIdentifier>
-      </Typedef>
-      <Typedef Name="std::vector&lt;_Ty, _Alloc&gt;::const_iterator" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vector</NewMemberFileName>
-        </TypeIdentifier>
-      </Typedef>
-      <Typedef Name="std::vector&lt;_Ty, _Alloc&gt;::difference_type" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vector</NewMemberFileName>
-        </TypeIdentifier>
-      </Typedef>
-      <Typedef Name="std::vector&lt;_Ty, _Alloc&gt;::_Mybase" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vector</NewMemberFileName>
-        </TypeIdentifier>
-      </Typedef>
-      <Typedef Name="std::vector&lt;_Ty, _Alloc&gt;::_Myt" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vector</NewMemberFileName>
-        </TypeIdentifier>
-      </Typedef>
-      <Typedef Name="std::vector&lt;_Ty, _Alloc&gt;::allocator_type" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vector</NewMemberFileName>
-        </TypeIdentifier>
-      </Typedef>
-      <Typedef Name="std::vector&lt;_Ty, _Alloc&gt;::pointer" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vector</NewMemberFileName>
-        </TypeIdentifier>
-      </Typedef>
-      <Typedef Name="std::vector&lt;_Ty, _Alloc&gt;::const_pointer" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vector</NewMemberFileName>
-        </TypeIdentifier>
-      </Typedef>
-      <Typedef Name="std::vector&lt;_Ty, _Alloc&gt;::size_type" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vector</NewMemberFileName>
-        </TypeIdentifier>
-      </Typedef>
-      <Typedef Name="std::vector&lt;_Ty, _Alloc&gt;::const_reference" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vector</NewMemberFileName>
-        </TypeIdentifier>
-      </Typedef>
-      <Typedef Name="std::vector&lt;_Ty, _Alloc&gt;::reverse_iterator" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vector</NewMemberFileName>
-        </TypeIdentifier>
-      </Typedef>
-      <Typedef Name="std::vector&lt;_Ty, _Alloc&gt;::_Alty" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vector</NewMemberFileName>
-        </TypeIdentifier>
-      </Typedef>
-      <Typedef Name="std::vector&lt;_Ty, _Alloc&gt;::iterator" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vector</NewMemberFileName>
-        </TypeIdentifier>
-      </Typedef>
-      <Typedef Name="std::vector&lt;_Ty, _Alloc&gt;::value_type" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vector</NewMemberFileName>
-        </TypeIdentifier>
-      </Typedef>
-      <Typedef Name="std::vector&lt;_Ty, _Alloc&gt;::const_reverse_iterator" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vector</NewMemberFileName>
-        </TypeIdentifier>
-      </Typedef>
-    </NestedTypes>
+    <Position X="2" Y="1.25" Width="2.75" />
     <TypeIdentifier>
       <HashCode>IUoEEIEqCLBMUEBAAKMIAgASAgUESAIAxQMwgwAEQgI=</HashCode>
       <FileName>c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vector</FileName>
