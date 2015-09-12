@@ -203,11 +203,11 @@ vector<string> QueryEvaluator:: parent(string leftArgument, string rightArgument
 	string select = getSelectClause();
 	vector<string> output;
 	if (stringEqual(select, leftArgument) && isNumericString(rightArgument)) {
-		vector<int> temp=database->getAllParentsOf(stoi(rightArgument));
+		vector<int> temp=database->getParentOf(stoi(rightArgument));
 		return output = integerVectorToString(temp);
 	}
 	else if (stringEqual(select, rightArgument) && isNumericString(leftArgument)) {
-		vector<int> temp=database->allChildrenOf(stoi(leftArgument));
+		vector<int> temp=database->getChildrenOf(stoi(leftArgument));
 		return output = integerVectorToString(temp);
 	}
 	else {
@@ -218,7 +218,7 @@ vector<string> QueryEvaluator:: parentT(string leftArgument, string rightArgumen
 	string select = getSelectClause();
 	vector<string> output;
 	if (stringEqual(select, leftArgument) && isNumericString(rightArgument)) {
-		vector<int> temp = database->allParentsStarOf(stoi(rightArgument));
+		vector<int> temp = database->getParentsStarOf(stoi(rightArgument));
 		return output = integerVectorToString(temp);
 	}
 	else if (stringEqual(select, rightArgument) && isNumericString(leftArgument)) {

@@ -288,7 +288,18 @@ Tnode* pkb::getNextStmtNode(Tnode* currNode){
 	}
 }
 
-vector<int> pkb::getAllParentsOf(int stmt){
+vector<int> pkb::getParentOf(int stmt){
+	Tnode* node = getNodeWithStmt(stmt);
+	if (node != NULL){
+		Tnode* parent = getSPAParent(node);
+		if (parent != NULL){
+			return vector<int>(parent->getStmtNum());
+		}
+	}
+	return vector<int>();
+}
+
+vector<int> pkb::getParentsStarOf(int stmt){
 	Tnode* node = getNodeWithStmt(stmt);
 	if (node != NULL) {
 		return flattenNodeVectorToIntVector(getAllParentsOf(node, &vector<Tnode*>()));
@@ -307,19 +318,27 @@ vector<Tnode*>* pkb::getAllParentsOf(Tnode* node, vector<Tnode*>* parents) {
 	}
 }
 
-vector<int> pkb::allChildrenOf(int stmt){
-	// incomplete
-	return vector<int>();
+vector<int> pkb::getChildrenOf(int stmt){
+	Tnode* node = getNodeWithStmt(stmt);
+	if (!isContainer(node)){
+		return vector<int>();
+	}
+
+	vector<int> children = vector<int>();
+	Tnode* child = node->getFirstChild();
+	while (!isLastChild(child)){
+		children.push_back(child->getStmtNum());
+		child = child->getRightSib();
+	}
+	return children;
 }
 
 bool pkb::isParentStar(int s1, int s2)
 {
-	return false;
-}
-
-vector<int> pkb::allParentsStarOf(int stmt)
-{
-	return vector<int>();
+	vector<int> parents = getParentsStarOf(s2);
+	std::vector<int>::iterator it;
+	it = find(parents.begin(), parents.end(), s1);
+	return it != parents.end();
 }
 
 vector<int> pkb::allChildrenStarOf(int stmt)
@@ -400,17 +419,17 @@ vector<int> pkb::flattenNodeVectorToIntVector(const vector<Tnode*>* inp) {
 }
 
 vector<int> pkb::flattenIntSetToIntVector(const unordered_set<int>* inp) {
-	return std::vector<int> (inp->begin(), inp->end());
+	return vector<int> (inp->begin(), inp->end());
 }
 
 vector<string> pkb::flattenStringSetToStringVector(const unordered_set<string>* inp) {
-	return std::vector<string> (inp->begin(), inp->end());
+	return vector<string> (inp->begin(), inp->end());
 }
 
 //return all nodes contained in the subtree of input node with type specified by input.
 vector<Tnode*> pkb::getNodesOfType(Tnode* start, Tnode::Type type){
 	vector<Tnode*> results;
-	results = *pkb::getNodesOfTypeHelper(start, type, &results);
+	results = *getNodesOfTypeHelper(start, type, &results);
 	return results;
 }
 
@@ -419,11 +438,14 @@ vector<Tnode*>* pkb::getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, vector<
 		if (curr->getType() == type){
 			results->push_back(curr);
 		}
-		results = pkb::getNodesOfTypeHelper(curr->getRightSib(), type, results);
-		return pkb::getNodesOfTypeHelper(curr->getFirstChild(), type, results);
-	} else {
-		return results;
+		if (isContainer(curr) || isProcedure(curr) || isProgram(curr) || isStmtLst(curr)){
+			results = getNodesOfTypeHelper(curr->getFirstChild(), type, results);
+		}
+		if (!isLastChild(curr)){
+			results = getNodesOfTypeHelper(curr->getRightSib(), type, results);
+		}
 	}
+	return results;
 }
 
 bool pkb::isContainer(Tnode* node){

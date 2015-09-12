@@ -41,14 +41,11 @@ public:
 	vector<string> allVarsUsedBy(string p);
 
 	bool isParent(int s1, int s2);
-	Tnode * getNodeWithStmt(Tnode * anchorNode, int stmtNum);
-	//returns parent(s1, s2)
-	vector<int> getAllParentsOf(int stmt); //returns all immediate parents of stmt.
-	vector<Tnode*>* getAllParentsOf(Tnode * node, vector<Tnode*>* parents);
-	vector<int> allChildrenOf(int stmt); //returns all immediate children of stmt;
+	vector<int> getParentOf(int stmt); // returns immediate parent of statement
+	vector<int> getChildrenOf(int stmt); //returns all immediate children of stmt
 
 	bool isParentStar(int s1, int s2); //returns parent*(s1, s2)
-	vector<int> allParentsStarOf(int stmt); //returns immediate and extended parents of stmt;
+	vector<int> getParentsStarOf(int stmt); //returns immediate and extended parents of stmt;
 	vector<int> allChildrenStarOf(int stmt); //returns immediate and extended parents of stmt;
 
 	bool isFollows(int s1, int s2); //returns follows(s1, s2)
@@ -114,6 +111,8 @@ private:
 	Tnode * getPreviousStmtNode(Tnode * currNode);
 	Tnode * getNextStmtNode(Tnode * currNode);
 	Tnode * getNodeWithProcName(string targetName);
+	vector<Tnode*>* getAllParentsOf(Tnode * node, vector<Tnode*>* parents);
+
 
 	void updateDBFile();
 	Tnode * getCallee(Tnode * node);
