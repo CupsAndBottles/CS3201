@@ -23,7 +23,7 @@ namespace UnitTesting
 
 			testNode = Tnode::createNode(Tnode::PROGRAM, "myProg");
 
-			Assert::AreEqual((string)"myProg", testNode->getName());
+			Assert::AreEqual((string)"myprog", testNode->getName());
 			Assert::IsNull(testNode->getParent());
 			Assert::IsNull(testNode->getFirstChild());
 			Assert::IsNull(testNode->getRightSibling());
@@ -122,7 +122,7 @@ namespace UnitTesting
 
 			T1 = Tnode::createNode(Tnode::PROCEDURE, "myProc");
 
-			Assert::AreEqual((string)"myProc", T1->getName());
+			Assert::AreEqual((string)"myproc", T1->getName());
 			Assert::IsNull(T1->getParent());
 			Assert::IsNull(T1->getFirstChild());
 			Assert::IsNull(T1->getRightSibling());
