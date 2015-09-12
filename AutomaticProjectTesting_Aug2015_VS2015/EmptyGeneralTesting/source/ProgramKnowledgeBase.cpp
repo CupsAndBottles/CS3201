@@ -471,7 +471,7 @@ vector<Tnode*> ProgramKnowledgeBase::getNodesOfType(Tnode::Type type){
 
 //return all nodes contained in the subtree of input node with type specified by input.
 vector<Tnode*> ProgramKnowledgeBase::getNodesOfType(Tnode* start, Tnode::Type type){
-	vector<Tnode*> results;
+	vector<Tnode*> results = vector<Tnode*>();
 	results = *getNodesOfTypeHelper(start, type, &results);
 	return results;
 }
@@ -481,7 +481,7 @@ vector<Tnode*>* ProgramKnowledgeBase::getNodesOfTypeHelper(Tnode* curr, Tnode::T
 		if (curr->getType() == type){
 			results->push_back(curr);
 		}
-		if (isContainer(curr) || isProcedure(curr) || isProgram(curr) || isStatementList(curr)){
+		if (curr->getFirstChild() != NULL){
 			results = getNodesOfTypeHelper(curr->getFirstChild(), type, results);
 		}
 		if (!isLastChild(curr)){
