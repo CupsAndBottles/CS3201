@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "AbstractWrapper.h"
-#include "AST.h"
+#include "AbstractSyntaxTree.h"
 #include "EntityTable.h"
 #include "Parser.h"
 #include "PKB.h"
