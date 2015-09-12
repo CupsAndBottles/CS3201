@@ -22,14 +22,19 @@ void TestWrapper::parse(std::string filename) {
 	Parser *p = new Parser();
 	vector<string> tokenized_program = (*p).parseSimpleProgram(filename);
 
-	ast *AST = new ast();
-	AST->buildAST(tokenized_program);
-	Tnode *root = AST->getRoot();
-	cout << "Successfully constructed AST.\n";
+	if (tokenized_program.size() > 0) {
+		ast *AST = new ast();
+		AST->buildAST(tokenized_program);
+		Tnode *root = AST->getRoot();
+		cout << "Successfully constructed AST.\n";
 
-	pkbPointer = &pkb(AST);
+		pkbPointer = &pkb(AST);
 
-	cout << "Successfully constructed PKB.\n";
+		cout << "Successfully constructed PKB.\n";
+	}
+	else {
+		cout << "Could not parse SIMPLE program. Aborting.\n";
+	}
 
 }
 

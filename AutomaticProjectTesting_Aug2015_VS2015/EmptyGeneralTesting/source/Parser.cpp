@@ -121,9 +121,9 @@ vector<string> Parser::parseSimpleProgram(string file)
 	program = readProgram(file);
 	tokenized_program = splitByDelimiters(program);
 
-	simpleParser *parser = new simpleParser();
+	simpleParser *parser = new simpleParser(tokenized_program);
 
-	if (!(*parser).parseProgram(tokenized_program)) {
+	if (!(*parser).parseProgram()) {
 		// Error parsing the program; return an empty vector
 		tokenized_program.clear();
 	}

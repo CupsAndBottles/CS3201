@@ -6,32 +6,24 @@ procedure kitkat {
 			z = x + y;
 			d = z * 0;
 			if d then {
-				y = y + 1;	
-			} else {
-				y = y - 1;
-			}
-			y = y -2;
-		}
-		x = 2;
-	} else {
-		z = d * 2;
-	}
+				y = y + 1;} 
+			else {
+				y = y - 1;}
+			y = y - 2;}
+		x = 2;}
+	else {
+		z = d * 2;}
 	x = z + 3;
-	call water;
-}
+	call water;}
 
 procedure snickers {
 	i = 1;
 	if i then {
-		call kitkat;
-	} else {
-		call water;
-	}
-}
+		call kitkat;}
+	else {
+		call water;}}
 
 procedure water {
 	q = 8;
 	while q {
-		q = q - 1;
-	}
-}
+		q = q - 1;}}

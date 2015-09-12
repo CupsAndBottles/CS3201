@@ -11,13 +11,9 @@ using namespace std;
 class simpleParser 
 {
 public:
-	simpleParser();
-	bool parseProgram(vector<string> program);
+	simpleParser(vector<string> program);
 
-private:
-	vector<string> tokenizedProgram;
-	int index;
-
+	bool parseProgram();
 	bool endOfProgram();
 	bool parseExpression();
 	bool parseAssign();
@@ -27,6 +23,10 @@ private:
 	bool parseStmt();
 	bool parseStmtList();
 	bool parseProcedure();
+
+private:
+	vector<string> tokenizedProgram;
+	int index;
 };
 
 #endif
