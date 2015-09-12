@@ -20,11 +20,11 @@ void TestWrapper::parse(std::string filename) {
 	// call your parser to do the parsing
     // ...rest of your code...
 	Parser *p = new Parser();
-	vector<string> tokenized_program = (*p).parseSimpleProgram(filename);
+	vector<string> tokenizedProgram = (*p).parseSimpleProgram(filename);
 
-	if (tokenized_program.size() > 0) {
+	if (tokenizedProgram.size() > 0) {
 		AbstractSyntaxTree *AST = new AbstractSyntaxTree();
-		AST->buildAbstractSyntaxTree(tokenized_program);
+		AST->buildAbstractSyntaxTree(tokenizedProgram);
 		Tnode *root = AST->getRoot();
 		cout << "Successfully constructed AST.\n";
 
