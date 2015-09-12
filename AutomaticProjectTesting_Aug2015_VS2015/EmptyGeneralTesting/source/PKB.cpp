@@ -46,19 +46,47 @@ vector<string> pkb::allVarsModdedBy(int stmt){
 	}
 }
 
-bool pkb::modifies(string p, string var)
-{
+bool pkb::modifies(string procName, string var){
+	Tnode* procNode = getNodeWithProcName(procName);
+	if (procNode == NULL) {
+		return false;
+	}
+	int procRangeStart = procNode->getFirstChild()->getFirstChild()->getStmtNum();
+	int procRangeEnd = getLastContainedStatement(procNode)->getStmtNum();
+	vector<int> statementsThatModifyVar = allStmtsThatMod(var);
+	for (int i : statementsThatModifyVar) {
+		if (procRangeStart <= i && i <= procRangeEnd) {
+			return true;
+		}
+	}
 	return false;
 }
 
-vector<string> pkb::allProceduresThatModify(string var)
-{
-	return vector<string>();
+vector<string> pkb::allProceduresThatModify(string var){
+	vector<string> results = vector<string>();
+	vector<Tnode*> procedures = vector<Tnode*>();
+	vector<pair<string, Tnode*>>* procTable = this->storedAst->getProcTable();
+	string currProc = NULL;
+	for (int i = 0; i < procTable->size(); i++) {
+		currProc = procTable->at(i).first;
+		if (modifies(currProc, var)) {
+			results.push_back(currProc);
+		}
+	}
+	return results;
 }
 
-vector<string> pkb::allVarsModdedBy(string p)
-{
-	return vector<string>();
+vector<string> pkb::allVarsModdedBy(string procName){
+	vector<string> results = vector<string>();
+	vector<pair<string, vector<Tnode*>>>* varTable = this->storedAst->getVarTable();
+	string currVar = NULL;
+	for (int i = 0; i < varTable->size(); i++) {
+		currVar = varTable->at(i).first;
+		if (modifies(procName, currVar)) {
+			results.push_back(currVar);
+		}
+	}
+	return results;
 }
 
 bool pkb::uses(int stmt, string var){
@@ -85,19 +113,49 @@ vector<string> pkb::allVarsUsedBy(int stmt){
 	}
 }
 
-bool pkb::uses(string p, string var)
+bool pkb::uses(string procName, string var)
 {
+	Tnode* procNode = getNodeWithProcName(procName);
+	if (procNode == NULL) {
+		return false;
+	}
+	int procRangeStart = procNode->getFirstChild()->getFirstChild()->getStmtNum();
+	int procRangeEnd = getLastContainedStatement(procNode)->getStmtNum();
+	vector<int> statementsThatUseVar = allStmtsThatUse(var);
+	for (int i : statementsThatUseVar) {
+		if (procRangeStart <= i && i <= procRangeEnd) {
+			return true;
+		}
+	}
 	return false;
 }
 
 vector<string> pkb::allProceduresThatUse(string var)
 {
-	return vector<string>();
+	vector<string> results = vector<string>();
+	vector<Tnode*> procedures = vector<Tnode*>();
+	vector<pair<string, Tnode*>>* procTable = this->storedAst->getProcTable();
+	string currProc = NULL;
+	for (int i = 0; i < procTable->size(); i++) {
+		currProc = procTable->at(i).first;
+		if (uses(currProc, var)) {
+			results.push_back(currProc);
+		}
+	}
+	return results;
 }
 
-vector<string> pkb::allVarsUsedBy(string p)
-{
-	return vector<string>();
+vector<string> pkb::allVarsUsedBy(string procName){
+	vector<string> results = vector<string>();
+	vector<pair<string, vector<Tnode*>>>* varTable = this->storedAst->getVarTable();
+	string currVar = NULL;
+	for (int i = 0; i < varTable->size(); i++) {
+		currVar = varTable->at(i).first;
+		if (uses(procName, currVar)) {
+			results.push_back(currVar);
+		}
+	}
+	return results;
 }
 
 bool pkb::isParent(int s1, int s2){
@@ -446,10 +504,10 @@ bool pkb::containsContainer(Tnode* node) {
 }
 
 Tnode* pkb::getCallee(Tnode* node){
-	return getProcNode(node->getName());
+	return getNodeWithProcName(node->getName());
 }
 
-Tnode* pkb::getProcNode(string procName){
+Tnode* pkb::getNodeWithProcName(string procName){
 	vector<pair<string, Tnode*>>* procTable = this->storedAst->getProcTable();
 	auto it = find_if(procTable->begin(),
 		procTable->end(),

@@ -113,6 +113,7 @@ private:
 	Tnode * getLastSibling(Tnode * node);
 	Tnode * getPreviousStmtNode(Tnode * currNode);
 	Tnode * getNextStmtNode(Tnode * currNode);
+	Tnode * getNodeWithProcName(string targetName);
 
 	void updateDBFile();
 	Tnode * getCallee(Tnode * node);
