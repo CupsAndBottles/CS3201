@@ -481,7 +481,7 @@ vector<Tnode*>* ProgramKnowledgeBase::getNodesOfTypeHelper(Tnode* curr, Tnode::T
 		if (curr->getType() == type){
 			results->push_back(curr);
 		}
-		if (isContainer(curr) || isProcedure(curr) || isProgram(curr) || isStatementList(curr)){
+		if (curr->getFirstChild() != NULL){
 			results = getNodesOfTypeHelper(curr->getFirstChild(), type, results);
 		}
 		if (!isLastChild(curr)){
