@@ -11,7 +11,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting
 {
-	TEST_CLASS(TestAST)
+	TEST_CLASS(TestParser)
 	{
 	public:
 		TEST_METHOD(testGoodAssign) {
@@ -60,6 +60,30 @@ namespace UnitTesting
 			call.push_back(";");
 
 			simpleParser *p = new simpleParser(call);
+			Assert::AreEqual(true, (*p).parseStmt());
+		}
+
+		TEST_METHOD(testGoodIf) {
+			vector<string> ifStmt;
+			ifStmt.push_back("if");
+			ifStmt.push_back("i");
+			ifStmt.push_back("then");
+			ifStmt.push_back("{");
+			ifStmt.push_back("call");
+			ifStmt.push_back("procName");
+			ifStmt.push_back(";");
+			ifStmt.push_back("}");
+			ifStmt.push_back("else");
+			ifStmt.push_back("{");
+			ifStmt.push_back("x");
+			ifStmt.push_back("=");
+			ifStmt.push_back("y");
+			ifStmt.push_back("+");
+			ifStmt.push_back("1");
+			ifStmt.push_back(";");
+			ifStmt.push_back("}");
+
+			simpleParser *p = new simpleParser(ifStmt);
 			Assert::AreEqual(true, (*p).parseStmt());
 		}
 
