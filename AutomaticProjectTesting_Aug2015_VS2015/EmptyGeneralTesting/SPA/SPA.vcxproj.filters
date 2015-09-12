@@ -21,9 +21,6 @@
     <ClInclude Include="..\Source\Parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\PKB.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\QueryEvaluator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -51,15 +48,15 @@
     <ClInclude Include="..\Source\AbstractSyntaxTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\ProgramKnowledgeBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\EntityTable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Parser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\PKB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\QueryEvaluator.cpp">
@@ -87,6 +84,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\AbstractSyntaxTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ProgramKnowledgeBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -14,7 +14,7 @@
     <ClInclude Include="..\Source\AbstractSyntaxTree.h" />
     <ClInclude Include="..\Source\EntityTable.h" />
     <ClInclude Include="..\Source\Parser.h" />
-    <ClInclude Include="..\Source\PKB.h" />
+    <ClInclude Include="..\Source\ProgramKnowledgeBase.h" />
     <ClInclude Include="..\Source\QueryEvaluator.h" />
     <ClInclude Include="..\Source\QueryObject.h" />
     <ClInclude Include="..\Source\QueryPreProcessor.h" />
@@ -28,7 +28,7 @@
     <ClCompile Include="..\Source\AbstractSyntaxTree.cpp" />
     <ClCompile Include="..\Source\EntityTable.cpp" />
     <ClCompile Include="..\Source\Parser.cpp" />
-    <ClCompile Include="..\Source\PKB.cpp" />
+    <ClCompile Include="..\Source\ProgramKnowledgeBase.cpp" />
     <ClCompile Include="..\Source\QueryEvaluator.cpp" />
     <ClCompile Include="..\Source\QueryObject.cpp" />
     <ClCompile Include="..\Source\QueryPreProcessor.cpp" />
