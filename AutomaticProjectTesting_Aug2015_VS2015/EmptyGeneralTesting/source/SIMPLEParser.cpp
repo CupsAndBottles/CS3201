@@ -10,8 +10,9 @@ using namespace std;
 
 simpleRules *rules = new simpleRules();
 
-simpleParser::simpleParser() {
+simpleParser::simpleParser(vector<string> program) {
 	this -> index = 0;
+	this-> tokenizedProgram = program;
 }
 
 bool simpleParser::endOfProgram() {
@@ -291,11 +292,9 @@ bool simpleParser::parseProcedure() {
 	}
 }
 
-bool simpleParser::parseProgram(vector<string> program) {
-	tokenizedProgram = program;
-
+bool simpleParser::parseProgram() {
 	while (!endOfProgram()) {
-		string token = program[index];
+		string token = tokenizedProgram[index];
 
 		if (token == "procedure") {
 			index += 1;
