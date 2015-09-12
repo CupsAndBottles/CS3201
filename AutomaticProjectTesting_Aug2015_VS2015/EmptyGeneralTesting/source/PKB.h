@@ -1,9 +1,5 @@
-#ifndef PKB_HEADER
-#define PKB_HEADER
-
 #include "AST.h"
 #include "Tnode.h"
-
 #include <vector>
 #include <string>
 #include <unordered_map>
@@ -101,6 +97,7 @@ private:
 	bool isExpr(Tnode * node);
 	bool isVariable(Tnode * node);
 	bool isConstant(Tnode * node);
+	bool isStatement(Tnode * node);
 	bool containsContainer(Tnode * node);
 	vector<int> flattenBoolVectorToIntVector(vector<bool> inp);
 	vector<string> flattenBoolMapToStringVector(unordered_map<string, bool> inp);
@@ -109,7 +106,13 @@ private:
 	vector<string> flattenStringSetToStringVector(const unordered_set<string>* inp);
 	vector<Tnode*> getNodesOfType(Tnode* start, Tnode::Type type);
 	vector<Tnode*>* getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, vector<Tnode*>* results);
-	Tnode* pkb::getNodeWithStmt(int stmtNum);
+	Tnode * getNodeWithStmt(int stmtNum);
+	Tnode * getProcedureContaining(int targetStmtNum);
+	Tnode * getParentProcedure(Tnode * node);
+	Tnode * getLastContainedStatement(Tnode * node);
+	Tnode * getLastSibling(Tnode * node);
+	Tnode * getPreviousStmtNode(Tnode * currNode);
+	Tnode * getNextStmtNode(Tnode * currNode);
 
 	void updateDBFile();
 	Tnode * getCallee(Tnode * node);
@@ -126,5 +129,3 @@ private:
 	void updateCalls(vector<Tnode*> callers, Tnode * callee);
 	void updateCalls(Tnode * caller, Tnode * callee);
 };
-
-#endif
