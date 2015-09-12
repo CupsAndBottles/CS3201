@@ -82,14 +82,15 @@ bool simpleParser::parseAssign() {
 	index += 1;
 
 	if (parseExpression()) {
+		string previous_token = tokenizedProgram[index - 1];
 		token = tokenizedProgram[index];
 
-		if (token == ";") {
+		if ((*rules).isFactor(previous_token) && token == ";") {
 			index += 1;
 			return true;
 		}
 		else {
-			cout << "Assign statement does not have delimiter.\n";
+			cout << "Invalid assign statement.\n";
 			return false;
 		}
 	}
