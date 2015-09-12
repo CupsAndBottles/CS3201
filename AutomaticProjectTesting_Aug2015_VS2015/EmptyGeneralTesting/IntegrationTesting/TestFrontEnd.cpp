@@ -2,6 +2,7 @@
 #include "CppUnitTest.h"
 #include "Parser.h"
 #include "AbstractSyntaxTree.h"
+#include "ProgramKnowledgeBase.h"
 
 #include <fstream>
 #include <string>
@@ -15,8 +16,7 @@ namespace IntegrationTesting
 	{
 	public:
 		
-		TEST_METHOD(testParserASTIntegration)
-		{
+		TEST_METHOD(testParserASTIntegration) {
 			ofstream outputFile("program.txt");
 			outputFile << "procedure Proc {";
 			outputFile << "x = y + 1;";
@@ -30,6 +30,24 @@ namespace IntegrationTesting
 			AbstractSyntaxTree *AST = new AbstractSyntaxTree();
 			AST->buildAbstractSyntaxTree(parsedProgram);
 			Tnode *root = AST->getRoot();
+		}
+
+		TEST_METHOD(testParserASTPKBIntegration) {
+			ofstream outputFile("program.txt");
+			outputFile << "procedure Proc {";
+			outputFile << "x = y + 1;";
+			outputFile << "}";
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = (*parse).parseSimpleProgram("program.txt");
+			Assert::AreNotEqual(0, (int)parsedProgram.size());
+
+			AbstractSyntaxTree *AST = new AbstractSyntaxTree();
+			AST->buildAbstractSyntaxTree(parsedProgram);
+			Tnode *root = AST->getRoot();
+
+			ProgramKnowledgeBase* pkbPointer = &ProgramKnowledgeBase(AST);
 		}
 
 	};
