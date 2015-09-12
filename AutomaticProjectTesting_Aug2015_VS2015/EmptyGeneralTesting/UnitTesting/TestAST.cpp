@@ -16,8 +16,8 @@ namespace UnitTesting
 			Assert::AreEqual((string)"", testNode->getName());
 			Assert::IsNull(testNode->getParent());
 			Assert::IsNull(testNode->getFirstChild());
-			Assert::IsNull(testNode->getRightSib());
-			Assert::IsNull(testNode->getLeftSib());
+			Assert::IsNull(testNode->getRightSibling());
+			Assert::IsNull(testNode->getLeftSibling());
 			Assert::AreEqual(Tnode::CONSTANT, testNode->getType());
 			Assert::AreEqual(5, testNode->getValue());
 
@@ -26,8 +26,8 @@ namespace UnitTesting
 			Assert::AreEqual((string)"myProg", testNode->getName());
 			Assert::IsNull(testNode->getParent());
 			Assert::IsNull(testNode->getFirstChild());
-			Assert::IsNull(testNode->getRightSib());
-			Assert::IsNull(testNode->getLeftSib());
+			Assert::IsNull(testNode->getRightSibling());
+			Assert::IsNull(testNode->getLeftSibling());
 			Assert::AreEqual(Tnode::PROGRAM, testNode->getType());
 			Assert::AreEqual(-1, testNode->getValue());
 
@@ -36,8 +36,8 @@ namespace UnitTesting
 			Assert::AreEqual((string)"then", testNode->getName());
 			Assert::IsNull(testNode->getParent());
 			Assert::IsNull(testNode->getFirstChild());
-			Assert::IsNull(testNode->getRightSib());
-			Assert::IsNull(testNode->getLeftSib());
+			Assert::IsNull(testNode->getRightSibling());
+			Assert::IsNull(testNode->getLeftSibling());
 			Assert::AreEqual(Tnode::STMTLST, testNode->getType());
 			Assert::AreEqual(-1, testNode->getValue());
 
@@ -46,52 +46,52 @@ namespace UnitTesting
 			Assert::AreEqual((string)"", testNode->getName());
 			Assert::IsNull(testNode->getParent());
 			Assert::IsNull(testNode->getFirstChild());
-			Assert::IsNull(testNode->getRightSib());
-			Assert::IsNull(testNode->getLeftSib());
+			Assert::IsNull(testNode->getRightSibling());
+			Assert::IsNull(testNode->getLeftSibling());
 			Assert::AreEqual(Tnode::STMT_WHILE, testNode->getType());
 			Assert::AreEqual(1, testNode->getValue());
-			Assert::AreEqual(1, testNode->getStmtNum());
+			Assert::AreEqual(1, testNode->getStatementNumber());
 
 			testNode = Tnode::createNode(Tnode::STMT_CALL, "procedure2");
 
 			Assert::AreEqual((string)"procedure2", testNode->getName());
 			Assert::IsNull(testNode->getParent());
 			Assert::IsNull(testNode->getFirstChild());
-			Assert::IsNull(testNode->getRightSib());
-			Assert::IsNull(testNode->getLeftSib());
+			Assert::IsNull(testNode->getRightSibling());
+			Assert::IsNull(testNode->getLeftSibling());
 			Assert::AreEqual(Tnode::STMT_CALL, testNode->getType());
 			Assert::AreEqual(2, testNode->getValue());
-			Assert::AreEqual(2, testNode->getStmtNum());
+			Assert::AreEqual(2, testNode->getStatementNumber());
 
 			testNode = Tnode::createNode(Tnode::STMT_IF, "");
 
 			Assert::AreEqual((string)"", testNode->getName());
 			Assert::IsNull(testNode->getParent());
 			Assert::IsNull(testNode->getFirstChild());
-			Assert::IsNull(testNode->getRightSib());
-			Assert::IsNull(testNode->getLeftSib());
+			Assert::IsNull(testNode->getRightSibling());
+			Assert::IsNull(testNode->getLeftSibling());
 			Assert::AreEqual(Tnode::STMT_IF, testNode->getType());
 			Assert::AreEqual(3, testNode->getValue());
-			Assert::AreEqual(3, testNode->getStmtNum());
+			Assert::AreEqual(3, testNode->getStatementNumber());
 
 			testNode = Tnode::createNode(Tnode::STMT_ASSIGN, "");
 
 			Assert::AreEqual((string)"", testNode->getName());
 			Assert::IsNull(testNode->getParent());
 			Assert::IsNull(testNode->getFirstChild());
-			Assert::IsNull(testNode->getRightSib());
-			Assert::IsNull(testNode->getLeftSib());
+			Assert::IsNull(testNode->getRightSibling());
+			Assert::IsNull(testNode->getLeftSibling());
 			Assert::AreEqual(Tnode::STMT_ASSIGN, testNode->getType());
 			Assert::AreEqual(4, testNode->getValue());
-			Assert::AreEqual(4, testNode->getStmtNum());
+			Assert::AreEqual(4, testNode->getStatementNumber());
 
 			testNode = Tnode::createNode(Tnode::EXPR_PLUS, "");
 
 			Assert::AreEqual((string)"", testNode->getName());
 			Assert::IsNull(testNode->getParent());
 			Assert::IsNull(testNode->getFirstChild());
-			Assert::IsNull(testNode->getRightSib());
-			Assert::IsNull(testNode->getLeftSib());
+			Assert::IsNull(testNode->getRightSibling());
+			Assert::IsNull(testNode->getLeftSibling());
 			Assert::AreEqual(Tnode::EXPR_PLUS, testNode->getType());
 			Assert::AreEqual(-1, testNode->getValue());
 
@@ -100,8 +100,8 @@ namespace UnitTesting
 			Assert::AreEqual((string)"", testNode->getName());
 			Assert::IsNull(testNode->getParent());
 			Assert::IsNull(testNode->getFirstChild());
-			Assert::IsNull(testNode->getRightSib());
-			Assert::IsNull(testNode->getLeftSib());
+			Assert::IsNull(testNode->getRightSibling());
+			Assert::IsNull(testNode->getLeftSibling());
 			Assert::AreEqual(Tnode::EXPR_MINUS, testNode->getType());
 			Assert::AreEqual(-1, testNode->getValue());
 
@@ -110,8 +110,8 @@ namespace UnitTesting
 			Assert::AreEqual((string)"", testNode->getName());
 			Assert::IsNull(testNode->getParent());
 			Assert::IsNull(testNode->getFirstChild());
-			Assert::IsNull(testNode->getRightSib());
-			Assert::IsNull(testNode->getLeftSib());
+			Assert::IsNull(testNode->getRightSibling());
+			Assert::IsNull(testNode->getLeftSibling());
 			Assert::AreEqual(Tnode::EXPR_TIMES, testNode->getType());
 			Assert::AreEqual(-1, testNode->getValue());
 		}
@@ -125,8 +125,8 @@ namespace UnitTesting
 			Assert::AreEqual((string)"myProc", T1->getName());
 			Assert::IsNull(T1->getParent());
 			Assert::IsNull(T1->getFirstChild());
-			Assert::IsNull(T1->getRightSib());
-			Assert::IsNull(T1->getLeftSib());
+			Assert::IsNull(T1->getRightSibling());
+			Assert::IsNull(T1->getLeftSibling());
 			Assert::AreEqual(Tnode::PROCEDURE, T1->getType());
 			Assert::AreEqual(-1, T1->getValue());
 
@@ -136,8 +136,8 @@ namespace UnitTesting
 			Assert::AreEqual((string)"", T2->getName());
 			Assert::IsNull(T2->getParent());
 			Assert::IsNull(T2->getFirstChild());
-			Assert::IsNull(T2->getRightSib());
-			Assert::IsNull(T2->getLeftSib());
+			Assert::IsNull(T2->getRightSibling());
+			Assert::IsNull(T2->getLeftSibling());
 			Assert::AreEqual(Tnode::STMTLST, T2->getType());
 			Assert::AreEqual(-1, T2->getValue());
 
@@ -156,8 +156,8 @@ namespace UnitTesting
 			Assert::AreEqual((string)"x", T3->getName());
 			Assert::IsNull(T3->getParent());
 			Assert::IsNull(T3->getFirstChild());
-			Assert::IsNull(T3->getRightSib());
-			Assert::IsNull(T3->getLeftSib());
+			Assert::IsNull(T3->getRightSibling());
+			Assert::IsNull(T3->getLeftSibling());
 			Assert::AreEqual(Tnode::VARIABLE, T3->getType());
 			Assert::AreEqual(-1, T3->getValue());
 
@@ -167,8 +167,8 @@ namespace UnitTesting
 			Assert::AreEqual((string)"", T4->getName());
 			Assert::IsNull(T4->getParent());
 			Assert::IsNull(T4->getFirstChild());
-			Assert::IsNull(T4->getRightSib());
-			Assert::IsNull(T4->getLeftSib());
+			Assert::IsNull(T4->getRightSibling());
+			Assert::IsNull(T4->getLeftSibling());
 			Assert::AreEqual(Tnode::CONSTANT, T4->getType());
 			Assert::AreEqual(7, T4->getValue());
 
@@ -176,8 +176,8 @@ namespace UnitTesting
 			link2 = Tnode::createLink(Tnode::RIGHTSIB, *T3, *T4);
 
 			Assert::AreEqual(true, link2);
-			Assert::AreEqual(T4, T3->getRightSib());
-			Assert::AreEqual(T3, T4->getLeftSib());
+			Assert::AreEqual(T4, T3->getRightSibling());
+			Assert::AreEqual(T3, T4->getLeftSibling());
 		}
 
 	};
