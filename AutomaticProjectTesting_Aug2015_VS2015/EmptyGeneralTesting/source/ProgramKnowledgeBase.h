@@ -1,3 +1,5 @@
+#pragma once
+
 #include "AbstractSyntaxTree.h"
 #include "Tnode.h"
 #include <vector>
