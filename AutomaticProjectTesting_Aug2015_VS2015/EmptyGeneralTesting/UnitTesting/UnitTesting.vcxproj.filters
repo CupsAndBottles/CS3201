@@ -26,13 +26,13 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestAST.cpp">
+    <ClCompile Include="TestParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestParser.cpp">
-	  <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TestQueryPreProc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestAST.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

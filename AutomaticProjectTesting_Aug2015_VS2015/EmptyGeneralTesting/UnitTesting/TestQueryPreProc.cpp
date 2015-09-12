@@ -16,7 +16,7 @@ namespace UnitTesting
 
 		TEST_METHOD(testQuery)
 		{
-
+			qpp.clearAll();
 			//Test select clause without such that, pattern
 			Assert::IsTrue(qpp.query("procedure p; Select p")); qpp.clearAll();
 			Assert::IsFalse(qpp.query("Select p")); qpp.clearAll();
@@ -71,8 +71,25 @@ namespace UnitTesting
 
 		TEST_METHOD(testSemanticsCheck) 
 		{
+			SemanticsCheck sCheck;
+			EntTable et = qpp.getEntityTable();
+			Assert::IsTrue(sCheck.isEntRef("a2", et));
+			Assert::IsTrue(sCheck.isEntRef("ifstat", et));
+			Assert::IsFalse(sCheck.isEntRef("a3", et));
+			Assert::IsTrue(sCheck.isEntRef("_", et));
+			Assert::IsTrue(sCheck.isEntRef("\"x\"", et));
 
+			Assert::IsTrue(sCheck.isStmtRef("_", et));
+			Assert::IsTrue(sCheck.isStmtRef("a", et));
+			Assert::IsFalse(sCheck.isStmtRef("s2", et));
+			Assert::IsTrue(sCheck.isStmtRef("5", et));
+			Assert::IsTrue(sCheck.isStmtRef("14", et));
 
+			Assert::IsTrue(sCheck.isExpressionSpec("_"));
+			Assert::IsTrue(sCheck.isExpressionSpec("_\"x\"_"));
+			Assert::IsTrue(sCheck.isExpressionSpec("\"x\""));
+			Assert::IsTrue(sCheck.isExpressionSpec("_\"10\"_"));
+			Assert::IsTrue(sCheck.isExpressionSpec("\"1\""));
 		}
 
 	};
