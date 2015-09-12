@@ -18,7 +18,7 @@ SemanticsCheck sCheck;
 EntTable entityTable;
 vector<string> entityList;
 vector<QueryObject> queryList;
-RelTable relTable;
+RelationshipTable relTable;
 
 vector<string> QueryPreProcessor::split(string s, string delim) {
 	stringstream stringStream(s);

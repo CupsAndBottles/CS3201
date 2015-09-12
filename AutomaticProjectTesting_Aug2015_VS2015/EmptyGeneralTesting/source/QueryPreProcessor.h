@@ -3,7 +3,7 @@
 #include "EntityTable.h"
 #include "QueryObject.h"
 #include "SemanticsCheck.h"
-#include "RelTable.h"
+#include "RelationshipTable.h"
 
 #include <iostream>
 #include <string>
