@@ -38,6 +38,9 @@
     <ClCompile Include="..\Source\SIMPLERules.cpp" />
     <ClCompile Include="..\Source\Tnode.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{DC21A1EA-D2C6-4D14-A2B4-E025B64BDE81}</ProjectGuid>
     <RootNamespace>SPA</RootNamespace>
