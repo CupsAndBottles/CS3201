@@ -19,8 +19,8 @@ TestWrapper::TestWrapper() {
 void TestWrapper::parse(std::string filename) {
 	// call your parser to do the parsing
     // ...rest of your code...
-	Parser p;
-	vector<string> tokenized_program = p.parseSimpleProgram(filename);
+	Parser *p = new Parser();
+	vector<string> tokenized_program = (*p).parseSimpleProgram(filename);
 
 	if (tokenized_program.size() > 0) {
 		ast *AST = new ast();
@@ -43,7 +43,7 @@ void TestWrapper::evaluate(std::string query, std::list<std::string>& results){
 // call your evaluator to evaluate the query here
   // ...code to evaluate query...
 	QueryEvaluator qe = QueryEvaluator(pkbPointer);
-	qe.getResults(query);
+	results = qe.getResults(query);
   // store the answers to the query in the results list (it is initially empty)
   // each result must be a string.
 }

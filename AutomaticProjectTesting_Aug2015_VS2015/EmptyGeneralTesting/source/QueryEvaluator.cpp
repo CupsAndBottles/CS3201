@@ -27,6 +27,7 @@ list<string> QueryEvaluator::getResults (string query) {
 		return output;
 	}
 	else {
+		output.push_back("none");
 		return output;
 	}
 }
