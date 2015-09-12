@@ -107,45 +107,128 @@ bool pkb::isParent(int s1, int s2){
 }
 
 // searches AST and returns node with statement number stmtNum if found, NULL if not.
-Tnode* pkb::getNodeWithStmt(Tnode* anchorNode, int stmtNum){
-	if (anchorNode == NULL){
+Tnode* pkb::getNodeWithStmt(int targetStmtNum){
+	Tnode* targetProc = getProcedureContaining(targetStmtNum);
+	if (targetProc == NULL){
 		return NULL;
 	}
 
-	int nodeStmtNum = anchorNode->getStmtNum();
-	if (nodeStmtNum == -1){
-		if (isProgram(anchorNode) || isProcedure(anchorNode) || isStmtLst(anchorNode)){
-			return getNodeWithStmt(anchorNode->getFirstChild(), stmtNum);
+	Tnode* candidate = targetProc->getFirstChild()->getFirstChild();
+	while (candidate->getStmtNum() < targetStmtNum){
+		if (isContainer(candidate)){
+			if (getLastContainedStatement(candidate)->getStmtNum() < targetStmtNum){
+				candidate = candidate->getRightSib();
+			} else {
+				candidate = candidate->getFirstChild();
+			}
 		} else {
-			//expressions, variables, constants
-			return NULL;
+			candidate = candidate->getRightSib();
 		}
-	} else if (nodeStmtNum == stmtNum){
-		return anchorNode;
-	} else if (nodeStmtNum > stmtNum){
-		Tnode* parent = getSPAParent(anchorNode);
-		// get node with nodeStmtNum - 1 or a parent node with stmtNum < nodeStmtNum
-		if (parent->getLeftSib() != NULL){
-			// parent node with stmtNum < nodeStmtNum
-			//incomplete
-			return NULL;
-		}
-	} else if (nodeStmtNum < stmtNum){
-		// iterate down right sibs
-		// if lastChild, jump to next parent
-	} else {
-		// not found
-		return NULL;
 	}
 
-	// incomplete
-	return NULL;
+	// candidate->getStmtNum() should be equal to targetStmtNum
+	return candidate;
 }
 
-Tnode* pkb::getNodeWithStmt(int stmtNum){
-	return getNodeWithStmt(this->storedAst->getRoot(), stmtNum);
+// linearly searches procedures for the procedure that contains the target.
+Tnode* pkb::getProcedureContaining(int targetStmtNum){
+	Tnode* proc = this->storedAst->getRoot()->getFirstChild();
+	int procLastStmtNum = getLastContainedStatement(proc)->getStmtNum();
+	while (targetStmtNum > procLastStmtNum){
+		Tnode* nextProc = proc->getRightSib();
+		if(nextProc != NULL){
+			proc = nextProc;
+		} else {
+			return NULL;
+		}
+		procLastStmtNum = getLastContainedStatement(proc)->getStmtNum();
+	}
+	return proc;
 }
 
+Tnode* pkb::getParentProcedure(Tnode* node){
+	if (isProcedure(node) || isProgram(node)){
+		return NULL;
+	}
+	Tnode* candidate = getSPAParent(node);
+	while (!isProcedure(candidate)){
+		candidate = getSPAParent(candidate);
+	}
+	return candidate;
+}
+
+Tnode* pkb::getLastContainedStatement(Tnode* node){
+	if (!isContainer(node)){
+		return NULL;
+	} else {
+		while (!isLastChild(node)){
+			node = node->getRightSib();
+		}
+		if (isContainer(node)){
+			return getLastContainedStatement(node);
+		} else {
+			return node;
+		}
+	}
+}
+
+Tnode* pkb::getLastSibling(Tnode* node){
+	Tnode* candidate = node->getRightSib();
+	while (candidate->getRightSib() != NULL) {
+		candidate = candidate->getRightSib();
+	}
+	return candidate;
+}
+
+bool pkb::isStatement(Tnode* node){
+	return (isCall(node) || isWhile(node) || isAssigns(node) || isIf(node));
+}
+
+// assumes input is a node with a statement number
+Tnode* pkb::getPreviousStmtNode(Tnode* currNode){
+	if (currNode->getLeftSib() != NULL){
+		return currNode->getLeftSib();
+	} else {
+		Tnode* parent = getSPAParent(currNode);
+		if (isProgram(parent)){
+			return NULL;
+		} else if (isProcedure(parent)){
+			if (parent->getLeftSib() != NULL){
+				Tnode* cousin = parent->getLeftSib()->getFirstChild()->getFirstChild();
+				while (!isLastChild(cousin)){
+					cousin = cousin->getRightSib();
+				}
+				return cousin;
+			} else {
+				// currNode is statement 1
+				return NULL;
+			}
+		} else if (isStatement(parent)){
+			return parent;
+		} else {
+			// ?
+		}
+	}
+}
+
+Tnode* pkb::getNextStmtNode(Tnode* currNode){
+	if (isLastChild(currNode)) {
+		Tnode* nextParent = getSPAParent(currNode)->getRightSib();
+		if (nextParent != NULL) {
+			if (isProcedure(nextParent)) {
+				return nextParent->getFirstChild()->getFirstChild();
+			}
+			else {
+				return nextParent;
+			}
+		}
+		else {
+			return NULL;
+		}
+	} else {
+		return currNode->getRightSib();
+	}
+}
 
 vector<int> pkb::getAllParentsOf(int stmt){
 	Tnode* node = getNodeWithStmt(stmt);
