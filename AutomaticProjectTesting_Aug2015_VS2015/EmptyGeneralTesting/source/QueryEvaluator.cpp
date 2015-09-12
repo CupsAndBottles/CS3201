@@ -21,8 +21,8 @@ list<string> QueryEvaluator::getResults (string query) {
 	if (preprocessor.query(query)) {
 		getQueryData();
 		vector<vector<string>> temp;
-		temp = queryResults();
-		output = finalResult(temp);
+		//temp = queryResults();
+		//output = finalResult(temp);
 		preprocessor.clearAll();
 		return output;
 	}
