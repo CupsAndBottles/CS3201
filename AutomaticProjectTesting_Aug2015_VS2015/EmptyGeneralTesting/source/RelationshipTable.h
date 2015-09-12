@@ -5,7 +5,7 @@
 
 using namespace std;
 
-class RelTable
+class RelationshipTable
 {
 	unordered_multimap<string, vector<string>> relTable;
 

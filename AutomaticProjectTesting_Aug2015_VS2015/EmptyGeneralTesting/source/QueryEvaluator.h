@@ -6,7 +6,7 @@
 #include "QueryPreProcessor.h"
 #include "EntityTable.h"
 #include "QueryObject.h"
-#include "PKB.h"
+#include "ProgramKnowledgeBase.h"
 #include "Tnode.h"
 
 #include <string>
@@ -24,7 +24,7 @@ class QueryEvaluator
 	EntTable declaration;
 
 public:
-	QueryEvaluator(pkb* storePkb);
+	QueryEvaluator(ProgramKnowledgeBase* storePkb);
 
 	list<string> getResults(string input);
 
@@ -51,7 +51,7 @@ public:
 	string removeQuotes(string s);
 
 private:
-	pkb* database;
+	ProgramKnowledgeBase* database;
 };
 
 #endif

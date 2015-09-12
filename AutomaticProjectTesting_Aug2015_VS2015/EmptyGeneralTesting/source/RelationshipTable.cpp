@@ -1,6 +1,6 @@
-#include "RelTable.h"
+#include "RelationshipTable.h"
 
-void RelTable::initRelTable() {
+void RelationshipTable::initRelTable() {
 
 	vector<string> Modifies = { "stmtRef", "entRef" };
 	vector<string> Uses = { "stmtRef", "entRef" };
@@ -18,7 +18,7 @@ void RelTable::initRelTable() {
 
 }
 
-vector<string> RelTable::getArguments(string name) {
+vector<string> RelationshipTable::getArguments(string name) {
 	if (exist(name)) {
 		vector<string> temp = relTable.find(name)->second;
 		return temp;
@@ -33,7 +33,7 @@ vector<string> RelTable::getArguments(string name) {
 	}
 }
 
-bool RelTable::exist(string name) {
+bool RelationshipTable::exist(string name) {
 	if (relTable.find(name) != relTable.end()) {
 		return true;
 	}

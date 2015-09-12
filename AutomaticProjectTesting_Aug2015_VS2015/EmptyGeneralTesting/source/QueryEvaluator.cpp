@@ -11,7 +11,7 @@ QueryPreProcessor preprocessor;
 EntTable declaration;
 //pkb database;
 
-QueryEvaluator::QueryEvaluator(pkb* storePkb) {
+QueryEvaluator::QueryEvaluator(ProgramKnowledgeBase* storePkb) {
 	database = storePkb;
 }
 
@@ -21,8 +21,8 @@ list<string> QueryEvaluator::getResults (string query) {
 	if (preprocessor.query(query)) {
 		getQueryData();
 		vector<vector<string>> temp;
-		temp = queryResults();
-		output = finalResult(temp);
+		//temp = queryResults();
+		//output = finalResult(temp);
 		preprocessor.clearAll();
 		return output;
 	}
@@ -107,12 +107,12 @@ vector<string> QueryEvaluator:: modify(string leftArgument, string rightArgument
 	vector<string> output;
 	if (stringEqual(select, leftArgument) && isDoubleQuote(rightArgument)) { //RHS is variable
 		if(declaration.getType(leftArgument).compare("procedure")==0){
-			output=database->allProceduresThatModify(removeQuotes(rightArgument));//string
+			output=database->getProceduresThatModify(removeQuotes(rightArgument));//string
 			return output;
 		}
 		else {
 			vector<int> temp;
-			temp= database->allStmtsThatMod(rightArgument);//int
+			temp= database->getStatementsThatModify(rightArgument);//int
 			return output = integerVectorToString(temp);
 		}
 		return output;
@@ -121,7 +121,7 @@ vector<string> QueryEvaluator:: modify(string leftArgument, string rightArgument
 	else if(stringEqual(select,leftArgument) && declaration.getType(rightArgument).compare("variable")==0){
 		if (declaration.getType(leftArgument).compare("procedure") == 0) {
 			for (int i = 0; selectResult.size(); i++) {
-				if (database->allVarsModdedBy(selectResult.at(i)).empty() == false) { //(procedures)string
+				if (database->getVariablesModifiedBy(selectResult.at(i)).empty() == false) { //(procedures)string
 					output.push_back(selectResult.at(i));
 				}
 			}
@@ -129,7 +129,7 @@ vector<string> QueryEvaluator:: modify(string leftArgument, string rightArgument
 		}
 		else {
 			for (int i = 0; selectResult.size(); i++) {
-				if (database->allVarsModdedBy(selectResult.at(i)).empty() == false) { //(stmts)int
+				if (database->getVariablesModifiedBy(selectResult.at(i)).empty() == false) { //(stmts)int
 					output.push_back(selectResult.at(i)+"");
 				}
 			}
@@ -139,10 +139,10 @@ vector<string> QueryEvaluator:: modify(string leftArgument, string rightArgument
 	}
 	else if (stringEqual(select, rightArgument) && stringEqual(select,"variable")) {
 		if (isNumericString(leftArgument)) {
-			return output= database->allVarsModdedBy(stoi(leftArgument)); //convert string to int
+			return output= database->getVariablesModifiedBy(stoi(leftArgument)); //convert string to int
 		}
 		else if (isDoubleQuote(leftArgument)) {
-			return output= database->allVarsModdedBy(removeQuotes(leftArgument));//"procedure", quoted p
+			return output= database->getVariablesModifiedBy(removeQuotes(leftArgument));//"procedure", quoted p
 		}
 		return output;
 	}
@@ -156,12 +156,12 @@ vector<string> QueryEvaluator:: uses(string leftArgument, string rightArgument) 
 	vector<string> output;
 	if (stringEqual(select, leftArgument) && isDoubleQuote(rightArgument)) { //RHS is variable
 		if (declaration.getType(leftArgument).compare("procedure") == 0) {
-			output = database->allProceduresThatUse(removeQuotes(rightArgument));//string
+			output = database->getProceduresThatUse(removeQuotes(rightArgument));//string
 			return output;
 		}
 		else {
 			vector<int> temp;
-			temp = database->allStmtsThatUse(rightArgument);//int
+			temp = database->getStatementsThatUse(rightArgument);//int
 			return output = integerVectorToString(temp);
 		}
 		return output;
@@ -170,7 +170,7 @@ vector<string> QueryEvaluator:: uses(string leftArgument, string rightArgument) 
 	else if (stringEqual(select, leftArgument) && declaration.getType(rightArgument).compare("variable") == 0) {
 		if (declaration.getType(leftArgument).compare("procedure") == 0) {
 			for (int i = 0; selectResult.size(); i++) {
-				if (database->allVarsUsedBy(selectResult.at(i)).empty() == false) { //(procedures)string
+				if (database->getVariablesUsedBy(selectResult.at(i)).empty() == false) { //(procedures)string
 					output.push_back(selectResult.at(i));
 				}
 			}
@@ -178,7 +178,7 @@ vector<string> QueryEvaluator:: uses(string leftArgument, string rightArgument) 
 		}
 		else {
 			for (int i = 0; selectResult.size(); i++) {
-				if (database->allVarsUsedBy(selectResult.at(i)).empty() == false) { //(stmts)int
+				if (database->getVariablesUsedBy(selectResult.at(i)).empty() == false) { //(stmts)int
 					output.push_back(selectResult.at(i) + "");
 				}
 			}
@@ -188,10 +188,10 @@ vector<string> QueryEvaluator:: uses(string leftArgument, string rightArgument) 
 	}
 	else if (stringEqual(select, rightArgument) && stringEqual(select, "variable")) {
 		if (isNumericString(leftArgument)) {
-			return output = database->allVarsUsedBy(stoi(leftArgument)); //convert string to int
+			return output = database->getVariablesUsedBy(stoi(leftArgument)); //convert string to int
 		}
 		else if (isDoubleQuote(leftArgument)) {
-			return output = database->allVarsUsedBy(removeQuotes(leftArgument));//"procedure", quoted p
+			return output = database->getVariablesUsedBy(removeQuotes(leftArgument));//"procedure", quoted p
 		}
 		return output;
 	}
@@ -203,11 +203,11 @@ vector<string> QueryEvaluator:: parent(string leftArgument, string rightArgument
 	string select = getSelectClause();
 	vector<string> output;
 	if (stringEqual(select, leftArgument) && isNumericString(rightArgument)) {
-		vector<int> temp=database->getAllParentsOf(stoi(rightArgument));
+		vector<int> temp=database->getParentOf(stoi(rightArgument));
 		return output = integerVectorToString(temp);
 	}
 	else if (stringEqual(select, rightArgument) && isNumericString(leftArgument)) {
-		vector<int> temp=database->allChildrenOf(stoi(leftArgument));
+		vector<int> temp=database->getChildrenOf(stoi(leftArgument));
 		return output = integerVectorToString(temp);
 	}
 	else {
@@ -218,11 +218,11 @@ vector<string> QueryEvaluator:: parentT(string leftArgument, string rightArgumen
 	string select = getSelectClause();
 	vector<string> output;
 	if (stringEqual(select, leftArgument) && isNumericString(rightArgument)) {
-		vector<int> temp = database->allParentsStarOf(stoi(rightArgument));
+		vector<int> temp = database->getParentsStarOf(stoi(rightArgument));
 		return output = integerVectorToString(temp);
 	}
 	else if (stringEqual(select, rightArgument) && isNumericString(leftArgument)) {
-		vector<int> temp = database->allChildrenStarOf(stoi(leftArgument));
+		vector<int> temp = database->getAllChildrenStarOf(stoi(leftArgument));
 		return output = integerVectorToString(temp);
 	}
 	else {
@@ -233,11 +233,11 @@ vector<string> QueryEvaluator:: follow(string leftArgument, string rightArgument
 	string select = getSelectClause();
 	vector<string> output;
 	if (stringEqual(select, leftArgument) && isNumericString(rightArgument)) {
-		vector<int> temp = database->allBefore(stoi(rightArgument));
+		vector<int> temp = database->getStatementsFollowedBy(stoi(rightArgument));
 		return output = integerVectorToString(temp);
 	}
 	else if (stringEqual(select, rightArgument) && isNumericString(leftArgument)) {
-		vector<int> temp = database->allThatFollow(stoi(leftArgument));
+		vector<int> temp = database->getStatementsThatFollow(stoi(leftArgument));
 		return output = integerVectorToString(temp);
 	}
 	else {
@@ -249,11 +249,11 @@ vector<string> QueryEvaluator:: followT(string leftArgument, string rightArgumen
 	string select = getSelectClause();
 	vector<string> output;
 	if (stringEqual(select, leftArgument) && isNumericString(rightArgument)) {
-		vector<int> temp = database->allBeforeStar(stoi(rightArgument));
+		vector<int> temp = database->getStatementsFollowStarredBy(stoi(rightArgument));
 		return output = integerVectorToString(temp);
 	}
 	else if (stringEqual(select, rightArgument) && isNumericString(leftArgument)) {
-		vector<int> temp = database->allThatFollowStar(stoi(leftArgument));
+		vector<int> temp = database->getStatementsThatFollowStar(stoi(leftArgument));
 		return output = integerVectorToString(temp);
 	}
 	else {
@@ -266,14 +266,14 @@ vector<string> QueryEvaluator::PatternClause(string type, string leftArgument, s
 	if (declaration.getType(type).compare("assign")) {
 		if (isDoubleQuote(leftArgument) || stringEqual("_",leftArgument)) {
 			//pattern a("x",'_')
-			vector<int> temp=database->patternStmts(Tnode::STMT_ASSIGN, removeQuotes(leftArgument), rightArgument);
+			vector<int> temp=database->getStatementsThatMatchPattern(Tnode::STMT_ASSIGN, removeQuotes(leftArgument), rightArgument);
 			return output = integerVectorToString(temp);
 		}
 		else if (declaration.getType(leftArgument).compare("variable")) {
 			string select = getSelectClause();
 			if (stringEqual(select, leftArgument)) {
 				for (size_t i = 0; i < selectResult.size(); i++) {
-					vector<int> temp = database->patternStmts(Tnode::STMT_ASSIGN, selectResult.at(i), rightArgument);
+					vector<int> temp = database->getStatementsThatMatchPattern(Tnode::STMT_ASSIGN, selectResult.at(i), rightArgument);
 					if (!temp.empty()) {
 						output.push_back(selectResult.at(i));
 					}
@@ -295,28 +295,28 @@ vector<string> QueryEvaluator::PatternClause(string type, string leftArgument, s
 void QueryEvaluator:: recordSelectClause() {
 	string select = getSelectClause();
 	if (declaration.getType(select).compare("stmt")==0) {
-		selectResult = integerVectorToString(database->selectStmts(Tnode::STMTLST));
+		selectResult = integerVectorToString(database->getStatementsOfType(Tnode::STMTLST));
 	}
 	else if (declaration.getType(select).compare("assign") == 0) {
-		selectResult = integerVectorToString(database->selectStmts(Tnode::STMT_ASSIGN));
+		selectResult = integerVectorToString(database->getStatementsOfType(Tnode::STMT_ASSIGN));
 	}
 	else if (declaration.getType(select).compare("while") == 0) {
-		selectResult = integerVectorToString(database->selectStmts(Tnode::STMT_WHILE));
+		selectResult = integerVectorToString(database->getStatementsOfType(Tnode::STMT_WHILE));
 	}
 	else if (declaration.getType(select).compare("if") == 0) {
-		selectResult = integerVectorToString(database->selectStmts(Tnode::STMT_IF));
+		selectResult = integerVectorToString(database->getStatementsOfType(Tnode::STMT_IF));
 	}
 	else if (declaration.getType(select).compare("variable") == 0) {
-		selectResult = database->selectStrs(Tnode::VARIABLE);
+		selectResult = database->getStringsOfType(Tnode::VARIABLE);
 	}
 	else if (declaration.getType(select).compare("procedure") == 0) {
-		selectResult = database->selectStrs(Tnode::PROCEDURE);
+		selectResult = database->getStringsOfType(Tnode::PROCEDURE);
 	}
 	else if (declaration.getType(select).compare("prog_line") == 0) {
-		selectResult = integerVectorToString(database->selectStmts(Tnode::STMTLST));
+		selectResult = integerVectorToString(database->getStatementsOfType(Tnode::STMTLST));
 	}
 	else if (declaration.getType(select).compare("constant") == 0) {
-		selectResult = integerVectorToString(database->selectStmts(Tnode::CONSTANT));
+		selectResult = integerVectorToString(database->getStatementsOfType(Tnode::CONSTANT));
 	}
 	else {
 		selectResult = vector<string>();//error

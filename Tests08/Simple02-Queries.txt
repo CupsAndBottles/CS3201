@@ -4,23 +4,23 @@ Select s such that Parent(s, 7)
 6
 5000
 2 - Test if Parent considers same nesting level
-stmt s, s1;
-Select s such that Parent(s1, 3) with s1.stmt# = 2
+stmt s;
+Select s such that Parent(s, 3)
 none
 5000
 3 - Test if Parent considers different nesting level in if/else statement
-stmt s1; variable v;
-Select v such that Parent(s1, 12) with s1.stmt# = 10
+variable v;
+Select v such that Parent(10, 12)
 x, y, z, i, v
 5000
 4 - Test basic function of Parent*
 variable v;
-Select v such that Parent*(s, 9) with s.stmt# = 6
+Select v such that Parent*(6, 10)
 none
 5000
 5 - Test if Parent* considers different container statements
 stmt s, s1;
-Select s such that Parent*(s, 11) with s.stmt# = 6
+Select s such that Parent*(6, 11)
 none
 5000
 6 - Test if Parent* considers a TRUE Parent
@@ -33,7 +33,7 @@ stmt s;
 Select s such that Follows(s, 2)
 1
 5000
-8 - Test for invalid Follows
+8 - Test for invalid procedure Follows
 variable v;
 Select v such that Follows("First", "Second")
 invalid
@@ -63,15 +63,15 @@ variable v;
 Select v such that Modifies(1, v)
 x
 5000
-14 - Test if Modifies recognizes container statement, in this case it is "if" statement
-variable v;
-Select v such that Modifies(7, v)
-x
+14 - Test basic function of Modifies for container statement, in this case it is "if" statement
+if ifstat
+Select ifstat such that Modifies(ifstat, "x")
+10
 5000
-15 - Test if Modifies recognizes all variables modified in procedure "First"
-variable v;
-Select v such that Modifies("First", v)
-x, z, i, y, v
+15 - Test basic function of Modifies for container statement, in this case it is “while” statement
+while w;
+Select w such that Modifies(w, "x")
+6
 5000
 16 - Test basic function of Uses
 stmt s;
@@ -90,60 +90,67 @@ Second
 5000
 19 - Test basic function of Pattern
 assign a;
-Select a pattern a(_, "x*y+z")
-15
+Select a pattern a(_ , "z")
+17
 5000
 20 - Test if Pattern recognizes sub expressions/underscores
 assign a;
-Select a pattern a(_, _"x*y"_)
-15
+Select a pattern a(_ , _"y"_)
+7, 15
 5000
-21 - Test if Pattern recognizes left associativity
+21 - Test if Pattern recognizes lhs 
 assign a;
-Select a pattern a(_, "z+x*y")
+Select a pattern a("x" , _ )
+5
+5000
+22 - Combine Modifies and not-existent pattern
+stmt s; assign a;
+Select s such that Modifies(s, "x") and pattern a("x", "x")
 none
 5000
-22 - Combine Modifies and pattern
-procedure p;
-Select p such that Modifies(p, "x") with pattern a("x", "x+2*y")
-Second
+23 - Combine Modifies and pattern
+stmt s; assign a;
+Select s such that Modifies(s, "x") and pattern a("x", _) 
+1, 4, 7, 11, 15
 5000
-23 - Combine Modifies and Follows
-stmt s;
-Select s such that Modifies(p, "x") such that Follows(3, 7)
-7
+24 - Combine Parent and pattern
+stmt s; assign a;
+Select s such that Parent(s, 7) and pattern a(_, _)
+6
 5000
-24 - Combine Modifies and Parent
-stmt s;
-Select s such that Parent(s, 6) with Modifies(s, "i")
-none
-5000
-25 - Combine Uses and Parent
-stmt s;
-Select s such that Parent(s, 6) with Uses(s, "i")
-3
+25 - Combine Uses and pattern
+stmt s; assign a;
+Select s such that Uses(s, "i") and pattern a("i", _)
+9
 5000
 26 - Combine Uses and pattern with same assignment stmt
 assign a; variable v;
 Select a such that Uses(a, "x") and pattern a(v, _)
-
+7, 10, 11, 13, 15
 5000
 27 - Combine Uses and pattern with different assignment stmt and variables
-assign a, a1, a2; variable v1, v2;
-Select a such that Uses(a2, v2) and pattern a1(v1, _)
-
+assign a, a1, a2;
+Select a such that Uses(a2, "z") and pattern a1(_ , _)
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ,17
 5000
 28 - Combine Uses and pattern with different assignment stmt and variables variation
-assign a, a1; variable v, v1;
-Select a such that Uses(a, v) and pattern a1(v1, _)
-
+assign a, a1;
+Select a such that Uses(a, "z") and pattern a1("z", _)
+13, 14, 15, 17
 5000
-29 - Combine Uses and pattern
-assign a, a1; variable v;
-Select a such that Uses(a, v) and pattern a1(v, _)
-
+29 - Combine parent* and pattern
+assign a, a1;
+Select a such that parent*(6, a) and pattern a1("x", _)
+7,8,9
 5000
-30
-31
-
+30 - Combine follows and pattern
+stmt s; assign a;
+Select s such that follows(1, s) and pattern a("z", "3")
+2
+5000
+31 - combine pattern and follows*
+stmt s; assign a;
+Select s pattern a("x",_) such that follows*(s,6)
+4
+5000
 

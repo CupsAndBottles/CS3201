@@ -8,14 +8,14 @@
 #include <vector>
 
 #include "AbstractWrapper.h"
-#include "AST.h"
+#include "AbstractSyntaxTree.h"
 #include "EntityTable.h"
 #include "Parser.h"
-#include "PKB.h"
+#include "ProgramKnowledgeBase.h"
 #include "QueryEvaluator.h"
 #include "QueryPreProcessor.h"
 #include "QueryObject.h"
-#include "RelTable.h"
+#include "RelationshipTable.h"
 #include "SemanticsCheck.h"
 #include "SIMPLEParser.h"
 #include "SIMPLERules.h"
@@ -29,7 +29,7 @@ class TestWrapper : public AbstractWrapper {
   // destructor
   ~TestWrapper();
   
-  pkb* pkbPointer;
+  ProgramKnowledgeBase* pkbPointer;
 
   // method for parsing the SIMPLE source
   virtual void parse(std::string filename);

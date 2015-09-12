@@ -1,7 +1,12 @@
-1 - Test if SPA tool returns all if and while statements
-if ifstat; while w;
-Select ifstat, w
-2, 4, 7, 16, 20
+1 - Test if SPA tool returns all if statements
+if ifstat;
+Select ifstat
+2, 7, 16
+5000
+1 - Test if SPA tool returns all while statements
+while w;
+Select w
+4, 20
 5000
 2 - Parent 
 assign a;
@@ -24,9 +29,9 @@ Select n such that Parent*(2, n)
 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
 5000
 6 - Parent*
-call c;
-Select c such that Parent*(4, 12)
-none
+stmt s;
+Select s such that Parent*(s, 12)
+2
 5000
 7 - Parent*
 procedure p;
@@ -64,52 +69,54 @@ Select s such that Follows*(21, s)
 none
 5000
 14 - Modifies
-variable v;
-Select v such that Modifies(1, v)
-x
+stmt s;
+Select s such that Modifies(8, "q")
+19
 5000
 15 - Modifies
 assign a;
 Select a such that Modifies(1, "x")
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
+5000
 16 - Modifies
-variable v;
-Select v such that Modifies(7, v)
-none
+stmt s;
+Select s such that Modifies(s, "q")
+19, 20, 21
 5000
 17 - Uses
-variable v, v1;
-Select v such that Uses(2, v1)
+variable v;
+Select v such that Uses(2, "x")
 x, y, z, d, i, q
 5000
 18 - Uses
 stmt s;
 Select s such that Uses(s, "x")
-2, 5
+2, 4, 5
 5000
 19 - Uses
 prog_line n;
 Select n such that Uses(7, "d")
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
 5000
-20 - Modifies pattern
+20 - pattern and modifies
 stmt s; assign a;
-Select s such that pattern a("y", _) and Modifies(s, "y")
+Select s pattern a("y", _) and such that Modifies(s, "y")
 3, 8, 9, 10
-21 - Modifies pattern
+5000
+21 - pattern and modifies
 variable v; assign a;
-Select v such that pattern a(_, "y - 2") and Modifies(a, v)
+Select v pattern a(_, _"y"_) such that Modifies(a, v)
 y
 5000
-22 - Uses pattern
+22 - Uses and pattern
 assign a, a1; variable v;
-Select a such that Uses(a, v) and pattern a1(v, "y+2")
+Select a such that Uses(a, "x") and pattern a1(_, "y")
 none
 5000
-23 - Uses pattern
-assign a, a1; variable v;
-Select a such that Uses(a, v) and pattern a1(v, "y-2")
-10
+23 - Uses and pattern
+assign a;
+Select a such that Uses(a, "y") and pattern a("y" , _)
+8, 9, 10
 5000
 24 - Uses pattern
 assign a; variable v;
@@ -133,11 +140,11 @@ none
 5000
 28 - follows pattern
 assign a, a1;
-Select a such that pattern a1("x", _) Follows(a, a1)
+Select a pattern a1("x", _) such that Follows(a, a1)
 none
 5000
 30 - follows pattern
 assign a, a1;
-Select a such that pattern a1("d", _) Follows(a, a1)
+Select a pattern a1("d", _) such that Follows(a, a1)
 5, 6
 5000

@@ -18,7 +18,7 @@ SemanticsCheck sCheck;
 EntTable entityTable;
 vector<string> entityList;
 vector<QueryObject> queryList;
-RelTable relTable;
+RelationshipTable relTable;
 
 vector<string> QueryPreProcessor::split(string s, string delim) {
 	stringstream stringStream(s);
@@ -68,7 +68,7 @@ bool QueryPreProcessor::verifySuchThatQuery(vector<string> temp) {
 	//check that this vector is of size 3
 	if (temp.size() != 3) {
 		cout << "querySTObj does not have 3 arguments" << endl;
-		cout << temp[0] + temp[1] << endl;
+		//cout << temp[0] + temp[1] << endl;
 		return false;
 	}
 
@@ -88,7 +88,7 @@ bool QueryPreProcessor::verifyPatternQuery(vector<string> temp) {
 	//check that this vector is of size 3
 	if (temp.size() != 3) {
 		cout << "queryPatternObj does not have 3 argument:";
-		cout << temp[3] << endl;
+		//cout << temp[3] << endl;
 		return false;
 	}
 
@@ -305,10 +305,10 @@ bool QueryPreProcessor::query(string s) {
 			//find pattern-cl
 			else if (toLowerCase(selectCl.at(i)).compare("pattern") == 0) {
 				i++;
-				cout << "pattern-cl: ";
+				//cout << "pattern-cl: ";
 				//extract patternCond
 				while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0)) {
-					cout << selectCl.at(i) + " ";
+					//cout << selectCl.at(i) + " ";
 					argVector.push_back(selectCl.at(i));
 					i++;
 					if (selectCl.size() == i) {
