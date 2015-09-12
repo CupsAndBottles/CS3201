@@ -67,12 +67,12 @@ Tnode *Tnode::getFirstChild()
 	return firstChildNode;
 }
 
-Tnode *Tnode::getLeftSib()
+Tnode *Tnode::getLeftSibling()
 {
 	return leftSibNode;
 }
 
-Tnode *Tnode::getRightSib()
+Tnode *Tnode::getRightSibling()
 {
 	return rightSibNode;
 }
@@ -92,7 +92,7 @@ int Tnode::getValue()
 	return value;
 }
 
-int Tnode::getStmtNum()
+int Tnode::getStatementNumber()
 {
 	return value;
 }
