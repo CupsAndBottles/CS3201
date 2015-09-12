@@ -93,7 +93,7 @@ vector<string> Parser::splitByDelimiters(vector<string> program) {
 	return program;
 }
 
-// Parse the program as it is being read in
+// Read the program in line by line
 // If there is an error, stop reading and terminate
 vector<string> Parser::readProgram(string file) {
 	ifstream fileReader;
@@ -116,18 +116,18 @@ vector<string> Parser::readProgram(string file) {
 
 vector<string> Parser::parseSimpleProgram(string file)
 {
-	vector<string> program, tokenized_program;
+	vector<string> program, tokenizedProgram;
 
 	program = readProgram(file);
-	tokenized_program = splitByDelimiters(program);
+	tokenizedProgram = splitByDelimiters(program);
 
-	simpleParser *parser = new simpleParser(tokenized_program);
+	simpleParser *parser = new simpleParser(tokenizedProgram);
 
 	if (!(*parser).parseProgram()) {
 		// Error parsing the program; return an empty vector
-		tokenized_program.clear();
+		tokenizedProgram.clear();
 	}
 
-	return tokenized_program;
+	return tokenizedProgram;
 }
 
