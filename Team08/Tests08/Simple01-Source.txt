@@ -1,0 +1,14 @@
+procedure Index {
+  x = 2;
+  y = 3;
+  d = x + y * 13;
+  z = x * y + d + 4;
+	x = z;
+	y = d + 2;}
+
+procedure Example {
+	x = 18;
+	j = 1;
+	call index;
+	i = x * 1 + 394 - 230 * x;
+	j = d - j;}
