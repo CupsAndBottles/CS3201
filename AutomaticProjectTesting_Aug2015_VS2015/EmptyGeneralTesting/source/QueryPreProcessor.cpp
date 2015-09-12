@@ -305,10 +305,10 @@ bool QueryPreProcessor::query(string s) {
 			//find pattern-cl
 			else if (toLowerCase(selectCl.at(i)).compare("pattern") == 0) {
 				i++;
-				cout << "pattern-cl: ";
+				//cout << "pattern-cl: ";
 				//extract patternCond
 				while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0)) {
-					cout << selectCl.at(i) + " ";
+					//cout << selectCl.at(i) + " ";
 					argVector.push_back(selectCl.at(i));
 					i++;
 					if (selectCl.size() == i) {

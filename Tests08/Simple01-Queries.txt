@@ -48,7 +48,7 @@ assign a;
 Select a such that Modifies(a, "q")
 none
 5000
-11 - Test for modified variable, but in another procedure
+11 - Test for modified variable
 assign a
 Select a such that Modifies(15, "d")
 none
@@ -70,8 +70,8 @@ x, y, z, d
 5000
 15 - Test for pattern in LHS assignment
 prog_line n; assign a;
-Select n pattern a(_, "d+2")
-6
+Select n pattern a(_, "2")
+1
 5000
 16 - Test for pattern in RHS assignment
 assign a;
@@ -80,8 +80,8 @@ Select a pattern a("x", _)
 5000
 17 - Test for pattern in long RHS assignments
 assign a;
-Select a pattern a(_, "y+d")
-4
+Select a pattern a(_, _"d"_)
+4, 6, 11
 5000
 18 - Test for definition of Parent
 stmt s;
@@ -114,7 +114,7 @@ Select v such that Parent*(6, 7)
 none
 5000
 24 - Test for definition Uses
-assign a
+assign a;
 Select a such that Uses(a, "x")
 3, 4, 10
 5000
@@ -123,10 +123,10 @@ variable v;
 Select v such that Uses(x, v)
 none
 5000
-26 - Test for Uses in calls
-call call;
-Select call such that Uses(call, "d")
-9
+26 - Test for Uses
+assign a;
+Select a such that Uses(a, "d")
+4, 6, 11
 5000
 27 - Test for Follows and Pattern
 assign a;
@@ -160,7 +160,7 @@ none
 5000
 33 - Test for Uses and pattern
 variable v;
-Select <a, v> such that Uses(11, v) and pattern a(v, "d-j")
+Select v such that Uses(11, "j") and pattern a(v, _ )
 j
 5000
 34 - Test for Modifies and pattern
@@ -169,13 +169,13 @@ Select p such that Modifies(p, "x") and pattern a(_, "2")
 Index
 5000
 35 - Test for Modifies and pattern
-call c; assign a; stmt s;
-Select c such that Modifies(s, "x") and pattern a("x", _)
-9
+assign a; stmt s;
+Select a such that Modifies(s, "x") and pattern a("x", _)
+1, 5, 7
 5000
 36 - Test for Modifies and pattern
 assign a, a1;
-Select a such that pattern a1("x", _) and Modifies(a, "x")
+Select a pattern a1("x", _) and such that Modifies(a, "x")
 1, 5, 7
 5000
 37 - Test for Modifies and pattern
@@ -184,7 +184,7 @@ Select a such that Modifies(a1, "x") and pattern a("x", _)
 none
 5000
 38 - Test for Parent and pattern
-stmt s;
-Select s pattern a(_,"d+2") and such that Parent(s, 6)
+stmt s; assign a;
+Select s pattern a(_, _"d"_) and such that Parent(s, 6)
 none
 5000
