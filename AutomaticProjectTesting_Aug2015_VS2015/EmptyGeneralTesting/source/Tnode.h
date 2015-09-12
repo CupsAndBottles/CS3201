@@ -46,12 +46,12 @@ public:
 	static bool createLink(Link_Type link, Tnode &fromNode, Tnode &toNode);
 	Tnode *getParent();
 	Tnode *getFirstChild();
-	Tnode *getLeftSib();
-	Tnode *getRightSib();
+	Tnode *getLeftSibling();
+	Tnode *getRightSibling();
 	Type getType();
 	string getName();
 	int getValue();
-	int getStmtNum();
+	int getStatementNumber();
 
 	void printNode(); //for debugging
 	char *enumToString(int enumVal);
