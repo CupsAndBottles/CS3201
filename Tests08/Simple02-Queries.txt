@@ -63,15 +63,15 @@ variable v;
 Select v such that Modifies(1, v)
 x
 5000
-14 - Test if Modifies recognizes container statement, in this case it is "if" statement
-variable v;
-Select v such that Modifies(7, v)
-x
+14 - Test basic function of Modifies for container statement, in this case it is "if" statement
+if ifstat
+Select ifstat such that Modifies(ifstat, "x")
+10
 5000
 15 - Test basic function of Modifies for container statement, in this case it is “while” statement
-stmt s1;
-Select s1 such that Modifies(s1,  “i”)
-5,6,9
+while w;
+Select w such that Modifies(w, "x")
+6
 5000
 16 - Test basic function of Uses
 stmt s;
@@ -90,17 +90,17 @@ Second
 5000
 19 - Test basic function of Pattern
 assign a;
-Select a pattern a(_, "z")
+Select a pattern a(_ , "z")
 17
 5000
 20 - Test if Pattern recognizes sub expressions/underscores
 assign a;
-Select a pattern a(_, _"y"_)
+Select a pattern a(_ , _"y"_)
 7, 15
 5000
 21 - Test if Pattern recognizes lhs 
 assign a;
-Select a pattern a(“i”, _)
+Select a pattern a("x" , _ )
 5
 5000
 22 - Combine Modifies and not-existent pattern
@@ -119,7 +119,7 @@ Select s such that Parent(s, 7) and pattern a(_, _)
 6
 5000
 25 - Combine Uses and pattern
-stmt s;
+stmt s; assign a;
 Select s such that Uses(s, "i") and pattern a("i", _)
 9
 5000
