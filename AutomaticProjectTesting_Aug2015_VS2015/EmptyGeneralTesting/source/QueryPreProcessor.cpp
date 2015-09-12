@@ -68,7 +68,7 @@ bool QueryPreProcessor::verifySuchThatQuery(vector<string> temp) {
 	//check that this vector is of size 3
 	if (temp.size() != 3) {
 		cout << "querySTObj does not have 3 arguments" << endl;
-		cout << temp[0] + temp[1] << endl;
+		//cout << temp[0] + temp[1] << endl;
 		return false;
 	}
 
@@ -88,7 +88,7 @@ bool QueryPreProcessor::verifyPatternQuery(vector<string> temp) {
 	//check that this vector is of size 3
 	if (temp.size() != 3) {
 		cout << "queryPatternObj does not have 3 argument:";
-		cout << temp[3] << endl;
+		//cout << temp[3] << endl;
 		return false;
 	}
 
