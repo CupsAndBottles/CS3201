@@ -89,12 +89,14 @@ private:
 	bool isStatement(Tnode * node);
 	bool containsContainer(Tnode * node);
 
+	vector<string> flattenNodeVectorToStringVector(vector<Tnode*>* inp);
 	vector<int> flattenBoolVectorToIntVector(vector<bool> inp);
 	vector<string> flattenBoolMapToStringVector(unordered_map<string, bool> inp);
 	vector<int> flattenNodeVectorToIntVector(const vector<Tnode*>* inp);
 	vector<int> flattenIntSetToIntVector(const unordered_set<int>* inp);
 	vector<string> flattenStringSetToStringVector(const unordered_set<string>* inp);
 
+	vector<Tnode*> getNodesOfType(Tnode::Type type);
 	vector<Tnode*> getNodesOfType(Tnode* start, Tnode::Type type);
 	vector<Tnode*>* getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, vector<Tnode*>* results);
 	Tnode * getNodeWithStatementNumber(int stmtNum);
@@ -111,7 +113,7 @@ private:
 	vector<Tnode*>* getAllParentsOf(Tnode * node, vector<Tnode*>* parents);
 
 	void updateDBFile();
-	
+
 	void calculateRelations(Tnode * currNode, vector<Tnode*> parents);
 	void updater(Relation rel, int stmtNum, string strName);
 	void updateUses(const vector<Tnode*> users, Tnode * used);

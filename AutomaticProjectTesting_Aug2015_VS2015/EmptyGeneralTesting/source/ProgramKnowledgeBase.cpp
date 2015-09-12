@@ -24,7 +24,12 @@ void ProgramKnowledgeBase::setAbstractSyntaxTree(AbstractSyntaxTree* tree){
 
 bool ProgramKnowledgeBase::modifies(int stmt, string var){
 	try{
-		return modifiesRelationIndexedByStatements.at(stmt).count(var);
+		int result = modifiesRelationIndexedByStatements.at(stmt).count(var);
+		if (result == 1) {
+			return true;
+		}		else {
+			return false;
+		}
 	} catch (std::out_of_range){
 		return false;
 	}
@@ -91,7 +96,12 @@ vector<string> ProgramKnowledgeBase::getVariablesModifiedBy(string procName){
 
 bool ProgramKnowledgeBase::uses(int stmt, string var){
 	try{
-		return usesRelationIndexedByStatements.at(stmt).count(var);
+		int result = usesRelationIndexedByStatements.at(stmt).count(var);
+		if (result == 1) {
+			return true;
+		} else {
+			return false;
+		}
 	} catch (std::out_of_range){
 		return false;
 	}
@@ -252,7 +262,7 @@ Tnode* ProgramKnowledgeBase::getPreviousStatementNode(Tnode* currNode){
 			return NULL;
 		} else if (isProcedure(parent)){
 			if (parent->getLeftSibling() != NULL){
-				Tnode* cousin = parent->getLeftSibling ()->getFirstChild()->getFirstChild();
+				Tnode* cousin = parent->getLeftSibling()->getFirstChild()->getFirstChild();
 				while (!isLastChild(cousin)){
 					cousin = cousin->getRightSibling();
 				}
@@ -264,7 +274,7 @@ Tnode* ProgramKnowledgeBase::getPreviousStatementNode(Tnode* currNode){
 		} else if (isStatement(parent)){
 			return parent;
 		} else {
-			// ?
+			return NULL;
 		}
 	}
 }
@@ -347,15 +357,37 @@ vector<int> ProgramKnowledgeBase::getAllChildrenStarOf(int stmt)
 }
 
 bool ProgramKnowledgeBase::isFollows(int s1, int s2){
-	return false;
+	Tnode* node1 = getNodeWithStatementNumber(s1);
+	Tnode* node2 = getNodeWithStatementNumber(s2);
+	return node1->getRightSibling() == node2;
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsThatFollow(int stmt){
-	return vector<int>();
+	Tnode* node = getNodeWithStatementNumber(stmt);
+	Tnode* sibling = node->getRightSibling();
+	vector<int> results = vector<int>();
+	if (sibling == NULL){
+		return results;
+	}
+	while (sibling != NULL){
+		results.push_back(sibling->getStatementNumber());
+		sibling = sibling->getRightSibling();
+	}
+	return results;
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsFollowedBy(int stmt){
-	return vector<int>();
+	Tnode* node = getNodeWithStatementNumber(stmt);
+	Tnode* sibling = node->getLeftSibling();
+	vector<int> results = vector<int>();
+	if (sibling == NULL){
+		return results;
+	}
+	while (sibling != NULL){
+		results.push_back(sibling->getStatementNumber());
+		sibling = sibling->getLeftSibling();
+	}
+	return results;
 }
 
 bool ProgramKnowledgeBase::followsStar(int s1, int s2)
@@ -374,16 +406,23 @@ vector<int> ProgramKnowledgeBase::getStatementsFollowStarredBy(int stmt)
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsOfType(Tnode::Type type){
-	Tnode* root = this->storedAbstractSyntaxTree->getRoot();
-	return flattenNodeVectorToIntVector(&getNodesOfType(root, type));
+	return flattenNodeVectorToIntVector(&getNodesOfType(type));
 }
 
 vector<string> ProgramKnowledgeBase::getStringsOfType(Tnode::Type type){
-	return vector<string>();
+	return flattenNodeVectorToStringVector(&getNodesOfType(type));
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsThatMatchPattern(Tnode::Type type, string var, string expr){
 	return vector<int>();
+}
+
+vector<string> ProgramKnowledgeBase::flattenNodeVectorToStringVector(vector<Tnode*>* inp){
+	vector<string> results = vector<string>();
+	for (auto it : *inp) {
+		results.push_back(it->getName());
+	}
+	return results;
 }
 
 //return vector of indices that have true values in input vector
@@ -424,6 +463,10 @@ vector<int> ProgramKnowledgeBase::flattenIntSetToIntVector(const unordered_set<i
 
 vector<string> ProgramKnowledgeBase::flattenStringSetToStringVector(const unordered_set<string>* inp) {
 	return vector<string> (inp->begin(), inp->end());
+}
+
+vector<Tnode*> ProgramKnowledgeBase::getNodesOfType(Tnode::Type type){
+	return getNodesOfType(this->storedAbstractSyntaxTree->getRoot(), type);
 }
 
 //return all nodes contained in the subtree of input node with type specified by input.
@@ -623,6 +666,8 @@ vector<Tnode*>* ProgramKnowledgeBase::getVariablesAndConstantsFromExpression(Tno
 		Tnode* rightChild = leftChild->getRightSibling();
 		results = getVariablesAndConstantsFromExpression(leftChild, results);
 		return getVariablesAndConstantsFromExpression(rightChild, results);
+	} else {
+		return results;
 	}
 }
 
