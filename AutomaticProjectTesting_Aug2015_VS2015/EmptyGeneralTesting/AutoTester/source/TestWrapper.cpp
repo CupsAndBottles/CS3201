@@ -23,8 +23,8 @@ void TestWrapper::parse(std::string filename) {
 	vector<string> tokenized_program = (*p).parseSimpleProgram(filename);
 
 	if (tokenized_program.size() > 0) {
-		ast *AST = new ast();
-		AST->buildAST(tokenized_program);
+		AbstractSyntaxTree *AST = new AbstractSyntaxTree();
+		AST->buildAbstractSyntaxTree(tokenized_program);
 		Tnode *root = AST->getRoot();
 		cout << "Successfully constructed AST.\n";
 

@@ -7,21 +7,21 @@
 
 using namespace std;
 
-class ast
+class AbstractSyntaxTree
 {
 public:
-	ast();
-	~ast();
+	AbstractSyntaxTree();
+	~AbstractSyntaxTree();
 
-	void buildAST(vector<string> tokens);
+	void buildAbstractSyntaxTree(vector<string> tokens);
 	string toUpperCase(string s);
-	bool isNum(string &s);
+	bool isNumber(string &s);
 	Tnode* getRoot();
-	vector<pair<string, Tnode*>>* getProcTable();
-	vector<pair<string, vector<Tnode*>>>* getVarTable();
-	void printAST();
-	void printProcTable();
-	void printVarTable();
+	vector<pair<string, Tnode*>>* getProcedureTable();
+	vector<pair<string, vector<Tnode*>>>* getVariableTable();
+	void printAbstractSyntaxTree();
+	void printProcedureTable();
+	void printVariableTable();
 
 private:
 	Tnode* root;
@@ -38,8 +38,8 @@ private:
 	Tnode* term(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end);
 	Tnode* factor(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end);
 	Tnode* createVariable(Tnode::Type t, string n);
-	void addToVarTable(string var, Tnode* varNode);
+	void addToVariableTable(string var, Tnode* varNode);
 	void match(vector<string>::iterator &it, string token);
-	void printASTCall(vector<vector<Tnode*>> &nss, vector<Tnode*> s, Tnode *curNode, unsigned int lvl);
+	void printAbstractSyntaxTreeCall(vector<vector<Tnode*>> &nss, vector<Tnode*> s, Tnode *curNode, unsigned int lvl);
 };
 
