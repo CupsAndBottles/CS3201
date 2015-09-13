@@ -24,18 +24,11 @@ list<string> QueryEvaluator::getResults (string query) {
 		//vector<vector<string>> temp;
 		//temp = queryResults();
 		//output = finalResult(temp);
-		vector<int> temp = database.getStatementsOfType(Tnode::STMT_ASSIGN);
+		vector<int> temp = database.getStatementsOfType(Tnode::CONSTANT);
 		cout << temp.size() << endl;
 		for (size_t i = 0; i < temp.size(); i++) {
 			cout << temp.at(i) << endl;
 		}
-		
-		vector<string> temp2 = database.getStringsOfType(Tnode::VARIABLE);
-		cout << temp2.size() << endl;
-		for (size_t i = 0; i < temp2.size(); i++) {
-			cout << temp2.at(i) << endl;
-		}
-
 		preprocessor.clearAll();
 		return output;
 	}
