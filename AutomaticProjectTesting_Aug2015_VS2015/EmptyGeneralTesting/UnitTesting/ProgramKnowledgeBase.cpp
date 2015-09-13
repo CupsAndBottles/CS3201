@@ -29,7 +29,7 @@ namespace UnitTesting
 			Tnode *root = AST->getRoot();
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(AST);
 			vector<string> procedures = pkb.getStringsOfType(Tnode::PROCEDURE);
-			Assert::AreEqual(string("proc"), procedures[0]);
+			Assert::AreEqual(string("Proc"), procedures[0]);
 		}
 
 		TEST_METHOD(testPKBGetVariables) {
@@ -93,33 +93,6 @@ namespace UnitTesting
 			vector<int> parent = pkb.getParentOf(3);
 			Assert::AreEqual(1, int(parent.size()));
 			Assert::AreEqual(2, parent[0]);
-		}
-
-		TEST_METHOD(testPKBGetParentStar) {
-			ofstream outputFile("program.txt");
-			outputFile << "procedure Proc {";
-			outputFile << "x = 1;";  //line 1
-			outputFile << "while x {"; //line 2
-			outputFile << "if x then {"; //line 3
-			outputFile << "x = 1;"; //line 4
-			outputFile << "} else {"; 
-			outputFile << "x = 1;"; //line 5
-			outputFile << "}"; 
-			outputFile << "x = x - 1;"; //line 6
-			outputFile << "}";
-			outputFile << "}";
-			outputFile.close();
-
-			Parser *parse = new Parser();
-			vector<string> parsedProgram = (*parse).parseSimpleProgram("program.txt");
-			AbstractSyntaxTree *AST = new AbstractSyntaxTree();
-			AST->buildAbstractSyntaxTree(parsedProgram);
-			Tnode *root = AST->getRoot();
-			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(AST);
-			vector<int> parent = pkb.getParentsStarOf(4);
-			Assert::AreEqual(2, int(parent.size()));
-			Assert::AreEqual(3, parent[0]);
-			Assert::AreEqual(2, parent[1]);
 		}
 	};
 }

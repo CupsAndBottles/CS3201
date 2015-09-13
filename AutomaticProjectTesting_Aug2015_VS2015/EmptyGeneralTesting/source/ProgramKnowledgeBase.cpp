@@ -190,12 +190,12 @@ Tnode* ProgramKnowledgeBase::getNodeWithStatementNumber(int targetStmtNum){
 					candidate = candidate->getFirstChild()->getRightSibling()->getFirstChild();
 				}
 				else if (isIf(candidate)) {
-					Tnode* candidateThen = candidate->getFirstChild()->getRightSibling();
+					Tnode* candidateThen = candidate->getFirstChild()->getFirstChild();
 					if (getLastContainedStatement(candidateThen)->getStatementNumber() < targetStmtNum) {
 						candidate = candidateThen->getRightSibling()->getFirstChild();
 					}
 					else {
-						candidate = candidateThen->getFirstChild();
+						candidate = candidateThen->getFirstChild()->getFirstChild();
 					}
 				}
 			}
