@@ -94,7 +94,6 @@ namespace UnitTesting
 			Assert::AreEqual(1, int(parent.size()));
 			Assert::AreEqual(2, parent[0]);
 		}
-<<<<<<< HEAD
 
 		TEST_METHOD(testPKBGetParentStar) {
 			ofstream outputFile("program.txt", ofstream::trunc);
@@ -155,7 +154,5 @@ namespace UnitTesting
 			vector<string> variablesProcs = pkb.getVariablesModifiedBy("Proc");
 			Assert::AreEqual(string("x"), variablesProcs[0]);
 		}
-=======
->>>>>>> parent of 5d8428a... Add unit test for ParentStar and corresponding bugfixes
 	};
 }
