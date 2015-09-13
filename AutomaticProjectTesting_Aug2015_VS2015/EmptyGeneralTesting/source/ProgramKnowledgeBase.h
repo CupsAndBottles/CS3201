@@ -100,7 +100,7 @@ private:
 
 	vector<Tnode*> getNodesOfType(Tnode::Type type);
 	vector<Tnode*> getNodesOfType(Tnode* start, Tnode::Type type);
-	unordered_set<Tnode*>* getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, unordered_set<Tnode*>* results);
+	vector<Tnode*>* getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, vector<Tnode*>* results);
 	Tnode * getNodeWithStatementNumber(int stmtNum);
 	Tnode * getNodeWithProcedureName(string targetName);
 	Tnode * getCallee(Tnode * node);

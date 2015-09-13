@@ -71,7 +71,7 @@ vector<string> ProgramKnowledgeBase::getProceduresThatModify(string var){
 	vector<string> results = vector<string>();
 	vector<Tnode*> procedures = vector<Tnode*>();
 	vector<pair<string, Tnode*>>* procTable = this->storedAbstractSyntaxTree->getProcedureTable();
-	string currProc = "";
+	string currProc = NULL;
 	for (int i = 0; i < procTable->size(); i++) {
 		currProc = procTable->at(i).first;
 		if (modifies(currProc, var)) {
@@ -84,7 +84,7 @@ vector<string> ProgramKnowledgeBase::getProceduresThatModify(string var){
 vector<string> ProgramKnowledgeBase::getVariablesModifiedBy(string procName){
 	vector<string> results = vector<string>();
 	vector<pair<string, vector<Tnode*>>>* varTable = this->storedAbstractSyntaxTree->getVariableTable();
-	string currVar = "";
+	string currVar = NULL;
 	for (int i = 0; i < varTable->size(); i++) {
 		currVar = varTable->at(i).first;
 		if (modifies(procName, currVar)) {
@@ -319,7 +319,7 @@ vector<int> ProgramKnowledgeBase::getParentOf(int stmt){
 		Tnode* parent = getSPAParent(node);
 		if (parent != NULL){
 			return vector<int>(1, parent->getStatementNumber());
-		}
+		} 
 	}
 	return vector<int>();
 }
@@ -486,15 +486,15 @@ vector<Tnode*> ProgramKnowledgeBase::getNodesOfType(Tnode::Type type){
 
 //return all nodes contained in the subtree of input node with type specified by input.
 vector<Tnode*> ProgramKnowledgeBase::getNodesOfType(Tnode* start, Tnode::Type type){
-	unordered_set<Tnode*> results = unordered_set<Tnode*>();
+	vector<Tnode*> results = vector<Tnode*>();
 	results = *getNodesOfTypeHelper(start, type, &results);
-	return vector<Tnode*>(results.begin(), results.end());
+	return results;
 }
 
-unordered_set<Tnode*>* ProgramKnowledgeBase::getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, unordered_set<Tnode*>* results){
+vector<Tnode*>* ProgramKnowledgeBase::getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, vector<Tnode*>* results){
 	if (curr != NULL){
 		if (curr->getType() == type){
-			results->insert(curr);
+			results->push_back(curr);
 		}
 		if (curr->getFirstChild() != NULL){
 			results = getNodesOfTypeHelper(curr->getFirstChild(), type, results);
@@ -589,13 +589,10 @@ Tnode* ProgramKnowledgeBase::getCallee(Tnode* node){
 
 Tnode* ProgramKnowledgeBase::getNodeWithProcedureName(string procName){
 	vector<pair<string, Tnode*>>* procTable = this->storedAbstractSyntaxTree->getProcedureTable();
-
-	for (size_t i = 0; i < procTable->size(); i++) {
-		if (procName.compare(procTable->at(i).first)==0) {
-			return procTable->at(i).second;
-		}
-	}
-	return NULL;
+	auto it = find_if(procTable->begin(),
+		procTable->end(),
+		[procName](pair<string, Tnode*> p)->bool {return procName.compare(p.second->getName())==0;});
+	return it->second;
 }
 
 Tnode* ProgramKnowledgeBase::getParentNode(Tnode* node){
@@ -623,9 +620,11 @@ Tnode* ProgramKnowledgeBase::getSPAParent(Tnode* node) {
 
 void ProgramKnowledgeBase::calculateRelations(Tnode* currNode, vector<Tnode*> parents) {
 	if (isProgram(currNode)) {
+		parents.push_back(currNode);
 		calculateRelations(currNode->getFirstChild(), parents);
 	} else if (isProcedure(currNode)){
-		calculateRelations(currNode->getFirstChild()->getFirstChild(), parents); // get first statement in procedure
+		parents.push_back(currNode);
+		calculateRelations(currNode->getFirstChild(), parents); // get first statement in procedure
 	} else if (isWhile(currNode)){
 		parents.push_back(currNode);
 		updateUses(parents, currNode->getFirstChild());	// uses conditional variable
@@ -646,17 +645,12 @@ void ProgramKnowledgeBase::calculateRelations(Tnode* currNode, vector<Tnode*> pa
 		updateUses(parents, assignLeft->getRightSibling());
 	}
 	if (isLastChild(currNode)){
-		if (parents.empty()) {
-			return;
-		}
 		currNode = parents.back();
 		parents.pop_back();
 		Tnode* nextNode = currNode->getRightSibling();
 		if (nextNode!=NULL) {
 			calculateRelations(nextNode, parents);
 		}
-	} else {
-		return calculateRelations(currNode->getRightSibling(), parents);
 	}
 }
 
