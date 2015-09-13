@@ -29,7 +29,7 @@ namespace UnitTesting
 			Tnode *root = AST->getRoot();
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(AST);
 			vector<string> procedures = pkb.getStringsOfType(Tnode::PROCEDURE);
-			Assert::AreEqual(string("Proc"), procedures[0]);
+			Assert::AreEqual(string("proc"), procedures[0]);
 		}
 
 		TEST_METHOD(testPKBGetVariables) {
