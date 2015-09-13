@@ -29,8 +29,8 @@ public:
 	list<string> getResults(string input);
 
 	void getQueryData();
-	vector<vector<string>> queryResults();
-	list<string> finalResult(vector<vector<string>> store);
+	vector<string> queryResults();
+	list<string> finalResult(vector<string> store);
 	vector<string> processCondition(string condition, string leftArgument, string rightArgument);
 	vector<string> modify(string leftArgument, string rightArgument);
 	vector<string> uses(string leftArgument, string rightArgument);
