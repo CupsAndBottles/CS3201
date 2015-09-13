@@ -180,19 +180,30 @@ Tnode* ProgramKnowledgeBase::getNodeWithStatementNumber(int targetStmtNum){
 	if (targetProc == NULL){
 		return NULL;
 	}
-
 	Tnode* candidate = targetProc->getFirstChild()->getFirstChild();
 	while (candidate->getStatementNumber() < targetStmtNum){
 		if (isContainer(candidate)){
 			if (getLastContainedStatement(candidate)->getStatementNumber() < targetStmtNum){
 				candidate = candidate->getRightSibling();
 			} else {
-				candidate = candidate->getFirstChild();
+				if (isWhile(candidate)){
+					candidate = candidate->getFirstChild()->getRightSibling()->getFirstChild();
+				}
+				else if (isIf(candidate)) {
+					Tnode* candidateThen = candidate->getFirstChild()->getFirstChild();
+					if (getLastContainedStatement(candidateThen)->getStatementNumber() < targetStmtNum) {
+						candidate = candidateThen->getRightSibling()->getFirstChild();
+					}
+					else {
+						candidate = candidateThen->getFirstChild()->getFirstChild();
+					}
+				}
 			}
 		} else {
 			candidate = candidate->getRightSibling();
 		}
 	}
+	//throw candidate->getType();
 
 	// candidate->getStmtNum() should be equal to targetStmtNum
 	return candidate;
@@ -226,16 +237,20 @@ Tnode* ProgramKnowledgeBase::getParentProcedure(Tnode* node){
 }
 
 Tnode* ProgramKnowledgeBase::getLastContainedStatement(Tnode* node){
-	if (!isContainer(node)){
+	if (!isContainer(node) && !isProcedure(node) && !isStatementList(node)){
 		return NULL;
 	} else {
-		while (!isLastChild(node)){
-			node = node->getRightSibling();
+		Tnode* lastNode = node->getFirstChild();
+		if (isProcedure(node)) {
+			lastNode = lastNode->getFirstChild();
 		}
-		if (isContainer(node)){
-			return getLastContainedStatement(node);
+		while (!isLastChild(lastNode)){
+			lastNode = lastNode->getRightSibling();
+		}
+		if (isContainer(lastNode) || isStatementList(lastNode)){
+			return getLastContainedStatement(lastNode);
 		} else {
-			return node;
+			return lastNode;
 		}
 	}
 }
@@ -303,7 +318,7 @@ vector<int> ProgramKnowledgeBase::getParentOf(int stmt){
 	if (node != NULL){
 		Tnode* parent = getSPAParent(node);
 		if (parent != NULL){
-			return vector<int>(parent->getStatementNumber());
+			return vector<int>(1, parent->getStatementNumber());
 		}
 	}
 	return vector<int>();
