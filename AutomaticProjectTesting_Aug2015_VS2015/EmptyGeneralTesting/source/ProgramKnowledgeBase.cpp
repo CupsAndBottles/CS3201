@@ -190,12 +190,12 @@ Tnode* ProgramKnowledgeBase::getNodeWithStatementNumber(int targetStmtNum){
 					candidate = candidate->getFirstChild()->getRightSibling()->getFirstChild();
 				}
 				else if (isIf(candidate)) {
-					Tnode* candidateThen = candidate->getFirstChild()->getFirstChild();
+					Tnode* candidateThen = candidate->getFirstChild()->getRightSibling();
 					if (getLastContainedStatement(candidateThen)->getStatementNumber() < targetStmtNum) {
 						candidate = candidateThen->getRightSibling()->getFirstChild();
 					}
 					else {
-						candidate = candidateThen->getFirstChild()->getFirstChild();
+						candidate = candidateThen->getFirstChild();
 					}
 				}
 			}
@@ -319,7 +319,7 @@ vector<int> ProgramKnowledgeBase::getParentOf(int stmt){
 		Tnode* parent = getSPAParent(node);
 		if (parent != NULL){
 			return vector<int>(1, parent->getStatementNumber());
-		} 
+		}
 	}
 	return vector<int>();
 }
@@ -589,10 +589,12 @@ Tnode* ProgramKnowledgeBase::getCallee(Tnode* node){
 
 Tnode* ProgramKnowledgeBase::getNodeWithProcedureName(string procName){
 	vector<pair<string, Tnode*>>* procTable = this->storedAbstractSyntaxTree->getProcedureTable();
-	auto it = find_if(procTable->begin(),
-		procTable->end(),
-		[procName](pair<string, Tnode*> p)->bool {return procName.compare(p.second->getName())==0;});
-	return it->second;
+	for (size_t i = 0; i < procTable->size(); i++) {
+		if (procName.compare(procTable->at(i).first)==0) {
+			return procTable->at(i).second;
+		}
+	}
+	return NULL;
 }
 
 Tnode* ProgramKnowledgeBase::getParentNode(Tnode* node){
@@ -620,11 +622,9 @@ Tnode* ProgramKnowledgeBase::getSPAParent(Tnode* node) {
 
 void ProgramKnowledgeBase::calculateRelations(Tnode* currNode, vector<Tnode*> parents) {
 	if (isProgram(currNode)) {
-		parents.push_back(currNode);
 		calculateRelations(currNode->getFirstChild(), parents);
 	} else if (isProcedure(currNode)){
-		parents.push_back(currNode);
-		calculateRelations(currNode->getFirstChild(), parents); // get first statement in procedure
+		calculateRelations(currNode->getFirstChild()->getFirstChild(), parents); // get first statement in procedure
 	} else if (isWhile(currNode)){
 		parents.push_back(currNode);
 		updateUses(parents, currNode->getFirstChild());	// uses conditional variable
@@ -644,14 +644,19 @@ void ProgramKnowledgeBase::calculateRelations(Tnode* currNode, vector<Tnode*> pa
 		updateModifies(parents, assignLeft);
 		updateUses(parents, assignLeft->getRightSibling());
 	}
-	if (isLastChild(currNode)){
-		currNode = parents.back();
-		parents.pop_back();
-		Tnode* nextNode = currNode->getRightSibling();
-		if (nextNode!=NULL) {
-			calculateRelations(nextNode, parents);
+ 	if (isLastChild(currNode)){
+		if (parents.empty()) {
+			return;
 		}
-	}
+ 		currNode = parents.back();
+ 		parents.pop_back();
+ 		Tnode* nextNode = currNode->getRightSibling();
+ 		if (nextNode!=NULL) {
+ 			calculateRelations(nextNode, parents);
+ 		}
+	} else {
+		return calculateRelations(currNode->getRightSibling(), parents);
+ 	}
 }
 
 void ProgramKnowledgeBase::updateUses(const vector<Tnode*> users, Tnode* used){
