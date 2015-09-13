@@ -647,11 +647,13 @@ void ProgramKnowledgeBase::calculateRelations(Tnode* currNode, vector<Tnode*> pa
 		updateUses(parents, assignLeft->getRightSibling());
 	}
 	if (isLastChild(currNode)){
-		currNode = parents.back();
-		parents.pop_back();
-		Tnode* nextNode = currNode->getRightSibling();
-		if (nextNode!=NULL) {
-			calculateRelations(nextNode, parents);
+		if (!parents.empty()) {
+			currNode = parents.back();
+			parents.pop_back();
+			Tnode* nextNode = currNode->getRightSibling();
+			if (nextNode != NULL) {
+				calculateRelations(nextNode, parents);
+			}
 		}
 	}
 }
