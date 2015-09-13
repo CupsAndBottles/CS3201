@@ -125,6 +125,36 @@ namespace UnitTesting
 			Assert::AreEqual(2, parent[1]);
 		}
 
+		TEST_METHOD(testPKBSimpleModify) {
+			ofstream outputFile("program.txt", ofstream::trunc);
+			outputFile << "procedure Proc {";
+			outputFile << "x = 1;";
+			outputFile << "}";
+			outputFile.close();
 
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = (*parse).parseSimpleProgram("program.txt");
+			AbstractSyntaxTree *AST = new AbstractSyntaxTree();
+			AST->buildAbstractSyntaxTree(parsedProgram);
+			Tnode *root = AST->getRoot();
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(AST);
+
+			Assert::IsTrue(pkb.modifies(1, "x"));
+			Assert::IsTrue(pkb.modifies("Proc", "x"));
+
+			vector<int> modders = pkb.getStatementsThatModify("x");
+			Assert::AreEqual(1, int(modders.size()));
+			Assert::AreEqual(1, modders[0]);
+
+			vector<string> variables = pkb.getVariablesModifiedBy(1);
+			Assert::AreEqual(string("x"), variables[0]);
+
+			vector<string> moddersProcs = pkb.getProceduresThatModify("x");
+			Assert::AreEqual(1, int(moddersProcs.size()));
+			Assert::AreEqual(string("Proc"), moddersProcs[0]);
+
+			vector<string> variablesProcs = pkb.getVariablesModifiedBy("Proc");
+			Assert::AreEqual(string("x"), variablesProcs[0]);
+		}
 	};
 }
