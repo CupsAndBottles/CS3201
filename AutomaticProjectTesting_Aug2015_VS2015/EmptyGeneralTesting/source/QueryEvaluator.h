@@ -24,7 +24,7 @@ class QueryEvaluator
 	EntTable declaration;
 
 public:
-	QueryEvaluator(ProgramKnowledgeBase* storePkb);
+	QueryEvaluator(ProgramKnowledgeBase storePkb);
 
 	list<string> getResults(string input);
 
@@ -51,7 +51,7 @@ public:
 	string removeQuotes(string s);
 
 private:
-	ProgramKnowledgeBase* database;
+	ProgramKnowledgeBase database;
 };
 
 #endif
