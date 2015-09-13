@@ -28,7 +28,7 @@ void TestWrapper::parse(std::string filename) {
 		Tnode *root = AST->getRoot();
 		cout << "Successfully constructed AST.\n";
 
-		pkbPointer = &ProgramKnowledgeBase(AST);
+		pkbPointer = ProgramKnowledgeBase(AST);
 
 		cout << "Successfully constructed PKB.\n";
 	}
