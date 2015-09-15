@@ -145,7 +145,7 @@ vector<string> ProgramKnowledgeBase::getProceduresThatUse(string var)
 	vector<string> results = vector<string>();
 	vector<Tnode*> procedures = vector<Tnode*>();
 	vector<pair<string, Tnode*>>* procTable = this->storedAbstractSyntaxTree->getProcedureTable();
-	string currProc = NULL;
+	string currProc = "";
 	for (int i = 0; i < procTable->size(); i++) {
 		currProc = procTable->at(i).first;
 		if (uses(currProc, var)) {
@@ -158,7 +158,7 @@ vector<string> ProgramKnowledgeBase::getProceduresThatUse(string var)
 vector<string> ProgramKnowledgeBase::getVariablesUsedBy(string procName){
 	vector<string> results = vector<string>();
 	vector<pair<string, vector<Tnode*>>>* varTable = this->storedAbstractSyntaxTree->getVariableTable();
-	string currVar = NULL;
+	string currVar = "";
 	for (int i = 0; i < varTable->size(); i++) {
 		currVar = varTable->at(i).first;
 		if (uses(procName, currVar)) {
@@ -319,7 +319,7 @@ vector<int> ProgramKnowledgeBase::getParentOf(int stmt){
 		Tnode* parent = getSPAParent(node);
 		if (parent != NULL){
 			return vector<int>(1, parent->getStatementNumber());
-		} 
+		}
 	}
 	return vector<int>();
 }
