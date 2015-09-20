@@ -22,15 +22,16 @@ int main()
 		"call", "you", ";",
 		"}"};
 	// Create AbstractSyntaxTree
-	AbstractSyntaxTree *a = new AbstractSyntaxTree;
+	Database *db = new Database;
 	cout << "building AbstractSyntaxTree..." << endl;
-	(*a).buildAbstractSyntaxTree(tokenized_program);
+	db -> buildAbstractSyntaxTree(tokenized_program);
 	cout << "AbstractSyntaxTree generated." << endl;
 	cout << "printing AbstractSyntaxTree..." << endl;
-	(*a).printAbstractSyntaxTree(); ///prints the AbstractSyntaxTree
+	db -> printAbstractSyntaxTree(); ///prints the AbstractSyntaxTree
 	cout << "AbstractSyntaxTree printed." << endl;
-	(*a).printProcedureTable();
-	(*a).printVariableTable();
+	db -> printStatementTable();
+	db -> printProcedureTable();
+	db -> printVariableTable();
 	return 0;
 }
 */
@@ -38,6 +39,7 @@ int main()
 Database::Database()
 {
 	this -> astRoot = NULL;
+	this -> stmtTable = new vector<Tnode*>;
 	this -> procTable = new vector<pair<string, Tnode*>>;
 	this -> varTable = new vector<pair<string, vector<Tnode*>>>;
 }
@@ -127,6 +129,7 @@ Tnode* Database::stmt(vector<string> &tokens, vector<string>::iterator &it)
 		st = Tnode::createNode(Tnode::STMT_ASSIGN, "");
 		Tnode::createLink(Tnode::PARENT, *st, *assign(tokens,it));
 	}
+	addToStatementTable(st);
 	return st;
 }
 
@@ -278,6 +281,14 @@ Tnode * Database::createVariable(Tnode::Type t, string n)
 	return varNode;
 }
 
+void Database::addToStatementTable(Tnode* stmtNode)
+{
+	if (stmtTable->size() < (unsigned)stmtNode->getStatementNumber()) {
+		stmtTable->resize(stmtNode->getStatementNumber());
+	}
+	stmtTable->at(stmtNode->getStatementNumber() - 1) = stmtNode;
+}
+
 void Database::addToVariableTable(string var, Tnode* varNode)
 {
 	for (unsigned int i = 0; i < (*varTable).size(); i++) {
@@ -343,6 +354,11 @@ Tnode *Database::getAbstractSyntaxTreeRoot()
 	return astRoot;
 }
 
+vector<Tnode*>* Database::getStatementTable()
+{
+	return stmtTable;
+}
+
 vector<pair<string, Tnode*>>* Database::getProcedureTable()
 {
 	return procTable;
@@ -380,6 +396,14 @@ void Database::printAbstractSyntaxTree()
 			(*notSoSimple.at(i).at(j)).printNode();
 			cout << "\n";
 		}
+	}
+}
+
+void Database::printStatementTable()
+{
+	cout << endl << "<---------------------------------------- Statement Table: ---------------------------------------->" << endl << endl;
+	for (vector<Tnode*>::iterator i = stmtTable -> begin(); i != stmtTable -> end(); i++) {
+		cout << "Statement :" << (i + 1 - stmtTable -> begin()) << ", Address: <" << *i << ">" << ", StmtNum: " << (**i).getStatementNumber() <<endl;
 	}
 }
 

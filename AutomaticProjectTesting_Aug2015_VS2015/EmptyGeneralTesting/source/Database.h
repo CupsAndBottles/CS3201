@@ -17,14 +17,17 @@ public:
 	string toUpperCase(string s);
 	bool isNumber(string &s);
 	Tnode* getAbstractSyntaxTreeRoot();
+	vector<Tnode*>* getStatementTable();
 	vector<pair<string, Tnode*>>* getProcedureTable();
 	vector<pair<string, vector<Tnode*>>>* getVariableTable();
 	void printAbstractSyntaxTree();
+	void printStatementTable();
 	void printProcedureTable();
 	void printVariableTable();
 
 private:
 	Tnode* astRoot;
+	vector<Tnode*> *stmtTable;
 	vector<pair<string, Tnode*>> *procTable;
 	vector<pair<string, vector<Tnode*>>> *varTable;
 	void program(vector<string> &tokens);
@@ -38,6 +41,7 @@ private:
 	Tnode* term(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end);
 	Tnode* factor(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end);
 	Tnode* createVariable(Tnode::Type t, string n);
+	void addToStatementTable(Tnode* stmtNode);
 	void addToVariableTable(string var, Tnode* varNode);
 	void match(vector<string>::iterator &it, string token);
 	void printAbstractSyntaxTreeCall(vector<vector<Tnode*>> &nss, vector<Tnode*> s, Tnode *curNode, unsigned int lvl);
