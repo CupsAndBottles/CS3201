@@ -1,12 +1,18 @@
 #include "ProgramKnowledgeBase.h"
 
-ProgramKnowledgeBase::ProgramKnowledgeBase(){
-	storedAbstractSyntaxTree = NULL;
+ProgramKnowledgeBase::ProgramKnowledgeBase() {
+	abstractSyntaxTree = NULL;
+	statementTable = NULL;
+	procTable = NULL;
+	varTable = NULL;
 }
 
-ProgramKnowledgeBase::ProgramKnowledgeBase(Database* tree){
-	storedAbstractSyntaxTree = tree;
-	calculateRelations(this->storedAbstractSyntaxTree->getAbstractSyntaxTreeRoot(), vector<Tnode*>());
+ProgramKnowledgeBase::ProgramKnowledgeBase(Database* db){
+	abstractSyntaxTree = db->getAbstractSyntaxTreeRoot();
+	statementTable = db->getStatementTable();
+	procTable = db->getProcedureTable();
+	varTable = db->getVariableTable();
+	calculateRelations(this->abstractSyntaxTree, vector<Tnode*>());
 }
 
 //load pkb from file storage
@@ -15,11 +21,6 @@ ProgramKnowledgeBase::ProgramKnowledgeBase(string filePath) {
 
 //write pkb to file
 void ProgramKnowledgeBase::updateDBFile() {
-}
-
-void ProgramKnowledgeBase::setAbstractSyntaxTree(Database* tree){
-	this->storedAbstractSyntaxTree = tree;
-	calculateRelations(this->storedAbstractSyntaxTree->getAbstractSyntaxTreeRoot(), vector<Tnode*>());
 }
 
 bool ProgramKnowledgeBase::modifies(int stmt, string var){
@@ -70,10 +71,9 @@ bool ProgramKnowledgeBase::modifies(string procName, string var){
 vector<string> ProgramKnowledgeBase::getProceduresThatModify(string var){
 	vector<string> results = vector<string>();
 	vector<Tnode*> procedures = vector<Tnode*>();
-	ProcTable* procTable = this->storedAbstractSyntaxTree->getProcedureTable();
 	string currProc = "";
-	for (int i = 0; i < procTable->getSize(); i++) {
-		currProc = procTable->getProcedureName(i);
+	for (int i = 0; i < this->procTable->getSize(); i++) {
+		currProc = this->procTable->getProcedureName(i);
 		if (modifies(currProc, var)) {
 			results.push_back(currProc);
 		}
@@ -83,10 +83,9 @@ vector<string> ProgramKnowledgeBase::getProceduresThatModify(string var){
 
 vector<string> ProgramKnowledgeBase::getVariablesModifiedBy(string procName){
 	vector<string> results = vector<string>();
-	VarTable* varTable = this->storedAbstractSyntaxTree->getVariableTable();
 	string currVar = "";
-	for (int i = 0; i < varTable->getSize(); i++) {
-		currVar = varTable->getVariableName(i);
+	for (int i = 0; i < this->varTable->getSize(); i++) {
+		currVar = this->varTable->getVariableName(i);
 		if (modifies(procName, currVar)) {
 			results.push_back(currVar);
 		}
@@ -144,10 +143,9 @@ vector<string> ProgramKnowledgeBase::getProceduresThatUse(string var)
 {
 	vector<string> results = vector<string>();
 	vector<Tnode*> procedures = vector<Tnode*>();
-	ProcTable* procTable = this->storedAbstractSyntaxTree->getProcedureTable();
 	string currProc = "";
-	for (int i = 0; i < procTable->getSize(); i++) {
-		currProc = procTable->getProcedureName(i);
+	for (int i = 0; i < this->procTable->getSize(); i++) {
+		currProc = this->procTable->getProcedureName(i);
 		if (uses(currProc, var)) {
 			results.push_back(currProc);
 		}
@@ -157,10 +155,9 @@ vector<string> ProgramKnowledgeBase::getProceduresThatUse(string var)
 
 vector<string> ProgramKnowledgeBase::getVariablesUsedBy(string procName){
 	vector<string> results = vector<string>();
-	VarTable* varTable = this->storedAbstractSyntaxTree->getVariableTable();
 	string currVar = "";
-	for (int i = 0; i < varTable->getSize(); i++) {
-		currVar = varTable->getVariableName(i);
+	for (int i = 0; i < this->varTable->getSize(); i++) {
+		currVar = this->varTable->getVariableName(i);
 		if (uses(procName, currVar)) {
 			results.push_back(currVar);
 		}
@@ -170,48 +167,16 @@ vector<string> ProgramKnowledgeBase::getVariablesUsedBy(string procName){
 
 bool ProgramKnowledgeBase::isParent(int s1, int s2){
 	Tnode* s2Node = getNodeWithStatementNumber(s2);
+	if (s2Node == NULL) {
+		return false;
+	}
 	Tnode* s2Parent = s2Node->getSPAParent();
 	return s2Parent->getStatementNumber() == s1;
 }
 
-// searches AST and returns node with statement number stmtNum if found, NULL if not.
-Tnode* ProgramKnowledgeBase::getNodeWithStatementNumber(int targetStmtNum){
-	Tnode* targetProc = getProcedureContaining(targetStmtNum);
-	if (targetProc == NULL){
-		return NULL;
-	}
-	Tnode* candidate = targetProc->getFirstChild()->getFirstChild();
-	while (candidate->getStatementNumber() < targetStmtNum){
-		if (candidate->isContainer()){
-			if (getLastContainedStatement(candidate)->getStatementNumber() < targetStmtNum){
-				candidate = candidate->getRightSibling();
-			} else {
-				if (candidate->isWhile()){
-					candidate = candidate->getFirstChild()->getRightSibling()->getFirstChild();
-				}
-				else if (candidate->isIf()) {
-					Tnode* candidateThen = candidate->getFirstChild()->getRightSibling();
-					if (getLastContainedStatement(candidateThen)->getStatementNumber() < targetStmtNum) {
-						candidate = candidateThen->getRightSibling()->getFirstChild();
-					}
-					else {
-						candidate = candidateThen->getFirstChild();
-					}
-				}
-			}
-		} else {
-			candidate = candidate->getRightSibling();
-		}
-	}
-	//throw candidate->getType();
-
-	// candidate->getStmtNum() should be equal to targetStmtNum
-	return candidate;
-}
-
 // linearly searches procedures for the procedure that contains the target.
 Tnode* ProgramKnowledgeBase::getProcedureContaining(int targetStmtNum){
-	Tnode* proc = this->storedAbstractSyntaxTree->getAbstractSyntaxTreeRoot()->getFirstChild();
+	Tnode* proc = this->abstractSyntaxTree->getFirstChild();
 	int procLastStmtNum = getLastContainedStatement(proc)->getStatementNumber();
 	while (targetStmtNum > procLastStmtNum){
 		Tnode* nextProc = proc->getRightSibling();
@@ -311,32 +276,31 @@ Tnode* ProgramKnowledgeBase::getNextStatementNode(Tnode* currNode){
 
 vector<int> ProgramKnowledgeBase::getParentOf(int stmt){
 	Tnode* node = getNodeWithStatementNumber(stmt);
-	if (node != NULL){
-		Tnode* parent = node->getSPAParent();
-		if (parent != NULL){
-			return vector<int>(1, parent->getStatementNumber());
-		}
+	if (node == NULL) {
+		return vector<int>();
 	}
-	return vector<int>();
+	Tnode* parent = node->getSPAParent();
+	if (parent != NULL){
+		return vector<int>(1, parent->getStatementNumber());
+	}
 }
 
 vector<int> ProgramKnowledgeBase::getParentsStarOf(int stmt){
 	Tnode* node = getNodeWithStatementNumber(stmt);
-	if (node != NULL) {
-		return flattenNodeVectorToIntVector(getAllParentsOf(node, &vector<Tnode*>()));
-	} else {
+	if (node == NULL) {
 		return vector<int>();
 	}
+	return flattenNodeVectorToIntVector(getAllParentsOf(node, &vector<Tnode*>()));
 }
 
 vector<Tnode*>* ProgramKnowledgeBase::getAllParentsOf(Tnode* node, vector<Tnode*>* parents) {
 	Tnode* parent = node->getSPAParent();
 	if (parent == NULL) {
 		return parents;
-	} else {
-		parents->push_back(parent);
-		return getAllParentsOf(parent, parents);
-	}
+	} 
+
+	parents->push_back(parent);
+	return getAllParentsOf(parent, parents);
 }
 
 vector<int> ProgramKnowledgeBase::getChildrenOf(int stmt){
@@ -370,31 +334,39 @@ vector<int> ProgramKnowledgeBase::getChildrenStarOf(int stmt)
 bool ProgramKnowledgeBase::isFollows(int s1, int s2){
 	Tnode* node1 = getNodeWithStatementNumber(s1);
 	Tnode* node2 = getNodeWithStatementNumber(s2);
+	if (node1 == NULL || node2 == NULL) {
+		return false;
+	}
+
 	return node1->getRightSibling() == node2;
 }
 
 vector<int> ProgramKnowledgeBase::getStatementThatFollows(int stmt){
 	Tnode* node = getNodeWithStatementNumber(stmt);
-	Tnode* sibling = node->getRightSibling();
-	vector<int> results = vector<int>();
-	if (sibling == NULL){
-		return results;
-	} else {
-		results.push_back(sibling->getStatementNumber());
+	if (node == NULL) {
+		return vector<int>();
 	}
-	return results;
+
+	Tnode* sibling = node->getRightSibling();
+	if (sibling == NULL){
+		return vector<int>();
+	}
+
+	return vector<int>(1, sibling->getStatementNumber());
 }
 
 vector<int> ProgramKnowledgeBase::getStatementFollowedBy(int stmt){
 	Tnode* node = getNodeWithStatementNumber(stmt);
-	Tnode* sibling = node->getLeftSibling();
-	vector<int> results = vector<int>();
-	if (sibling == NULL){
-		return results;
-	} else {
-		results.push_back(sibling->getStatementNumber());
+	if (node == NULL) {
+		return vector<int>();
 	}
-	return results;
+
+	Tnode* sibling = node->getLeftSibling();
+	if (sibling == NULL){
+		return vector<int>();
+	} 
+
+	return vector<int>(1, sibling->getStatementNumber());
 }
 
 bool ProgramKnowledgeBase::followsStar(int s1, int s2)
@@ -406,37 +378,61 @@ bool ProgramKnowledgeBase::followsStar(int s1, int s2)
 vector<int> ProgramKnowledgeBase::getStatementsThatFollowStar(int stmt)
 {
 	Tnode* node = getNodeWithStatementNumber(stmt);
-	Tnode* sibling = node->getRightSibling();
-	vector<int> results = vector<int>();
-	if (sibling == NULL){
-		return results;
+	if (node == NULL) {
+		return vector<int>();
 	}
+
+	Tnode* sibling = node->getRightSibling();
+	if (sibling == NULL){
+		return vector<int>();
+	}
+
+	vector<int> results = vector<int>();
 	while (sibling != NULL){
 		results.push_back(sibling->getStatementNumber());
 		sibling = sibling->getRightSibling();
 	}
-	return results;}
+	return results;
+}
 
 vector<int> ProgramKnowledgeBase::getStatementsFollowStarredBy(int stmt)
 {
 	Tnode* node = getNodeWithStatementNumber(stmt);
-	Tnode* sibling = node->getLeftSibling();
-	vector<int> results = vector<int>();
-	if (sibling == NULL){
-		return results;
+	if (node == NULL) {
+		return vector<int>();
 	}
+
+	Tnode* sibling = node->getLeftSibling();
+	if (sibling == NULL){
+		return vector<int>();
+	}
+
+	vector<int> results = vector<int>();
 	while (sibling != NULL){
 		results.push_back(sibling->getStatementNumber());
 		sibling = sibling->getLeftSibling();
 	}
-	return results;}
+	return results;
+}
 
 vector<int> ProgramKnowledgeBase::getStatementsOfType(Tnode::Type type){
 	return flattenNodeVectorToIntVector(&getNodesOfType(type));
 }
 
-vector<string> ProgramKnowledgeBase::getStringsOfType(Tnode::Type type){
-	return flattenNodeVectorToStringVector(&getNodesOfType(type));
+vector<string> ProgramKnowledgeBase::getVariableNames(){
+	vector<string> results = vector<string>(varTable->getSize());
+	for (int i = 0; i < varTable->getSize(); i++) {
+		results[i] = varTable->getVariableName(i);
+	}
+	return results;
+}
+
+vector<string> ProgramKnowledgeBase::getProcedureNames() {
+	vector<string> results = vector<string>(procTable->getSize());
+	for (int i = 0; i < procTable->getSize(); i++) {
+		results[i] = procTable->getProcedureName(i);
+	}
+	return results;
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsThatMatchPattern(Tnode::Type type, string var, string expr){
@@ -492,29 +488,21 @@ vector<string> ProgramKnowledgeBase::flattenStringSetToStringVector(const unorde
 }
 
 vector<Tnode*> ProgramKnowledgeBase::getNodesOfType(Tnode::Type type){
-	return getNodesOfType(this->storedAbstractSyntaxTree->getAbstractSyntaxTreeRoot(), type);
-}
-
-//return all nodes contained in the subtree of input node with type specified by input.
-vector<Tnode*> ProgramKnowledgeBase::getNodesOfType(Tnode* start, Tnode::Type type){
-	unordered_set<Tnode*> results = unordered_set<Tnode*>();
-	results = *getNodesOfTypeHelper(start, type, &results);
-	return vector<Tnode*>(results.begin(), results.end());
-}
-
-unordered_set<Tnode*>* ProgramKnowledgeBase::getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, unordered_set<Tnode*>* results){
-	if (curr != NULL){
-		if (curr->getType() == type){
-			results->insert(curr);
-		}
-		if (curr->getFirstChild() != NULL){
-			results = getNodesOfTypeHelper(curr->getFirstChild(), type, results);
-		}
-		if (!curr->isLastChild()){
-			results = getNodesOfTypeHelper(curr->getRightSibling(), type, results);
+	vector<Tnode*> results = vector<Tnode*>();
+	for (Tnode* node : *this->statementTable){
+		if (node->getType() == type){
+			results.push_back(node);
 		}
 	}
 	return results;
+}
+
+Tnode* ProgramKnowledgeBase::getNodeWithStatementNumber(int num) {
+	try {
+		return this->statementTable->at(num);
+	} catch (out_of_range e) {
+		return NULL;
+	}
 }
 
 bool ProgramKnowledgeBase::containsContainer(Tnode* node) {
@@ -550,10 +538,9 @@ Tnode* ProgramKnowledgeBase::getCallee(Tnode* node){
 }
 
 Tnode* ProgramKnowledgeBase::getNodeWithProcedureName(string procName){
-	ProcTable* procTable = this->storedAbstractSyntaxTree->getProcedureTable();
-	for (size_t i = 0; i < procTable->getSize(); i++) {
-		if (procName.compare(procTable->getProcedureName(i)) == 0) {
-			return procTable->getProcedureAddress(i);
+	for (size_t i = 0; i < this->procTable->getSize(); i++) {
+		if (procName.compare(this->procTable->getProcedureName(i)) == 0) {
+			return this->procTable->getProcedureAddress(i);
 		}
 	}
 	return NULL;

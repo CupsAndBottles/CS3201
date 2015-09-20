@@ -17,8 +17,7 @@ using namespace std;
 class ProgramKnowledgeBase{
 public:
 	ProgramKnowledgeBase();
-	void setAbstractSyntaxTree(Database * tree);
-	ProgramKnowledgeBase(Database* tree);
+	ProgramKnowledgeBase(Database* db);
 	ProgramKnowledgeBase(string filePath);
 
 	enum Relation {
@@ -62,11 +61,15 @@ public:
 	vector<int> getStatementsFollowStarredBy(int stmt);
 
 	vector<int> getStatementsOfType(Tnode::Type type);
-	vector<string> getStringsOfType(Tnode::Type type);
+	vector<string> getVariableNames();
+	vector<string> getProcedureNames();
 	vector<int> getStatementsThatMatchPattern(Tnode::Type type, string var, string expr);
 
 private:
-	Database* storedAbstractSyntaxTree;
+	Tnode* abstractSyntaxTree;
+	vector<Tnode*>* statementTable;
+	VarTable* varTable;
+	ProcTable* procTable;
 
 	// use adjacency lists to store relations as a sparse graph is expected.
 	// unordered_map for quick reference by hashing variables and statement numbers,
@@ -88,10 +91,8 @@ private:
 	vector<string> flattenStringSetToStringVector(const unordered_set<string>* inp);
 
 	vector<Tnode*> getNodesOfType(Tnode::Type type);
-	vector<Tnode*> getNodesOfType(Tnode* start, Tnode::Type type); //DON'T NEED
-	unordered_set<Tnode*>* getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, unordered_set<Tnode*>* results); //DON'T NEED
-	Tnode * getNodeWithStatementNumber(int stmtNum);
-	Tnode * getNodeWithProcedureName(string targetName);
+	Tnode * getNodeWithStatementNumber(int num);
+	Tnode * getNodeWithProcedureName(string procName);
 	Tnode * getCallee(Tnode * node);
 	Tnode * getParentNode(Tnode * node);
 	Tnode * getSPAParent(Tnode * node);

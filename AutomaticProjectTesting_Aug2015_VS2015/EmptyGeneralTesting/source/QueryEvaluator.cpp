@@ -64,10 +64,10 @@ void QueryEvaluator::recordSelectClause() {
 		selectResult = integerVectorToString(database.getStatementsOfType(Tnode::CONSTANT));
 	}
 	else if (declaration.getType(select).compare("variable") == 0) {
-		selectResult = database.getStringsOfType(Tnode::VARIABLE);
+		selectResult = database.getVariableNames();
 	}
 	else if (declaration.getType(select).compare("procedure") == 0) {
-		selectResult = database.getStringsOfType(Tnode::PROCEDURE);
+		selectResult = database.getProcedureNames();
 	}
 	else {
 		selectResult = vector<string>();
