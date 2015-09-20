@@ -12,11 +12,15 @@ public:
 	ProcTable();
 	~ProcTable();
 
-	unsigned int addProcedure(string procName, Tnode* procNode);
+	int getSize();
+	int addProcedure(string procName, Tnode* procNode);
+	string getProcedureName(int i) throw(string);
+	int getProcedureIndex(string procName);
+	Tnode* getProcedureAddress(int i) throw(string);
+	Tnode* getProcedureAddress(string procName);
 	void printProcedureTable();
 
 private:
 	unordered_map < string, Tnode*> *procTable;
-	unsigned int size;
 };
 
