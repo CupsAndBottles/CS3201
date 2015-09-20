@@ -19,10 +19,11 @@ public:
 	string toUpperCase(string s);
 	bool isNumber(string &s);
 	Tnode* getAbstractSyntaxTreeRoot();
+	Tnode* getExpressionTree(vector<string> exprList);
 	vector<Tnode*>* getStatementTable();
 	ProcTable* getProcedureTable();
 	VarTable* getVariableTable();
-	void printAbstractSyntaxTree();
+	void printAbstractSyntaxTree(Tnode* root);
 	void printStatementTable();
 
 private:

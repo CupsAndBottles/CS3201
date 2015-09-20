@@ -340,6 +340,12 @@ Tnode *Database::getAbstractSyntaxTreeRoot()
 	return astRoot;
 }
 
+//returns the root of the expression tree
+Tnode* Database::getExpressionTree(vector<string> exprList)
+{
+	return expr(exprList, exprList.begin(), exprList.end()-1);
+}
+
 vector<Tnode*>* Database::getStatementTable()
 {
 	return stmtTable;
@@ -355,11 +361,11 @@ VarTable* Database::getVariableTable()
 	return varTable;
 }
 
-void Database::printAbstractSyntaxTree()
+void Database::printAbstractSyntaxTree(Tnode* root)
 {
 	vector<vector<Tnode*>> notSoSimple;
 	vector<Tnode*> simple;
-	printAbstractSyntaxTreeCall(notSoSimple, simple, (*this).astRoot, 0);
+	printAbstractSyntaxTreeCall(notSoSimple, simple, root, 0);
 	for (unsigned int i = 2; i < notSoSimple.size(); i++) {
 		simple = vector<Tnode*>();
 		for (unsigned int k = 0; k < notSoSimple.at(i-1).size(); k++) {
