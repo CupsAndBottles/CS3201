@@ -49,7 +49,7 @@ public:
 
 	bool isParentStar(int s1, int s2); //returns parent*(s1, s2)
 	vector<int> getParentsStarOf(int stmt); //returns immediate and extended parents of stmt;
-	vector<int> getAllChildrenStarOf(int stmt); //returns immediate and extended parents of stmt;
+	vector<int> getChildrenStarOf(int stmt); //returns immediate and extended parents of stmt;
 
 	bool isFollows(int s1, int s2); //returns follows(s1, s2)
 	vector<int> getStatementThatFollows(int stmt);
