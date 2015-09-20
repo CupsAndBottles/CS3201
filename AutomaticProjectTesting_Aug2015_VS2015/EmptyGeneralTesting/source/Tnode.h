@@ -45,6 +45,7 @@ public:
 	static Tnode *createNode(int v);
 	static bool createLink(Link_Type link, Tnode &fromNode, Tnode &toNode);
 	Tnode *getParent();
+	Tnode *getSPAParent();
 	Tnode *getFirstChild();
 	Tnode *getLeftSibling();
 	Tnode *getRightSibling();
