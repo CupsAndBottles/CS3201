@@ -489,7 +489,8 @@ vector<string> ProgramKnowledgeBase::flattenStringSetToStringVector(const unorde
 
 vector<Tnode*> ProgramKnowledgeBase::getNodesOfType(Tnode::Type type){
 	vector<Tnode*> results = vector<Tnode*>();
-	for (Tnode* node : *this->statementTable){
+	for (int i = 1; i < this->statementTable->size(); i++) {
+		Tnode* node = this->statementTable->at(i);
 		if (node->getType() == type){
 			results.push_back(node);
 		}
