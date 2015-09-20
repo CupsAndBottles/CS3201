@@ -245,6 +245,24 @@ bool Tnode::isEquals(Tnode *other)
 	return equals;
 }
 
+bool Tnode::contains(Tnode * subTree)
+{
+	bool cont = false;
+	if (this->isEquals(subTree)) {
+		return true;
+	}
+	if (this->getRightSibling() != NULL) {
+		cont = this->getRightSibling()->contains(subTree);
+		if (cont == true) {
+			return contains;
+		}
+	}
+	if (this->getFirstChild() != NULL) {
+		cont = this->getFirstChild()->contains(subTree);
+	}
+	return cont;
+}
+
 bool Tnode::isContainer()
 {
 	return this->isWhile() || this->isIf();
