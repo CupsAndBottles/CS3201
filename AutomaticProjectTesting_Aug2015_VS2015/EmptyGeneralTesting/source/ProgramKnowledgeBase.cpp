@@ -279,10 +279,13 @@ vector<int> ProgramKnowledgeBase::getParentOf(int stmt){
 	if (node == NULL) {
 		return vector<int>();
 	}
+
 	Tnode* parent = node->getSPAParent();
-	if (parent != NULL){
-		return vector<int>(1, parent->getStatementNumber());
+	if (parent == NULL) {
+		return vector<int>();
 	}
+
+	return vector<int>(1, parent->getStatementNumber());
 }
 
 vector<int> ProgramKnowledgeBase::getParentsStarOf(int stmt){

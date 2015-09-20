@@ -66,8 +66,14 @@ Tnode *Tnode::getSPAParent()
 {
 	Tnode* parent = this->getParent();
 	if (parent == NULL) {
-		return NULL;
-	} else if (parent->isStatementList()) {
+		Tnode* left = this->getLeftSibling();
+		while (left->getLeftSibling() != NULL) {
+			left = getLeftSibling();
+		}
+		parent = left->getParent();
+	}
+
+	if (parent->isStatementList()) {
 		return parent->getSPAParent();
 	} else if (parent->isProcedure() || parent->isProgram()) {
 		return NULL;
