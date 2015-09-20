@@ -42,13 +42,13 @@
     <ClInclude Include="..\Source\Tnode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\AbstractSyntaxTree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\ProgramKnowledgeBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\RelationshipTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Database.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -80,13 +80,13 @@
     <ClCompile Include="..\Source\Tnode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\AbstractSyntaxTree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\ProgramKnowledgeBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\RelationshipTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Database.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

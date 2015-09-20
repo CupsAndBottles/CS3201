@@ -1,4 +1,4 @@
-#include "AbstractSyntaxTree.h"
+#include "Database.h"
 
 /*
 //stub main
@@ -35,7 +35,7 @@ int main()
 }
 */
 
-AbstractSyntaxTree::AbstractSyntaxTree()
+Database::Database()
 {
 	this -> root = NULL;
 	this -> procTable = new vector<pair<string, Tnode*>>;
@@ -43,17 +43,17 @@ AbstractSyntaxTree::AbstractSyntaxTree()
 }
 
 
-AbstractSyntaxTree::~AbstractSyntaxTree()
+Database::~Database()
 {
 }
 
 //assume input is of valid SIMPLE language syntax and extra white spaces are removed
-void AbstractSyntaxTree::buildAbstractSyntaxTree(vector<string> tokens)
+void Database::buildAbstractSyntaxTree(vector<string> tokens)
 {
 	program(tokens);
 }
 
-void AbstractSyntaxTree::program(vector<string> &tokens)
+void Database::program(vector<string> &tokens)
 {
 	vector<string>::iterator it = tokens.begin();
 	if (root == NULL) {
@@ -64,7 +64,7 @@ void AbstractSyntaxTree::program(vector<string> &tokens)
 }
 
 //returns procedure node, the first recursion will return topmost node will return first child (i.e. first procedure) of program
-Tnode* AbstractSyntaxTree::procedure(vector<string> &tokens, vector<string>::iterator &it)
+Tnode* Database::procedure(vector<string> &tokens, vector<string>::iterator &it)
 {
 	Tnode *curNode, *nextNode, *curNodeStmtLst;
 	match(it, stringify(PROCEDURE));
@@ -86,7 +86,7 @@ Tnode* AbstractSyntaxTree::procedure(vector<string> &tokens, vector<string>::ite
 }
 
 //return Tnode containing statement type, the first recursion will return first child of current statement list
-Tnode* AbstractSyntaxTree::stmtLst(vector<string> &tokens, vector<string>::iterator &it)
+Tnode* Database::stmtLst(vector<string> &tokens, vector<string>::iterator &it)
 {
 	Tnode *curNode, *nextNode;
 	curNode = stmt(tokens, it);
@@ -105,7 +105,7 @@ Tnode* AbstractSyntaxTree::stmtLst(vector<string> &tokens, vector<string>::itera
 }
 
 //return Tnode containing statement type
-Tnode* AbstractSyntaxTree::stmt(vector<string> &tokens, vector<string>::iterator &it)
+Tnode* Database::stmt(vector<string> &tokens, vector<string>::iterator &it)
 {
 	Tnode *st;
 	if (toUpperCase(*it) == "CALL") {
@@ -131,7 +131,7 @@ Tnode* AbstractSyntaxTree::stmt(vector<string> &tokens, vector<string>::iterator
 }
 
 //returns first child of while statement i.e. the control variable
-Tnode *AbstractSyntaxTree::whileSt(vector<string> &tokens, vector<string>::iterator &it)
+Tnode *Database::whileSt(vector<string> &tokens, vector<string>::iterator &it)
 {
 	Tnode *stLst, *var;
 	var = createVariable(Tnode::VARIABLE, *it);
@@ -144,7 +144,7 @@ Tnode *AbstractSyntaxTree::whileSt(vector<string> &tokens, vector<string>::itera
 }
 
 //returns first child of if statement i.e. the control variable
-Tnode *AbstractSyntaxTree::ifSt(vector<string> &tokens, vector<string>::iterator &it)
+Tnode *Database::ifSt(vector<string> &tokens, vector<string>::iterator &it)
 {
 	Tnode *thenStLst, *elseStLst, *var;
 	var = createVariable(Tnode::VARIABLE, *it);
@@ -162,7 +162,7 @@ Tnode *AbstractSyntaxTree::ifSt(vector<string> &tokens, vector<string>::iterator
 	return var;
 }
 
-Tnode *AbstractSyntaxTree::assign(vector<string> &tokens, vector<string>::iterator &it)
+Tnode *Database::assign(vector<string> &tokens, vector<string>::iterator &it)
 {
 	Tnode *var;
 	var = createVariable(Tnode::VARIABLE, *it);
@@ -178,7 +178,7 @@ Tnode *AbstractSyntaxTree::assign(vector<string> &tokens, vector<string>::iterat
 
 //start from the back of the expression
 //returns the topmost node in the expression AbstractSyntaxTree (either + or - or term node)
-Tnode *AbstractSyntaxTree::expr(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end)
+Tnode *Database::expr(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end)
 {
 	Tnode *op = NULL, *ex, *t;
 	int brackets = 0;
@@ -217,7 +217,7 @@ Tnode *AbstractSyntaxTree::expr(vector<string> &tokens, vector<string>::iterator
 }
 
 //returns the topmost node in the term AbstractSyntaxTree (either * or factor node)
-Tnode *AbstractSyntaxTree::term(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end)
+Tnode *Database::term(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end)
 {
 	Tnode *op = NULL, *t = NULL, *fac;
 	int brackets = 0;
@@ -251,7 +251,7 @@ Tnode *AbstractSyntaxTree::term(vector<string> &tokens, vector<string>::iterator
 }
 
 //returns topmost node in the factor AbstractSyntaxTree (either a variable or constant or expresion==> for "()")
-Tnode *AbstractSyntaxTree::factor(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end)
+Tnode *Database::factor(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end)
 {
 	Tnode *fac, *ex;
 	fac = NULL;
@@ -270,7 +270,7 @@ Tnode *AbstractSyntaxTree::factor(vector<string> &tokens, vector<string>::iterat
 	return fac;
 }
 
-Tnode * AbstractSyntaxTree::createVariable(Tnode::Type t, string n)
+Tnode * Database::createVariable(Tnode::Type t, string n)
 {
 	Tnode* varNode;
 	varNode = Tnode::createNode(Tnode::VARIABLE, n);
@@ -278,7 +278,7 @@ Tnode * AbstractSyntaxTree::createVariable(Tnode::Type t, string n)
 	return varNode;
 }
 
-void AbstractSyntaxTree::addToVariableTable(string var, Tnode* varNode)
+void Database::addToVariableTable(string var, Tnode* varNode)
 {
 	for (unsigned int i = 0; i < (*varTable).size(); i++) {
 		if (get<0>((*varTable).at(i)) == var) {
@@ -292,7 +292,7 @@ void AbstractSyntaxTree::addToVariableTable(string var, Tnode* varNode)
 	return;
 }
 
-void AbstractSyntaxTree::match(vector<string>::iterator &it, string token)
+void Database::match(vector<string>::iterator &it, string token)
 {
 	if (toUpperCase(*it) == toUpperCase(token)) {
 		++it;
@@ -303,7 +303,7 @@ void AbstractSyntaxTree::match(vector<string>::iterator &it, string token)
 	}
 }
 
-void AbstractSyntaxTree::printAbstractSyntaxTreeCall(vector<vector<Tnode*>>& nss, vector<Tnode*> s, Tnode * curNode, unsigned int lvl)
+void Database::printAbstractSyntaxTreeCall(vector<vector<Tnode*>>& nss, vector<Tnode*> s, Tnode * curNode, unsigned int lvl)
 {
 	if (lvl + 1 > nss.size()) {
 		nss.push_back(s);
@@ -318,7 +318,7 @@ void AbstractSyntaxTree::printAbstractSyntaxTreeCall(vector<vector<Tnode*>>& nss
 	return;
 }
 
-string AbstractSyntaxTree::toUpperCase(string s)
+string Database::toUpperCase(string s)
 {
 	for (unsigned int i = 0; i < s.length(); i++)
 	{
@@ -327,7 +327,7 @@ string AbstractSyntaxTree::toUpperCase(string s)
 	return s;
 }
 
-bool AbstractSyntaxTree::isNumber(string &s)
+bool Database::isNumber(string &s)
 {
 	for (unsigned int i = 0; i < s.length(); i++)
 	{
@@ -338,22 +338,22 @@ bool AbstractSyntaxTree::isNumber(string &s)
 	return true;
 }
 
-Tnode *AbstractSyntaxTree::getRoot()
+Tnode *Database::getRoot()
 {
 	return root;
 }
 
-vector<pair<string, Tnode*>>* AbstractSyntaxTree::getProcedureTable()
+vector<pair<string, Tnode*>>* Database::getProcedureTable()
 {
 	return procTable;
 }
 
-vector<pair<string, vector<Tnode*>>>* AbstractSyntaxTree::getVariableTable()
+vector<pair<string, vector<Tnode*>>>* Database::getVariableTable()
 {
 	return varTable;
 }
 
-void AbstractSyntaxTree::printAbstractSyntaxTree()
+void Database::printAbstractSyntaxTree()
 {
 	vector<vector<Tnode*>> notSoSimple;
 	vector<Tnode*> simple;
@@ -383,7 +383,7 @@ void AbstractSyntaxTree::printAbstractSyntaxTree()
 	}
 }
 
-void AbstractSyntaxTree::printProcedureTable()
+void Database::printProcedureTable()
 {
 	cout << endl << "<---------------------------------------- Procedure Table: ---------------------------------------->" << endl << endl;
 	for (vector<pair<string, Tnode*>>::iterator i = (*procTable).begin(); i != (*procTable).end(); i++) {
@@ -391,7 +391,7 @@ void AbstractSyntaxTree::printProcedureTable()
 	}
 }
 
-void AbstractSyntaxTree::printVariableTable()
+void Database::printVariableTable()
 {
 	cout << endl << "<---------------------------------------- Variable Table: ---------------------------------------->" << endl << endl;
 	for (vector<pair<string, vector<Tnode*>>>::iterator i = (*varTable).begin(); i != (*varTable).end(); i++) {
