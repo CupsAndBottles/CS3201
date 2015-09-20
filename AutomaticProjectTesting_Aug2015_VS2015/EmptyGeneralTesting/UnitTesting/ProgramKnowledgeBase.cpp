@@ -28,8 +28,9 @@ namespace UnitTesting
 			AST->buildAbstractSyntaxTree(parsedProgram);
 			Tnode *root = AST->getAbstractSyntaxTreeRoot();
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(AST);
-			vector<string> procedures = pkb.getStringsOfType(Tnode::PROCEDURE);
-			Assert::AreEqual(string("proc"), procedures[0]);
+			vector<string> procedures = pkb.getProcedureNames();
+			Assert::AreEqual(1, int(procedures.size()));
+			Assert::AreEqual(string("Proc"), procedures[0]);
 		}
 
 		TEST_METHOD(testPKBGetVariables) {
@@ -46,7 +47,7 @@ namespace UnitTesting
 			Tnode *root = AST->getAbstractSyntaxTreeRoot();
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(AST);
 
-			vector<string> variables = pkb.getStringsOfType(Tnode::VARIABLE);
+			vector<string> variables = pkb.getVariableNames();
 			Assert::AreEqual(2, int(variables.size()));
 			Assert::AreEqual(string("x"), variables[0]);
 			Assert::AreEqual(string("y"), variables[1]);
@@ -153,6 +154,70 @@ namespace UnitTesting
 
 			vector<string> variablesProcs = pkb.getVariablesModifiedBy("Proc");
 			Assert::AreEqual(string("x"), variablesProcs[0]);
+		}
+
+
+		TEST_METHOD(testPKBSimpleUses) {
+			ofstream outputFile("program.txt", ofstream::trunc);
+			outputFile << "procedure Proc {";
+			outputFile << "x = 1;";
+			outputFile << "}";
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = (*parse).parseSimpleProgram("program.txt");
+			Database *database = new Database();
+			database->buildAbstractSyntaxTree(parsedProgram);
+			Tnode *root = database->getAbstractSyntaxTreeRoot();
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(database);
+
+			Assert::IsTrue(pkb.uses(1, "x"));
+			Assert::IsTrue(pkb.uses("proc", "x"));
+
+			vector<int> users = pkb.getStatementsThatUse("x");
+			Assert::AreEqual(1, int(users.size()));
+			Assert::AreEqual(1, users[0]);
+
+			vector<string> variables = pkb.getVariablesUsedBy(1);
+			Assert::AreEqual(string("x"), variables[0]);
+
+			vector<string> usersProcs = pkb.getProceduresThatUse("x");
+			Assert::AreEqual(1, int(usersProcs.size()));
+			Assert::AreEqual(string("Proc"), usersProcs[0]);
+
+			vector<string> variablesProcs = pkb.getVariablesUsedBy("Proc");
+			Assert::AreEqual(1, int(variablesProcs.size()));
+			Assert::AreEqual(string("x"), variablesProcs[0]);
+		}
+
+		TEST_METHOD(testPKBFollows) {
+			ofstream outputFile("program.txt");
+			outputFile << "procedure Proc {";
+			outputFile << "x = 1;";  //line 1
+			outputFile << "while x {"; //line 2
+			outputFile << "x = x - 1;"; //line 3
+			outputFile << "}";
+			outputFile << "y = 1;";  //line 4
+			outputFile << "}";
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = (*parse).parseSimpleProgram("program.txt");
+			Database *database = new Database();
+			database->buildAbstractSyntaxTree(parsedProgram);
+			Tnode *root = database->getAbstractSyntaxTreeRoot();
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(database);
+
+			Assert::IsTrue(pkb.isFollows(1, 2));
+			Assert::IsFalse(pkb.isFollows(2, 3));
+
+			vector<int> folls = pkb.getStatementThatFollows(1);
+			Assert::AreEqual(1, int(folls.size()));
+			Assert::AreEqual(2, folls[0]);
+
+			vector<int> follBy = pkb.getStatementFollowedBy(2);
+			Assert::AreEqual(1, int(folls.size()));
+			Assert::AreEqual(1, folls[0]);
 		}
 	};
 }
