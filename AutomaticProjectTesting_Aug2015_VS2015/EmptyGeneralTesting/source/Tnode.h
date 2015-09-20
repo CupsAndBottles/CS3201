@@ -58,6 +58,8 @@ public:
 	char *enumToString(int enumVal);
 	string toLowerCase(string s);
 
+	bool isEquals(Tnode* other);
+	bool contains(Tnode* subTree);
 	bool isContainer();
 	bool isCall();
 	bool isStatementList();
