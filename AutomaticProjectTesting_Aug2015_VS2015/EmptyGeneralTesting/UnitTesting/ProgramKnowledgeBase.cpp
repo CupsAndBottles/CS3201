@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 #include "Parser.h"
-#include "AbstractSyntaxTree.h"
+#include "Database.h"
 #include "ProgramKnowledgeBase.h"
 
 #include <fstream>
@@ -24,9 +24,9 @@ namespace UnitTesting
 
 			Parser *parse = new Parser();
 			vector<string> parsedProgram = (*parse).parseSimpleProgram("program.txt");
-			AbstractSyntaxTree *AST = new AbstractSyntaxTree();
+			Database *AST = new Database();
 			AST->buildAbstractSyntaxTree(parsedProgram);
-			Tnode *root = AST->getRoot();
+			Tnode *root = AST->getAbstractSyntaxTreeRoot();
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(AST);
 			vector<string> procedures = pkb.getStringsOfType(Tnode::PROCEDURE);
 			Assert::AreEqual(string("proc"), procedures[0]);
@@ -41,9 +41,9 @@ namespace UnitTesting
 
 			Parser *parse = new Parser();
 			vector<string> parsedProgram = (*parse).parseSimpleProgram("program.txt");
-			AbstractSyntaxTree *AST = new AbstractSyntaxTree();
+			Database *AST = new Database();
 			AST->buildAbstractSyntaxTree(parsedProgram);
-			Tnode *root = AST->getRoot();
+			Tnode *root = AST->getAbstractSyntaxTreeRoot();
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(AST);
 
 			vector<string> variables = pkb.getStringsOfType(Tnode::VARIABLE);
@@ -64,9 +64,9 @@ namespace UnitTesting
 
 			Parser *parse = new Parser();
 			vector<string> parsedProgram = (*parse).parseSimpleProgram("program.txt");
-			AbstractSyntaxTree *AST = new AbstractSyntaxTree();
+			Database *AST = new Database();
 			AST->buildAbstractSyntaxTree(parsedProgram);
-			Tnode *root = AST->getRoot();
+			Tnode *root = AST->getAbstractSyntaxTreeRoot();
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(AST);
 
 			vector<int> whiles = pkb.getStatementsOfType(Tnode::STMT_WHILE);
@@ -86,9 +86,9 @@ namespace UnitTesting
 
 			Parser *parse = new Parser();
 			vector<string> parsedProgram = (*parse).parseSimpleProgram("program.txt");
-			AbstractSyntaxTree *AST = new AbstractSyntaxTree();
+			Database *AST = new Database();
 			AST->buildAbstractSyntaxTree(parsedProgram);
-			Tnode *root = AST->getRoot();
+			Tnode *root = AST->getAbstractSyntaxTreeRoot();
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(AST);
 			vector<int> parent = pkb.getParentOf(3);
 			Assert::AreEqual(1, int(parent.size()));
@@ -112,9 +112,9 @@ namespace UnitTesting
 
 			Parser *parse = new Parser();
 			vector<string> parsedProgram = (*parse).parseSimpleProgram("program.txt");
-			AbstractSyntaxTree *AST = new AbstractSyntaxTree();
+			Database *AST = new Database();
 			AST->buildAbstractSyntaxTree(parsedProgram);
-			Tnode *root = AST->getRoot();
+			Tnode *root = AST->getAbstractSyntaxTreeRoot();
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(AST);
 
 			vector<int> parent = pkb.getParentsStarOf(4);
@@ -132,9 +132,9 @@ namespace UnitTesting
 
 			Parser *parse = new Parser();
 			vector<string> parsedProgram = (*parse).parseSimpleProgram("program.txt");
-			AbstractSyntaxTree *AST = new AbstractSyntaxTree();
+			Database *AST = new Database();
 			AST->buildAbstractSyntaxTree(parsedProgram);
-			Tnode *root = AST->getRoot();
+			Tnode *root = AST->getAbstractSyntaxTreeRoot();
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(AST);
 
 			Assert::IsTrue(pkb.modifies(1, "x"));

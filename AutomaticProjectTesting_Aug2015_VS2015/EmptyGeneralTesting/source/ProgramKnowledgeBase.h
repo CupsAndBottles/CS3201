@@ -1,6 +1,6 @@
 #pragma once
 
-#include "AbstractSyntaxTree.h"
+#include "Database.h"
 #include "Tnode.h"
 #include <vector>
 #include <string>
@@ -15,8 +15,8 @@ using namespace std;
 class ProgramKnowledgeBase{
 public:
 	ProgramKnowledgeBase();
-	void setAbstractSyntaxTree(AbstractSyntaxTree * tree);
-	ProgramKnowledgeBase(AbstractSyntaxTree* tree);
+	void setAbstractSyntaxTree(Database * tree);
+	ProgramKnowledgeBase(Database* tree);
 	ProgramKnowledgeBase(string filePath);
 
 	enum Relation {
@@ -64,7 +64,7 @@ public:
 	vector<int> getStatementsThatMatchPattern(Tnode::Type type, string var, string expr);
 
 private:
-	AbstractSyntaxTree* storedAbstractSyntaxTree;
+	Database* storedAbstractSyntaxTree;
 
 	// use adjacency lists to store relations as a sparse graph is expected.
 	// unordered_map for quick reference by hashing variables and statement numbers,

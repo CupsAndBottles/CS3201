@@ -16,7 +16,7 @@ public:
 	void buildAbstractSyntaxTree(vector<string> tokens);
 	string toUpperCase(string s);
 	bool isNumber(string &s);
-	Tnode* getRoot();
+	Tnode* getAbstractSyntaxTreeRoot();
 	vector<pair<string, Tnode*>>* getProcedureTable();
 	vector<pair<string, vector<Tnode*>>>* getVariableTable();
 	void printAbstractSyntaxTree();
@@ -24,7 +24,7 @@ public:
 	void printVariableTable();
 
 private:
-	Tnode* root;
+	Tnode* astRoot;
 	vector<pair<string, Tnode*>> *procTable;
 	vector<pair<string, vector<Tnode*>>> *varTable;
 	void program(vector<string> &tokens);

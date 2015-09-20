@@ -37,7 +37,7 @@ int main()
 
 Database::Database()
 {
-	this -> root = NULL;
+	this -> astRoot = NULL;
 	this -> procTable = new vector<pair<string, Tnode*>>;
 	this -> varTable = new vector<pair<string, vector<Tnode*>>>;
 }
@@ -56,10 +56,10 @@ void Database::buildAbstractSyntaxTree(vector<string> tokens)
 void Database::program(vector<string> &tokens)
 {
 	vector<string>::iterator it = tokens.begin();
-	if (root == NULL) {
-		root = Tnode::createNode(Tnode::PROGRAM, *(it+1)); //creates a root node with type:PROGRAM and name of the first procedure
+	if (astRoot == NULL) {
+		astRoot = Tnode::createNode(Tnode::PROGRAM, *(it+1)); //creates a root node with type:PROGRAM and name of the first procedure
 	}
-	Tnode::createLink(Tnode::PARENT, *root, *procedure(tokens, it));
+	Tnode::createLink(Tnode::PARENT, *astRoot, *procedure(tokens, it));
 	return;
 }
 
@@ -338,9 +338,9 @@ bool Database::isNumber(string &s)
 	return true;
 }
 
-Tnode *Database::getRoot()
+Tnode *Database::getAbstractSyntaxTreeRoot()
 {
-	return root;
+	return astRoot;
 }
 
 vector<pair<string, Tnode*>>* Database::getProcedureTable()
@@ -357,7 +357,7 @@ void Database::printAbstractSyntaxTree()
 {
 	vector<vector<Tnode*>> notSoSimple;
 	vector<Tnode*> simple;
-	printAbstractSyntaxTreeCall(notSoSimple, simple, (*this).root, 0);
+	printAbstractSyntaxTreeCall(notSoSimple, simple, (*this).astRoot, 0);
 	for (unsigned int i = 2; i < notSoSimple.size(); i++) {
 		simple = vector<Tnode*>();
 		for (unsigned int k = 0; k < notSoSimple.at(i-1).size(); k++) {

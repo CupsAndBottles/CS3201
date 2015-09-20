@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 #include "Parser.h"
-#include "AbstractSyntaxTree.h"
+#include "Database.h"
 #include "ProgramKnowledgeBase.h"
 
 #include <fstream>
@@ -27,9 +27,9 @@ namespace IntegrationTesting
 			vector<string> parsedProgram = (*parse).parseSimpleProgram("program.txt");
 			Assert::AreNotEqual(0, (int) parsedProgram.size());
 
-			AbstractSyntaxTree *AST = new AbstractSyntaxTree();
+			Database *AST = new Database();
 			AST->buildAbstractSyntaxTree(parsedProgram);
-			Tnode *root = AST->getRoot();
+			Tnode *root = AST->getAbstractSyntaxTreeRoot();
 		}
 
 		TEST_METHOD(testParserASTPKBIntegration) {
@@ -43,9 +43,9 @@ namespace IntegrationTesting
 			vector<string> parsedProgram = (*parse).parseSimpleProgram("program.txt");
 			Assert::AreNotEqual(0, (int)parsedProgram.size());
 
-			AbstractSyntaxTree *AST = new AbstractSyntaxTree();
+			Database *AST = new Database();
 			AST->buildAbstractSyntaxTree(parsedProgram);
-			Tnode *root = AST->getRoot();
+			Tnode *root = AST->getAbstractSyntaxTreeRoot();
 
 			ProgramKnowledgeBase* pkbPointer = &ProgramKnowledgeBase(AST);
 		}

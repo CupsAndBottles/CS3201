@@ -4,9 +4,9 @@ ProgramKnowledgeBase::ProgramKnowledgeBase(){
 	storedAbstractSyntaxTree = NULL;
 }
 
-ProgramKnowledgeBase::ProgramKnowledgeBase(AbstractSyntaxTree* tree){
+ProgramKnowledgeBase::ProgramKnowledgeBase(Database* tree){
 	storedAbstractSyntaxTree = tree;
-	calculateRelations(this->storedAbstractSyntaxTree->getRoot(), vector<Tnode*>());
+	calculateRelations(this->storedAbstractSyntaxTree->getAbstractSyntaxTreeRoot(), vector<Tnode*>());
 }
 
 //load pkb from file storage
@@ -17,9 +17,9 @@ ProgramKnowledgeBase::ProgramKnowledgeBase(string filePath) {
 void ProgramKnowledgeBase::updateDBFile() {
 }
 
-void ProgramKnowledgeBase::setAbstractSyntaxTree(AbstractSyntaxTree* tree){
+void ProgramKnowledgeBase::setAbstractSyntaxTree(Database* tree){
 	this->storedAbstractSyntaxTree = tree;
-	calculateRelations(this->storedAbstractSyntaxTree->getRoot(), vector<Tnode*>());
+	calculateRelations(this->storedAbstractSyntaxTree->getAbstractSyntaxTreeRoot(), vector<Tnode*>());
 }
 
 bool ProgramKnowledgeBase::modifies(int stmt, string var){
@@ -211,7 +211,7 @@ Tnode* ProgramKnowledgeBase::getNodeWithStatementNumber(int targetStmtNum){
 
 // linearly searches procedures for the procedure that contains the target.
 Tnode* ProgramKnowledgeBase::getProcedureContaining(int targetStmtNum){
-	Tnode* proc = this->storedAbstractSyntaxTree->getRoot()->getFirstChild();
+	Tnode* proc = this->storedAbstractSyntaxTree->getAbstractSyntaxTreeRoot()->getFirstChild();
 	int procLastStmtNum = getLastContainedStatement(proc)->getStatementNumber();
 	while (targetStmtNum > procLastStmtNum){
 		Tnode* nextProc = proc->getRightSibling();
@@ -477,7 +477,7 @@ vector<string> ProgramKnowledgeBase::flattenStringSetToStringVector(const unorde
 }
 
 vector<Tnode*> ProgramKnowledgeBase::getNodesOfType(Tnode::Type type){
-	return getNodesOfType(this->storedAbstractSyntaxTree->getRoot(), type);
+	return getNodesOfType(this->storedAbstractSyntaxTree->getAbstractSyntaxTreeRoot(), type);
 }
 
 //return all nodes contained in the subtree of input node with type specified by input.

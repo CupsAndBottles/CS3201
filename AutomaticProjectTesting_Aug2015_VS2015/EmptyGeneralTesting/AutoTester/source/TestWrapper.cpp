@@ -23,12 +23,12 @@ void TestWrapper::parse(std::string filename) {
 	vector<string> tokenizedProgram = (*p).parseSimpleProgram(filename);
 
 	if (tokenizedProgram.size() > 0) {
-		AbstractSyntaxTree *AST = new AbstractSyntaxTree();
-		AST->buildAbstractSyntaxTree(tokenizedProgram);
-		Tnode *root = AST->getRoot();
+		Database *db = new Database();
+		db->buildAbstractSyntaxTree(tokenizedProgram);
+		Tnode *astRoot = db->getAbstractSyntaxTreeRoot();
 		cout << "Successfully constructed AST.\n";
 
-		pkbPointer = ProgramKnowledgeBase(AST);
+		pkbPointer = ProgramKnowledgeBase(db);
 
 		cout << "Successfully constructed PKB.\n";
 	}
