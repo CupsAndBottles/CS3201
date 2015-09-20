@@ -14,6 +14,7 @@
     <ClInclude Include="..\Source\Database.h" />
     <ClInclude Include="..\Source\EntityTable.h" />
     <ClInclude Include="..\Source\Parser.h" />
+    <ClInclude Include="..\source\ProcTable.h" />
     <ClInclude Include="..\Source\ProgramKnowledgeBase.h" />
     <ClInclude Include="..\Source\QueryEvaluator.h" />
     <ClInclude Include="..\Source\QueryObject.h" />
@@ -28,6 +29,7 @@
     <ClCompile Include="..\Source\Database.cpp" />
     <ClCompile Include="..\Source\EntityTable.cpp" />
     <ClCompile Include="..\Source\Parser.cpp" />
+    <ClCompile Include="..\source\ProcTable.cpp" />
     <ClCompile Include="..\Source\ProgramKnowledgeBase.cpp" />
     <ClCompile Include="..\Source\QueryEvaluator.cpp" />
     <ClCompile Include="..\Source\QueryObject.cpp" />

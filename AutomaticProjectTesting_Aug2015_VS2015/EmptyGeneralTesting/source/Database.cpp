@@ -40,7 +40,7 @@ Database::Database()
 {
 	this -> astRoot = NULL;
 	this -> stmtTable = new vector<Tnode*>;
-	this -> procTable = new vector<pair<string, Tnode*>>;
+	this -> procTable = new ProcTable;
 	this -> varTable = new vector<pair<string, vector<Tnode*>>>;
 }
 
@@ -71,7 +71,7 @@ Tnode* Database::procedure(vector<string> &tokens, vector<string>::iterator &it)
 	Tnode *curNode, *nextNode, *curNodeStmtLst;
 	match(it, stringify(PROCEDURE));
 	curNode = Tnode::createNode(Tnode::PROCEDURE, *it);
-	(*procTable).push_back(make_pair(*it, curNode));
+	procTable->addProcedure(*it, curNode);
 	curNodeStmtLst = Tnode::createNode(Tnode::STMTLST, "");
 	Tnode::createLink(Tnode::PARENT, *curNode, *curNodeStmtLst);
 	match(it, *it);
@@ -359,7 +359,7 @@ vector<Tnode*>* Database::getStatementTable()
 	return stmtTable;
 }
 
-vector<pair<string, Tnode*>>* Database::getProcedureTable()
+ProcTable* Database::getProcedureTable()
 {
 	return procTable;
 }
@@ -404,14 +404,6 @@ void Database::printStatementTable()
 	cout << endl << "<---------------------------------------- Statement Table: ---------------------------------------->" << endl << endl;
 	for (vector<Tnode*>::iterator i = stmtTable -> begin(); i != stmtTable -> end(); i++) {
 		cout << "Statement :" << (i + 1 - stmtTable -> begin()) << ", Address: <" << *i << ">" << ", StmtNum: " << (**i).getStatementNumber() <<endl;
-	}
-}
-
-void Database::printProcedureTable()
-{
-	cout << endl << "<---------------------------------------- Procedure Table: ---------------------------------------->" << endl << endl;
-	for (vector<pair<string, Tnode*>>::iterator i = (*procTable).begin(); i != (*procTable).end(); i++) {
-		cout << "Index :" << (i - (*procTable).begin()) << ", Name: " << (*i).first << ", Address: <" << (*i).second << ">" << endl;
 	}
 }
 

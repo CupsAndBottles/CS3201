@@ -1,5 +1,6 @@
 #pragma once
 #include "Tnode.h"
+#include "ProcTable.h"
 
 #include <vector>
 #include <string>
@@ -18,17 +19,16 @@ public:
 	bool isNumber(string &s);
 	Tnode* getAbstractSyntaxTreeRoot();
 	vector<Tnode*>* getStatementTable();
-	vector<pair<string, Tnode*>>* getProcedureTable();
+	ProcTable* getProcedureTable();
 	vector<pair<string, vector<Tnode*>>>* getVariableTable();
 	void printAbstractSyntaxTree();
 	void printStatementTable();
-	void printProcedureTable();
 	void printVariableTable();
 
 private:
 	Tnode* astRoot;
 	vector<Tnode*> *stmtTable;
-	vector<pair<string, Tnode*>> *procTable;
+	ProcTable *procTable;
 	vector<pair<string, vector<Tnode*>>> *varTable;
 	void program(vector<string> &tokens);
 	Tnode* procedure(vector<string> &tokens, vector<string>::iterator &it);
