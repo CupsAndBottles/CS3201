@@ -102,7 +102,7 @@ void Tnode::printNode()
 	cout << "Node: " << enumToString(type) << "-" << name;
 	if (type == CONSTANT) {
 		cout << value;
-	} 
+	}
 	cout << "<" << this << ">" << endl;
 	cout << "Parent node: ";
 	if (parentNode != NULL) {
@@ -127,7 +127,7 @@ void Tnode::printNode()
 		cout << enumToString((*leftSibNode).getType()) << "-" << (*leftSibNode).getName();
 		if ((*leftSibNode).getType() == CONSTANT) {
 			cout << (*leftSibNode).getValue();
-		} 
+		}
 		cout << "<" << leftSibNode << ">" << endl;
 	}
 	else {
@@ -138,7 +138,7 @@ void Tnode::printNode()
 		cout << enumToString((*rightSibNode).getType()) << "-" << (*rightSibNode).getName();
 		if ((*rightSibNode).getType() == CONSTANT) {
 			cout << (*rightSibNode).getValue();
-		} 
+		}
 		cout << "<" << rightSibNode << ">" << endl;
 	}
 	else {
@@ -191,4 +191,68 @@ string Tnode::toLowerCase(string s)
 		s[i] = tolower(s[i]);
 	}
 	return s;
+}
+
+bool Tnode::isContainer()
+{
+	return this->isWhile() || this->isIf();
+}
+
+bool Tnode::isCall()
+{
+	return this->getType() == Tnode::STMT_CALL;
+}
+
+bool Tnode::isStatementList()
+{
+	return this->getType() == Tnode::STMTLST;
+}
+
+bool Tnode::isProcedure()
+{
+	return this->getType() == Tnode::PROCEDURE;
+}
+
+bool Tnode::isWhile()
+{
+	return this->getType() == Tnode::STMT_WHILE;
+}
+
+bool Tnode::isIf()
+{
+	return this->getType() == Tnode::STMT_IF;
+}
+
+bool Tnode::isAssigns()
+{
+	return this->getType() == Tnode::STMT_ASSIGN;
+}
+
+bool Tnode::isProgram()
+{
+	return this->getType() == Tnode::PROGRAM;
+}
+
+bool Tnode::isLastChild()
+{
+	return this->getRightSibling() == NULL;
+}
+
+bool Tnode::isExpression()
+{
+	return this->getType() == Tnode::EXPR_PLUS || this->getType() == Tnode::EXPR_MINUS || this->getType() == Tnode::EXPR_TIMES;
+}
+
+bool Tnode::isVariable()
+{
+	return this->getType() == Tnode::VARIABLE;
+}
+
+bool Tnode::isConstant()
+{
+	return this->getType() == Tnode::CONSTANT;
+}
+
+bool Tnode::isStatement() {
+	return (this->isCall() || this->isWhile() || this->isAssigns() || this->isIf());
 }

@@ -182,14 +182,14 @@ Tnode* ProgramKnowledgeBase::getNodeWithStatementNumber(int targetStmtNum){
 	}
 	Tnode* candidate = targetProc->getFirstChild()->getFirstChild();
 	while (candidate->getStatementNumber() < targetStmtNum){
-		if (isContainer(candidate)){
+		if (candidate->isContainer()){
 			if (getLastContainedStatement(candidate)->getStatementNumber() < targetStmtNum){
 				candidate = candidate->getRightSibling();
 			} else {
-				if (isWhile(candidate)){
+				if (candidate->isWhile()){
 					candidate = candidate->getFirstChild()->getRightSibling()->getFirstChild();
 				}
-				else if (isIf(candidate)) {
+				else if (candidate->isIf()) {
 					Tnode* candidateThen = candidate->getFirstChild()->getRightSibling();
 					if (getLastContainedStatement(candidateThen)->getStatementNumber() < targetStmtNum) {
 						candidate = candidateThen->getRightSibling()->getFirstChild();
@@ -226,28 +226,28 @@ Tnode* ProgramKnowledgeBase::getProcedureContaining(int targetStmtNum){
 }
 
 Tnode* ProgramKnowledgeBase::getParentProcedure(Tnode* node){
-	if (isProcedure(node) || isProgram(node)){
+	if (node->isProcedure() || node->isProgram()){
 		return NULL;
 	}
 	Tnode* candidate = getSPAParent(node);
-	while (!isProcedure(candidate)){
+	while (!candidate->isProcedure()){
 		candidate = getSPAParent(candidate);
 	}
 	return candidate;
 }
 
 Tnode* ProgramKnowledgeBase::getLastContainedStatement(Tnode* node){
-	if (!isContainer(node) && !isProcedure(node) && !isStatementList(node)){
+	if (!node->isContainer() && !node->isProcedure() && !node->isStatementList()){
 		return NULL;
 	} else {
 		Tnode* lastNode = node->getFirstChild();
-		if (isProcedure(node)) {
+		if (node->isProcedure()) {
 			lastNode = lastNode->getFirstChild();
 		}
-		while (!isLastChild(lastNode)){
+		while (!lastNode->isLastChild()){
 			lastNode = lastNode->getRightSibling();
 		}
-		if (isContainer(lastNode) || isStatementList(lastNode)){
+		if (lastNode->isContainer() || lastNode->isStatementList()){
 			return getLastContainedStatement(lastNode);
 		} else {
 			return lastNode;
@@ -263,22 +263,18 @@ Tnode* ProgramKnowledgeBase::getLastSibling(Tnode* node){
 	return candidate;
 }
 
-bool ProgramKnowledgeBase::isStatement(Tnode* node){
-	return (isCall(node) || isWhile(node) || isAssigns(node) || isIf(node));
-}
-
 // assumes input is a node with a statement number
 Tnode* ProgramKnowledgeBase::getPreviousStatementNode(Tnode* currNode){
 	if (currNode->getLeftSibling() != NULL){
 		return currNode->getLeftSibling();
 	} else {
 		Tnode* parent = getSPAParent(currNode);
-		if (isProgram(parent)){
+		if (parent->isProgram()){
 			return NULL;
-		} else if (isProcedure(parent)){
+		} else if (parent->isProcedure()){
 			if (parent->getLeftSibling() != NULL){
 				Tnode* cousin = parent->getLeftSibling()->getFirstChild()->getFirstChild();
-				while (!isLastChild(cousin)){
+				while (!cousin->isLastChild()){
 					cousin = cousin->getRightSibling();
 				}
 				return cousin;
@@ -286,7 +282,7 @@ Tnode* ProgramKnowledgeBase::getPreviousStatementNode(Tnode* currNode){
 				// currNode is statement 1
 				return NULL;
 			}
-		} else if (isStatement(parent)){
+		} else if (parent->isStatement()){
 			return parent;
 		} else {
 			return NULL;
@@ -295,10 +291,10 @@ Tnode* ProgramKnowledgeBase::getPreviousStatementNode(Tnode* currNode){
 }
 
 Tnode* ProgramKnowledgeBase::getNextStatementNode(Tnode* currNode){
-	if (isLastChild(currNode)) {
+	if (currNode->isLastChild()) {
 		Tnode* nextParent = getSPAParent(currNode)->getRightSibling();
 		if (nextParent != NULL) {
-			if (isProcedure(nextParent)) {
+			if (nextParent->isProcedure()) {
 				return nextParent->getFirstChild()->getFirstChild();
 			}
 			else {
@@ -345,13 +341,13 @@ vector<Tnode*>* ProgramKnowledgeBase::getAllParentsOf(Tnode* node, vector<Tnode*
 
 vector<int> ProgramKnowledgeBase::getChildrenOf(int stmt){
 	Tnode* node = getNodeWithStatementNumber(stmt);
-	if (!isContainer(node)){
+	if (!node->isContainer()){
 		return vector<int>();
 	}
 
 	vector<int> children = vector<int>();
 	Tnode* child = node->getFirstChild();
-	while (!isLastChild(child)){
+	while (!child->isLastChild()){
 		children.push_back(child->getStatementNumber());
 		child = child->getRightSibling();
 	}
@@ -377,7 +373,7 @@ bool ProgramKnowledgeBase::isFollows(int s1, int s2){
 	return node1->getRightSibling() == node2;
 }
 
-vector<int> ProgramKnowledgeBase::getStatementsThatFollow(int stmt){
+vector<int> ProgramKnowledgeBase::getStatementThatFollows(int stmt){
 	Tnode* node = getNodeWithStatementNumber(stmt);
 	Tnode* sibling = node->getRightSibling();
 	vector<int> results = vector<int>();
@@ -391,7 +387,7 @@ vector<int> ProgramKnowledgeBase::getStatementsThatFollow(int stmt){
 	return results;
 }
 
-vector<int> ProgramKnowledgeBase::getStatementsFollowedBy(int stmt){
+vector<int> ProgramKnowledgeBase::getStatementFollowedBy(int stmt){
 	Tnode* node = getNodeWithStatementNumber(stmt);
 	Tnode* sibling = node->getLeftSibling();
 	vector<int> results = vector<int>();
@@ -499,60 +495,11 @@ unordered_set<Tnode*>* ProgramKnowledgeBase::getNodesOfTypeHelper(Tnode* curr, T
 		if (curr->getFirstChild() != NULL){
 			results = getNodesOfTypeHelper(curr->getFirstChild(), type, results);
 		}
-		if (!isLastChild(curr)){
+		if (!curr->isLastChild()){
 			results = getNodesOfTypeHelper(curr->getRightSibling(), type, results);
 		}
 	}
 	return results;
-}
-
-bool ProgramKnowledgeBase::isContainer(Tnode* node){
-	Tnode::Type type = node->getType();
-	return type == Tnode::STMT_WHILE || type == Tnode::STMT_IF;
-}
-
-bool ProgramKnowledgeBase::isCall(Tnode* node){
-	return node->getType() == Tnode::STMT_CALL;
-}
-
-bool ProgramKnowledgeBase::isStatementList(Tnode* node){
-	return node->getType() == Tnode::STMTLST;
-}
-
-bool ProgramKnowledgeBase::isProcedure(Tnode* node){
-	return node->getType() == Tnode::PROCEDURE;
-}
-
-bool ProgramKnowledgeBase::isWhile(Tnode* node){
-	return node->getType() == Tnode::STMT_WHILE;
-}
-
-bool ProgramKnowledgeBase::isIf(Tnode* node){
-	return node->getType() == Tnode::STMT_IF;
-}
-
-bool ProgramKnowledgeBase::isAssigns(Tnode* node){
-	return node->getType() == Tnode::STMT_ASSIGN;
-}
-
-bool ProgramKnowledgeBase::isProgram(Tnode* node){
-	return node->getType() == Tnode::PROGRAM;
-}
-
-bool ProgramKnowledgeBase::isLastChild(Tnode* node){
-	return node->getRightSibling() == NULL;
-}
-
-bool ProgramKnowledgeBase::isExpression(Tnode* node){
-	return node->getType() == Tnode::EXPR_PLUS || node->getType() == Tnode::EXPR_MINUS || node->getType() == Tnode::EXPR_TIMES;
-}
-
-bool ProgramKnowledgeBase::isVariable(Tnode* node) {
-	return node->getType() == Tnode::VARIABLE;
-}
-
-bool ProgramKnowledgeBase::isConstant(Tnode* node) {
-	return node->getType() == Tnode::CONSTANT;
 }
 
 bool ProgramKnowledgeBase::containsContainer(Tnode* node) {
@@ -561,10 +508,10 @@ bool ProgramKnowledgeBase::containsContainer(Tnode* node) {
 	Tnode* currStmt = stmtLst->getFirstChild();
 	bool foundContainer = false;
 	bool searchedElse = false;
-	while (!isLastChild(currStmt) && !foundContainer) {
-		if (isContainer(currStmt)) {
+	while (!currStmt->isLastChild() && !foundContainer) {
+		if (currStmt->isContainer()) {
 			return true;
-		} else if (isLastChild(currStmt) && !searchedElse) {
+		} else if (currStmt->isLastChild() && !searchedElse) {
 			if (stmtLst->getRightSibling () != NULL) {
 				searchedElse = false;
 				currStmt = stmtLst->getRightSibling();
@@ -611,9 +558,9 @@ Tnode* ProgramKnowledgeBase::getParentNode(Tnode* node){
 
 Tnode* ProgramKnowledgeBase::getSPAParent(Tnode* node) {
 	Tnode* parent = getParentNode(node);
-	if (isStatementList(parent)) {
+	if (parent->isStatementList()) {
 		return getSPAParent(parent);
-	} else if (isProcedure(parent) || isProgram(parent)) {
+	} else if (parent->isProcedure() || parent->isProgram()) {
 		return NULL;
 	} else {
 		return parent;
@@ -621,32 +568,32 @@ Tnode* ProgramKnowledgeBase::getSPAParent(Tnode* node) {
 }
 
 void ProgramKnowledgeBase::calculateRelations(Tnode* currNode, vector<Tnode*> parents) {
-	if (isProgram(currNode)) {
+	if (currNode->isProgram()) {
 		parents.push_back(currNode);
 		calculateRelations(currNode->getFirstChild(), parents);
-	} else if (isProcedure(currNode)){
+	} else if (currNode->isProcedure()){
 		parents.push_back(currNode);
 		calculateRelations(currNode->getFirstChild()->getFirstChild(), parents); // get first statement in procedure
-	} else if (isWhile(currNode)){
+	} else if (currNode->isWhile()){
 		parents.push_back(currNode);
 		updateUses(parents, currNode->getFirstChild());	// uses conditional variable
 		calculateRelations(currNode->getFirstChild()->getRightSibling()->getFirstChild(), parents); // first statement in while
-	} else if (isIf(currNode)){
+	} else if (currNode->isIf()){
 		parents.push_back(currNode);
 		updateUses(parents, currNode->getFirstChild());	// uses conditional variable
 		calculateRelations(currNode->getFirstChild()->getRightSibling()->getFirstChild(), parents); // first statement in then stmtLst
-	} else if (isCall(currNode)){
+	} else if (currNode->isCall()){
 		parents.push_back(currNode);
 		Tnode* callee = getCallee(currNode);
 		updateCalls(parents, callee); // calls procedure
 		calculateRelations(callee, parents);
-	} else if (isAssigns(currNode)) {
+	} else if (currNode->isAssigns()) {
 		parents.push_back(currNode);
 		Tnode* assignLeft = currNode->getFirstChild();
 		updateModifies(parents, assignLeft);
 		updateUses(parents, assignLeft->getRightSibling());
 	}
-	if (isLastChild(currNode)){
+	if (currNode->isLastChild()){
 		if (!parents.empty()) {
 			currNode = parents.back();
 			parents.pop_back();
@@ -659,7 +606,7 @@ void ProgramKnowledgeBase::calculateRelations(Tnode* currNode, vector<Tnode*> pa
 }
 
 void ProgramKnowledgeBase::updateUses(const vector<Tnode*> users, Tnode* used){
-	if (isExpression(used)) {
+	if (used->isExpression()) {
 		vector<Tnode*> varCons = vector<Tnode*>();
 		varCons = *getVariablesAndConstantsFromExpression(used, &varCons);
 		for (Tnode* vc : varCons) {
@@ -667,7 +614,7 @@ void ProgramKnowledgeBase::updateUses(const vector<Tnode*> users, Tnode* used){
 		}
 	} else {
 		for (Tnode* n : users) {
-			if (!isProgram(n)) {
+			if (!n->isProgram()) {
 				updateUses(n, used);
 			}
 		}
@@ -677,10 +624,10 @@ void ProgramKnowledgeBase::updateUses(const vector<Tnode*> users, Tnode* used){
 vector<Tnode*>* ProgramKnowledgeBase::getVariablesAndConstantsFromExpression(Tnode* expr, vector<Tnode*>* results) {
 	if (expr == NULL) {
 		return results;
-	} else if (isVariable(expr) || isConstant(expr)) {
+	} else if (expr->isVariable() || expr->isConstant()) {
 		results->push_back(expr);
 		return results;
-	} else if (isExpression(expr)){
+	} else if (expr->isExpression()){
 		Tnode* leftChild = expr->getFirstChild();
 		Tnode* rightChild = leftChild->getRightSibling();
 		results = getVariablesAndConstantsFromExpression(leftChild, results);
@@ -696,7 +643,7 @@ void ProgramKnowledgeBase::updateUses(Tnode* user, Tnode* usee) {
 
 void ProgramKnowledgeBase::updateModifies(vector<Tnode*> modders, Tnode* modded) {
 	for (Tnode* n : modders) {
-		if (!isProgram(n)) {
+		if (!n->isProgram()) {
 			updateModifies(n, modded);
 		}
 	}
@@ -747,7 +694,7 @@ void ProgramKnowledgeBase::updater(ProgramKnowledgeBase::Relation rel, int stmtN
 
 void ProgramKnowledgeBase::updateCalls(vector<Tnode*> callers, Tnode* callee) {
 	for (Tnode* n : callers) {
-		if (isProcedure(n)) {
+		if (n->isProcedure()) {
 			updateCalls(n, callee);
 		}
 	}

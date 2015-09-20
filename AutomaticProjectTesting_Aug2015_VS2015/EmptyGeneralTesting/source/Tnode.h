@@ -57,7 +57,19 @@ public:
 	char *enumToString(int enumVal);
 	string toLowerCase(string s);
 
-	
+	bool isContainer();
+	bool isCall();
+	bool isStatementList();
+	bool isProcedure();
+	bool isWhile();
+	bool isIf();
+	bool isAssigns();
+	bool isProgram();
+	bool isLastChild();
+	bool isExpression();
+	bool isVariable();
+	bool isConstant();
+	bool isStatement();
 
 private:
 	Tnode *parentNode;

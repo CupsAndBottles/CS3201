@@ -52,8 +52,8 @@ public:
 	vector<int> getAllChildrenStarOf(int stmt); //returns immediate and extended parents of stmt;
 
 	bool isFollows(int s1, int s2); //returns follows(s1, s2)
-	vector<int> getStatementsThatFollow(int stmt);
-	vector<int> getStatementsFollowedBy(int stmt);
+	vector<int> getStatementThatFollows(int stmt);
+	vector<int> getStatementFollowedBy(int stmt);
 
 	bool followsStar(int s1, int s2); //returns follows*(s1, s2)
 	vector<int> getStatementsThatFollowStar(int stmt);
@@ -76,20 +76,7 @@ private:
 	unordered_map<string, unordered_set<int>> callsRelationIndexedByProcedures;
 	unordered_map<int, unordered_set<string>> callsRelationIndexedByStatements;
 
-	bool isContainer(Tnode*);
-	bool isCall(Tnode * node);
-	bool isStatementList(Tnode * node);
-	bool isProcedure(Tnode * node);
-	bool isWhile(Tnode * node);
-	bool isIf(Tnode * node);
-	bool isAssigns(Tnode * node);
-	bool isProgram(Tnode * node);
-	bool isLastChild(Tnode * node);
-	bool isExpression(Tnode * node);
-	bool isVariable(Tnode * node);
-	bool isConstant(Tnode * node);
-	bool isStatement(Tnode * node);
-	bool containsContainer(Tnode * node);
+	bool containsContainer(Tnode * node); //not used
 
 	vector<string> flattenNodeVectorToStringVector(vector<Tnode*>* inp);
 	vector<int> flattenBoolVectorToIntVector(vector<bool> inp);
@@ -99,17 +86,17 @@ private:
 	vector<string> flattenStringSetToStringVector(const unordered_set<string>* inp);
 
 	vector<Tnode*> getNodesOfType(Tnode::Type type);
-	vector<Tnode*> getNodesOfType(Tnode* start, Tnode::Type type);
-	unordered_set<Tnode*>* getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, unordered_set<Tnode*>* results);
+	vector<Tnode*> getNodesOfType(Tnode* start, Tnode::Type type); //DON'T NEED
+	unordered_set<Tnode*>* getNodesOfTypeHelper(Tnode* curr, Tnode::Type type, unordered_set<Tnode*>* results); //DON'T NEED
 	Tnode * getNodeWithStatementNumber(int stmtNum);
 	Tnode * getNodeWithProcedureName(string targetName);
 	Tnode * getCallee(Tnode * node);
 	Tnode * getParentNode(Tnode * node);
 	Tnode * getSPAParent(Tnode * node);
-	Tnode * getProcedureContaining(int targetStmtNum);
-	Tnode * getParentProcedure(Tnode * node);
-	Tnode * getLastContainedStatement(Tnode * node);
-	Tnode * getLastSibling(Tnode * node);
+	Tnode * getProcedureContaining(int targetStmtNum); //DON'T NEED
+	Tnode * getParentProcedure(Tnode * node); //DON'T NEED
+	Tnode * getLastContainedStatement(Tnode * node); //DON'T NEED
+	Tnode * getLastSibling(Tnode * node); //not used
 	Tnode * getPreviousStatementNode(Tnode * currNode);
 	Tnode * getNextStatementNode(Tnode * currNode);
 	vector<Tnode*>* getAllParentsOf(Tnode * node, vector<Tnode*>* parents);

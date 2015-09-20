@@ -253,11 +253,11 @@ vector<string> QueryEvaluator:: follow(string leftArgument, string rightArgument
 	string select = getSelectClause();
 	vector<string> output;
 	if (stringEqual(select, leftArgument) && isNumericString(rightArgument)) {
-		vector<int> temp = database.getStatementsFollowedBy(stoi(rightArgument));
+		vector<int> temp = database.getStatementFollowedBy(stoi(rightArgument));
 		return output = integerVectorToString(temp);
 	}
 	else if (stringEqual(select, rightArgument) && isNumericString(leftArgument)) {
-		vector<int> temp = database.getStatementsThatFollow(stoi(leftArgument));
+		vector<int> temp = database.getStatementThatFollows(stoi(leftArgument));
 		return output = integerVectorToString(temp);
 	}
 	else {
