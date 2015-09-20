@@ -1,5 +1,7 @@
 #pragma once
 #include "Tnode.h"
+#include "ProcTable.h"
+#include "VarTable.h"
 
 #include <vector>
 #include <string>
@@ -18,18 +20,16 @@ public:
 	bool isNumber(string &s);
 	Tnode* getAbstractSyntaxTreeRoot();
 	vector<Tnode*>* getStatementTable();
-	vector<pair<string, Tnode*>>* getProcedureTable();
-	vector<pair<string, vector<Tnode*>>>* getVariableTable();
+	ProcTable* getProcedureTable();
+	VarTable* getVariableTable();
 	void printAbstractSyntaxTree();
 	void printStatementTable();
-	void printProcedureTable();
-	void printVariableTable();
 
 private:
 	Tnode* astRoot;
 	vector<Tnode*> *stmtTable;
-	vector<pair<string, Tnode*>> *procTable;
-	vector<pair<string, vector<Tnode*>>> *varTable;
+	ProcTable *procTable;
+	VarTable *varTable;
 	void program(vector<string> &tokens);
 	Tnode* procedure(vector<string> &tokens, vector<string>::iterator &it);
 	Tnode* stmtLst(vector<string> &tokens, vector<string>::iterator &it);
@@ -42,7 +42,6 @@ private:
 	Tnode* factor(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end);
 	Tnode* createVariable(Tnode::Type t, string n);
 	void addToStatementTable(Tnode* stmtNode);
-	void addToVariableTable(string var, Tnode* varNode);
 	void match(vector<string>::iterator &it, string token);
 	void printAbstractSyntaxTreeCall(vector<vector<Tnode*>> &nss, vector<Tnode*> s, Tnode *curNode, unsigned int lvl);
 };

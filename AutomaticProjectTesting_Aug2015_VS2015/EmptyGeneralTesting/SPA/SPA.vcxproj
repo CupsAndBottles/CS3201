@@ -14,6 +14,7 @@
     <ClInclude Include="..\Source\Database.h" />
     <ClInclude Include="..\Source\EntityTable.h" />
     <ClInclude Include="..\Source\Parser.h" />
+    <ClInclude Include="..\source\ProcTable.h" />
     <ClInclude Include="..\Source\ProgramKnowledgeBase.h" />
     <ClInclude Include="..\Source\QueryEvaluator.h" />
     <ClInclude Include="..\Source\QueryObject.h" />
@@ -23,11 +24,13 @@
     <ClInclude Include="..\Source\SIMPLEParser.h" />
     <ClInclude Include="..\Source\SIMPLERules.h" />
     <ClInclude Include="..\Source\Tnode.h" />
+    <ClInclude Include="..\source\VarTable.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Database.cpp" />
     <ClCompile Include="..\Source\EntityTable.cpp" />
     <ClCompile Include="..\Source\Parser.cpp" />
+    <ClCompile Include="..\source\ProcTable.cpp" />
     <ClCompile Include="..\Source\ProgramKnowledgeBase.cpp" />
     <ClCompile Include="..\Source\QueryEvaluator.cpp" />
     <ClCompile Include="..\Source\QueryObject.cpp" />
@@ -37,6 +40,7 @@
     <ClCompile Include="..\Source\SIMPLEParser.cpp" />
     <ClCompile Include="..\Source\SIMPLERules.cpp" />
     <ClCompile Include="..\Source\Tnode.cpp" />
+    <ClCompile Include="..\source\VarTable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
