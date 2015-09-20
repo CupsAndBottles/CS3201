@@ -254,7 +254,7 @@ bool Tnode::contains(Tnode * subTree)
 	if (this->getRightSibling() != NULL) {
 		cont = this->getRightSibling()->contains(subTree);
 		if (cont == true) {
-			return contains;
+			return cont;
 		}
 	}
 	if (this->getFirstChild() != NULL) {
