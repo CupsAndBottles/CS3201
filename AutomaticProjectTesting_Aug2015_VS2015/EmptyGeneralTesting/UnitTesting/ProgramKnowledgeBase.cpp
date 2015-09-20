@@ -53,7 +53,7 @@ namespace UnitTesting
 			Assert::AreEqual(string("y"), variables[1]);
 		}
 
-		TEST_METHOD(testPKBGetWhiles) {
+		TEST_METHOD(testPKBGetStatementsOfType) {
 			ofstream outputFile("program.txt");
 			outputFile << "procedure Proc {";
 			outputFile << "x = 1;";
@@ -73,6 +73,11 @@ namespace UnitTesting
 			vector<int> whiles = pkb.getStatementsOfType(Tnode::STMT_WHILE);
 			Assert::AreEqual(1, int(whiles.size()));
 			Assert::AreEqual(2, whiles[0]);
+
+			vector<int> assigns = pkb.getStatementsOfType(Tnode::STMT_ASSIGN);
+			Assert::AreEqual(2, int(assigns.size()));
+			Assert::AreEqual(1, assigns[0]);
+			Assert::AreEqual(3, assigns[1]);
 		}
 
 		TEST_METHOD(testPKBGetParent) {
