@@ -205,6 +205,46 @@ string Tnode::toLowerCase(string s)
 	return s;
 }
 
+bool Tnode::isEquals(Tnode *other)
+{
+	bool equals = true;
+	if (this->getType() != other->getType()) {
+		return false;
+	}
+	if ((*this).name != (*other).name) {
+		return false;
+	}
+	if (this->getValue() != other->getValue()) {
+		return false;
+	}
+	if (this->getFirstChild() == NULL && other->getFirstChild() != NULL ||
+		this->getFirstChild() != NULL && other->getFirstChild() == NULL) {
+		return false;
+	}
+	if (this->getParent() == NULL && other->getParent() != NULL ||
+		this->getParent() != NULL && other->getParent() == NULL) {
+		return false;
+	}
+	if (this->getLeftSibling() == NULL && other->getLeftSibling() != NULL ||
+		this->getLeftSibling() != NULL && other->getLeftSibling() == NULL) {
+		return false;
+	}
+	if (this->getRightSibling() == NULL && other->getRightSibling() != NULL ||
+		this->getRightSibling() != NULL && other->getRightSibling() == NULL) {
+		return false;
+	}
+	if (this -> getRightSibling() != NULL && other->getRightSibling() != NULL) {
+		equals = this->getRightSibling()->isEquals(other -> getRightSibling());
+		if (equals == false) {
+			return equals;
+		}
+	}
+	if (this -> getFirstChild() != NULL && other->getFirstChild() != NULL) {
+		equals = this->getFirstChild()->isEquals(other->getFirstChild());
+	}
+	return equals;
+}
+
 bool Tnode::isContainer()
 {
 	return this->isWhile() || this->isIf();
