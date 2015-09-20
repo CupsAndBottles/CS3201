@@ -242,7 +242,7 @@ vector<string> QueryEvaluator:: parentT(string leftArgument, string rightArgumen
 		return output = integerVectorToString(temp);
 	}
 	else if (stringEqual(select, rightArgument) && isNumericString(leftArgument)) {
-		vector<int> temp = database.getAllChildrenStarOf(stoi(leftArgument));
+		vector<int> temp = database.getChildrenStarOf(stoi(leftArgument));
 		return output = integerVectorToString(temp);
 	}
 	else {

@@ -362,7 +362,7 @@ bool ProgramKnowledgeBase::isParentStar(int s1, int s2)
 	return it != parents.end();
 }
 
-vector<int> ProgramKnowledgeBase::getAllChildrenStarOf(int stmt)
+vector<int> ProgramKnowledgeBase::getChildrenStarOf(int stmt)
 {
 	return vector<int>();
 }
