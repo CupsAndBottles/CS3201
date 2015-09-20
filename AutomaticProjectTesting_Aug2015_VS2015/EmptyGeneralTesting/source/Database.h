@@ -7,11 +7,11 @@
 
 using namespace std;
 
-class AbstractSyntaxTree
+class Database
 {
 public:
-	AbstractSyntaxTree();
-	~AbstractSyntaxTree();
+	Database();
+	~Database();
 
 	void buildAbstractSyntaxTree(vector<string> tokens);
 	string toUpperCase(string s);

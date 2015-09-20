@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Source\AbstractSyntaxTree.h" />
+    <ClInclude Include="..\Source\Database.h" />
     <ClInclude Include="..\Source\EntityTable.h" />
     <ClInclude Include="..\Source\Parser.h" />
     <ClInclude Include="..\Source\ProgramKnowledgeBase.h" />
@@ -25,7 +25,7 @@
     <ClInclude Include="..\Source\Tnode.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Source\AbstractSyntaxTree.cpp" />
+    <ClCompile Include="..\Source\Database.cpp" />
     <ClCompile Include="..\Source\EntityTable.cpp" />
     <ClCompile Include="..\Source\Parser.cpp" />
     <ClCompile Include="..\Source\ProgramKnowledgeBase.cpp" />
