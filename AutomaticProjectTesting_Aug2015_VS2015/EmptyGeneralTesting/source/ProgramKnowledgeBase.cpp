@@ -379,10 +379,8 @@ vector<int> ProgramKnowledgeBase::getStatementThatFollows(int stmt){
 	vector<int> results = vector<int>();
 	if (sibling == NULL){
 		return results;
-	}
-	while (sibling != NULL){
+	} else {
 		results.push_back(sibling->getStatementNumber());
-		sibling = sibling->getRightSibling();
 	}
 	return results;
 }
@@ -393,28 +391,45 @@ vector<int> ProgramKnowledgeBase::getStatementFollowedBy(int stmt){
 	vector<int> results = vector<int>();
 	if (sibling == NULL){
 		return results;
-	}
-	while (sibling != NULL){
+	} else {
 		results.push_back(sibling->getStatementNumber());
-		sibling = sibling->getLeftSibling();
 	}
 	return results;
 }
 
 bool ProgramKnowledgeBase::followsStar(int s1, int s2)
 {
-	return false;
+	vector<int> nodesThatFollow = getStatementsThatFollowStar(s1);
+	return find(nodesThatFollow.begin(), nodesThatFollow.end(), s2) != nodesThatFollow.end();
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsThatFollowStar(int stmt)
 {
-	return vector<int>();
-}
+	Tnode* node = getNodeWithStatementNumber(stmt);
+	Tnode* sibling = node->getRightSibling();
+	vector<int> results = vector<int>();
+	if (sibling == NULL){
+		return results;
+	}
+	while (sibling != NULL){
+		results.push_back(sibling->getStatementNumber());
+		sibling = sibling->getRightSibling();
+	}
+	return results;}
 
 vector<int> ProgramKnowledgeBase::getStatementsFollowStarredBy(int stmt)
 {
-	return vector<int>();
-}
+	Tnode* node = getNodeWithStatementNumber(stmt);
+	Tnode* sibling = node->getLeftSibling();
+	vector<int> results = vector<int>();
+	if (sibling == NULL){
+		return results;
+	}
+	while (sibling != NULL){
+		results.push_back(sibling->getStatementNumber());
+		sibling = sibling->getLeftSibling();
+	}
+	return results;}
 
 vector<int> ProgramKnowledgeBase::getStatementsOfType(Tnode::Type type){
 	return flattenNodeVectorToIntVector(&getNodesOfType(type));
