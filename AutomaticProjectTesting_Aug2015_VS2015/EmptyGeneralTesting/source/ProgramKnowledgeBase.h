@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Database.h"
+#include "VarTable.h"
+#include "ProcTable.h"
 #include "Tnode.h"
 #include <vector>
 #include <string>

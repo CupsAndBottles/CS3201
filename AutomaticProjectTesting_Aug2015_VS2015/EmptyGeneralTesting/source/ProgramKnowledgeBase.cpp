@@ -70,10 +70,10 @@ bool ProgramKnowledgeBase::modifies(string procName, string var){
 vector<string> ProgramKnowledgeBase::getProceduresThatModify(string var){
 	vector<string> results = vector<string>();
 	vector<Tnode*> procedures = vector<Tnode*>();
-	vector<pair<string, Tnode*>>* procTable = this->storedAbstractSyntaxTree->getProcedureTable();
+	ProcTable* procTable = this->storedAbstractSyntaxTree->getProcedureTable();
 	string currProc = "";
-	for (int i = 0; i < procTable->size(); i++) {
-		currProc = procTable->at(i).first;
+	for (int i = 0; i < procTable->getSize(); i++) {
+		currProc = procTable->getProcedureName(i);
 		if (modifies(currProc, var)) {
 			results.push_back(currProc);
 		}
@@ -83,10 +83,10 @@ vector<string> ProgramKnowledgeBase::getProceduresThatModify(string var){
 
 vector<string> ProgramKnowledgeBase::getVariablesModifiedBy(string procName){
 	vector<string> results = vector<string>();
-	vector<pair<string, vector<Tnode*>>>* varTable = this->storedAbstractSyntaxTree->getVariableTable();
+	VarTable* varTable = this->storedAbstractSyntaxTree->getVariableTable();
 	string currVar = "";
-	for (int i = 0; i < varTable->size(); i++) {
-		currVar = varTable->at(i).first;
+	for (int i = 0; i < varTable->getSize(); i++) {
+		currVar = varTable->getVariableName(i);
 		if (modifies(procName, currVar)) {
 			results.push_back(currVar);
 		}
@@ -144,10 +144,10 @@ vector<string> ProgramKnowledgeBase::getProceduresThatUse(string var)
 {
 	vector<string> results = vector<string>();
 	vector<Tnode*> procedures = vector<Tnode*>();
-	vector<pair<string, Tnode*>>* procTable = this->storedAbstractSyntaxTree->getProcedureTable();
+	ProcTable* procTable = this->storedAbstractSyntaxTree->getProcedureTable();
 	string currProc = "";
-	for (int i = 0; i < procTable->size(); i++) {
-		currProc = procTable->at(i).first;
+	for (int i = 0; i < procTable->getSize(); i++) {
+		currProc = procTable->getProcedureName(i);
 		if (uses(currProc, var)) {
 			results.push_back(currProc);
 		}
@@ -157,10 +157,10 @@ vector<string> ProgramKnowledgeBase::getProceduresThatUse(string var)
 
 vector<string> ProgramKnowledgeBase::getVariablesUsedBy(string procName){
 	vector<string> results = vector<string>();
-	vector<pair<string, vector<Tnode*>>>* varTable = this->storedAbstractSyntaxTree->getVariableTable();
+	VarTable* varTable = this->storedAbstractSyntaxTree->getVariableTable();
 	string currVar = "";
-	for (int i = 0; i < varTable->size(); i++) {
-		currVar = varTable->at(i).first;
+	for (int i = 0; i < varTable->getSize(); i++) {
+		currVar = varTable->getVariableName(i);
 		if (uses(procName, currVar)) {
 			results.push_back(currVar);
 		}
@@ -550,10 +550,10 @@ Tnode* ProgramKnowledgeBase::getCallee(Tnode* node){
 }
 
 Tnode* ProgramKnowledgeBase::getNodeWithProcedureName(string procName){
-	vector<pair<string, Tnode*>>* procTable = this->storedAbstractSyntaxTree->getProcedureTable();
-	for (size_t i = 0; i < procTable->size(); i++) {
-		if (procName.compare(procTable->at(i).first) == 0) {
-			return procTable->at(i).second;
+	ProcTable* procTable = this->storedAbstractSyntaxTree->getProcedureTable();
+	for (size_t i = 0; i < procTable->getSize(); i++) {
+		if (procName.compare(procTable->getProcedureName(i)) == 0) {
+			return procTable->getProcedureAddress(i);
 		}
 	}
 	return NULL;
