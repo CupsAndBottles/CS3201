@@ -1,6 +1,7 @@
 #pragma once
 #include "Tnode.h"
 #include "ProcTable.h"
+#include "VarTable.h"
 
 #include <vector>
 #include <string>
@@ -20,16 +21,15 @@ public:
 	Tnode* getAbstractSyntaxTreeRoot();
 	vector<Tnode*>* getStatementTable();
 	ProcTable* getProcedureTable();
-	vector<pair<string, vector<Tnode*>>>* getVariableTable();
+	VarTable* getVariableTable();
 	void printAbstractSyntaxTree();
 	void printStatementTable();
-	void printVariableTable();
 
 private:
 	Tnode* astRoot;
 	vector<Tnode*> *stmtTable;
 	ProcTable *procTable;
-	vector<pair<string, vector<Tnode*>>> *varTable;
+	VarTable *varTable;
 	void program(vector<string> &tokens);
 	Tnode* procedure(vector<string> &tokens, vector<string>::iterator &it);
 	Tnode* stmtLst(vector<string> &tokens, vector<string>::iterator &it);
@@ -42,7 +42,6 @@ private:
 	Tnode* factor(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end);
 	Tnode* createVariable(Tnode::Type t, string n);
 	void addToStatementTable(Tnode* stmtNode);
-	void addToVariableTable(string var, Tnode* varNode);
 	void match(vector<string>::iterator &it, string token);
 	void printAbstractSyntaxTreeCall(vector<vector<Tnode*>> &nss, vector<Tnode*> s, Tnode *curNode, unsigned int lvl);
 };

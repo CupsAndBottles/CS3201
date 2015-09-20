@@ -24,6 +24,7 @@
     <ClInclude Include="..\Source\SIMPLEParser.h" />
     <ClInclude Include="..\Source\SIMPLERules.h" />
     <ClInclude Include="..\Source\Tnode.h" />
+    <ClInclude Include="..\source\VarTable.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Database.cpp" />
@@ -39,6 +40,7 @@
     <ClCompile Include="..\Source\SIMPLEParser.cpp" />
     <ClCompile Include="..\Source\SIMPLERules.cpp" />
     <ClCompile Include="..\Source\Tnode.cpp" />
+    <ClCompile Include="..\source\VarTable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

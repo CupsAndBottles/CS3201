@@ -25,7 +25,6 @@ void TestWrapper::parse(std::string filename) {
 	if (tokenizedProgram.size() > 0) {
 		Database *db = new Database();
 		db->buildAbstractSyntaxTree(tokenizedProgram);
-		Tnode *astRoot = db->getAbstractSyntaxTreeRoot();
 		cout << "Successfully constructed AST.\n";
 
 		pkbPointer = ProgramKnowledgeBase(db);

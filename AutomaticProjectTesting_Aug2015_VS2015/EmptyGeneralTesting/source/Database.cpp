@@ -30,8 +30,8 @@ int main()
 	db -> printAbstractSyntaxTree(); ///prints the AbstractSyntaxTree
 	cout << "AbstractSyntaxTree printed." << endl;
 	db -> printStatementTable();
-	db -> printProcedureTable();
-	db -> printVariableTable();
+	db -> getProcedureTable() -> printProcedureTable();
+	db -> getVariableTable() -> printVariableTable();
 	return 0;
 }
 */
@@ -41,7 +41,7 @@ Database::Database()
 	this -> astRoot = NULL;
 	this -> stmtTable = new vector<Tnode*>;
 	this -> procTable = new ProcTable;
-	this -> varTable = new vector<pair<string, vector<Tnode*>>>;
+	this -> varTable = new VarTable;
 }
 
 
@@ -277,7 +277,7 @@ Tnode * Database::createVariable(Tnode::Type t, string n)
 {
 	Tnode* varNode;
 	varNode = Tnode::createNode(Tnode::VARIABLE, n);
-	addToVariableTable(n, varNode);
+	varTable->addVariable(n, varNode);
 	return varNode;
 }
 
@@ -287,20 +287,6 @@ void Database::addToStatementTable(Tnode* stmtNode)
 		stmtTable->resize(stmtNode->getStatementNumber());
 	}
 	stmtTable->at(stmtNode->getStatementNumber() - 1) = stmtNode;
-}
-
-void Database::addToVariableTable(string var, Tnode* varNode)
-{
-	for (unsigned int i = 0; i < (*varTable).size(); i++) {
-		if (get<0>((*varTable).at(i)) == var) {
-			get<1>((*varTable).at(i)).push_back(varNode);
-			return;
-		}
-	}
-	vector<Tnode*> addressList;
-	addressList.push_back(varNode);
-	(*varTable).push_back(make_pair(var, addressList));
-	return;
 }
 
 void Database::match(vector<string>::iterator &it, string token)
@@ -364,7 +350,7 @@ ProcTable* Database::getProcedureTable()
 	return procTable;
 }
 
-vector<pair<string, vector<Tnode*>>>* Database::getVariableTable()
+VarTable* Database::getVariableTable()
 {
 	return varTable;
 }
@@ -404,20 +390,5 @@ void Database::printStatementTable()
 	cout << endl << "<---------------------------------------- Statement Table: ---------------------------------------->" << endl << endl;
 	for (vector<Tnode*>::iterator i = stmtTable -> begin(); i != stmtTable -> end(); i++) {
 		cout << "Statement :" << (i + 1 - stmtTable -> begin()) << ", Address: <" << *i << ">" << ", StmtNum: " << (**i).getStatementNumber() <<endl;
-	}
-}
-
-void Database::printVariableTable()
-{
-	cout << endl << "<---------------------------------------- Variable Table: ---------------------------------------->" << endl << endl;
-	for (vector<pair<string, vector<Tnode*>>>::iterator i = (*varTable).begin(); i != (*varTable).end(); i++) {
-		cout << "Index :" << (i - (*varTable).begin()) << ", Name: " << (*i).first << ", Address(es): ";
-		for (vector<Tnode*>::iterator j = (*i).second.begin(); j != (*i).second.end(); j++) {
-			cout << "<" << (*j) << ">";
-			if (j < (*i).second.end() - 1) {
-				cout << ", ";
-			}
-		}
-		cout << "\n";
 	}
 }

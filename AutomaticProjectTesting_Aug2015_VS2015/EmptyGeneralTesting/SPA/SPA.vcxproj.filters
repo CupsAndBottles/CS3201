@@ -54,6 +54,9 @@
     <ClInclude Include="..\source\ProcTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\VarTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\EntityTable.cpp">
@@ -93,6 +96,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\source\ProcTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\VarTable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
