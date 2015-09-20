@@ -283,10 +283,10 @@ Tnode * Database::createVariable(Tnode::Type t, string n)
 
 void Database::addToStatementTable(Tnode* stmtNode)
 {
-	if (stmtTable->size() < (unsigned)stmtNode->getStatementNumber()) {
-		stmtTable->resize(stmtNode->getStatementNumber());
+	if (stmtTable->size() < (unsigned)stmtNode->getStatementNumber()+1) {
+		stmtTable->resize(stmtNode->getStatementNumber()+1);
 	}
-	stmtTable->at(stmtNode->getStatementNumber() - 1) = stmtNode;
+	stmtTable->at(stmtNode->getStatementNumber()) = stmtNode;
 }
 
 void Database::match(vector<string>::iterator &it, string token)
@@ -395,6 +395,6 @@ void Database::printStatementTable()
 {
 	cout << endl << "<---------------------------------------- Statement Table: ---------------------------------------->" << endl << endl;
 	for (vector<Tnode*>::iterator i = stmtTable -> begin(); i != stmtTable -> end(); i++) {
-		cout << "Statement :" << (i + 1 - stmtTable -> begin()) << ", Address: <" << *i << ">" << ", StmtNum: " << (**i).getStatementNumber() <<endl;
+		cout << "Statement :" << (i - stmtTable -> begin()) << ", Address: <" << *i << ">" << ", StmtNum: " << (**i).getStatementNumber() <<endl;
 	}
 }
