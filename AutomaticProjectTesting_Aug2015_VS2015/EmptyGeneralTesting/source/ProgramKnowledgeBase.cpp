@@ -170,7 +170,7 @@ vector<string> ProgramKnowledgeBase::getVariablesUsedBy(string procName){
 
 bool ProgramKnowledgeBase::isParent(int s1, int s2){
 	Tnode* s2Node = getNodeWithStatementNumber(s2);
-	Tnode* s2Parent = getSPAParent(s2Node);
+	Tnode* s2Parent = s2Node->getSPAParent();
 	return s2Parent->getStatementNumber() == s1;
 }
 
@@ -229,9 +229,9 @@ Tnode* ProgramKnowledgeBase::getParentProcedure(Tnode* node){
 	if (node->isProcedure() || node->isProgram()){
 		return NULL;
 	}
-	Tnode* candidate = getSPAParent(node);
+	Tnode* candidate = node->getSPAParent();
 	while (!candidate->isProcedure()){
-		candidate = getSPAParent(candidate);
+		candidate = candidate->getSPAParent();
 	}
 	return candidate;
 }
@@ -268,7 +268,7 @@ Tnode* ProgramKnowledgeBase::getPreviousStatementNode(Tnode* currNode){
 	if (currNode->getLeftSibling() != NULL){
 		return currNode->getLeftSibling();
 	} else {
-		Tnode* parent = getSPAParent(currNode);
+		Tnode* parent = currNode->getSPAParent();
 		if (parent->isProgram()){
 			return NULL;
 		} else if (parent->isProcedure()){
@@ -292,7 +292,7 @@ Tnode* ProgramKnowledgeBase::getPreviousStatementNode(Tnode* currNode){
 
 Tnode* ProgramKnowledgeBase::getNextStatementNode(Tnode* currNode){
 	if (currNode->isLastChild()) {
-		Tnode* nextParent = getSPAParent(currNode)->getRightSibling();
+		Tnode* nextParent = currNode->getSPAParent()->getRightSibling();
 		if (nextParent != NULL) {
 			if (nextParent->isProcedure()) {
 				return nextParent->getFirstChild()->getFirstChild();
@@ -312,7 +312,7 @@ Tnode* ProgramKnowledgeBase::getNextStatementNode(Tnode* currNode){
 vector<int> ProgramKnowledgeBase::getParentOf(int stmt){
 	Tnode* node = getNodeWithStatementNumber(stmt);
 	if (node != NULL){
-		Tnode* parent = getSPAParent(node);
+		Tnode* parent = node->getSPAParent();
 		if (parent != NULL){
 			return vector<int>(1, parent->getStatementNumber());
 		}
@@ -330,7 +330,7 @@ vector<int> ProgramKnowledgeBase::getParentsStarOf(int stmt){
 }
 
 vector<Tnode*>* ProgramKnowledgeBase::getAllParentsOf(Tnode* node, vector<Tnode*>* parents) {
-	Tnode* parent = getSPAParent(node);
+	Tnode* parent = node->getSPAParent();
 	if (parent == NULL) {
 		return parents;
 	} else {
@@ -379,10 +379,8 @@ vector<int> ProgramKnowledgeBase::getStatementThatFollows(int stmt){
 	vector<int> results = vector<int>();
 	if (sibling == NULL){
 		return results;
-	}
-	while (sibling != NULL){
+	} else {
 		results.push_back(sibling->getStatementNumber());
-		sibling = sibling->getRightSibling();
 	}
 	return results;
 }
@@ -393,28 +391,45 @@ vector<int> ProgramKnowledgeBase::getStatementFollowedBy(int stmt){
 	vector<int> results = vector<int>();
 	if (sibling == NULL){
 		return results;
-	}
-	while (sibling != NULL){
+	} else {
 		results.push_back(sibling->getStatementNumber());
-		sibling = sibling->getLeftSibling();
 	}
 	return results;
 }
 
 bool ProgramKnowledgeBase::followsStar(int s1, int s2)
 {
-	return false;
+	vector<int> nodesThatFollow = getStatementsThatFollowStar(s1);
+	return find(nodesThatFollow.begin(), nodesThatFollow.end(), s2) != nodesThatFollow.end();
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsThatFollowStar(int stmt)
 {
-	return vector<int>();
-}
+	Tnode* node = getNodeWithStatementNumber(stmt);
+	Tnode* sibling = node->getRightSibling();
+	vector<int> results = vector<int>();
+	if (sibling == NULL){
+		return results;
+	}
+	while (sibling != NULL){
+		results.push_back(sibling->getStatementNumber());
+		sibling = sibling->getRightSibling();
+	}
+	return results;}
 
 vector<int> ProgramKnowledgeBase::getStatementsFollowStarredBy(int stmt)
 {
-	return vector<int>();
-}
+	Tnode* node = getNodeWithStatementNumber(stmt);
+	Tnode* sibling = node->getLeftSibling();
+	vector<int> results = vector<int>();
+	if (sibling == NULL){
+		return results;
+	}
+	while (sibling != NULL){
+		results.push_back(sibling->getStatementNumber());
+		sibling = sibling->getLeftSibling();
+	}
+	return results;}
 
 vector<int> ProgramKnowledgeBase::getStatementsOfType(Tnode::Type type){
 	return flattenNodeVectorToIntVector(&getNodesOfType(type));
@@ -553,17 +568,6 @@ Tnode* ProgramKnowledgeBase::getParentNode(Tnode* node){
 		return getParentNode(currNode);
 	} else {
 		return node->getParent();
-	}
-}
-
-Tnode* ProgramKnowledgeBase::getSPAParent(Tnode* node) {
-	Tnode* parent = getParentNode(node);
-	if (parent->isStatementList()) {
-		return getSPAParent(parent);
-	} else if (parent->isProcedure() || parent->isProgram()) {
-		return NULL;
-	} else {
-		return parent;
 	}
 }
 

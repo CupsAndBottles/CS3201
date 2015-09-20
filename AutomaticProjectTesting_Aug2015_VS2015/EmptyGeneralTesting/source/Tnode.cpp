@@ -62,6 +62,18 @@ Tnode *Tnode::getParent()
 	return parentNode;
 }
 
+Tnode *Tnode::getSPAParent()
+{
+	Tnode* parent = this->getParent();
+	if (parent->isStatementList()) {
+		return parent->getSPAParent();
+	} else if (parent->isProcedure() || parent->isProgram()) {
+		return NULL;
+	} else {
+		return parent;
+	}
+}
+
 Tnode *Tnode::getFirstChild()
 {
 	return firstChildNode;
