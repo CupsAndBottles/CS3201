@@ -216,8 +216,8 @@ namespace UnitTesting
 			Assert::AreEqual(2, folls[0]);
 
 			vector<int> follBy = pkb.getStatementFollowedBy(2);
-			Assert::AreEqual(1, int(folls.size()));
-			Assert::AreEqual(1, folls[0]);
+			Assert::AreEqual(1, int(follBy.size()));
+			Assert::AreEqual(1, follBy[0]);
 		}
 	};
 }
