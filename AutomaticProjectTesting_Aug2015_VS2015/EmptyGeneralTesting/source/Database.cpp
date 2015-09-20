@@ -394,7 +394,7 @@ void Database::printAbstractSyntaxTree(Tnode* root)
 void Database::printStatementTable()
 {
 	cout << endl << "<---------------------------------------- Statement Table: ---------------------------------------->" << endl << endl;
-	for (vector<Tnode*>::iterator i = stmtTable -> begin(); i != stmtTable -> end(); i++) {
+	for (vector<Tnode*>::iterator i = stmtTable -> begin()+1; i != stmtTable -> end(); i++) {
 		cout << "Statement :" << (i - stmtTable -> begin()) << ", Address: <" << *i << ">" << ", StmtNum: " << (**i).getStatementNumber() <<endl;
 	}
 }
