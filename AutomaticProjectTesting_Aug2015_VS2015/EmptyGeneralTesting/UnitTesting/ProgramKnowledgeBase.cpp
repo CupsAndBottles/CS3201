@@ -225,6 +225,46 @@ namespace UnitTesting
 			Assert::AreEqual(string("x"), variablesProcs[0]);
 		}
 
+		TEST_METHOD(testPKBMultiProcedureModify) {
+			string fileName = "programMultiProcedureModify.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc {";
+			outputFile << "x = 1;"; //line 1
+			outputFile << "call Other;"; //line 2
+			outputFile << "}";
+			outputFile << "procedure Other {";
+			outputFile << "y = 1;"; //line 3
+			outputFile << "}";
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+
+			Assert::IsTrue(pkb.modifies(3, "y"));
+			Assert::IsTrue(pkb.modifies("Other", "y"));
+
+			vector<int> modders = pkb.getStatementsThatModify("y");
+			Assert::AreEqual(1, int(modders.size()));
+			Assert::AreEqual(3, modders[0]);
+
+			vector<string> variables = pkb.getVariablesModifiedBy(3);
+			Assert::AreEqual(string("y"), variables[0]);
+
+			vector<string> moddersProcs = pkb.getProceduresThatModify("y");
+			Assert::AreEqual(2, int(moddersProcs.size()));
+			Assert::AreEqual(string("Other"), moddersProcs[0]);
+			Assert::AreEqual(string("Proc"), moddersProcs[0]);
+
+			vector<string> variablesProcs = pkb.getVariablesModifiedBy("Proc");
+			Assert::AreEqual(2, int(variablesProcs.size()));
+			Assert::AreEqual(string("x"), variablesProcs[0]);
+			Assert::AreEqual(string("y"), variablesProcs[1]);
+		}
+
 		TEST_METHOD(testPKBSimpleUses) {
 			string fileName = "programSimpleUses.txt";
 			ofstream outputFile(fileName, ofstream::trunc);
