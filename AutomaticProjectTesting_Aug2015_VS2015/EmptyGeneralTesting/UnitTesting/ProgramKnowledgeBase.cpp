@@ -27,7 +27,7 @@ namespace UnitTesting
 			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
 			remove(fileName.c_str());
 			Database* db = new Database();
-			db->buildAbstractSyntaxTree(parsedProgram);
+			db->buildDatabase(parsedProgram);
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 
 			vector<string> procedures = pkb.getProcedureNames();
@@ -47,7 +47,7 @@ namespace UnitTesting
 			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
 			remove(fileName.c_str());
 			Database* db = new Database();
-			db->buildAbstractSyntaxTree(parsedProgram);
+			db->buildDatabase(parsedProgram);
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 
 			vector<string> variables = pkb.getVariableNames();
@@ -71,7 +71,7 @@ namespace UnitTesting
 			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
 			remove(fileName.c_str());
 			Database* db = new Database();
-			db->buildAbstractSyntaxTree(parsedProgram);
+			db->buildDatabase(parsedProgram);
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 
 			vector<int> whiles = pkb.getStatementsOfType(Tnode::STMT_WHILE);
@@ -99,7 +99,7 @@ namespace UnitTesting
 			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
 			remove(fileName.c_str());
 			Database* db = new Database();
-			db->buildAbstractSyntaxTree(parsedProgram);
+			db->buildDatabase(parsedProgram);
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 
 			vector<int> parent = pkb.getParentOf(3);
@@ -127,7 +127,7 @@ namespace UnitTesting
 			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
 			remove(fileName.c_str());
 			Database* db = new Database();
-			db->buildAbstractSyntaxTree(parsedProgram);
+			db->buildDatabase(parsedProgram);
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 
 			vector<int> parent = pkb.getParentsStarOf(4);
@@ -148,7 +148,7 @@ namespace UnitTesting
 			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
 			remove(fileName.c_str());
 			Database* db = new Database();
-			db->buildAbstractSyntaxTree(parsedProgram);
+			db->buildDatabase(parsedProgram);
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 
 			Assert::IsTrue(pkb.modifies(1, "x"));
@@ -181,7 +181,7 @@ namespace UnitTesting
 			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
 			remove(fileName.c_str());
 			Database* db = new Database();
-			db->buildAbstractSyntaxTree(parsedProgram);
+			db->buildDatabase(parsedProgram);
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 
 			Assert::IsTrue(pkb.uses(1, "x"));
@@ -219,7 +219,7 @@ namespace UnitTesting
 			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
 			remove(fileName.c_str());
 			Database* db = new Database();
-			db->buildAbstractSyntaxTree(parsedProgram);
+			db->buildDatabase(parsedProgram);
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 
 			Assert::IsTrue(pkb.isFollows(1, 2));

@@ -30,7 +30,7 @@ namespace IntegrationTesting
 			Assert::AreNotEqual(0, (int) parsedProgram.size());
 
 			Database* db = new Database();
-			db->buildAbstractSyntaxTree(parsedProgram);
+			db->buildDatabase(parsedProgram);
 		}
 
 		TEST_METHOD(testParserDatabasePKBIntegration) {
@@ -48,7 +48,7 @@ namespace IntegrationTesting
 			Assert::AreNotEqual(0, (int)parsedProgram.size());
 
 			Database* db = new Database();
-			db->buildAbstractSyntaxTree(parsedProgram);
+			db->buildDatabase(parsedProgram);
 
 			ProgramKnowledgeBase* pkbPointer = &ProgramKnowledgeBase(db);
 		}

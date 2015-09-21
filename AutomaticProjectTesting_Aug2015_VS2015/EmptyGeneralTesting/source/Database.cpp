@@ -24,7 +24,7 @@ int main()
 	// Create AbstractSyntaxTree
 	Database *db = new Database;
 	cout << "building AbstractSyntaxTree..." << endl;
-	db -> buildAbstractSyntaxTree(tokenized_program);
+	db -> buildDatabase(tokenized_program);
 	cout << "AbstractSyntaxTree generated." << endl;
 	cout << "printing AbstractSyntaxTree..." << endl;
 	db -> printAbstractSyntaxTree(); ///prints the AbstractSyntaxTree
@@ -50,7 +50,7 @@ Database::~Database()
 }
 
 //assume input is of valid SIMPLE language syntax and extra white spaces are removed
-void Database::buildAbstractSyntaxTree(vector<string> tokens)
+void Database::buildDatabase(vector<string> tokens)
 {
 	program(tokens);
 }
