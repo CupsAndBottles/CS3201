@@ -16,38 +16,41 @@ namespace IntegrationTesting
 	{
 	public:
 		
-		TEST_METHOD(testParserASTIntegration) {
-			ofstream outputFile("program.txt");
+		TEST_METHOD(testParserDatabaseIntegration) {
+			string fileName = "testParserDatabaseIntegration.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
 			outputFile << "procedure Proc {";
 			outputFile << "x = y + 1;";
 			outputFile << "}";
 			outputFile.close();
 
 			Parser *parse = new Parser();
-			vector<string> parsedProgram = (*parse).parseSimpleProgram("program.txt");
+			vector<string> parsedProgram = (*parse).parseSimpleProgram(fileName);
+			remove(fileName.c_str());
 			Assert::AreNotEqual(0, (int) parsedProgram.size());
 
-			Database *AST = new Database();
-			AST->buildAbstractSyntaxTree(parsedProgram);
-			Tnode *root = AST->getAbstractSyntaxTreeRoot();
+			Database* db = new Database();
+			db->buildAbstractSyntaxTree(parsedProgram);
 		}
 
-		TEST_METHOD(testParserASTPKBIntegration) {
-			ofstream outputFile("program.txt");
+		TEST_METHOD(testParserDatabasePKBIntegration) {
+			string fileName = "testParserDatabasePKBIntegration.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
 			outputFile << "procedure Proc {";
 			outputFile << "x = y + 1;";
 			outputFile << "}";
 			outputFile.close();
 
 			Parser *parse = new Parser();
-			vector<string> parsedProgram = (*parse).parseSimpleProgram("program.txt");
+			vector<string> parsedProgram = (*parse).parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+
 			Assert::AreNotEqual(0, (int)parsedProgram.size());
 
-			Database *AST = new Database();
-			AST->buildAbstractSyntaxTree(parsedProgram);
-			Tnode *root = AST->getAbstractSyntaxTreeRoot();
+			Database* db = new Database();
+			db->buildAbstractSyntaxTree(parsedProgram);
 
-			ProgramKnowledgeBase* pkbPointer = &ProgramKnowledgeBase(AST);
+			ProgramKnowledgeBase* pkbPointer = &ProgramKnowledgeBase(db);
 		}
 
 	};

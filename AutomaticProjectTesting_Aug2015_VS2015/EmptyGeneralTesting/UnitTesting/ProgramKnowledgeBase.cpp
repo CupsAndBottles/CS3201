@@ -16,36 +16,39 @@ namespace UnitTesting
 	{
 	public:
 		TEST_METHOD(testPKBGetProcedures) {
-			ofstream outputFile("program.txt");
+			string fileName = "programGetProcedures.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
 			outputFile << "procedure Proc {";
 			outputFile << "x = y + 1;";
 			outputFile << "}";
 			outputFile.close();
 
 			Parser *parse = new Parser();
-			vector<string> parsedProgram = (*parse).parseSimpleProgram("program.txt");
-			Database *AST = new Database();
-			AST->buildAbstractSyntaxTree(parsedProgram);
-			Tnode *root = AST->getAbstractSyntaxTreeRoot();
-			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(AST);
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildAbstractSyntaxTree(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+
 			vector<string> procedures = pkb.getProcedureNames();
 			Assert::AreEqual(1, int(procedures.size()));
 			Assert::AreEqual(string("Proc"), procedures[0]);
 		}
 
 		TEST_METHOD(testPKBGetVariables) {
-			ofstream outputFile("program.txt");
+			string fileName = "programGetVariables.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
 			outputFile << "procedure Proc {";
 			outputFile << "x = y + 1;";
 			outputFile << "}";
 			outputFile.close();
 
 			Parser *parse = new Parser();
-			vector<string> parsedProgram = (*parse).parseSimpleProgram("program.txt");
-			Database *AST = new Database();
-			AST->buildAbstractSyntaxTree(parsedProgram);
-			Tnode *root = AST->getAbstractSyntaxTreeRoot();
-			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(AST);
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildAbstractSyntaxTree(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 
 			vector<string> variables = pkb.getVariableNames();
 			Assert::AreEqual(2, int(variables.size()));
@@ -54,7 +57,8 @@ namespace UnitTesting
 		}
 
 		TEST_METHOD(testPKBGetStatementsOfType) {
-			ofstream outputFile("program.txt");
+			string fileName = "programGetStatementsOfType.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
 			outputFile << "procedure Proc {";
 			outputFile << "x = 1;";
 			outputFile << "while x {";
@@ -64,11 +68,11 @@ namespace UnitTesting
 			outputFile.close();
 
 			Parser *parse = new Parser();
-			vector<string> parsedProgram = (*parse).parseSimpleProgram("program.txt");
-			Database *AST = new Database();
-			AST->buildAbstractSyntaxTree(parsedProgram);
-			Tnode *root = AST->getAbstractSyntaxTreeRoot();
-			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(AST);
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildAbstractSyntaxTree(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 
 			vector<int> whiles = pkb.getStatementsOfType(Tnode::STMT_WHILE);
 			Assert::AreEqual(1, int(whiles.size()));
@@ -81,7 +85,8 @@ namespace UnitTesting
 		}
 
 		TEST_METHOD(testPKBGetParent) {
-			ofstream outputFile("program.txt");
+			string fileName = "programGetParent.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
 			outputFile << "procedure Proc {";
 			outputFile << "x = 1;";  //line 1
 			outputFile << "while x {"; //line 2
@@ -91,18 +96,20 @@ namespace UnitTesting
 			outputFile.close();
 
 			Parser *parse = new Parser();
-			vector<string> parsedProgram = (*parse).parseSimpleProgram("program.txt");
-			Database *AST = new Database();
-			AST->buildAbstractSyntaxTree(parsedProgram);
-			Tnode *root = AST->getAbstractSyntaxTreeRoot();
-			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(AST);
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildAbstractSyntaxTree(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+
 			vector<int> parent = pkb.getParentOf(3);
 			Assert::AreEqual(1, int(parent.size()));
 			Assert::AreEqual(2, parent[0]);
 		}
 
 		TEST_METHOD(testPKBGetParentStar) {
-			ofstream outputFile("program.txt", ofstream::trunc);
+			string fileName = "programGetParentStar.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
 			outputFile << "procedure Proc {";
 			outputFile << "x = 1;";  //line 1
 			outputFile << "while x {"; //line 2
@@ -117,11 +124,11 @@ namespace UnitTesting
 			outputFile.close();
 
 			Parser *parse = new Parser();
-			vector<string> parsedProgram = (*parse).parseSimpleProgram("program.txt");
-			Database *AST = new Database();
-			AST->buildAbstractSyntaxTree(parsedProgram);
-			Tnode *root = AST->getAbstractSyntaxTreeRoot();
-			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(AST);
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildAbstractSyntaxTree(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 
 			vector<int> parent = pkb.getParentsStarOf(4);
 			Assert::AreEqual(2, int(parent.size()));
@@ -130,18 +137,19 @@ namespace UnitTesting
 		}
 
 		TEST_METHOD(testPKBSimpleModify) {
-			ofstream outputFile("program.txt", ofstream::trunc);
+			string fileName = "programSimpleModify.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
 			outputFile << "procedure Proc {";
 			outputFile << "x = 1;";
 			outputFile << "}";
 			outputFile.close();
 
 			Parser *parse = new Parser();
-			vector<string> parsedProgram = (*parse).parseSimpleProgram("program.txt");
-			Database *AST = new Database();
-			AST->buildAbstractSyntaxTree(parsedProgram);
-			Tnode *root = AST->getAbstractSyntaxTreeRoot();
-			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(AST);
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildAbstractSyntaxTree(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 
 			Assert::IsTrue(pkb.modifies(1, "x"));
 			Assert::IsTrue(pkb.modifies("Proc", "x"));
@@ -161,20 +169,20 @@ namespace UnitTesting
 			Assert::AreEqual(string("x"), variablesProcs[0]);
 		}
 
-
 		TEST_METHOD(testPKBSimpleUses) {
-			ofstream outputFile("program.txt", ofstream::trunc);
+			string fileName = "programSimpleUses.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
 			outputFile << "procedure Proc {";
 			outputFile << "x = 1;";
 			outputFile << "}";
 			outputFile.close();
 
 			Parser *parse = new Parser();
-			vector<string> parsedProgram = (*parse).parseSimpleProgram("program.txt");
-			Database *database = new Database();
-			database->buildAbstractSyntaxTree(parsedProgram);
-			Tnode *root = database->getAbstractSyntaxTreeRoot();
-			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(database);
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildAbstractSyntaxTree(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 
 			Assert::IsTrue(pkb.uses(1, "x"));
 			Assert::IsTrue(pkb.uses("proc", "x"));
@@ -196,7 +204,8 @@ namespace UnitTesting
 		}
 
 		TEST_METHOD(testPKBFollows) {
-			ofstream outputFile("program.txt");
+			string fileName = "programFollows.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
 			outputFile << "procedure Proc {";
 			outputFile << "x = 1;";  //line 1
 			outputFile << "while x {"; //line 2
@@ -207,11 +216,11 @@ namespace UnitTesting
 			outputFile.close();
 
 			Parser *parse = new Parser();
-			vector<string> parsedProgram = (*parse).parseSimpleProgram("program.txt");
-			Database *database = new Database();
-			database->buildAbstractSyntaxTree(parsedProgram);
-			Tnode *root = database->getAbstractSyntaxTreeRoot();
-			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(database);
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildAbstractSyntaxTree(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 
 			Assert::IsTrue(pkb.isFollows(1, 2));
 			Assert::IsFalse(pkb.isFollows(2, 3));
