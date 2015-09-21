@@ -279,7 +279,7 @@ namespace UnitTesting
 			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
 			remove(fileName.c_str());
 			Database* db = new Database();
-			db->buildAbstractSyntaxTree(parsedProgram);
+			db->buildDatabase(parsedProgram);
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 
 			Assert::IsTrue(pkb.followsStar(1, 2));
