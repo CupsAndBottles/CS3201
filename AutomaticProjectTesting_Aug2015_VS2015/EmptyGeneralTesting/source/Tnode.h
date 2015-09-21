@@ -68,6 +68,7 @@ public:
 	bool isIf();
 	bool isAssigns();
 	bool isProgram();
+	bool isFirstChild();
 	bool isLastChild();
 	bool isExpression();
 	bool isVariable();

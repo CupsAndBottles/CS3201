@@ -311,6 +311,10 @@ bool Tnode::isProgram()
 	return this->getType() == Tnode::PROGRAM;
 }
 
+bool Tnode::isFirstChild() {
+	return this->getLeftSibling() == NULL;
+}
+
 bool Tnode::isLastChild()
 {
 	return this->getRightSibling() == NULL;
