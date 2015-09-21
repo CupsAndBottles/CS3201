@@ -564,7 +564,6 @@ Tnode* ProgramKnowledgeBase::getParentNode(Tnode* node){
 
 void ProgramKnowledgeBase::calculateRelations(Tnode* currNode, vector<Tnode*> parents) {
 	if (currNode->isProgram()) {
-		parents.push_back(currNode);
 		calculateRelations(currNode->getFirstChild(), parents);
 	} else if (currNode->isProcedure()){
 		parents.push_back(currNode);
@@ -589,14 +588,18 @@ void ProgramKnowledgeBase::calculateRelations(Tnode* currNode, vector<Tnode*> pa
 		updateUses(parents, assignLeft->getRightSibling());
 	}
 	if (currNode->isLastChild()){
-		if (!parents.empty()) {
+		Tnode* nextNode = NULL;
+		while (nextNode == NULL && !parents.empty()) {
 			currNode = parents.back();
 			parents.pop_back();
-			Tnode* nextNode = currNode->getRightSibling();
-			if (nextNode != NULL) {
-				calculateRelations(nextNode, parents);
-			}
+			nextNode = currNode->getRightSibling();
 		}
+		if (nextNode != NULL){
+			calculateRelations(nextNode, parents);
+		}
+		//else parents empty, no more nodes.
+	} else {
+		calculateRelations(currNode->getRightSibling(), parents);
 	}
 }
 
