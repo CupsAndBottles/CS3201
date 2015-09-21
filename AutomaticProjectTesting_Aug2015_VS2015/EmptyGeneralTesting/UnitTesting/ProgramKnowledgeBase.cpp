@@ -118,6 +118,10 @@ namespace UnitTesting
 			vector<int> parent4 = pkb.getParentOf(4);
 			Assert::AreEqual(1, int(parent4.size()));
 			Assert::AreEqual(3, parent4[0]);
+
+			vector<int> parent5 = pkb.getParentOf(5);
+			Assert::AreEqual(1, int(parent5.size()));
+			Assert::AreEqual(3, parent5[0]);
 		}
 
 		TEST_METHOD(testPKBGetParentStar) {
@@ -148,10 +152,15 @@ namespace UnitTesting
 			Assert::IsTrue(pkb.isParentStar(2, 5));
 			Assert::IsFalse(pkb.isParentStar(1, 2));
 
-			vector<int> parent = pkb.getParentsStarOf(4);
-			Assert::AreEqual(2, int(parent.size()));
-			Assert::AreEqual(3, parent[0]);
-			Assert::AreEqual(2, parent[1]);
+			vector<int> parents4 = pkb.getParentsStarOf(4);
+			Assert::AreEqual(2, int(parents4.size()));
+			Assert::AreEqual(3, parents4[0]);
+			Assert::AreEqual(2, parents4[1]);
+
+			vector<int> parents5 = pkb.getParentsStarOf(5);
+			Assert::AreEqual(2, int(parents5.size()));
+			Assert::AreEqual(3, parents5[0]);
+			Assert::AreEqual(2, parents5[1]);
 		}
 
 		TEST_METHOD(testPKBSimpleModify) {
