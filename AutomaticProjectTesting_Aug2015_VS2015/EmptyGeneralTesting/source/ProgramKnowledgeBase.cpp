@@ -300,7 +300,7 @@ vector<Tnode*>* ProgramKnowledgeBase::getAllParentsOf(Tnode* node, vector<Tnode*
 	Tnode* parent = node->getSPAParent();
 	if (parent == NULL) {
 		return parents;
-	} 
+	}
 
 	parents->push_back(parent);
 	return getAllParentsOf(parent, parents);
@@ -367,7 +367,7 @@ vector<int> ProgramKnowledgeBase::getStatementFollowedBy(int stmt){
 	Tnode* sibling = node->getLeftSibling();
 	if (sibling == NULL){
 		return vector<int>();
-	} 
+	}
 
 	return vector<int>(1, sibling->getStatementNumber());
 }
@@ -568,14 +568,17 @@ void ProgramKnowledgeBase::calculateRelations(Tnode* currNode, vector<Tnode*> pa
 	} else if (currNode->isProcedure()){
 		parents.push_back(currNode);
 		calculateRelations(currNode->getFirstChild()->getFirstChild(), parents); // get first statement in procedure
-	} else if (currNode->isWhile()){
+	} else if (currNode->isStatementList()){
+		parents.push_back(currNode);
+		calculateRelations(currNode->getFirstChild(), parents);
+	} else if (currNode->isWhile()) {
 		parents.push_back(currNode);
 		updateUses(parents, currNode->getFirstChild());	// uses conditional variable
 		calculateRelations(currNode->getFirstChild()->getRightSibling()->getFirstChild(), parents); // first statement in while
 	} else if (currNode->isIf()){
 		parents.push_back(currNode);
 		updateUses(parents, currNode->getFirstChild());	// uses conditional variable
-		calculateRelations(currNode->getFirstChild()->getRightSibling()->getFirstChild(), parents); // first statement in then stmtLst
+		calculateRelations(currNode->getFirstChild()->getRightSibling(), parents); //then stmtLst
 	} else if (currNode->isCall()){
 		parents.push_back(currNode);
 		Tnode* callee = getCallee(currNode);
@@ -611,7 +614,7 @@ void ProgramKnowledgeBase::updateUses(const vector<Tnode*> users, Tnode* used){
 		}
 	} else {
 		for (Tnode* n : users) {
-			if (!n->isProgram()) {
+			if (!n->isProgram() && !n->isProcedure() && !n->isStatementList()) {
 				updateUses(n, used);
 			}
 		}
@@ -640,7 +643,7 @@ void ProgramKnowledgeBase::updateUses(Tnode* user, Tnode* usee) {
 
 void ProgramKnowledgeBase::updateModifies(vector<Tnode*> modders, Tnode* modded) {
 	for (Tnode* n : modders) {
-		if (!n->isProgram()) {
+		if (!n->isProgram() && !n->isProcedure() && !n->isStatementList()) {
 			updateModifies(n, modded);
 		}
 	}
