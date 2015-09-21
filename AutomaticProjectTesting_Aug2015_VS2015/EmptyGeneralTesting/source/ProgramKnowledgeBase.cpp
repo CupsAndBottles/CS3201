@@ -612,8 +612,8 @@ void ProgramKnowledgeBase::updateUses(const vector<Tnode*> users, Tnode* used){
 		for (Tnode* vc : varCons) {
 			updateUses(users, vc);
 		}
-	} else {
-		for (Tnode* n : users) {
+	} else { // conditional variables or single variables extracted from expressions
+		for (Tnode* n : users) { 
 			if (!n->isProgram() && !n->isProcedure() && !n->isStatementList()) {
 				updateUses(n, used);
 			}
