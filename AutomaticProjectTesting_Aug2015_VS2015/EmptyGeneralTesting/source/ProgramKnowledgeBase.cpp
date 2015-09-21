@@ -288,22 +288,22 @@ vector<int> ProgramKnowledgeBase::getParentOf(int stmt){
 	return vector<int>(1, parent->getStatementNumber());
 }
 
-vector<int> ProgramKnowledgeBase::getParentsStarOf(int stmt){
+vector<int> ProgramKnowledgeBase::getParentsStarOf(int stmt, vector<Tnode*>* parents){
 	Tnode* node = getNodeWithStatementNumber(stmt);
 	if (node == NULL) {
 		return vector<int>();
 	}
-	return flattenNodeVectorToIntVector(getAllParentsOf(node, &vector<Tnode*>()));
-}
 
-vector<Tnode*>* ProgramKnowledgeBase::getAllParentsOf(Tnode* node, vector<Tnode*>* parents) {
 	Tnode* parent = node->getSPAParent();
 	if (parent == NULL) {
-		return parents;
+		return vector<int>();
 	}
 
-	parents->push_back(parent);
-	return getAllParentsOf(parent, parents);
+	while (parent != NULL) {
+		parents->push_back(parent);
+		parent = parent->getSPAParent();
+	}
+	return flattenNodeVectorToIntVector(parents);
 }
 
 vector<int> ProgramKnowledgeBase::getChildrenOf(int stmt){

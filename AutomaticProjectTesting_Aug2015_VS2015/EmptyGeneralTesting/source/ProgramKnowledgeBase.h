@@ -49,7 +49,7 @@ public:
 	vector<int> getChildrenOf(int stmt); //returns all immediate children of stmt
 
 	bool isParentStar(int s1, int s2); //returns parent*(s1, s2)
-	vector<int> getParentsStarOf(int stmt); //returns immediate and extended parents of stmt;
+	vector<int> getParentsStarOf(int stmt, vector<Tnode*>* parents = &vector<Tnode*>()); //returns immediate and extended parents of stmt;
 	vector<int> getChildrenStarOf(int stmt); //returns immediate and extended parents of stmt;
 
 	bool isFollows(int s1, int s2); //returns follows(s1, s2)
@@ -102,7 +102,6 @@ private:
 	Tnode * getLastSibling(Tnode * node); //not used
 	Tnode * getPreviousStatementNode(Tnode * currNode);
 	Tnode * getNextStatementNode(Tnode * currNode);
-	vector<Tnode*>* getAllParentsOf(Tnode * node, vector<Tnode*>* parents);
 
 	void updateDBFile();
 	
