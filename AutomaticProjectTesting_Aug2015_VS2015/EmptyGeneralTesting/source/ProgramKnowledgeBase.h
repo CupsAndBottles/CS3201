@@ -63,7 +63,12 @@ public:
 	vector<int> getStatementsOfType(Tnode::Type type);
 	vector<string> getVariableNames();
 	vector<string> getProcedureNames();
+
 	vector<int> getStatementsThatMatchPattern(Tnode::Type type, string var, string expr);
+
+	bool calls(string p1, string p2);
+	vector<string> getProceduresThatCall(string proc);
+	vector<string> getProceduresCalledBy(string proc);
 
 private:
 	Tnode* abstractSyntaxTree;

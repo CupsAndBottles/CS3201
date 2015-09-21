@@ -442,6 +442,21 @@ vector<int> ProgramKnowledgeBase::getStatementsThatMatchPattern(Tnode::Type type
 	return vector<int>();
 }
 
+bool ProgramKnowledgeBase::calls(string p1, string p2)
+{
+	return false;
+}
+
+vector<string> ProgramKnowledgeBase::getProceduresThatCall(string proc)
+{
+	return vector<string>();
+}
+
+vector<string> ProgramKnowledgeBase::getProceduresCalledBy(string proc)
+{
+	return vector<string>();
+}
+
 vector<string> ProgramKnowledgeBase::flattenNodeVectorToStringVector(vector<Tnode*>* inp){
 	vector<string> results = vector<string>();
 	for (auto it : *inp) {

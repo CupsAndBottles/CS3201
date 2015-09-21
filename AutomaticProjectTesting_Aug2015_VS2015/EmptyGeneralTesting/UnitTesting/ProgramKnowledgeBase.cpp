@@ -84,6 +84,35 @@ namespace UnitTesting
 			Assert::AreEqual(3, assigns[1]);
 		}
 
+		TEST_METHOD(testPKBCall) {
+			string fileName = "programCall.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc {";
+			outputFile << "call Other;"; //line 1
+			outputFile << "}";
+			outputFile << "procedure Other {";
+			outputFile << "y = 1;"; //line 2
+			outputFile << "}";
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+
+			Assert::IsTrue(pkb.calls("Proc", "Other"));
+			
+			vector<string> callers = pkb.getProceduresThatCall("Other");
+			Assert::AreEqual(1, int(callers.size()));
+			Assert::AreEqual(string("Proc"), callers[0]);
+
+			vector<string> callees = pkb.getProceduresCalledBy("Proc");
+			Assert::AreEqual(1, int(callees.size()));
+			Assert::AreEqual(string("Other"), callees[0]);
+		}
+
 		TEST_METHOD(testPKBGetParent) {
 			string fileName = "programGetParent.txt";
 			ofstream outputFile(fileName, ofstream::trunc);
