@@ -15,7 +15,7 @@ public:
 	Database();
 	~Database();
 
-	void buildAbstractSyntaxTree(vector<string> tokens);
+	void buildDatabase(vector<string> tokens);
 	string toUpperCase(string s);
 	bool isNumber(string &s);
 	Tnode* getAbstractSyntaxTreeRoot();

@@ -24,7 +24,7 @@ void TestWrapper::parse(std::string filename) {
 
 	if (tokenizedProgram.size() > 0) {
 		Database *db = new Database();
-		db->buildAbstractSyntaxTree(tokenizedProgram);
+		db->buildDatabase(tokenizedProgram);
 		cout << "Successfully constructed AST.\n";
 
 		pkbPointer = &ProgramKnowledgeBase(db);
