@@ -90,7 +90,12 @@ namespace UnitTesting
 			outputFile << "procedure Proc {";
 			outputFile << "x = 1;";  //line 1
 			outputFile << "while x {"; //line 2
-			outputFile << "x = x - 1;"; //line 3
+			outputFile << "if x then {"; //line 3
+			outputFile << "x = 1;"; //line 4
+			outputFile << "} else {";
+			outputFile << "x = 1;"; //line 5
+			outputFile << "}";
+			outputFile << "x = x - 1;"; //line 6
 			outputFile << "}";
 			outputFile << "}";
 			outputFile.close();
@@ -102,9 +107,17 @@ namespace UnitTesting
 			db->buildAbstractSyntaxTree(parsedProgram);
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 
-			vector<int> parent = pkb.getParentOf(3);
-			Assert::AreEqual(1, int(parent.size()));
-			Assert::AreEqual(2, parent[0]);
+			Assert::IsTrue(pkb.isParent(2, 3));
+			Assert::IsFalse(pkb.isParent(1, 3));
+			Assert::IsFalse(pkb.isParent(2, 4));
+
+			vector<int> parent3 = pkb.getParentOf(3);
+			Assert::AreEqual(1, int(parent3.size()));
+			Assert::AreEqual(2, parent3[0]);
+
+			vector<int> parent4 = pkb.getParentOf(4);
+			Assert::AreEqual(1, int(parent4.size()));
+			Assert::AreEqual(3, parent4[0]);
 		}
 
 		TEST_METHOD(testPKBGetParentStar) {
@@ -129,6 +142,11 @@ namespace UnitTesting
 			Database* db = new Database();
 			db->buildAbstractSyntaxTree(parsedProgram);
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+
+			Assert::IsTrue(pkb.isParentStar(2, 3));
+			Assert::IsTrue(pkb.isParentStar(2, 4));
+			Assert::IsTrue(pkb.isParentStar(2, 5));
+			Assert::IsFalse(pkb.isParentStar(1, 2));
 
 			vector<int> parent = pkb.getParentsStarOf(4);
 			Assert::AreEqual(2, int(parent.size()));
@@ -224,6 +242,8 @@ namespace UnitTesting
 
 			Assert::IsTrue(pkb.isFollows(1, 2));
 			Assert::IsFalse(pkb.isFollows(2, 3));
+			Assert::IsFalse(pkb.isFollows(3, 4));
+			Assert::IsTrue(pkb.isFollows(2, 4));
 
 			vector<int> folls = pkb.getStatementThatFollows(1);
 			Assert::AreEqual(1, int(folls.size()));
