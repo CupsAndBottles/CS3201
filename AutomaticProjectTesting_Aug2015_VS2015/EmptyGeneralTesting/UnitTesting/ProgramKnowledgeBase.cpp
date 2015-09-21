@@ -173,7 +173,7 @@ namespace UnitTesting
 			string fileName = "programSimpleUses.txt";
 			ofstream outputFile(fileName, ofstream::trunc);
 			outputFile << "procedure Proc {";
-			outputFile << "x = 1;";
+			outputFile << "x = y + 1;";
 			outputFile << "}";
 			outputFile.close();
 
@@ -184,23 +184,23 @@ namespace UnitTesting
 			db->buildAbstractSyntaxTree(parsedProgram);
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 
-			Assert::IsTrue(pkb.uses(1, "x"));
-			Assert::IsTrue(pkb.uses("proc", "x"));
+			Assert::IsTrue(pkb.uses(1, "y"));
+			Assert::IsTrue(pkb.uses("Proc", "y"));
 
-			vector<int> users = pkb.getStatementsThatUse("x");
+			vector<int> users = pkb.getStatementsThatUse("y");
 			Assert::AreEqual(1, int(users.size()));
 			Assert::AreEqual(1, users[0]);
 
 			vector<string> variables = pkb.getVariablesUsedBy(1);
-			Assert::AreEqual(string("x"), variables[0]);
+			Assert::AreEqual(string("y"), variables[0]);
 
-			vector<string> usersProcs = pkb.getProceduresThatUse("x");
+			vector<string> usersProcs = pkb.getProceduresThatUse("y");
 			Assert::AreEqual(1, int(usersProcs.size()));
 			Assert::AreEqual(string("Proc"), usersProcs[0]);
 
 			vector<string> variablesProcs = pkb.getVariablesUsedBy("Proc");
 			Assert::AreEqual(1, int(variablesProcs.size()));
-			Assert::AreEqual(string("x"), variablesProcs[0]);
+			Assert::AreEqual(string("y"), variablesProcs[0]);
 		}
 
 		TEST_METHOD(testPKBFollows) {
