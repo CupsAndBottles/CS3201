@@ -12,7 +12,7 @@ ProgramKnowledgeBase::ProgramKnowledgeBase(Database* db){
 	statementTable = db->getStatementTable();
 	procTable = db->getProcedureTable();
 	varTable = db->getVariableTable();
-	calculateRelations(this->abstractSyntaxTree, vector<Tnode*>());
+	calculateRelations(this->abstractSyntaxTree);
 }
 
 //load pkb from file storage
@@ -605,8 +605,7 @@ void ProgramKnowledgeBase::calculateRelations(Tnode* currNode, vector<Tnode*> pa
 
 void ProgramKnowledgeBase::updateUses(const vector<Tnode*> users, Tnode* used){
 	if (used->isExpression()) {
-		vector<Tnode*> varCons = vector<Tnode*>();
-		varCons = *getVariablesAndConstantsFromExpression(used, &varCons);
+		vector<Tnode*> varCons = *getVariablesAndConstantsFromExpression(used);
 		for (Tnode* vc : varCons) {
 			updateUses(users, vc);
 		}

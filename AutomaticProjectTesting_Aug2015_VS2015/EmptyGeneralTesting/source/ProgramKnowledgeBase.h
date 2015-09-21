@@ -105,11 +105,11 @@ private:
 	vector<Tnode*>* getAllParentsOf(Tnode * node, vector<Tnode*>* parents);
 
 	void updateDBFile();
-
-	void calculateRelations(Tnode * currNode, vector<Tnode*> parents);
+	
+	void calculateRelations(Tnode * currNode, vector<Tnode*> parents = vector<Tnode*>());
 	void updater(Relation rel, int stmtNum, string strName);
 	void updateUses(const vector<Tnode*> users, Tnode * used);
-	vector<Tnode*>* getVariablesAndConstantsFromExpression(Tnode * expr, vector<Tnode*>* results);
+	vector<Tnode*>* getVariablesAndConstantsFromExpression(Tnode * expr, vector<Tnode*>* results = &vector<Tnode*>());
 	void updateUses(Tnode * n, Tnode * used);
 	void updateModifies(vector<Tnode*> modders, Tnode * modded);
 	void updateModifies(Tnode * modder, Tnode * modded);
