@@ -64,14 +64,11 @@ Tnode *Tnode::getParent()
 
 Tnode *Tnode::getSPAParent()
 {
-	Tnode* parent = this->getParent();
-	if (parent == NULL) {
-		Tnode* left = this->getLeftSibling();
-		while (left->getLeftSibling() != NULL) {
-			left = getLeftSibling();
-		}
-		parent = left->getParent();
+	Tnode* curr = this;
+	while (!curr->isFirstChild()){
+		curr = curr->getLeftSibling();
 	}
+	Tnode* parent = curr->getParent();
 
 	if (parent->isStatementList()) {
 		return parent->getSPAParent();
