@@ -233,5 +233,37 @@ namespace UnitTesting
 			Assert::AreEqual(1, int(follBy.size()));
 			Assert::AreEqual(1, follBy[0]);
 		}
+
+		TEST_METHOD(testPKBFollowsStar) {
+			string fileName = "programFollowsStar.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc {";
+			outputFile << "x = 1;";  //line 1
+			outputFile << "while x {"; //line 2
+			outputFile << "x = x - 1;"; //line 3
+			outputFile << "}";
+			outputFile << "y = 1;";  //line 4
+			outputFile << "}";
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildAbstractSyntaxTree(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+
+			Assert::IsTrue(pkb.followsStar(1, 2));
+			Assert::IsFalse(pkb.followsStar(2, 3));
+
+			vector<int> folls = pkb.getStatementsThatFollowStar(1);
+			Assert::AreEqual(2, int(folls.size()));
+			Assert::AreEqual(2, folls[0]);
+			Assert::AreEqual(4, folls[1]);
+
+			vector<int> follBy = pkb.getStatementsFollowStarredBy(2);
+			Assert::AreEqual(1, int(follBy.size()));
+			Assert::AreEqual(1, follBy[0]);
+		}
 	};
 }
