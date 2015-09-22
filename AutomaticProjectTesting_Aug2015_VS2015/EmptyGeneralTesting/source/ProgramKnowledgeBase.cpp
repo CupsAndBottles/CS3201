@@ -314,10 +314,19 @@ vector<int> ProgramKnowledgeBase::getChildrenOf(int stmt){
 
 	vector<int> children = vector<int>();
 	Tnode* child = node->getFirstChild();
-	while (!child->isLastChild()){
-		children.push_back(child->getStatementNumber());
+	while (child != NULL){
+		if (child->isStatementList()) {
+			Tnode* childStatement = child->getFirstChild();
+			while (childStatement != NULL) {
+				children.push_back(childStatement->getStatementNumber());
+				childStatement = childStatement->getRightSibling();
+			}
+		} else if (child->isStatement()) {
+			children.push_back(child->getStatementNumber());
+		} //else conditional variable, do nothing
 		child = child->getRightSibling();
-	}
+	} 
+	
 	return children;
 }
 
