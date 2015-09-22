@@ -100,7 +100,6 @@ private:
 	Tnode * getNodeWithProcedureName(string procName);
 	Tnode * getCallee(Tnode * node);
 	Tnode * getParentNode(Tnode * node);
-	Tnode * getSPAParent(Tnode * node);
 	Tnode * getProcedureContaining(int targetStmtNum); //DON'T NEED
 	Tnode * getParentProcedure(Tnode * node); //DON'T NEED
 	Tnode * getLastContainedStatement(Tnode * node); //DON'T NEED

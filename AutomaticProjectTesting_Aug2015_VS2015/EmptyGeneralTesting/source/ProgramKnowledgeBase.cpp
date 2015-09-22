@@ -12,7 +12,7 @@ ProgramKnowledgeBase::ProgramKnowledgeBase(Database* db){
 	statementTable = db->getStatementTable();
 	procTable = db->getProcedureTable();
 	varTable = db->getVariableTable();
-	calculateRelations(this->abstractSyntaxTree);
+	calculateRelations(abstractSyntaxTree);
 }
 
 //load pkb from file storage
