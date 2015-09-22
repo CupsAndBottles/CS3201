@@ -25,10 +25,12 @@ public:
 	VarTable* getVariableTable();
 	void printAbstractSyntaxTree(Tnode* root);
 	void printStatementTable();
+	void printConstantTable();
 
 private:
 	Tnode* astRoot;
 	vector<Tnode*> *stmtTable;
+	unordered_map<int, vector<Tnode*>> *constTable;
 	ProcTable *procTable;
 	VarTable *varTable;
 	void program(vector<string> &tokens);
@@ -43,6 +45,7 @@ private:
 	Tnode* factor(vector<string> &tokens, vector<string>::iterator start, vector<string>::iterator end);
 	Tnode* createVariable(Tnode::Type t, string n);
 	void addToStatementTable(Tnode* stmtNode);
+	void addToConstTable(int i, Tnode* fac);
 	void match(vector<string>::iterator &it, string token);
 	void printAbstractSyntaxTreeCall(vector<vector<Tnode*>> &nss, vector<Tnode*> s, Tnode *curNode, unsigned int lvl);
 };

@@ -265,6 +265,7 @@ Tnode *Database::factor(vector<string> &tokens, vector<string>::iterator start, 
 	else if (start == end) {
 		if (isNumber(*start)) {
 			fac = Tnode::createNode(stoi(*start));
+			addToConstTable(stoi(*start), fac);
 		}
 		else {
 			fac = createVariable(Tnode::VARIABLE, *start);
@@ -287,6 +288,17 @@ void Database::addToStatementTable(Tnode* stmtNode)
 		stmtTable->resize(stmtNode->getStatementNumber()+1);
 	}
 	stmtTable->at(stmtNode->getStatementNumber()) = stmtNode;
+}
+
+void Database::addToConstTable(int i, Tnode * constNode)
+{
+	if (constTable->find(i) != constTable->end()) {
+		(constTable->at(i)).push_back(constNode);
+	}
+	else {
+		vector<Tnode*> listNode = { constNode };
+		constTable->insert({ i, listNode });
+	}
 }
 
 void Database::match(vector<string>::iterator &it, string token)
@@ -396,5 +408,14 @@ void Database::printStatementTable()
 	cout << endl << "<---------------------------------------- Statement Table: ---------------------------------------->" << endl << endl;
 	for (vector<Tnode*>::iterator i = stmtTable -> begin()+1; i != stmtTable -> end(); i++) {
 		cout << "Statement :" << (i - stmtTable -> begin()) << ", Address: <" << *i << ">" << ", StmtNum: " << (**i).getStatementNumber() <<endl;
+	}
+}
+
+void Database::printConstantTable()
+{
+	cout << endl << "<---------------------------------------- Constant Table: ---------------------------------------->" << endl << endl;
+	for (auto i = (*constTable).begin(); i != (*constTable).end(); i++) {
+		cout << "Index :" << distance(constTable->begin(), i) << ", Value: " << (*i).first << ", Address: ";
+		varTable->printNodeVector((*i).second);
 	}
 }
