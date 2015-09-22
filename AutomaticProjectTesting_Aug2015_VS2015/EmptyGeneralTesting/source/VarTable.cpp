@@ -63,9 +63,14 @@ vector<Tnode*> VarTable::getVariableAddress(int i) throw(string)
 	}
 }
 
-vector<Tnode*> VarTable::getVariableAddress(string varName)
+vector<Tnode*> VarTable::getVariableAddress(string varName) throw(string)
 {
-	return varTable->at(varName);
+	try {
+		return varTable->at(varName);
+	}
+	catch (int e) {
+		throw string("INVALIDREFERENCEEXCEPTION");
+	}
 }
 
 void VarTable::printVariableTable()

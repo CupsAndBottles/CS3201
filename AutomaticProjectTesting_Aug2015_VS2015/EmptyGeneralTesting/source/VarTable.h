@@ -17,7 +17,7 @@ public:
 	string getVariableName(int i) throw(string);
 	int getVariableIndex(string procName);
 	vector<Tnode*> getVariableAddress(int i) throw(string);
-	vector<Tnode*> getVariableAddress(string procName);
+	vector<Tnode*> getVariableAddress(string procName) throw(string);
 	void printVariableTable();
 	void printNodeVector(vector<Tnode*> list);
 

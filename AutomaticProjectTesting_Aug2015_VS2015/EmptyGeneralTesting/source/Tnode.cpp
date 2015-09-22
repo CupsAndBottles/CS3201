@@ -101,7 +101,7 @@ Tnode::Type Tnode::getType()
 
 string Tnode::getName()
 {
-	return toLowerCase(name);
+	return name;
 }
 
 int Tnode::getValue()

@@ -17,7 +17,7 @@ public:
 	string getProcedureName(int i) throw(string);
 	int getProcedureIndex(string procName);
 	Tnode* getProcedureAddress(int i) throw(string);
-	Tnode* getProcedureAddress(string procName);
+	Tnode* getProcedureAddress(string procName) throw(string);
 	void printProcedureTable();
 
 private:

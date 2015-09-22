@@ -57,9 +57,14 @@ Tnode* ProcTable::getProcedureAddress(int i) throw(string)
 	}
 }
 
-Tnode* ProcTable::getProcedureAddress(string procName)
+Tnode* ProcTable::getProcedureAddress(string procName) throw(string)
 {
-	return procTable -> at(procName);
+	try {
+		return procTable -> at(procName);
+	}
+	catch (int e) {
+		throw string("INVALIDREFERENCEEXCEPTION");
+	}
 }
 
 void ProcTable::printProcedureTable()
