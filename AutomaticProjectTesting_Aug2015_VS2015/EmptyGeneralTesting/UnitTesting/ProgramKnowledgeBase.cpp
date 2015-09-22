@@ -375,5 +375,43 @@ namespace UnitTesting
 			Assert::AreEqual(1, int(follBy.size()));
 			Assert::AreEqual(1, follBy[0]);
 		}
+
+		TEST_METHOD(testPKBPatternAssign) {
+			string fileName = "programPatternAssign.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc {";
+			outputFile << "x = y;"; // line 1
+			outputFile << "x = y + 1;"; // line 2
+			outputFile << "x = x + y + 1;"; //line 3
+			outputFile << "x = y + 1 + x;"; // line 4
+			outputFile << "x = x + 2 * y;"; // line 5
+			outputFile << "x = (x + 2) * y);"; // line 6
+			outputFile << "}";
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+
+			vector<int> matchesSingleton = pkb.getStatementsThatMatchPattern(Tnode::STMT_ASSIGN, "x", "y");
+			Assert::AreEqual(1, int(matchesSingleton.size()));
+			Assert::AreEqual(1, matchesSingleton[0]);
+
+			vector<int> matchesMultiNode = pkb.getStatementsThatMatchPattern(Tnode::STMT_ASSIGN, "x", "y+1");
+			Assert::AreEqual(1, int(matchesMultiNode.size()));
+			Assert::AreEqual(2, matchesMultiNode[0]);
+
+			vector<int> containers = pkb.getStatementsThatContainPattern(Tnode::STMT_ASSIGN, "x", "y+1");
+			Assert::AreEqual(2, int(containers.size()));
+			Assert::AreEqual(2, containers[0]);
+			Assert::AreEqual(4, containers[1]);
+
+			vector<int> containersBrackets = pkb.getStatementsThatContainPattern(Tnode::STMT_ASSIGN, "x", "x+2");
+			Assert::AreEqual(1, int(containersBrackets.size()));
+			Assert::AreEqual(6, containersBrackets[0]);
+		}
 	};
 }
