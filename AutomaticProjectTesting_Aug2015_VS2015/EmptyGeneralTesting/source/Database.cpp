@@ -9,12 +9,12 @@ int main()
 	{ "Procedure", "myProc", "{",
 		"if", "x", "then", "{",
 		"while", "k", "{",
-		"k", "=", "y", "-", "(", "a", "-", "x", ")", ";",
+		"k", "=", "500", "-", "(", "5", "-", "3", ")", ";",
 		"}",
 		"}",
 		"else", "{",
 		"call", "sun", ";",
-		"f", "=", "(","(","(", "x", ")",")",")", ";",
+		"f", "=", "(","(","(", "5", ")",")",")", ";",
 		"}",
 		"}",
 		"Procedure", "2ndproc", "{",
@@ -27,9 +27,10 @@ int main()
 	db -> buildDatabase(tokenized_program);
 	cout << "AbstractSyntaxTree generated." << endl;
 	cout << "printing AbstractSyntaxTree..." << endl;
-	db -> printAbstractSyntaxTree(); ///prints the AbstractSyntaxTree
+	db -> printAbstractSyntaxTree(db -> getAbstractSyntaxTreeRoot()); ///prints the AbstractSyntaxTree
 	cout << "AbstractSyntaxTree printed." << endl;
 	db -> printStatementTable();
+	db -> printConstantTable();
 	db -> getProcedureTable() -> printProcedureTable();
 	db -> getVariableTable() -> printVariableTable();
 	return 0;
@@ -40,6 +41,7 @@ Database::Database()
 {
 	this -> astRoot = NULL;
 	this -> stmtTable = new vector<Tnode*>;
+	this-> constTable = new unordered_map<int, vector<Tnode*>>;
 	this -> procTable = new ProcTable;
 	this -> varTable = new VarTable;
 }
