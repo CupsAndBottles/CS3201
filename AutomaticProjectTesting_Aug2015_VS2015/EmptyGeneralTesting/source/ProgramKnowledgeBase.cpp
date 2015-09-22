@@ -594,17 +594,8 @@ bool ProgramKnowledgeBase::containsContainer(Tnode* node) {
 	return foundContainer;
 }
 
-Tnode* ProgramKnowledgeBase::getCallee(Tnode* node){
-	return getNodeWithProcedureName(node->getName());
-}
-
 Tnode* ProgramKnowledgeBase::getNodeWithProcedureName(string procName){
-	for (size_t i = 0; i < this->procTable->getSize(); i++) {
-		if (procName.compare(this->procTable->getProcedureName(i)) == 0) {
-			return this->procTable->getProcedureAddress(i);
-		}
-	}
-	return NULL;
+	return this->procTable->getProcedureAddress(procName);
 }
 
 Tnode* ProgramKnowledgeBase::getParentNode(Tnode* node){
@@ -638,7 +629,7 @@ void ProgramKnowledgeBase::calculateRelations(Tnode* currNode, vector<Tnode*> pa
 		calculateRelations(currNode->getFirstChild()->getRightSibling(), parents); //then stmtLst
 	} else if (currNode->isCall()){
 		parents.push_back(currNode);
-		Tnode* callee = getCallee(currNode);
+		Tnode* callee = getNodeWithProcedureName(currNode->getName());
 		updateCalls(parents, callee); // calls procedure
 		calculateRelations(callee, parents);
 	} else if (currNode->isAssigns()) {
