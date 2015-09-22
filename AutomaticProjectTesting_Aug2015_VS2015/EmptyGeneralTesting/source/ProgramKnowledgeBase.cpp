@@ -484,6 +484,11 @@ vector<int> ProgramKnowledgeBase::getStatementsThatMatchPattern(Tnode::Type type
 	return vector<int>();
 }
 
+vector<int> ProgramKnowledgeBase::getStatementsThatContainPattern(Tnode::Type type, string var, string expr)
+{
+	return vector<int>();
+}
+
 bool ProgramKnowledgeBase::calls(string p1, string p2)
 {
 	return false;

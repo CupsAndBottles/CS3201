@@ -65,6 +65,7 @@ public:
 	vector<string> getProcedureNames();
 
 	vector<int> getStatementsThatMatchPattern(Tnode::Type type, string var, string expr);
+	vector<int> getStatementsThatContainPattern(Tnode::Type type, string var, string expr);
 
 	bool calls(string p1, string p2);
 	vector<string> getProceduresThatCall(string proc);
