@@ -686,7 +686,7 @@ vector<Tnode*>* ProgramKnowledgeBase::getVariablesAndConstantsFromExpression(Tno
 }
 
 void ProgramKnowledgeBase::updateUses(Tnode* user, Tnode* usee) {
-	updater(ProgramKnowledgeBase::USE, user->getStatementNumber(), usee->getName());
+	updater(ProgramKnowledgeBase::USE, user, usee);
 }
 
 void ProgramKnowledgeBase::updateModifies(vector<Tnode*> modders, Tnode* modded) {
@@ -698,10 +698,10 @@ void ProgramKnowledgeBase::updateModifies(vector<Tnode*> modders, Tnode* modded)
 }
 
 void ProgramKnowledgeBase::updateModifies(Tnode* modder, Tnode* modded) {
-	updater(ProgramKnowledgeBase::MODIFY, modder->getStatementNumber(), modded->getName());
+	updater(ProgramKnowledgeBase::MODIFY, modder, modded);
 }
 
-void ProgramKnowledgeBase::updater(ProgramKnowledgeBase::Relation rel, int stmtNum, string strName) {
+void ProgramKnowledgeBase::updater(ProgramKnowledgeBase::Relation rel, Tnode* node1, Tnode* node2) {
 	unordered_map<int, unordered_set<string>>* relInt;
 	unordered_map<string, unordered_set<int>>* relStr;
 	switch(rel){
@@ -714,10 +714,13 @@ void ProgramKnowledgeBase::updater(ProgramKnowledgeBase::Relation rel, int stmtN
 			relStr = &this->usesRelationIndexedByVariables;
 			break;
 		case CALL:
-			relInt = &this->callsRelationIndexedByStatements;
-			relStr = &this->callsRelationIndexedByProcedures;
+			updaterCalls(node1, node2);
+			exit(0);
 			break;
 	}
+
+	int stmtNum = node1->getStatementNumber();
+	string strName = node2->getName();
 
 	//update relation indexed by stmtNum
 	unordered_set<string> vars = unordered_set<string>();
@@ -749,5 +752,31 @@ void ProgramKnowledgeBase::updateCalls(vector<Tnode*> callers, Tnode* callee) {
 }
 
 void ProgramKnowledgeBase::updateCalls(Tnode* caller, Tnode* callee) {
-	updater(ProgramKnowledgeBase::CALL, caller->getStatementNumber(), callee->getName());
+	updater(ProgramKnowledgeBase::CALL, caller, callee);
+}
+
+void ProgramKnowledgeBase::updaterCalls(Tnode* caller, Tnode* callee) {
+	string callerName = caller->getName();
+	string calleeName = callee->getName();
+	//update relation indexed by caller
+	unordered_set<string> callees = unordered_set<string>();
+	try {
+		callees = this->callsRelationIndexedByCallers.at(callerName);
+		callees.insert(calleeName);
+	}
+	catch (out_of_range) {
+		callees.insert(calleeName);
+		this->callsRelationIndexedByCallers.insert({callerName, callees});
+	}
+
+	//update relation indexed by callee
+	unordered_set<string> callers = unordered_set<string>();
+	try {
+		callers = callsRelationIndexedByCallees.at(calleeName);
+		callers.insert(callerName);
+	}
+	catch (out_of_range) {
+		callers.insert(callerName);
+		this->callsRelationIndexedByCallees.insert({calleeName, callers});
+	}
 }

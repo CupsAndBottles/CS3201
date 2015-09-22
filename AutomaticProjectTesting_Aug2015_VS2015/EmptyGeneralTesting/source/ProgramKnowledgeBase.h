@@ -83,8 +83,8 @@ private:
 	unordered_map<int, unordered_set<string>> modifiesRelationIndexedByStatements;
 	unordered_map<string, unordered_set<int>> usesRelationIndexedByVariables;
 	unordered_map<int, unordered_set<string>> usesRelationIndexedByStatements;
-	unordered_map<string, unordered_set<int>> callsRelationIndexedByProcedures;
-	unordered_map<int, unordered_set<string>> callsRelationIndexedByStatements;
+	unordered_map<string, unordered_set<string>> callsRelationIndexedByCallers;
+	unordered_map<string, unordered_set<string>> callsRelationIndexedByCallees;
 
 	bool containsContainer(Tnode * node); //not used
 
@@ -111,7 +111,7 @@ private:
 	void updateDBFile();
 
 	void calculateRelations(Tnode * currNode, vector<Tnode*> parents = vector<Tnode*>());
-	void updater(Relation rel, int stmtNum, string strName);
+	void updater(Relation rel, Tnode* node1, Tnode* node2);
 	void updateUses(const vector<Tnode*> users, Tnode * used);
 	vector<Tnode*>* getVariablesAndConstantsFromExpression(Tnode * expr, vector<Tnode*>* results = &vector<Tnode*>());
 	void updateUses(Tnode * n, Tnode * used);
@@ -119,4 +119,5 @@ private:
 	void updateModifies(Tnode * modder, Tnode * modded);
 	void updateCalls(vector<Tnode*> callers, Tnode * callee);
 	void updateCalls(Tnode * caller, Tnode * callee);
+	void updaterCalls(Tnode * caller, Tnode * callee);
 };
