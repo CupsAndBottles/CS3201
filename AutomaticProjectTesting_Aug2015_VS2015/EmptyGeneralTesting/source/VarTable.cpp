@@ -29,10 +29,10 @@ int VarTable::addVariable(string varName, Tnode *varNode)
 	return distance(varTable->begin(), varTable->find(varName));
 }
 
-string VarTable::getVariableName(int i) throw(string)
+string VarTable::getVariableName(int i)
 {
-	if (i >= varTable->size()) {
-		throw string("INVALIDREFERENCEEXCEPTION");
+	if ((unsigned)i >= varTable->size()) {
+		return "";
 	}
 	else {
 		auto j = varTable->begin();
@@ -53,23 +53,18 @@ int VarTable::getVariableIndex(string varName)
 	}
 }
 
-vector<Tnode*> VarTable::getVariableAddress(int i) throw(string)
+vector<Tnode*>* VarTable::getVariableAddress(int i)
 {
-	try {
-		return getVariableAddress(getVariableName(i));
-	}
-	catch (int e) {
-		throw string("INVALIDREFERENCEEXCEPTION");
-	}
+	return getVariableAddress(getVariableName(i));
 }
 
-vector<Tnode*> VarTable::getVariableAddress(string varName) throw(string)
+vector<Tnode*>* VarTable::getVariableAddress(string varName)
 {
 	try {
-		return varTable->at(varName);
+		return &(varTable->at(varName));
 	}
-	catch (int e) {
-		throw string("INVALIDREFERENCEEXCEPTION");
+	catch (...) {
+		return NULL;
 	}
 }
 

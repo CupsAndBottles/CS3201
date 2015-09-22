@@ -23,10 +23,10 @@ int ProcTable::addProcedure(string procName, Tnode *procNode)
 	return distance(procTable -> begin(),procTable -> find(procName));
 }
 
-string ProcTable::getProcedureName(int i) throw(string)
+string ProcTable::getProcedureName(int i)
 {
-	if (i >= procTable -> size()) {
-		throw string("INVALIDREFERENCEEXCEPTION");
+	if ((unsigned)i >= procTable -> size()) {
+		return "";
 	}
 	else {
 		auto j = procTable->begin();
@@ -47,23 +47,18 @@ int ProcTable::getProcedureIndex(string procName)
 	}
 }
 
-Tnode* ProcTable::getProcedureAddress(int i) throw(string)
+Tnode* ProcTable::getProcedureAddress(int i) 
 {
-	try{
-		return getProcedureAddress(getProcedureName(i));
-	}
-	catch (int e) {
-		throw string("INVALIDREFERENCEEXCEPTION");
-	}
+	return getProcedureAddress(getProcedureName(i));
 }
 
-Tnode* ProcTable::getProcedureAddress(string procName) throw(string)
+Tnode* ProcTable::getProcedureAddress(string procName)
 {
 	try {
 		return procTable -> at(procName);
 	}
-	catch (int e) {
-		throw string("INVALIDREFERENCEEXCEPTION");
+	catch (...) {
+		return NULL;
 	}
 }
 

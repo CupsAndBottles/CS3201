@@ -14,10 +14,10 @@ public:
 
 	int getSize();
 	int addVariable(string procName, Tnode* procNode);
-	string getVariableName(int i) throw(string);
+	string getVariableName(int i);
 	int getVariableIndex(string procName);
-	vector<Tnode*> getVariableAddress(int i) throw(string);
-	vector<Tnode*> getVariableAddress(string procName) throw(string);
+	vector<Tnode*>* getVariableAddress(int i);
+	vector<Tnode*>* getVariableAddress(string procName);
 	void printVariableTable();
 	void printNodeVector(vector<Tnode*> list);
 
