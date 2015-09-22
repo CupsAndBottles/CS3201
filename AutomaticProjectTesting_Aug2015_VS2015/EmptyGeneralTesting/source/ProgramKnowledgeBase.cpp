@@ -308,6 +308,10 @@ vector<int> ProgramKnowledgeBase::getParentsStarOf(int stmt, vector<Tnode*>* par
 
 vector<int> ProgramKnowledgeBase::getChildrenOf(int stmt){
 	Tnode* node = getNodeWithStatementNumber(stmt);
+	if (node == NULL) {
+		return vector<int>();
+	}
+
 	if (!node->isContainer()){
 		return vector<int>();
 	}
