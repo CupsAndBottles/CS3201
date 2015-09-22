@@ -365,6 +365,11 @@ vector<Tnode*>* Database::getStatementTable()
 	return stmtTable;
 }
 
+unordered_map<int, vector<Tnode*>>* Database::getConstantTable()
+{
+	return constTable;
+}
+
 ProcTable* Database::getProcedureTable()
 {
 	return procTable;

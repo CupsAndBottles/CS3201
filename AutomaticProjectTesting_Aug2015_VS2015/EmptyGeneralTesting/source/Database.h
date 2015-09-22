@@ -21,6 +21,7 @@ public:
 	Tnode* getAbstractSyntaxTreeRoot();
 	Tnode* getExpressionTree(vector<string> exprList);
 	vector<Tnode*>* getStatementTable();
+	unordered_map<int, vector<Tnode*>>* getConstantTable();
 	ProcTable* getProcedureTable();
 	VarTable* getVariableTable();
 	void printAbstractSyntaxTree(Tnode* root);
