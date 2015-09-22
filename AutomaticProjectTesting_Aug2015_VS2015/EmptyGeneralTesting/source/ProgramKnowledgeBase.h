@@ -106,9 +106,10 @@ private:
 	Tnode * getLastSibling(Tnode * node); //not used
 	Tnode * getPreviousStatementNode(Tnode * currNode);
 	Tnode * getNextStatementNode(Tnode * currNode);
+	vector<Tnode*>* populateChildrenStarOf(Tnode* currNode, vector<Tnode*>* children = &vector<Tnode*>());
 
 	void updateDBFile();
-	
+
 	void calculateRelations(Tnode * currNode, vector<Tnode*> parents = vector<Tnode*>());
 	void updater(Relation rel, int stmtNum, string strName);
 	void updateUses(const vector<Tnode*> users, Tnode * used);

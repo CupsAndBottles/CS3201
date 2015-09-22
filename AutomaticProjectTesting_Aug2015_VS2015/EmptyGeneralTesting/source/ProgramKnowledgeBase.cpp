@@ -338,9 +338,38 @@ bool ProgramKnowledgeBase::isParentStar(int s1, int s2)
 	return it != parents.end();
 }
 
-vector<int> ProgramKnowledgeBase::getChildrenStarOf(int stmt)
-{
-	return vector<int>();
+vector<int> ProgramKnowledgeBase::getChildrenStarOf(int stmt){
+	Tnode* node = getNodeWithStatementNumber(stmt);
+	if (node == NULL) {
+		return vector<int>();
+	}
+
+	return flattenNodeVectorToIntVector(populateChildrenStarOf(node));
+}
+
+vector<Tnode*>* ProgramKnowledgeBase::populateChildrenStarOf(Tnode* currNode, vector<Tnode*>* children){ 
+	if (currNode == NULL) {
+		return children;
+	}
+
+	if (!currNode->isContainer() && !currNode->isStatementList()) {
+		return children;
+	}
+	
+	Tnode* child = currNode->getFirstChild();
+	while (child != NULL) {
+		if (child->isContainer()){
+			children->push_back(child);
+			children = populateChildrenStarOf(child, children);
+		} else if (child->isStatementList()) {
+			children = populateChildrenStarOf(child, children);
+		} else if (child->isStatement()) { //but not container
+			children->push_back(child);
+		}
+		
+		child = child->getRightSibling();
+	}
+	return children;
 }
 
 bool ProgramKnowledgeBase::isFollows(int s1, int s2){

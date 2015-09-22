@@ -195,6 +195,13 @@ namespace UnitTesting
 			Assert::AreEqual(2, int(parents5.size()));
 			Assert::AreEqual(3, parents5[0]);
 			Assert::AreEqual(2, parents5[1]);
+
+			vector<int> children2 = pkb.getChildrenStarOf(2);
+			Assert::AreEqual(4, int(children2.size()));
+			Assert::AreEqual(3, children2[0]);
+			Assert::AreEqual(4, children2[1]); 
+			Assert::AreEqual(5, children2[2]); 
+			Assert::AreEqual(6, children2[3]);
 		}
 
 		TEST_METHOD(testPKBSimpleModify) {
