@@ -5,14 +5,25 @@ ProgramKnowledgeBase::ProgramKnowledgeBase() {
 	statementTable = NULL;
 	procTable = NULL;
 	varTable = NULL;
+	initializeTables();
 }
 
-ProgramKnowledgeBase::ProgramKnowledgeBase(Database* db){
+ProgramKnowledgeBase::ProgramKnowledgeBase(Database* db) {
 	abstractSyntaxTree = db->getAbstractSyntaxTreeRoot();
 	statementTable = db->getStatementTable();
 	procTable = db->getProcedureTable();
 	varTable = db->getVariableTable();
+	initializeTables();
 	calculateRelations(abstractSyntaxTree);
+}
+
+void ProgramKnowledgeBase::initializeTables() {
+	modifiesRelationIndexedByVariables = unordered_map<string, unordered_set<int>>();
+	modifiesRelationIndexedByStatements = unordered_map<int, unordered_set<string>>();
+	usesRelationIndexedByVariables = unordered_map<string, unordered_set<int>>();
+	usesRelationIndexedByStatements = unordered_map<int, unordered_set<string>>();
+	callsRelationIndexedByCallees = unordered_map<string, unordered_set<string>>();
+	callsRelationIndexedByCallers = unordered_map<string, unordered_set<string>>();
 }
 
 //load pkb from file storage

@@ -80,6 +80,7 @@ private:
 	vector<Tnode*>* statementTable;
 	VarTable* varTable;
 	ProcTable* procTable;
+	void initializeTables();
 
 	// use adjacency lists to store relations as a sparse graph is expected.
 	// unordered_map for quick reference by hashing variables and statement numbers,
