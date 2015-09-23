@@ -89,7 +89,7 @@ namespace UnitTesting
 			ofstream outputFile(fileName, ofstream::trunc);
 			outputFile << "procedure Proc {";
 			outputFile << "call Other;"; //line 1
-			outputFile << "}";
+			outputFile << "}" << endl;
 			outputFile << "procedure Other {";
 			outputFile << "y = 1;"; //line 2
 			outputFile << "}";
@@ -243,7 +243,7 @@ namespace UnitTesting
 			outputFile << "procedure Proc {";
 			outputFile << "x = 1;"; //line 1
 			outputFile << "call Other;"; //line 2
-			outputFile << "}";
+			outputFile << "}" << endl;
 			outputFile << "procedure Other {";
 			outputFile << "y = 1;"; //line 3
 			outputFile << "}";
