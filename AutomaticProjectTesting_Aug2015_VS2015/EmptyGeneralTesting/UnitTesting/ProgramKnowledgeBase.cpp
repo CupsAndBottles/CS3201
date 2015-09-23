@@ -82,6 +82,9 @@ namespace UnitTesting
 			Assert::AreEqual(2, int(assigns.size()));
 			Assert::AreEqual(1, assigns[0]);
 			Assert::AreEqual(3, assigns[1]);
+
+			vector<int> ifs = pkb.getStatementsOfType(Tnode::STMT_IF);
+			Assert::AreEqual(0, int(ifs.size()));
 		}
 
 		TEST_METHOD(testPKBCall) {
@@ -103,6 +106,7 @@ namespace UnitTesting
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 
 			Assert::IsTrue(pkb.calls("Proc", "Other"));
+			Assert::IsFalse(pkb.calls("Other", "Proc"));
 			
 			vector<string> callers = pkb.getProceduresThatCall("Other");
 			Assert::AreEqual(1, int(callers.size()));
@@ -221,6 +225,9 @@ namespace UnitTesting
 
 			Assert::IsTrue(pkb.modifies(1, "x"));
 			Assert::IsTrue(pkb.modifies("Proc", "x"));
+			Assert::IsFalse(pkb.modifies(1, "y"));
+			Assert::IsFalse(pkb.modifies("Proc", "y"));
+			Assert::IsFalse(pkb.modifies("Other", "x"));
 
 			vector<int> modders = pkb.getStatementsThatModify("x");
 			Assert::AreEqual(1, int(modders.size()));
@@ -294,6 +301,8 @@ namespace UnitTesting
 
 			Assert::IsTrue(pkb.uses(1, "y"));
 			Assert::IsTrue(pkb.uses("Proc", "y"));
+			Assert::IsFalse(pkb.uses(2, "y"));
+			Assert::IsFalse(pkb.uses("Proc", "x"));
 
 			vector<int> users = pkb.getStatementsThatUse("y");
 			Assert::AreEqual(1, int(users.size()));
