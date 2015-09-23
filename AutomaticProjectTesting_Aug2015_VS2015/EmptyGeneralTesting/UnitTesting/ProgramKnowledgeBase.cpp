@@ -446,6 +446,36 @@ namespace UnitTesting
 			Assert::AreEqual(0, int(matchesNegative.size()));
 		}
 
+		TEST_METHOD(testPKBPatternIf) {
+			string fileName = "programPatternIf.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc {";
+			outputFile << "if a then {"; // line 1
+			outputFile << "x = 1;"; // line 2
+			outputFile << "} else {";
+			outputFile << "x = 1;"; // line 3
+			outputFile << "}}";
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+
+			vector<int> matchesPositive = pkb.getStatementsThatMatchPattern(Tnode::STMT_IF, "a", "");
+			Assert::AreEqual(1, int(matchesPositive.size()));
+			Assert::AreEqual(1, matchesPositive[0]);
+
+			vector<int> matchesNegative = pkb.getStatementsThatMatchPattern(Tnode::STMT_IF, "x", "");
+			Assert::AreEqual(0, int(matchesNegative.size()));
+
+			vector<int> matchesWildcard = pkb.getStatementsThatMatchPattern(Tnode::STMT_IF, "_", "");
+			Assert::AreEqual(1, int(matchesWildcard.size()));
+			Assert::AreEqual(1, matchesWildcard[0]);
+		}
+
 		TEST_METHOD(testPKBPatternAssign) {
 			string fileName = "programPatternAssign.txt";
 			ofstream outputFile(fileName, ofstream::trunc);

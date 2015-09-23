@@ -398,8 +398,20 @@ vector<Tnode*> ProgramKnowledgeBase::getWhilesThatMatchPattern(string var) {
 	}
 }
 
-vector<Tnode*> ProgramKnowledgeBase::getIfsThatMatchPattern(string ifs) {
-	return vector<Tnode*>();
+vector<Tnode*> ProgramKnowledgeBase::getIfsThatMatchPattern(string var) {
+	vector<Tnode*> ifs = getNodesOfType(Tnode::STMT_IF);
+	if (var == WILDCARD) {
+		return ifs;
+	}
+	else {
+		vector<Tnode*> results = vector<Tnode*>();
+		for (Tnode* n : ifs) {
+			if (n->getFirstChild()->getName() == var) {
+				results.push_back(n);
+			}
+		}
+		return results;
+	}
 }
 
 vector<Tnode*> ProgramKnowledgeBase::getAssignsThatContainPattern(string var, string expr) {
