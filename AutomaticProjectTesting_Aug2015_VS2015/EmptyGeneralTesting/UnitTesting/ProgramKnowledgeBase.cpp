@@ -418,6 +418,34 @@ namespace UnitTesting
 			Assert::AreEqual(1, follBy[0]);
 		}
 
+		TEST_METHOD(testPKBPatternWhile) {
+			string fileName = "programPatternWhile.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc {";
+			outputFile << "while a {"; // line 1
+			outputFile << "x = 1;"; // line 2
+			outputFile << "}}";
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+
+			vector<int> matchesPositive = pkb.getStatementsThatMatchPattern(Tnode::STMT_WHILE, "a", "");
+			Assert::AreEqual(1, int(matchesPositive.size()));
+			Assert::AreEqual(1, matchesPositive[0]);
+
+			vector<int> matchesWildcard = pkb.getStatementsThatMatchPattern(Tnode::STMT_WHILE, "_", "");
+			Assert::AreEqual(1, int(matchesWildcard.size()));
+			Assert::AreEqual(1, matchesWildcard[0]);
+			
+			vector<int> matchesNegative = pkb.getStatementsThatMatchPattern(Tnode::STMT_WHILE, "x", "");
+			Assert::AreEqual(0, int(matchesNegative.size()));
+		}
+
 		TEST_METHOD(testPKBPatternAssign) {
 			string fileName = "programPatternAssign.txt";
 			ofstream outputFile(fileName, ofstream::trunc);
