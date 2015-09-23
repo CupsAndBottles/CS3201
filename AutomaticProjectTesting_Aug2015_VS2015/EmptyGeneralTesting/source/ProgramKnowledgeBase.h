@@ -114,12 +114,12 @@ private:
 	vector<Tnode*>* populateChildrenStarOf(Tnode* currNode, vector<Tnode*>* children = &vector<Tnode*>());
 
 	static const string WILDCARD;
-	vector<Tnode*>* getAssignsThatMatchPattern(string var, string expr);
-	vector<Tnode*>* getWhilesThatMatchPattern(string var);
-	vector<Tnode*>* getIfsThatMatchPattern(string ifs);
-	vector<Tnode*>* getAssignsThatContainPattern(string var, string expr);
-	vector<Tnode*>* getWhilesThatContainPattern(string var);
-	vector<Tnode*>* getIfsThatContainPattern(string ifs);
+	vector<Tnode*> getAssignsThatMatchPattern(string var, string expr);
+	vector<Tnode*> getWhilesThatMatchPattern(string var);
+	vector<Tnode*> getIfsThatMatchPattern(string ifs);
+	vector<Tnode*> getAssignsThatContainPattern(string var, string expr);
+	vector<Tnode*> getWhilesThatContainPattern(string var);
+	vector<Tnode*> getIfsThatContainPattern(string ifs);
 
 	void updateDBFile();
 

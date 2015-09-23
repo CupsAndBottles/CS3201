@@ -1,6 +1,6 @@
 #include "ProgramKnowledgeBase.h"
 
-const string ProgramKnowledgeBase::WILDCARD = string("_");
+const string ProgramKnowledgeBase::WILDCARD = "_";
 
 ProgramKnowledgeBase::ProgramKnowledgeBase() {
 	abstractSyntaxTree = NULL;
@@ -379,28 +379,39 @@ vector<Tnode*>* ProgramKnowledgeBase::populateChildrenStarOf(Tnode* currNode, ve
 	return children;
 }
 
-vector<Tnode*>* ProgramKnowledgeBase::getAssignsThatMatchPattern(string var, string expr) {
-	return &vector<Tnode*>();
+vector<Tnode*> ProgramKnowledgeBase::getAssignsThatMatchPattern(string var, string expr) {
+	return vector<Tnode*>();
 }
 
-vector<Tnode*>* ProgramKnowledgeBase::getWhilesThatMatchPattern(string var) {
-	return &vector<Tnode*>();
+vector<Tnode*> ProgramKnowledgeBase::getWhilesThatMatchPattern(string var) {
+	vector<Tnode*> whiles = getNodesOfType(Tnode::STMT_WHILE);
+	if (var == WILDCARD) {
+		return whiles;
+	} else {
+		vector<Tnode*> results = vector<Tnode*>();
+		for (Tnode* n : whiles) {
+			if (n->getFirstChild()->getName() == var) {
+				results.push_back(n);
+			}
+		}
+		return results;
+	}
 }
 
-vector<Tnode*>* ProgramKnowledgeBase::getIfsThatMatchPattern(string ifs) {
-	return &vector<Tnode*>();
+vector<Tnode*> ProgramKnowledgeBase::getIfsThatMatchPattern(string ifs) {
+	return vector<Tnode*>();
 }
 
-vector<Tnode*>* ProgramKnowledgeBase::getAssignsThatContainPattern(string var, string expr) {
-	return &vector<Tnode*>();
+vector<Tnode*> ProgramKnowledgeBase::getAssignsThatContainPattern(string var, string expr) {
+	return vector<Tnode*>();
 }
 
-vector<Tnode*>* ProgramKnowledgeBase::getWhilesThatContainPattern(string var) {
-	return &vector<Tnode*>();
+vector<Tnode*> ProgramKnowledgeBase::getWhilesThatContainPattern(string var) {
+	return vector<Tnode*>();
 }
 
-vector<Tnode*>* ProgramKnowledgeBase::getIfsThatContainPattern(string ifs) {
-	return &vector<Tnode*>();
+vector<Tnode*> ProgramKnowledgeBase::getIfsThatContainPattern(string ifs) {
+	return vector<Tnode*>();
 }
 
 bool ProgramKnowledgeBase::isFollows(int s1, int s2){
@@ -510,11 +521,11 @@ vector<string> ProgramKnowledgeBase::getProcedureNames() {
 vector<int> ProgramKnowledgeBase::getStatementsThatMatchPattern(Tnode::Type type, string var, string expr) {
 	switch (type) {
 		case Tnode::STMT_WHILE:
-			return flattenNodeVectorToIntVector(getWhilesThatMatchPattern(var));
+			return flattenNodeVectorToIntVector(&getWhilesThatMatchPattern(var));
 		case Tnode::STMT_IF:
-			return flattenNodeVectorToIntVector(getIfsThatMatchPattern(var));
+			return flattenNodeVectorToIntVector(&getIfsThatMatchPattern(var));
 		case Tnode::STMT_ASSIGN:
-			return flattenNodeVectorToIntVector(getAssignsThatMatchPattern(var, expr));
+			return flattenNodeVectorToIntVector(&getAssignsThatMatchPattern(var, expr));
 		default:
 			return vector<int>();
 	}
@@ -523,11 +534,11 @@ vector<int> ProgramKnowledgeBase::getStatementsThatMatchPattern(Tnode::Type type
 vector<int> ProgramKnowledgeBase::getStatementsThatContainPattern(Tnode::Type type, string var, string expr) {
 	switch (type) {
 		case Tnode::STMT_WHILE:
-			return flattenNodeVectorToIntVector(getWhilesThatContainPattern(var));
+			return flattenNodeVectorToIntVector(&getWhilesThatContainPattern(var));
 		case Tnode::STMT_IF:
-			return flattenNodeVectorToIntVector(getIfsThatContainPattern(var));
+			return flattenNodeVectorToIntVector(&getIfsThatContainPattern(var));
 		case Tnode::STMT_ASSIGN:
-			return flattenNodeVectorToIntVector(getAssignsThatContainPattern(var, expr));
+			return flattenNodeVectorToIntVector(&getAssignsThatContainPattern(var, expr));
 		default:
 			return vector<int>();
 	}
