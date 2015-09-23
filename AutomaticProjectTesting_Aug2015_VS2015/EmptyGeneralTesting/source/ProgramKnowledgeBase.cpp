@@ -366,6 +366,30 @@ vector<Tnode*>* ProgramKnowledgeBase::populateChildrenStarOf(Tnode* currNode, ve
 	return children;
 }
 
+vector<Tnode*>* ProgramKnowledgeBase::getAssignsThatMatchPattern(string var, string expr) {
+	return &vector<Tnode*>();
+}
+
+vector<Tnode*>* ProgramKnowledgeBase::getWhilesThatMatchPattern(string var) {
+	return &vector<Tnode*>();
+}
+
+vector<Tnode*>* ProgramKnowledgeBase::getIfsThatMatchPattern(string ifs) {
+	return &vector<Tnode*>();
+}
+
+vector<Tnode*>* ProgramKnowledgeBase::getAssignsThatContainPattern(string var, string expr) {
+	return &vector<Tnode*>();
+}
+
+vector<Tnode*>* ProgramKnowledgeBase::getWhilesThatContainPattern(string var) {
+	return &vector<Tnode*>();
+}
+
+vector<Tnode*>* ProgramKnowledgeBase::getIfsThatContainPattern(string ifs) {
+	return &vector<Tnode*>();
+}
+
 bool ProgramKnowledgeBase::isFollows(int s1, int s2){
 	Tnode* node1 = getNodeWithStatementNumber(s1);
 	Tnode* node2 = getNodeWithStatementNumber(s2);
@@ -470,13 +494,30 @@ vector<string> ProgramKnowledgeBase::getProcedureNames() {
 	return results;
 }
 
-vector<int> ProgramKnowledgeBase::getStatementsThatMatchPattern(Tnode::Type type, string var, string expr){
-	return vector<int>();
+vector<int> ProgramKnowledgeBase::getStatementsThatMatchPattern(Tnode::Type type, string var, string expr) {
+	switch (type) {
+		case Tnode::STMT_WHILE:
+			return flattenNodeVectorToIntVector(getWhilesThatMatchPattern(var));
+		case Tnode::STMT_IF:
+			return flattenNodeVectorToIntVector(getIfsThatMatchPattern(var));
+		case Tnode::STMT_ASSIGN:
+			return flattenNodeVectorToIntVector(getAssignsThatMatchPattern(var, expr));
+		default:
+			return vector<int>();
+	}
 }
 
-vector<int> ProgramKnowledgeBase::getStatementsThatContainPattern(Tnode::Type type, string var, string expr)
-{
-	return vector<int>();
+vector<int> ProgramKnowledgeBase::getStatementsThatContainPattern(Tnode::Type type, string var, string expr) {
+	switch (type) {
+		case Tnode::STMT_WHILE:
+			return flattenNodeVectorToIntVector(getWhilesThatContainPattern(var));
+		case Tnode::STMT_IF:
+			return flattenNodeVectorToIntVector(getIfsThatContainPattern(var));
+		case Tnode::STMT_ASSIGN:
+			return flattenNodeVectorToIntVector(getAssignsThatContainPattern(var, expr));
+		default:
+			return vector<int>();
+	}
 }
 
 bool ProgramKnowledgeBase::calls(string p1, string p2)

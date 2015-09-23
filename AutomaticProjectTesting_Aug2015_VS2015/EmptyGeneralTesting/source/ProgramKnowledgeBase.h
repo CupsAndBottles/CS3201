@@ -99,15 +99,21 @@ private:
 	vector<Tnode*> getNodesOfType(Tnode::Type type);
 	Tnode * getNodeWithStatementNumber(int num);
 	Tnode * getNodeWithProcedureName(string procName);
-	Tnode * getCallee(Tnode * node);
 	Tnode * getParentNode(Tnode * node);
 	Tnode * getProcedureContaining(int targetStmtNum); //DON'T NEED
 	Tnode * getParentProcedure(Tnode * node); //DON'T NEED
-	Tnode * getLastContainedStatement(Tnode * node); //DON'T NEED
+	Tnode * getLastContainedStatement(Tnode * node);
 	Tnode * getLastSibling(Tnode * node); //not used
 	Tnode * getPreviousStatementNode(Tnode * currNode);
 	Tnode * getNextStatementNode(Tnode * currNode);
 	vector<Tnode*>* populateChildrenStarOf(Tnode* currNode, vector<Tnode*>* children = &vector<Tnode*>());
+
+	vector<Tnode*>* getAssignsThatMatchPattern(string var, string expr);
+	vector<Tnode*>* getWhilesThatMatchPattern(string var);
+	vector<Tnode*>* getIfsThatMatchPattern(string ifs);
+	vector<Tnode*>* getAssignsThatContainPattern(string var, string expr);
+	vector<Tnode*>* getWhilesThatContainPattern(string var);
+	vector<Tnode*>* getIfsThatContainPattern(string ifs);
 
 	void updateDBFile();
 
