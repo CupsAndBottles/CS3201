@@ -481,17 +481,29 @@ vector<int> ProgramKnowledgeBase::getStatementsThatContainPattern(Tnode::Type ty
 
 bool ProgramKnowledgeBase::calls(string p1, string p2)
 {
-	return false;
+	try {
+		return callsRelationIndexedByCallers.at(p1).count(p2) == 1;
+	} catch (out_of_range) {
+		return false;
+	}
 }
 
 vector<string> ProgramKnowledgeBase::getProceduresThatCall(string proc)
 {
-	return vector<string>();
+	try {
+		return flattenStringSetToStringVector(&callsRelationIndexedByCallees.at(proc));
+	} catch (out_of_range) {
+		return vector<string>();
+	}
 }
 
 vector<string> ProgramKnowledgeBase::getProceduresCalledBy(string proc)
 {
-	return vector<string>();
+	try {
+		return flattenStringSetToStringVector(&callsRelationIndexedByCallers.at(proc));
+	} catch (out_of_range) {
+		return vector<string>();
+	}
 }
 
 vector<string> ProgramKnowledgeBase::flattenNodeVectorToStringVector(vector<Tnode*>* inp){
