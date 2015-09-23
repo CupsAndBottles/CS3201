@@ -113,6 +113,7 @@ private:
 	Tnode * getNextStatementNode(Tnode * currNode);
 	vector<Tnode*>* populateChildrenStarOf(Tnode* currNode, vector<Tnode*>* children = &vector<Tnode*>());
 
+	static const string WILDCARD;
 	vector<Tnode*>* getAssignsThatMatchPattern(string var, string expr);
 	vector<Tnode*>* getWhilesThatMatchPattern(string var);
 	vector<Tnode*>* getIfsThatMatchPattern(string ifs);

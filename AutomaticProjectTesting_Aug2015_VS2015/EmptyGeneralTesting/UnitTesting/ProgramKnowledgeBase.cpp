@@ -117,6 +117,39 @@ namespace UnitTesting
 			Assert::AreEqual(string("Other"), callees[0]);
 		}
 
+		TEST_METHOD(testPKBCallWithWildcards) {
+			string fileName = "programCall.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc {";
+			outputFile << "call Other;"; //line 1
+			outputFile << "}" << endl;
+			outputFile << "procedure Other {";
+			outputFile << "y = 1;"; //line 2
+			outputFile << "}";
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+
+			Assert::IsTrue(pkb.calls("_", "Other"));
+			Assert::IsTrue(pkb.calls("Proc", "_"));
+			Assert::IsTrue(pkb.calls("_", "_"));
+			Assert::IsFalse(pkb.calls("Other", "_"));
+			Assert::IsFalse(pkb.calls("_", "Proc"));
+
+			vector<string> callers = pkb.getProceduresThatCall("_");
+			Assert::AreEqual(1, int(callers.size()));
+			Assert::AreEqual(string("Proc"), callers[0]);
+
+			vector<string> callees = pkb.getProceduresCalledBy("_");
+			Assert::AreEqual(1, int(callees.size()));
+			Assert::AreEqual(string("Other"), callees[0]);
+		}
+
 		TEST_METHOD(testPKBGetParent) {
 			string fileName = "programGetParent.txt";
 			ofstream outputFile(fileName, ofstream::trunc);

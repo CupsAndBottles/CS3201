@@ -1,5 +1,7 @@
 #include "ProgramKnowledgeBase.h"
 
+const string ProgramKnowledgeBase::WILDCARD = string("_");
+
 ProgramKnowledgeBase::ProgramKnowledgeBase() {
 	abstractSyntaxTree = NULL;
 	statementTable = NULL;
@@ -533,25 +535,49 @@ vector<int> ProgramKnowledgeBase::getStatementsThatContainPattern(Tnode::Type ty
 
 bool ProgramKnowledgeBase::calls(string p1, string p2) {
 	try {
-		return callsRelationIndexedByCallers.at(p1).count(p2) == 1;
+		if (p1 == WILDCARD && p2 == WILDCARD) {
+			return callsRelationIndexedByCallers.size() != 0;
+		} else if (p1 == WILDCARD) {
+			return callsRelationIndexedByCallees.at(p2).size() != 0;
+		} else if (p2 == WILDCARD) {
+			return callsRelationIndexedByCallers.at(p1).size() != 0;
+		} else {
+			return callsRelationIndexedByCallers.at(p1).count(p2) == 1;
+		}
 	} catch (out_of_range) {
 		return false;
 	}
 }
 
 vector<string> ProgramKnowledgeBase::getProceduresThatCall(string proc) {
-	try {
-		return flattenStringSetToStringVector(&callsRelationIndexedByCallees.at(proc));
-	} catch (out_of_range) {
-		return vector<string>();
+	if (proc == WILDCARD) {
+		vector<string> callers = vector<string>();
+		for (auto kv : callsRelationIndexedByCallers) {
+			callers.push_back(kv.first);
+		}
+		return callers;
+	} else {
+		try {
+			return flattenStringSetToStringVector(&callsRelationIndexedByCallees.at(proc));
+		} catch (out_of_range) {
+			return vector<string>();
+		}
 	}
 }
 
 vector<string> ProgramKnowledgeBase::getProceduresCalledBy(string proc) {
-	try {
-		return flattenStringSetToStringVector(&callsRelationIndexedByCallers.at(proc));
-	} catch (out_of_range) {
-		return vector<string>();
+	if (proc == WILDCARD) {
+		vector<string> callees = vector<string>();
+		for (auto kv : callsRelationIndexedByCallees) {
+			callees.push_back(kv.first);
+		}
+		return callees;
+	} else {
+		try {
+			return flattenStringSetToStringVector(&callsRelationIndexedByCallers.at(proc));
+		} catch (out_of_range) {
+			return vector<string>();
+		}
 	}
 }
 
