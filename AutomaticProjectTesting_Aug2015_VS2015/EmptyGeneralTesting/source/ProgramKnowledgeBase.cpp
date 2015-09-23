@@ -720,8 +720,7 @@ void ProgramKnowledgeBase::updater(ProgramKnowledgeBase::Relation rel, Tnode* no
 			break;
 		case CALL:
 			updaterCalls(node1, node2);
-			exit(0);
-			break;
+			return;
 	}
 
 	int stmtNum = node1->getStatementNumber();
