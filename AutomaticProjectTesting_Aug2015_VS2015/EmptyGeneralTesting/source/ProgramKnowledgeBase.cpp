@@ -25,12 +25,7 @@ void ProgramKnowledgeBase::updateDBFile() {
 
 bool ProgramKnowledgeBase::modifies(int stmt, string var){
 	try{
-		int result = modifiesRelationIndexedByStatements.at(stmt).count(var);
-		if (result == 1) {
-			return true;
-		}		else {
-			return false;
-		}
+		return modifiesRelationIndexedByStatements.at(stmt).count(var) == 1;
 	} catch (std::out_of_range){
 		return false;
 	}
@@ -95,12 +90,7 @@ vector<string> ProgramKnowledgeBase::getVariablesModifiedBy(string procName){
 
 bool ProgramKnowledgeBase::uses(int stmt, string var){
 	try{
-		int result = usesRelationIndexedByStatements.at(stmt).count(var);
-		if (result == 1) {
-			return true;
-		} else {
-			return false;
-		}
+		return usesRelationIndexedByStatements.at(stmt).count(var) == 1;
 	} catch (std::out_of_range){
 		return false;
 	}
