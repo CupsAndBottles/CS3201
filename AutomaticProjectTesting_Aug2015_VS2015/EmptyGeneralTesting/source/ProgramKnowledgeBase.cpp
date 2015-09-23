@@ -547,6 +547,18 @@ vector<string> ProgramKnowledgeBase::getProceduresCalledBy(string proc)
 	}
 }
 
+bool ProgramKnowledgeBase::callsStar(string p1, string p2) {
+	return false;
+}
+
+vector<string> ProgramKnowledgeBase::getProceduresThatCallStar(string proc) {
+	return vector<string>();
+}
+
+vector<string> ProgramKnowledgeBase::getProceduresCallStarredBy(string proc) {
+	return vector<string>();
+}
+
 vector<string> ProgramKnowledgeBase::flattenNodeVectorToStringVector(vector<Tnode*>* inp){
 	vector<string> results = vector<string>();
 	for (auto it : *inp) {

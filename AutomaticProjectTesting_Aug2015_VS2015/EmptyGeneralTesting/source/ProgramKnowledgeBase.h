@@ -71,6 +71,10 @@ public:
 	vector<string> getProceduresThatCall(string proc);
 	vector<string> getProceduresCalledBy(string proc);
 
+	bool callsStar(string p1, string p2);
+	vector<string> getProceduresThatCallStar(string proc);
+	vector<string> getProceduresCallStarredBy(string proc);
+
 private:
 	Tnode* abstractSyntaxTree;
 	vector<Tnode*>* statementTable;
