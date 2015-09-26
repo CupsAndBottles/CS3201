@@ -381,7 +381,7 @@ VarTable* Database::getVariableTable()
 	return varTable;
 }
 
-void Database::printAbstractSyntaxTree(Tnode* root)
+vector<vector<Tnode*>> Database::printAbstractSyntaxTree(Tnode* root)
 {
 	vector<vector<Tnode*>> notSoSimple;
 	vector<Tnode*> simple;
@@ -409,6 +409,7 @@ void Database::printAbstractSyntaxTree(Tnode* root)
 			cout << "\n";
 		}
 	}
+	return notSoSimple;
 }
 
 void Database::printStatementTable()

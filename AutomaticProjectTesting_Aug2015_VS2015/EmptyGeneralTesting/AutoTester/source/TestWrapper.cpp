@@ -26,7 +26,8 @@ void TestWrapper::parse(std::string filename) {
 		Database *db = new Database();
 		db->buildDatabase(tokenizedProgram);
 		cout << "Successfully constructed AST.\n";
-
+		
+		viewAST(db->printAbstractSyntaxTree(db->getAbstractSyntaxTreeRoot()));
 		pkbPointer = &ProgramKnowledgeBase(db);
 
 		cout << "Successfully constructed PKB.\n";

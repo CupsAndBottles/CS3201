@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\source\ASTView.h" />
     <ClInclude Include="..\Source\Database.h" />
     <ClInclude Include="..\Source\EntityTable.h" />
     <ClInclude Include="..\Source\Parser.h" />
@@ -27,6 +28,7 @@
     <ClInclude Include="..\source\VarTable.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\source\ASTView.cpp" />
     <ClCompile Include="..\Source\Database.cpp" />
     <ClCompile Include="..\Source\EntityTable.cpp" />
     <ClCompile Include="..\Source\Parser.cpp" />
@@ -79,6 +81,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>C:\Users\wcLim\Dropbox\NUS\Work\CS3201-02\Project\CS3201\AutomaticProjectTesting_Aug2015_VS2015\EmptyGeneralTesting\glut\glew-1.11.0\include;C:\Users\wcLim\Dropbox\NUS\Work\CS3201-02\Project\CS3201\AutomaticProjectTesting_Aug2015_VS2015\EmptyGeneralTesting\glut\freeglut\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

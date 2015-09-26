@@ -20,6 +20,7 @@
 #include "SIMPLEParser.h"
 #include "SIMPLERules.h"
 #include "Tnode.h"
+#include "ASTView.h"
 
 class TestWrapper : public AbstractWrapper {
  public:

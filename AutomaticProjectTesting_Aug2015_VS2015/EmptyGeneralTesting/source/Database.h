@@ -24,7 +24,7 @@ public:
 	unordered_map<int, vector<Tnode*>>* getConstantTable();
 	ProcTable* getProcedureTable();
 	VarTable* getVariableTable();
-	void printAbstractSyntaxTree(Tnode* root);
+	vector<vector<Tnode*>> printAbstractSyntaxTree(Tnode* root);
 	void printStatementTable();
 	void printConstantTable();
 
