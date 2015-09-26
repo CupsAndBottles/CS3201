@@ -55,6 +55,7 @@ Database::~Database()
 void Database::buildDatabase(vector<string> tokens)
 {
 	program(tokens);
+	Tnode::curStmtNum = 1;
 }
 
 void Database::program(vector<string> &tokens)

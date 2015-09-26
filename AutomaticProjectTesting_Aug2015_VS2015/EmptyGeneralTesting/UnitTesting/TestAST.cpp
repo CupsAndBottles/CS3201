@@ -23,7 +23,7 @@ namespace UnitTesting
 
 			testNode = Tnode::createNode(Tnode::PROGRAM, "myProg");
 
-			Assert::AreEqual((string)"myprog", testNode->getName());
+			Assert::AreEqual((string)"myProg", testNode->getName());
 			Assert::IsNull(testNode->getParent());
 			Assert::IsNull(testNode->getFirstChild());
 			Assert::IsNull(testNode->getRightSibling());
@@ -49,8 +49,6 @@ namespace UnitTesting
 			Assert::IsNull(testNode->getRightSibling());
 			Assert::IsNull(testNode->getLeftSibling());
 			Assert::AreEqual((int)Tnode::STMT_WHILE, (int)testNode->getType());
-			Assert::AreEqual(1, testNode->getValue());
-			Assert::AreEqual(1, testNode->getStatementNumber());
 
 			testNode = Tnode::createNode(Tnode::STMT_CALL, "procedure2");
 
@@ -60,8 +58,6 @@ namespace UnitTesting
 			Assert::IsNull(testNode->getRightSibling());
 			Assert::IsNull(testNode->getLeftSibling());
 			Assert::AreEqual((int)Tnode::STMT_CALL, (int)testNode->getType());
-			Assert::AreEqual(2, testNode->getValue());
-			Assert::AreEqual(2, testNode->getStatementNumber());
 
 			testNode = Tnode::createNode(Tnode::STMT_IF, "");
 
@@ -71,8 +67,6 @@ namespace UnitTesting
 			Assert::IsNull(testNode->getRightSibling());
 			Assert::IsNull(testNode->getLeftSibling());
 			Assert::AreEqual((int)Tnode::STMT_IF, (int)testNode->getType());
-			Assert::AreEqual(3, testNode->getValue());
-			Assert::AreEqual(3, testNode->getStatementNumber());
 
 			testNode = Tnode::createNode(Tnode::STMT_ASSIGN, "");
 
@@ -82,8 +76,6 @@ namespace UnitTesting
 			Assert::IsNull(testNode->getRightSibling());
 			Assert::IsNull(testNode->getLeftSibling());
 			Assert::AreEqual((int)Tnode::STMT_ASSIGN, (int)testNode->getType());
-			Assert::AreEqual(4, testNode->getValue());
-			Assert::AreEqual(4, testNode->getStatementNumber());
 
 			testNode = Tnode::createNode(Tnode::EXPR_PLUS, "");
 
@@ -122,7 +114,7 @@ namespace UnitTesting
 
 			T1 = Tnode::createNode(Tnode::PROCEDURE, "myProc");
 
-			Assert::AreEqual((string)"myproc", T1->getName());
+			Assert::AreEqual((string)"myProc", T1->getName());
 			Assert::IsNull(T1->getParent());
 			Assert::IsNull(T1->getFirstChild());
 			Assert::IsNull(T1->getRightSibling());
