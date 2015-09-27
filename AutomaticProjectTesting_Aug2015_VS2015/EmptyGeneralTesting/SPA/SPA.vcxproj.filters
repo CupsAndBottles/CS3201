@@ -60,6 +60,9 @@
     <ClInclude Include="..\source\ASTView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\InputFormatter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\EntityTable.cpp">
@@ -107,8 +110,8 @@
     <ClCompile Include="..\source\ASTView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
+    <ClCompile Include="..\source\InputFormatter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
