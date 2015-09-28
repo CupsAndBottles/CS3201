@@ -60,6 +60,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>$(SolutionDir)lib\AutoTester_debug.lib;$(SolutionDir)$(Configuration)\SPA.lib;$(SolutionDir)glut\freeglut\lib\freeglut.lib;$(SolutionDir)glut\glew-1.11.0\lib\glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)glut\freeglut.dll" "$(SolutionDir)$(Configuration)\"
+xcopy "$(SolutionDir)glut\glew32.dll" "$(SolutionDir)$(Configuration)\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
