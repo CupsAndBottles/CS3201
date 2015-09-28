@@ -85,6 +85,15 @@ namespace UnitTesting
 				temp += n;
 			}
 			Assert::AreEqual(string("bc"), temp);
+
+			vector<string> v3{ "2","3","1","3","A","a","BC"};
+			vector<string> v4{ "1","3","a","2","A","3","1","2","1","BC" };
+			output = formatter.intersection(v3, v4);
+			temp = "";
+			for (string n : output) {
+				temp += n;
+			}
+			Assert::AreEqual(string("1233ABCa"), temp);
 		}
 
 	};
