@@ -51,7 +51,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\wcLim\Dropbox\NUS\Work\CS3201-02\Project\CS3201\AutomaticProjectTesting_Aug2015_VS2015\EmptyGeneralTesting\glut\glew-1.11.0\include;C:\Users\wcLim\Dropbox\NUS\Work\CS3201-02\Project\CS3201\AutomaticProjectTesting_Aug2015_VS2015\EmptyGeneralTesting\glut\freeglut\include;$(SolutionDir)source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)glut\glew-1.11.0\include;$(SolutionDir)glut\freeglut\include;$(SolutionDir)source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
