@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <iterator>
 #include <iostream>
 
 using namespace std;
@@ -16,4 +17,5 @@ public:
 	bool isDoubleQuote(string s);
 	void displayQuery(string results);
 	string removeQuotes(string s);
+	vector<string> intersection(vector<string> a, vector<string> b);
 };

@@ -76,6 +76,16 @@ namespace UnitTesting
 			}
 			Assert::AreEqual(string(""), output);
 		}
+		TEST_METHOD(testIntersectionString) {
+			vector<string> v1{ "a","b","c" };
+			vector<string> v2{ "b","c" };
+			vector<string> output=formatter.intersection(v1, v2);
+			string temp = "";
+			for (string n : output) {
+				temp += n;
+			}
+			Assert::AreEqual(string("bc"), temp);
+		}
 
 	};
 }

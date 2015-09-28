@@ -11,7 +11,7 @@
 
 #include <string>
 #include <vector>
-#include <sstream>
+//#include <sstream>
 #include <algorithm>
 
 using namespace std;
@@ -21,19 +21,29 @@ class QueryEvaluator
 public:
 	QueryEvaluator(ProgramKnowledgeBase storePkb);
 	
-	list<string> getResults(string input);
+	vector<string> getResults(string input);
 	
 	void getQueryData();
 
 	string getSelectClause();
 
-	void recordSelectClause();
+	string getEntitiyType(string s);
+
+	vector<string> evaluation();
+
+	vector<string> recordConditionClause();
+
+	vector<string> evaluateConditionClause(string first,string second,string third);
+
+	vector<string> recordSelectClause();
+
+	vector<string> parent(string leftArgument, string rightArgument);
 
 private:
-	ProgramKnowledgeBase database;
 	vector<string> getSelect;
 	vector<QueryObject> conditionClause;
-	vector<string>selectResult;
+	
+	ProgramKnowledgeBase database;
 	QueryPreProcessor preprocessor;
 	EntTable declaration;
 	InputFormatter formatter;
