@@ -418,14 +418,6 @@ vector<Tnode*> ProgramKnowledgeBase::getAssignsThatContainPattern(string var, st
 	return vector<Tnode*>();
 }
 
-vector<Tnode*> ProgramKnowledgeBase::getWhilesThatContainPattern(string var) {
-	return vector<Tnode*>();
-}
-
-vector<Tnode*> ProgramKnowledgeBase::getIfsThatContainPattern(string ifs) {
-	return vector<Tnode*>();
-}
-
 bool ProgramKnowledgeBase::isFollows(int s1, int s2){
 	Tnode* node1 = getNodeWithStatementNumber(s1);
 	Tnode* node2 = getNodeWithStatementNumber(s2);
@@ -544,15 +536,10 @@ vector<int> ProgramKnowledgeBase::getStatementsThatMatchPattern(Tnode::Type type
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsThatContainPattern(Tnode::Type type, string var, string expr) {
-	switch (type) {
-		case Tnode::STMT_WHILE:
-			return flattenNodeVectorToIntVector(&getWhilesThatContainPattern(var));
-		case Tnode::STMT_IF:
-			return flattenNodeVectorToIntVector(&getIfsThatContainPattern(var));
-		case Tnode::STMT_ASSIGN:
-			return flattenNodeVectorToIntVector(&getAssignsThatContainPattern(var, expr));
-		default:
-			return vector<int>();
+	if (type == Tnode::STMT_ASSIGN) {
+		return flattenNodeVectorToIntVector(&getAssignsThatContainPattern(var, expr));
+	} else {
+		return vector<int>();
 	}
 }
 
@@ -754,6 +741,7 @@ void ProgramKnowledgeBase::calculateRelations(Tnode* currNode, vector<Tnode*> pa
 		Tnode* assignLeft = currNode->getFirstChild();
 		updateModifies(parents, assignLeft);
 		updateUses(parents, assignLeft->getRightSibling());
+		parents.pop_back(); // remove assignment node that was just added
 	}
 	if (currNode->isLastChild()){
 		Tnode* nextNode = NULL;
@@ -839,21 +827,21 @@ void ProgramKnowledgeBase::updater(ProgramKnowledgeBase::Relation rel, Tnode* no
 	string strName = node2->getName();
 
 	//update relation indexed by stmtNum
-	unordered_set<string> vars = unordered_set<string>();
 	try {
-		vars = relInt->at(stmtNum);
-		vars.insert(strName);
+		unordered_set<string>* vars = &relInt->at(stmtNum);
+		vars->insert(strName);
 	} catch (out_of_range){
+		unordered_set<string> vars = unordered_set<string>();
 		vars.insert(strName);
 		relInt->insert({stmtNum, vars});
 	}
 
 	//update relation indexed by strName
-	unordered_set<int> stmts = unordered_set<int>();
 	try {
-		stmts = relStr->at(strName);
-		stmts.insert(stmtNum);
+		unordered_set<int>* stmts = &relStr->at(strName);
+		stmts->insert(stmtNum);
 	} catch (out_of_range){
+		unordered_set<int> stmts = unordered_set<int>();
 		stmts.insert(stmtNum);
 		relStr->insert({strName, stmts});
 	}
@@ -875,12 +863,12 @@ void ProgramKnowledgeBase::updaterCalls(Tnode* caller, Tnode* callee) {
 	string callerName = caller->getName();
 	string calleeName = callee->getName();
 	//update relation indexed by caller
-	unordered_set<string> callees = unordered_set<string>();
 	try {
-		callees = this->callsRelationIndexedByCallers.at(callerName);
-		callees.insert(calleeName);
+		unordered_set<string>* callees = &this->callsRelationIndexedByCallers.at(callerName);
+		callees->insert(calleeName);
 	}
 	catch (out_of_range) {
+		unordered_set<string> callees = unordered_set<string>();
 		callees.insert(calleeName);
 		this->callsRelationIndexedByCallers.insert({callerName, callees});
 	}
