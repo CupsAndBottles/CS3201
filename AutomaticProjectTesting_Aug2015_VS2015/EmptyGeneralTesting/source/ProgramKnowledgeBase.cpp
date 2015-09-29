@@ -754,6 +754,7 @@ void ProgramKnowledgeBase::calculateRelations(Tnode* currNode, vector<Tnode*> pa
 		Tnode* assignLeft = currNode->getFirstChild();
 		updateModifies(parents, assignLeft);
 		updateUses(parents, assignLeft->getRightSibling());
+		parents.pop_back(); // remove assignment node that was just added
 	}
 	if (currNode->isLastChild()){
 		Tnode* nextNode = NULL;
@@ -839,21 +840,21 @@ void ProgramKnowledgeBase::updater(ProgramKnowledgeBase::Relation rel, Tnode* no
 	string strName = node2->getName();
 
 	//update relation indexed by stmtNum
-	unordered_set<string> vars = unordered_set<string>();
 	try {
-		vars = relInt->at(stmtNum);
-		vars.insert(strName);
+		unordered_set<string>* vars = &relInt->at(stmtNum);
+		vars->insert(strName);
 	} catch (out_of_range){
+		unordered_set<string> vars = unordered_set<string>();
 		vars.insert(strName);
 		relInt->insert({stmtNum, vars});
 	}
 
 	//update relation indexed by strName
-	unordered_set<int> stmts = unordered_set<int>();
 	try {
-		stmts = relStr->at(strName);
-		stmts.insert(stmtNum);
+		unordered_set<int>* stmts = &relStr->at(strName);
+		stmts->insert(stmtNum);
 	} catch (out_of_range){
+		unordered_set<int> stmts = unordered_set<int>();
 		stmts.insert(stmtNum);
 		relStr->insert({strName, stmts});
 	}

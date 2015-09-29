@@ -40,6 +40,7 @@ namespace UnitTesting
 			ofstream outputFile(fileName, ofstream::trunc);
 			outputFile << "procedure Proc {";
 			outputFile << "x = y + 1;";
+			outputFile << "y = x + 1;"; // test for duplicates
 			outputFile << "}";
 			outputFile.close();
 
@@ -246,6 +247,9 @@ namespace UnitTesting
 			ofstream outputFile(fileName, ofstream::trunc);
 			outputFile << "procedure Proc {";
 			outputFile << "x = 1;";
+			outputFile << "x = 2;";
+			outputFile << "y = 3;";
+			outputFile << "y = 4;";
 			outputFile << "}";
 			outputFile.close();
 
@@ -257,24 +261,39 @@ namespace UnitTesting
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 
 			Assert::IsTrue(pkb.modifies(1, "x"));
+			Assert::IsTrue(pkb.modifies(2, "x"));
+			Assert::IsTrue(pkb.modifies(3, "y"));
+			Assert::IsTrue(pkb.modifies(4, "y"));
 			Assert::IsTrue(pkb.modifies("Proc", "x"));
-			Assert::IsFalse(pkb.modifies(1, "y"));
-			Assert::IsFalse(pkb.modifies("Proc", "y"));
+			Assert::IsFalse(pkb.modifies(1, "z"));
+			Assert::IsFalse(pkb.modifies("Proc", "z"));
 			Assert::IsFalse(pkb.modifies("Other", "x"));
 
-			vector<int> modders = pkb.getStatementsThatModify("x");
-			Assert::AreEqual(1, int(modders.size()));
-			Assert::AreEqual(1, modders[0]);
+			vector<int> moddersx = pkb.getStatementsThatModify("x");
+			Assert::AreEqual(2, int(moddersx.size()));
+			Assert::AreEqual(1, moddersx[0]);
+			Assert::AreEqual(2, moddersx[1]);
+
+			vector<int> moddersy = pkb.getStatementsThatModify("y");
+			Assert::AreEqual(2, int(moddersy.size()));
+			Assert::AreEqual(3, moddersy[0]);
+			Assert::AreEqual(4, moddersy[1]);
 
 			vector<string> variables = pkb.getVariablesModifiedBy(1);
 			Assert::AreEqual(string("x"), variables[0]);
 
-			vector<string> moddersProcs = pkb.getProceduresThatModify("x");
-			Assert::AreEqual(1, int(moddersProcs.size()));
-			Assert::AreEqual(string("Proc"), moddersProcs[0]);
+			vector<string> moddersProcsx = pkb.getProceduresThatModify("x");
+			Assert::AreEqual(1, int(moddersProcsx.size()));
+			Assert::AreEqual(string("Proc"), moddersProcsx[0]);
+
+			vector<string> moddersProcsy = pkb.getProceduresThatModify("y");
+			Assert::AreEqual(1, int(moddersProcsy.size()));
+			Assert::AreEqual(string("Proc"), moddersProcsy[0]);
 
 			vector<string> variablesProcs = pkb.getVariablesModifiedBy("Proc");
+			Assert::AreEqual(2, int(variablesProcs.size()));
 			Assert::AreEqual(string("x"), variablesProcs[0]);
+			Assert::AreEqual(string("y"), variablesProcs[1]);
 		}
 
 		TEST_METHOD(testPKBMultiProcedureModify) {
@@ -322,6 +341,7 @@ namespace UnitTesting
 			ofstream outputFile(fileName, ofstream::trunc);
 			outputFile << "procedure Proc {";
 			outputFile << "x = y + 1;";
+			outputFile << "z = y + 1;";
 			outputFile << "}";
 			outputFile.close();
 
@@ -334,12 +354,14 @@ namespace UnitTesting
 
 			Assert::IsTrue(pkb.uses(1, "y"));
 			Assert::IsTrue(pkb.uses("Proc", "y"));
-			Assert::IsFalse(pkb.uses(2, "y"));
+			Assert::IsTrue(pkb.uses(2, "y"));
+			Assert::IsFalse(pkb.uses(3, "y"));
 			Assert::IsFalse(pkb.uses("Proc", "x"));
 
 			vector<int> users = pkb.getStatementsThatUse("y");
-			Assert::AreEqual(1, int(users.size()));
+			Assert::AreEqual(2, int(users.size()));
 			Assert::AreEqual(1, users[0]);
+			Assert::AreEqual(2, users[1]);
 
 			vector<string> variables = pkb.getVariablesUsedBy(1);
 			Assert::AreEqual(string("y"), variables[0]);
