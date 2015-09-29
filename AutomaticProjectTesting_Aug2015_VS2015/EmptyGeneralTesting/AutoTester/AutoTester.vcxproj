@@ -64,6 +64,10 @@
       <Command>xcopy "$(SolutionDir)glut\freeglut.dll" "$(SolutionDir)$(Configuration)\"
 xcopy "$(SolutionDir)glut\glew32.dll" "$(SolutionDir)$(Configuration)\"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>del "$(SolutionDir)$(Configuration)\glew32.dll"
+del "$(SolutionDir)$(Configuration)\freeglut.dll"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
