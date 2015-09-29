@@ -876,12 +876,12 @@ void ProgramKnowledgeBase::updaterCalls(Tnode* caller, Tnode* callee) {
 	string callerName = caller->getName();
 	string calleeName = callee->getName();
 	//update relation indexed by caller
-	unordered_set<string> callees = unordered_set<string>();
 	try {
-		callees = this->callsRelationIndexedByCallers.at(callerName);
-		callees.insert(calleeName);
+		unordered_set<string>* callees = &this->callsRelationIndexedByCallers.at(callerName);
+		callees->insert(calleeName);
 	}
 	catch (out_of_range) {
+		unordered_set<string> callees = unordered_set<string>();
 		callees.insert(calleeName);
 		this->callsRelationIndexedByCallers.insert({callerName, callees});
 	}

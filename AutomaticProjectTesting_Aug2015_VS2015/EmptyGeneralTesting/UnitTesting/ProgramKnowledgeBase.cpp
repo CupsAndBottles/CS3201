@@ -93,9 +93,13 @@ namespace UnitTesting
 			ofstream outputFile(fileName, ofstream::trunc);
 			outputFile << "procedure Proc {";
 			outputFile << "call Other;"; //line 1
+			outputFile << "call Another;"; // line 2
 			outputFile << "}" << endl;
 			outputFile << "procedure Other {";
-			outputFile << "y = 1;"; //line 2
+			outputFile << "y = 1;"; //line 3
+			outputFile << "}" << endl;
+			outputFile << "procedure Another {";
+			outputFile << "y = 1;"; //line 4
 			outputFile << "}";
 			outputFile.close();
 
@@ -107,6 +111,7 @@ namespace UnitTesting
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 
 			Assert::IsTrue(pkb.calls("Proc", "Other"));
+			Assert::IsTrue(pkb.calls("Proc", "Another"));
 			Assert::IsFalse(pkb.calls("Other", "Proc"));
 			
 			vector<string> callers = pkb.getProceduresThatCall("Other");
@@ -114,8 +119,9 @@ namespace UnitTesting
 			Assert::AreEqual(string("Proc"), callers[0]);
 
 			vector<string> callees = pkb.getProceduresCalledBy("Proc");
-			Assert::AreEqual(1, int(callees.size()));
+			Assert::AreEqual(2, int(callees.size()));
 			Assert::AreEqual(string("Other"), callees[0]);
+			Assert::AreEqual(string("Another"), callees[1]);
 		}
 
 		TEST_METHOD(testPKBCallWithWildcards) {
