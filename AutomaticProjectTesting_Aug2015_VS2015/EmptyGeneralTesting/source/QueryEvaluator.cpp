@@ -47,9 +47,9 @@ vector<string> QueryEvaluator::evaluation() {
 			vector<string>temp1;
 			vector<string>temp2;
 			temp1= recordSelectClause();
-			temp2 = recordConditionClause();
+			temp2 = recordConditionClause();//do intersection and output in formatter
+			output = formatter.intersection(temp1, temp2);
 			return output;
-			//do intersection and output in formatter
 		}
 	}
 	else if (conditionClause.size() == 2) {
@@ -68,12 +68,17 @@ vector<string> QueryEvaluator::recordSelectClause() {
 		vector<string>tempAssign;
 		vector<string>tempWhile;
 		vector<string>tempIf;
+		vector<string>temp;
 		tempAssign = formatter.integerVectorToString(database.getStatementsOfType(Tnode::STMT_ASSIGN));
 		tempWhile = formatter.integerVectorToString(database.getStatementsOfType(Tnode::STMT_WHILE));
 		tempIf = formatter.integerVectorToString(database.getStatementsOfType(Tnode::STMT_IF));
-		selectResult.insert(selectResult.end(), tempAssign.begin(), tempAssign.end());
+		
+		temp= formatter.join(tempAssign, tempWhile);
+		selectResult = (temp, tempIf);
+		
+		/*selectResult.insert(selectResult.end(), tempAssign.begin(), tempAssign.end());
 		selectResult.insert(selectResult.end(), tempWhile.begin(), tempWhile.end());
-		selectResult.insert(selectResult.end(), tempIf.begin(), tempIf.end());
+		selectResult.insert(selectResult.end(), tempIf.begin(), tempIf.end());*/
 		return selectResult;
 	}
 

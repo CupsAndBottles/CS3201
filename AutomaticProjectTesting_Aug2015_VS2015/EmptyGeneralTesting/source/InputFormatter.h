@@ -18,4 +18,5 @@ public:
 	void displayQuery(string results);
 	string removeQuotes(string s);
 	vector<string> intersection(vector<string> a, vector<string> b);
+	vector<string> join(vector<string> a, vector<string> b);
 };
