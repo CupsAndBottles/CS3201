@@ -14,6 +14,43 @@ namespace UnitTesting
 	TEST_CLASS(TestParser)
 	{
 	public:
+
+		TEST_METHOD(testGoodFactor) {
+			vector<string> factor;
+			factor.push_back("x");
+
+			simpleParser *p = new simpleParser(factor);
+			Assert::AreEqual(true, (*p).parseFactor());
+
+			factor.clear();
+			factor.push_back("10");
+			Assert::AreEqual(true, (*p).parseFactor());
+		}
+
+		TEST_METHOD(testGoodTerm) {
+			vector<string> term;
+			term.push_back("x");
+			term.push_back("*");
+			term.push_back("y");
+			term.push_back("*");
+			term.push_back("z");
+			term.push_back(";");
+
+			simpleParser *p = new simpleParser(term);
+			Assert::AreEqual(true, (*p).parseTerm());
+		}
+
+		TEST_METHOD(testGoodExpression) {
+			vector<string> expr;
+			expr.push_back("x");
+			expr.push_back("+");
+			expr.push_back("1");
+			expr.push_back(";");
+
+			simpleParser *p = new simpleParser(expr);
+			Assert::AreEqual(true, (*p).parseExpression());
+		}
+
 		TEST_METHOD(testGoodAssign) {
 			vector<string> stmt;
 			stmt.push_back("x");

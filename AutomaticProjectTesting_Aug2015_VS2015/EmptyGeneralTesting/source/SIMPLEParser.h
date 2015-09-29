@@ -15,6 +15,8 @@ public:
 
 	bool parseProgram();
 	bool endOfProgram();
+	bool parseFactor();
+	bool parseTerm();
 	bool parseExpression();
 	bool parseAssign();
 	bool parseWhile();
