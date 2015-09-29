@@ -21,7 +21,7 @@ class QueryEvaluator
 public:
 	QueryEvaluator(ProgramKnowledgeBase storePkb);
 	
-	vector<string> getResults(string input);
+	list<string> getResults(string input);
 	
 	void getQueryData();
 

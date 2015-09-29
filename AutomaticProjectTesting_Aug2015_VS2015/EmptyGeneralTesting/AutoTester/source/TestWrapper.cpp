@@ -27,8 +27,8 @@ void TestWrapper::parse(std::string filename) {
 		db->buildDatabase(tokenizedProgram);
 		cout << "Successfully constructed AST.\n";
 		
-		viewAST(db->printAbstractSyntaxTree(db->getAbstractSyntaxTreeRoot()));
-		pkbPointer = &ProgramKnowledgeBase(db);
+		//viewAST(db->printAbstractSyntaxTree(db->getAbstractSyntaxTreeRoot()), filename);
+		pkbPointer = ProgramKnowledgeBase(db);
 
 		cout << "Successfully constructed PKB.\n";
 	}
@@ -43,7 +43,7 @@ void TestWrapper::evaluate(std::string query, std::list<std::string>& results){
 // call your evaluator to evaluate the query here
   // ...code to evaluate query...
 
-	QueryEvaluator qe = QueryEvaluator(*pkbPointer);	
+	//QueryEvaluator qe = QueryEvaluator(*pkbPointer);	
 	//results = qe.getResults(query);
   // store the answers to the query in the results list (it is initially empty)
   // each result must be a string.

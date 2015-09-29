@@ -79,15 +79,23 @@ del "$(SolutionDir)$(Configuration)\freeglut.dll"</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)glut\glew-1.11.0\include;$(SolutionDir)glut\freeglut\include;$(SolutionDir)source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$(SolutionDir)lib\AutoTester_release.lib;$(SolutionDir)$(Configuration)\SPA.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)lib\AutoTester_release.lib;$(SolutionDir)$(Configuration)\SPA.lib;$(SolutionDir)glut\freeglut\lib\freeglut.lib;$(SolutionDir)glut\glew-1.11.0\lib\glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>del "$(SolutionDir)$(Configuration)\glew32.dll"
+del "$(SolutionDir)$(Configuration)\freeglut.dll"</Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)glut\freeglut.dll" "$(SolutionDir)$(Configuration)\"
+xcopy "$(SolutionDir)glut\glew32.dll" "$(SolutionDir)$(Configuration)\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\TestWrapper.cpp" />

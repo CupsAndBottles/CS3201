@@ -210,7 +210,7 @@ string enumToPrintable(int enumVal)
 	}
 }
 
-int viewAST(vector<vector<Tnode*>> inputVector)
+int viewAST(vector<vector<Tnode*>> inputVector, string fileName)
 {
 	char fakeParam[] = "fake";
 	char *fakeargv[] = { fakeParam, NULL };
@@ -222,7 +222,7 @@ int viewAST(vector<vector<Tnode*>> inputVector)
 	GetDesktopResolution(horizontal, vertical);
 	glutInitWindowSize(horizontal, vertical);
 	glutInitWindowPosition(0, 0);
-	glutCreateWindow("AST");
+	glutCreateWindow(fileName.c_str());
 
 	astVector = inputVector;
 
@@ -241,6 +241,7 @@ int viewAST(vector<vector<Tnode*>> inputVector)
 	glutDisplayFunc(display);
 	glutReshapeFunc(resize);
 	init();
+	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 	glutMainLoop();
 
 	return 0;

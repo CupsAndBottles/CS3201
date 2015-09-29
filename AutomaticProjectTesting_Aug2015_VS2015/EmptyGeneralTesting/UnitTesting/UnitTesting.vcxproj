@@ -163,6 +163,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ProgramKnowledgeBase.cpp" />
+    <ClCompile Include="TestQueryEvaluator.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="TestAST.cpp" />
     <ClCompile Include="TestInputFormatter.cpp" />
