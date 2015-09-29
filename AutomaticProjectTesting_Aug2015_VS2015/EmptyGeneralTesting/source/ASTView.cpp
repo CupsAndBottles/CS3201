@@ -241,6 +241,7 @@ int viewAST(vector<vector<Tnode*>> inputVector, string fileName)
 	glutDisplayFunc(display);
 	glutReshapeFunc(resize);
 	init();
+	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 	glutMainLoop();
 
 	return 0;

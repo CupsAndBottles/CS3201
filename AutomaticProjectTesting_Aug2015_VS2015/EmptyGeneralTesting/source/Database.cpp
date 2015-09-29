@@ -401,6 +401,7 @@ vector<vector<Tnode*>> Database::printAbstractSyntaxTree(Tnode* root)
 		}
 		notSoSimple.at(i) = simple;
 	}
+	/*
 	for (unsigned int i = 0; i < notSoSimple.size(); i++) {
 		cout << endl << "<---------------------------------------- Level " << i << ": ---------------------------------------->" << endl << endl;
 		for (unsigned int j = 0; j < notSoSimple.at(i).size(); j++) {
@@ -409,6 +410,7 @@ vector<vector<Tnode*>> Database::printAbstractSyntaxTree(Tnode* root)
 			cout << "\n";
 		}
 	}
+	*/
 	return notSoSimple;
 }
 
