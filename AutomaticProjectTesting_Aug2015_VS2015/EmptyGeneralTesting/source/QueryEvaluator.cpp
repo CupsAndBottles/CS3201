@@ -11,6 +11,7 @@ QueryEvaluator::QueryEvaluator(ProgramKnowledgeBase storePkb) {
 list<string> QueryEvaluator::getResults (string query) {
 	vector<string>output;
 	list<string> finaloutput;
+	preprocessor.clearAll();
 	if (preprocessor.query(query)) {
 		getQueryData();
 		output=evaluation();
