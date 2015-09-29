@@ -8,14 +8,19 @@ QueryEvaluator::QueryEvaluator(ProgramKnowledgeBase storePkb) {
 }
 
 //Autotester test driver function
-vector<string> QueryEvaluator::getResults (string query) {
+list<string> QueryEvaluator::getResults (string query) {
 	vector<string>output;
+	list<string> finaloutput;
 	if (preprocessor.query(query)) {
 		getQueryData();
-		return output=evaluation();
+		output=evaluation();
+		for (size_t i = 0; i < output.size(); i++) {
+			finaloutput.push_back(output[i]);
+		}
+		return finaloutput;
 	}
 	else {
-		return output;
+		return finaloutput;
 	}
 }
 
@@ -74,7 +79,7 @@ vector<string> QueryEvaluator::recordSelectClause() {
 		tempIf = formatter.integerVectorToString(database.getStatementsOfType(Tnode::STMT_IF));
 		
 		temp= formatter.join(tempAssign, tempWhile);
-		selectResult = (temp, tempIf);
+		selectResult = formatter.join(temp, tempIf);
 		
 		/*selectResult.insert(selectResult.end(), tempAssign.begin(), tempAssign.end());
 		selectResult.insert(selectResult.end(), tempWhile.begin(), tempWhile.end());
@@ -144,23 +149,23 @@ vector<string> QueryEvaluator::evaluateConditionClause(string first,string secon
 
 vector<string> QueryEvaluator::parent(string leftArgument, string rightArgument) {
 	vector<string> output;
-	if (formatter.stringEqual(getEntitiyType(leftArgument),"non-existant") ==false
-		&& formatter.stringEqual(getEntitiyType(rightArgument), "non-existant")==false) {
+	if ( !(formatter.stringEqual(getEntitiyType(leftArgument),"non-existant"))
+		 && !(formatter.stringEqual(getEntitiyType(rightArgument), "non-existant")) ) {
 		//both synonyms
 		return output;
 	}
-	else if (formatter.stringEqual(getEntitiyType(leftArgument), "non-existant")
+	/*else if (formatter.stringEqual(getEntitiyType(leftArgument), "non-existant")
 		&& formatter.stringEqual(getEntitiyType(rightArgument), "non-existant")) {
 		//both non-synonyms, parent(1,2)
 		database.isParent(stoi(leftArgument), stoi(rightArgument));
 		return output;
-	}
+	}*/
 	else if(formatter.stringEqual(getEntitiyType(leftArgument), "non-existant")){
-		//only right is synonyms, todo:: add assert that left is integer
+		//left is known, only right is synonyms, todo:: add assert that left is integer
 		return output = formatter.integerVectorToString(database.getChildrenOf(stoi(leftArgument)));
 	}
 	else if (formatter.stringEqual(getEntitiyType(rightArgument), "non-existant")) {
-		//only left is synonyms, todo:: add assert that right is integer
+		//right is known, only left is synonyms, todo:: add assert that right is integer
 		return output = formatter.integerVectorToString(database.getParentOf(stoi(rightArgument)));
 	}
 	else {
