@@ -121,7 +121,7 @@ private:
 
 	void updateDBFile();
 
-	void calculateRelations(Tnode * currNode, vector<Tnode*> parents = vector<Tnode*>());
+	void calculateRelations(Tnode * currNode, vector<Tnode*>* parents = &vector<Tnode*>(), vector<Tnode*>* processedProcedures = &vector<Tnode*>());
 	void updater(Relation rel, Tnode* node1, Tnode* node2);
 	void updateUses(const vector<Tnode*> users, Tnode * used);
 	vector<Tnode*>* getVariablesAndConstantsFromExpression(Tnode * expr, vector<Tnode*>* results = &vector<Tnode*>());

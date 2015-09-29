@@ -92,14 +92,15 @@ namespace UnitTesting
 			string fileName = "programCall.txt";
 			ofstream outputFile(fileName, ofstream::trunc);
 			outputFile << "procedure Proc {";
-			outputFile << "call Other;"; //line 1
+			outputFile << "y = 1;"; // line 1
 			outputFile << "call Another;"; // line 2
 			outputFile << "}" << endl;
 			outputFile << "procedure Other {";
-			outputFile << "y = 1;"; //line 3
+			outputFile << "call Another;"; // line 3
+			outputFile << "call Proc;"; //line 4
 			outputFile << "}" << endl;
 			outputFile << "procedure Another {";
-			outputFile << "y = 1;"; //line 4
+			outputFile << "x = 2;"; //line 4
 			outputFile << "}";
 			outputFile.close();
 
@@ -110,18 +111,26 @@ namespace UnitTesting
 			db->buildDatabase(parsedProgram);
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 
-			Assert::IsTrue(pkb.calls("Proc", "Other"));
 			Assert::IsTrue(pkb.calls("Proc", "Another"));
-			Assert::IsFalse(pkb.calls("Other", "Proc"));
+			Assert::IsTrue(pkb.calls("Other", "Proc"));
+			Assert::IsTrue(pkb.calls("Other", "Another"));
+			Assert::IsFalse(pkb.calls("Another", "Proc"));
 			
-			vector<string> callers = pkb.getProceduresThatCall("Other");
-			Assert::AreEqual(1, int(callers.size()));
-			Assert::AreEqual(string("Proc"), callers[0]);
+			vector<string> callersP = pkb.getProceduresThatCall("Proc");
+			Assert::AreEqual(1, int(callersP.size()));
+			Assert::AreEqual(string("Other"), callersP[0]);
+
+			vector<string> callersO = pkb.getProceduresThatCall("Other");
+			Assert::AreEqual(0, int(callersO.size()));
+
+			vector<string> callersA = pkb.getProceduresThatCall("Another");
+			Assert::AreEqual(2, int(callersA.size()));
+			Assert::AreEqual(string("Proc"), callersA[0]);
+			Assert::AreEqual(string("Other"), callersA[1]);
 
 			vector<string> callees = pkb.getProceduresCalledBy("Proc");
-			Assert::AreEqual(2, int(callees.size()));
-			Assert::AreEqual(string("Other"), callees[0]);
-			Assert::AreEqual(string("Another"), callees[1]);
+			Assert::AreEqual(1, int(callees.size()));
+			Assert::AreEqual(string("Another"), callees[0]);		
 		}
 
 		TEST_METHOD(testPKBCallWithWildcards) {

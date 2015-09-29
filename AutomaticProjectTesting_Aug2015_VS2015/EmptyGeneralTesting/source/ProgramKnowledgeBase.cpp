@@ -714,48 +714,53 @@ Tnode* ProgramKnowledgeBase::getParentNode(Tnode* node){
 	}
 }
 
-void ProgramKnowledgeBase::calculateRelations(Tnode* currNode, vector<Tnode*> parents) {
+void ProgramKnowledgeBase::calculateRelations(Tnode* currNode, vector<Tnode*>* parents, vector<Tnode*>* processedProcedures) {
 	if (currNode->isProgram()) {
-		calculateRelations(currNode->getFirstChild(), parents);
+		calculateRelations(currNode->getFirstChild(), parents, processedProcedures);
 	} else if (currNode->isProcedure()){
-		parents.push_back(currNode);
-		calculateRelations(currNode->getFirstChild()->getFirstChild(), parents); // get first statement in procedure
+		parents->push_back(currNode);
+		processedProcedures->push_back(currNode);
+		calculateRelations(currNode->getFirstChild()->getFirstChild(), parents, processedProcedures); // get first statement in procedure
 	} else if (currNode->isStatementList()){
-		parents.push_back(currNode);
-		calculateRelations(currNode->getFirstChild(), parents);
+		parents->push_back(currNode);
+		calculateRelations(currNode->getFirstChild(), parents, processedProcedures);
 	} else if (currNode->isWhile()) {
-		parents.push_back(currNode);
-		updateUses(parents, currNode->getFirstChild());	// uses conditional variable
-		calculateRelations(currNode->getFirstChild()->getRightSibling()->getFirstChild(), parents); // first statement in while
+		parents->push_back(currNode);
+		updateUses(*parents, currNode->getFirstChild());	// uses conditional variable
+		calculateRelations(currNode->getFirstChild()->getRightSibling()->getFirstChild(), parents, processedProcedures); // first statement in while
 	} else if (currNode->isIf()){
-		parents.push_back(currNode);
-		updateUses(parents, currNode->getFirstChild());	// uses conditional variable
-		calculateRelations(currNode->getFirstChild()->getRightSibling(), parents); //then stmtLst
+		parents->push_back(currNode);
+		updateUses(*parents, currNode->getFirstChild());	// uses conditional variable
+		calculateRelations(currNode->getFirstChild()->getRightSibling(), parents, processedProcedures); //then stmtLst
 	} else if (currNode->isCall()){
-		parents.push_back(currNode);
+		parents->push_back(currNode);
 		Tnode* callee = getNodeWithProcedureName(currNode->getName());
-		updateCalls(parents, callee); // calls procedure
-		calculateRelations(callee, parents);
+		updateCalls(*parents, callee); // calls procedure
+		if (find(processedProcedures->begin(), processedProcedures->end(), callee) == processedProcedures->end()) {
+			// callee procedure has not been processed yet
+			calculateRelations(callee, parents, processedProcedures);
+		}
+		// else: callee procedure has already been processed or is in the stack, don't recurse into it
 	} else if (currNode->isAssigns()) {
-		parents.push_back(currNode);
+		parents->push_back(currNode);
 		Tnode* assignLeft = currNode->getFirstChild();
-		updateModifies(parents, assignLeft);
-		updateUses(parents, assignLeft->getRightSibling());
-		parents.pop_back(); // remove assignment node that was just added
+		updateModifies(*parents, assignLeft);
+		updateUses(*parents, assignLeft->getRightSibling());
+		parents->pop_back(); // remove assignment node that was just added
 	}
 	if (currNode->isLastChild()){
 		Tnode* nextNode = NULL;
-		while (nextNode == NULL && !parents.empty()) {
-			currNode = parents.back();
-			parents.pop_back();
+		while (nextNode == NULL && !parents->empty()) {
+			currNode = parents->back();
+			parents->pop_back();
 			nextNode = currNode->getRightSibling();
 		}
 		if (nextNode != NULL){
-			calculateRelations(nextNode, parents);
+			calculateRelations(nextNode, parents, processedProcedures);
 		}
 		//else parents empty, no more nodes.
 	} else {
-		calculateRelations(currNode->getRightSibling(), parents);
+		calculateRelations(currNode->getRightSibling(), parents, processedProcedures);
 	}
 }
 
@@ -848,9 +853,11 @@ void ProgramKnowledgeBase::updater(ProgramKnowledgeBase::Relation rel, Tnode* no
 }
 
 void ProgramKnowledgeBase::updateCalls(vector<Tnode*> callers, Tnode* callee) {
-	for (Tnode* n : callers) {
+	for (int i = callers.size()-1; i >= 0; i--) {
+		Tnode* n = callers[i];
 		if (n->isProcedure()) {
 			updateCalls(n, callee);
+			break; // only update for direct calls
 		}
 	}
 }
@@ -874,12 +881,12 @@ void ProgramKnowledgeBase::updaterCalls(Tnode* caller, Tnode* callee) {
 	}
 
 	//update relation indexed by callee
-	unordered_set<string> callers = unordered_set<string>();
 	try {
-		callers = callsRelationIndexedByCallees.at(calleeName);
-		callers.insert(callerName);
+		unordered_set<string>* callers = &callsRelationIndexedByCallees.at(calleeName);
+		callers->insert(callerName);
 	}
 	catch (out_of_range) {
+		unordered_set<string> callers = unordered_set<string>();
 		callers.insert(callerName);
 		this->callsRelationIndexedByCallees.insert({calleeName, callers});
 	}
