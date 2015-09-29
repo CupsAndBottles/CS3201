@@ -118,8 +118,6 @@ private:
 	vector<Tnode*> getWhilesThatMatchPattern(string var);
 	vector<Tnode*> getIfsThatMatchPattern(string var);
 	vector<Tnode*> getAssignsThatContainPattern(string var, string expr);
-	vector<Tnode*> getWhilesThatContainPattern(string var);
-	vector<Tnode*> getIfsThatContainPattern(string ifs);
 
 	void updateDBFile();
 
