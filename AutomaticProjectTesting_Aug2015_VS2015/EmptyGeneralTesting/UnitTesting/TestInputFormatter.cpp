@@ -95,6 +95,26 @@ namespace UnitTesting
 			}
 			Assert::AreEqual(string("1233ABCa"), temp);
 		}
+		TEST_METHOD(testUnionString) {
+			vector<string> v1{ "a","b","c" };
+			vector<string> v2{ "b","c" };
+			vector<string> output = formatter.join(v1, v2);
+			string temp = "";
+			for (string n : output) {
+				temp += n;
+			}
+			Assert::AreEqual(string("abc"), temp);
+
+			vector<string> v3{ "2","3","1","3","A","a","BC" };
+			vector<string> v4{ "1","3","a","2","A","3","1","2","1","BC" };
+			output = formatter.intersection(v3, v4);
+			temp = "";
+			for (string n : output) {
+				temp += n;
+			}
+			Assert::AreEqual(string("1233ABCa"), temp);
+		}
+
 
 	};
 }

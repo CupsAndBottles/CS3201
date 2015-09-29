@@ -65,3 +65,11 @@ vector<string> InputFormatter::intersection(vector<string> a, vector<string> b) 
 	set_intersection(a.begin(), a.end(), b.begin(), b.end(), back_inserter(c));
 	return c;
 }
+
+vector<string> InputFormatter::join( vector<string>a, vector<string> b) {
+	vector<string> c;
+	sort(a.begin(), a.end());
+	sort(b.begin(), b.end());
+	set_union(a.begin(), a.end(), b.begin(), b.end(), back_inserter(c));
+	return c;
+}
