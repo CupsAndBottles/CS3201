@@ -95,9 +95,9 @@ private:
 
 	bool containsContainer(Tnode * node); //not used
 
-	vector<string> flattenNodeVectorToStringVector(vector<Tnode*>* inp);
-	vector<int> flattenBoolVectorToIntVector(vector<bool> inp);
-	vector<string> flattenBoolMapToStringVector(unordered_map<string, bool> inp);
+	vector<string> flattenNodeVectorToStringVector(const vector<Tnode*>* inp);
+	vector<int> flattenBoolVectorToIntVector(const vector<bool> inp);
+	vector<string> flattenBoolMapToStringVector(const unordered_map<string, bool> inp);
 	vector<int> flattenNodeVectorToIntVector(const vector<Tnode*>* inp);
 	vector<int> flattenIntSetToIntVector(const unordered_set<int>* inp);
 	vector<string> flattenStringSetToStringVector(const unordered_set<string>* inp);

@@ -625,7 +625,7 @@ vector<string> ProgramKnowledgeBase::getProceduresCallStarredBy(string proc) {
 	return vector<string>();
 }
 
-vector<string> ProgramKnowledgeBase::flattenNodeVectorToStringVector(vector<Tnode*>* inp){
+vector<string> ProgramKnowledgeBase::flattenNodeVectorToStringVector(const vector<Tnode*>* inp){
 	vector<string> results = vector<string>();
 	for (auto it : *inp) {
 		results.push_back(it->getName());
@@ -634,7 +634,7 @@ vector<string> ProgramKnowledgeBase::flattenNodeVectorToStringVector(vector<Tnod
 }
 
 //return vector of indices that have true values in input vector
-vector<int> ProgramKnowledgeBase::flattenBoolVectorToIntVector(vector<bool> inp) {
+vector<int> ProgramKnowledgeBase::flattenBoolVectorToIntVector(const vector<bool> inp) {
 	vector<int> results = vector<int>();
 	int len = inp.size();
 	for (int i = 0; i < len; i++) {
@@ -646,7 +646,7 @@ vector<int> ProgramKnowledgeBase::flattenBoolVectorToIntVector(vector<bool> inp)
 }
 
 //return vector of strings that have true values in input unordered map
-vector<string> ProgramKnowledgeBase::flattenBoolMapToStringVector(unordered_map<string, bool> inp) {
+vector<string> ProgramKnowledgeBase::flattenBoolMapToStringVector(const unordered_map<string, bool> inp) {
 	vector<string> results = vector<string>();
 	for (auto it : inp) {
 		if (it.second) {
