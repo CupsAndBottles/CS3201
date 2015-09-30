@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 #include "Tnode.h"
+#include "Database.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -172,5 +173,77 @@ namespace UnitTesting
 			Assert::AreEqual((int)T3, (int)T4->getLeftSibling());
 		}
 
+		TEST_METHOD(TestASTEquals)
+		{
+
+			Tnode *T1;
+			T1 = Tnode::createNode(Tnode::VARIABLE, "j");
+			Tnode *T2;
+			T2 = Tnode::createNode(Tnode::EXPR_PLUS, "");
+			Tnode *T3;
+			T3 = Tnode::createNode(Tnode::VARIABLE, "x");
+			Tnode::createLink(Tnode::PARENT, *T2, *T1);
+			Tnode::createLink(Tnode::RIGHTSIB, *T1, *T3);
+
+			Tnode *T11;
+			T11 = Tnode::createNode(Tnode::VARIABLE, "j");
+			Tnode *T22;
+			T22 = Tnode::createNode(Tnode::EXPR_PLUS, "");
+			Tnode *T33;
+			T33 = Tnode::createNode(Tnode::VARIABLE, "x");
+			Tnode::createLink(Tnode::PARENT, *T22, *T11);
+			Tnode::createLink(Tnode::RIGHTSIB, *T11, *T33);
+
+			Assert::IsTrue(T2->isEquals(T2));
+			Assert::IsTrue(T2->isEquals(T22));
+
+		}
+
+		TEST_METHOD(TestExprAST)
+		{
+			Tnode* exprRoot = Database::getExpressionTree({ "(", "j", ")", "+", "x" });
+
+			Tnode *T1;
+			T1 = Tnode::createNode(Tnode::VARIABLE, "j");
+			Tnode *T2;
+			T2 = Tnode::createNode(Tnode::EXPR_PLUS, "");
+			Tnode *T3;
+			T3 = Tnode::createNode(Tnode::VARIABLE, "x");
+			Tnode::createLink(Tnode::PARENT, *T2, *T1);
+			Tnode::createLink(Tnode::RIGHTSIB, *T1, *T3);
+
+			Assert::IsTrue(T2->isEquals(exprRoot));
+			
+		}
+
+		TEST_METHOD(TestContains)
+		{
+			Tnode* exprRoot = Database::getExpressionTree({ "(", "j", ")", "+", "x", "*", "z"});
+
+			Assert::IsTrue(exprRoot->contains(exprRoot));
+
+			Tnode *T1;
+			T1 = Tnode::createNode(Tnode::VARIABLE, "j");
+			Tnode *T2;
+			T2 = Tnode::createNode(Tnode::EXPR_PLUS, "");
+			Tnode *T3;
+			T3 = Tnode::createNode(Tnode::VARIABLE, "x");
+			Tnode::createLink(Tnode::PARENT, *T2, *T1);
+			Tnode::createLink(Tnode::RIGHTSIB, *T1, *T3);
+
+			Assert::IsFalse(T2->contains(exprRoot));
+
+			Tnode *T11;
+			T11 = Tnode::createNode(Tnode::VARIABLE, "x");
+			Tnode *T22;
+			T22 = Tnode::createNode(Tnode::EXPR_TIMES, "");
+			Tnode *T33;
+			T33 = Tnode::createNode(Tnode::VARIABLE, "z");
+			Tnode::createLink(Tnode::PARENT, *T22, *T11);
+			Tnode::createLink(Tnode::RIGHTSIB, *T11, *T33);
+
+			Assert::IsTrue(exprRoot->contains(T22));
+
+		}
 	};
 }

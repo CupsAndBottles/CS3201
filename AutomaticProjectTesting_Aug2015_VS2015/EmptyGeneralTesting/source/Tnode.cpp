@@ -226,14 +226,6 @@ bool Tnode::isEquals(Tnode *other)
 		this->getFirstChild() != NULL && other->getFirstChild() == NULL) {
 		return false;
 	}
-	if (this->getParent() == NULL && other->getParent() != NULL ||
-		this->getParent() != NULL && other->getParent() == NULL) {
-		return false;
-	}
-	if (this->getLeftSibling() == NULL && other->getLeftSibling() != NULL ||
-		this->getLeftSibling() != NULL && other->getLeftSibling() == NULL) {
-		return false;
-	}
 	if (this->getRightSibling() == NULL && other->getRightSibling() != NULL ||
 		this->getRightSibling() != NULL && other->getRightSibling() == NULL) {
 		return false;
