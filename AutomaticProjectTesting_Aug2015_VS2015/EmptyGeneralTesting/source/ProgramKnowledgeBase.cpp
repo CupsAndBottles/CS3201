@@ -380,7 +380,18 @@ vector<Tnode*>* ProgramKnowledgeBase::populateChildrenStarOf(Tnode* currNode, ve
 }
 
 vector<Tnode*> ProgramKnowledgeBase::getAssignsThatMatchPattern(string var, string expr) {
-	return vector<Tnode*>();
+	vector<string> expressionTokens = Parser().splitByDelimiters(vector<string>(1, expr));
+	Tnode* expressionTreeRoot = Database().getExpressionTree(expressionTokens);
+	vector<Tnode*> assigns = getNodesOfType(Tnode::STMT_ASSIGN);
+	vector<Tnode*> results = vector<Tnode*>();
+	Tnode* expression = NULL;
+	for (Tnode* assign : assigns) {
+		expression = assign->getFirstChild()->getRightSibling();
+		if (expression->isEquals(expressionTreeRoot)) {
+			results.push_back(assign);
+		}
+	}
+	return results;
 }
 
 vector<Tnode*> ProgramKnowledgeBase::getWhilesThatMatchPattern(string var) {
@@ -415,7 +426,18 @@ vector<Tnode*> ProgramKnowledgeBase::getIfsThatMatchPattern(string var) {
 }
 
 vector<Tnode*> ProgramKnowledgeBase::getAssignsThatContainPattern(string var, string expr) {
-	return vector<Tnode*>();
+	vector<string> expressionTokens = Parser().splitByDelimiters(vector<string>(1, expr));
+	Tnode* expressionTreeRoot = Database().getExpressionTree(expressionTokens);
+	vector<Tnode*> assigns = getNodesOfType(Tnode::STMT_ASSIGN);
+	vector<Tnode*> results = vector<Tnode*>();
+	Tnode* expression = NULL;
+	for (Tnode* assign : assigns) {
+		expression = assign->getFirstChild()->getRightSibling();
+		if (expression->contains(expressionTreeRoot)) {
+			results.push_back(assign);
+		}
+	}
+	return results;
 }
 
 bool ProgramKnowledgeBase::isFollows(int s1, int s2){

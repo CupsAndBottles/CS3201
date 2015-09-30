@@ -4,6 +4,7 @@
 #include "VarTable.h"
 #include "ProcTable.h"
 #include "Tnode.h"
+#include "Parser.h"
 #include <vector>
 #include <string>
 #include <unordered_map>
