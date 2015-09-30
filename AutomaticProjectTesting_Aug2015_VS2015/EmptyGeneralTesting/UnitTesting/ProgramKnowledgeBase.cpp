@@ -522,8 +522,8 @@ namespace UnitTesting
 			outputFile << "x = y + 1;"; // line 2
 			outputFile << "x = x + y + 1;"; //line 3
 			outputFile << "x = y + 1 + x;"; // line 4
-			outputFile << "x = x + 2 * y;"; // line 5
-			outputFile << "x = (x + 2) * y);"; // line 6
+			// outputFile << "x = y + x * 2;"; // line 5
+			// outputFile << "x = x * 2 + y;"; // line 6
 			outputFile << "}";
 			outputFile.close();
 
@@ -538,18 +538,38 @@ namespace UnitTesting
 			Assert::AreEqual(1, int(matchesSingleton.size()));
 			Assert::AreEqual(1, matchesSingleton[0]);
 
-			vector<int> matchesMultiNode = pkb.getStatementsThatMatchPattern(Tnode::STMT_ASSIGN, "x", "y+1");
-			Assert::AreEqual(1, int(matchesMultiNode.size()));
-			Assert::AreEqual(2, matchesMultiNode[0]);
+			vector<int> containsSingletonX = pkb.getStatementsThatContainPattern(Tnode::STMT_ASSIGN, "x", "x");
+			Assert::AreEqual(2, int(containsSingletonX.size()));
+			Assert::IsTrue(find(containsSingletonX.begin(), containsSingletonX.end(), 3) != containsSingletonX.end());
+			Assert::IsTrue(find(containsSingletonX.begin(), containsSingletonX.end(), 4) != containsSingletonX.end());
+			Assert::IsTrue(find(containsSingletonX.begin(), containsSingletonX.end(), 5) != containsSingletonX.end());
+			Assert::IsTrue(find(containsSingletonX.begin(), containsSingletonX.end(), 6) != containsSingletonX.end());
 
-			vector<int> containers = pkb.getStatementsThatContainPattern(Tnode::STMT_ASSIGN, "x", "y+1");
-			Assert::AreEqual(2, int(containers.size()));
-			Assert::AreEqual(2, containers[0]);
-			Assert::AreEqual(4, containers[1]);
+			vector<int> containsSingletonY = pkb.getStatementsThatContainPattern(Tnode::STMT_ASSIGN, "x", "y");
+			Assert::AreEqual(4, int(containsSingletonY.size()));
+			Assert::IsTrue(find(containsSingletonY.begin(), containsSingletonY.end(), 1) != containsSingletonY.end());
+			Assert::IsTrue(find(containsSingletonY.begin(), containsSingletonY.end(), 2) != containsSingletonY.end());
+			Assert::IsTrue(find(containsSingletonY.begin(), containsSingletonY.end(), 3) != containsSingletonY.end());
+			Assert::IsTrue(find(containsSingletonY.begin(), containsSingletonY.end(), 4) != containsSingletonY.end());
+			Assert::IsTrue(find(containsSingletonY.begin(), containsSingletonY.end(), 5) != containsSingletonY.end());
+			Assert::IsTrue(find(containsSingletonY.begin(), containsSingletonY.end(), 6) != containsSingletonY.end());
 
-			vector<int> containersBrackets = pkb.getStatementsThatContainPattern(Tnode::STMT_ASSIGN, "x", "x+2");
-			Assert::AreEqual(1, int(containersBrackets.size()));
-			Assert::AreEqual(6, containersBrackets[0]);
+			vector<int> matchesMultiNodePlus = pkb.getStatementsThatMatchPattern(Tnode::STMT_ASSIGN, "x", "y+1");
+			Assert::AreEqual(1, int(matchesMultiNodePlus.size()));
+			Assert::AreEqual(2, matchesMultiNodePlus[0]);
+
+			vector<int> containersPlus = pkb.getStatementsThatContainPattern(Tnode::STMT_ASSIGN, "x", "y+1");
+			Assert::AreEqual(2, int(containersPlus.size()));
+			Assert::AreEqual(2, containersPlus[0]);
+			Assert::AreEqual(4, containersPlus[1]);
+
+			// vector<int> matchesMultiNodeTimes = pkb.getStatementsThatMatchPattern(Tnode::STMT_ASSIGN, "x", "x*2");
+			// Assert::AreEqual(0, int(matchesMultiNodeTimes.size()));
+
+			// vector<int> containersTimes = pkb.getStatementsThatContainPattern(Tnode::STMT_ASSIGN, "x", "x*2");
+			// Assert::AreEqual(2, int(containersTimes.size()));
+			// Assert::IsTrue(find(containersTimes.begin(), containersTimes.end(), 5) != containersTimes.end());
+			// Assert::IsTrue(find(containersTimes.begin(), containersTimes.end(), 6) != containersTimes.end());
 		}
 	};
 }
