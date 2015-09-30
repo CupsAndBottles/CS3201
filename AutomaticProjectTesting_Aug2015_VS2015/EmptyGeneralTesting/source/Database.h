@@ -19,12 +19,12 @@ public:
 	string toUpperCase(string s);
 	bool isNumber(string &s);
 	Tnode* getAbstractSyntaxTreeRoot();
-	Tnode* getExpressionTree(vector<string> exprList);
+	static Tnode* getExpressionTree(vector<string> exprList);
 	vector<Tnode*>* getStatementTable();
 	unordered_map<int, vector<Tnode*>>* getConstantTable();
 	ProcTable* getProcedureTable();
 	VarTable* getVariableTable();
-	vector<vector<Tnode*>> printAbstractSyntaxTree(Tnode* root);
+	static vector<vector<Tnode*>> printAbstractSyntaxTree(Tnode* root);
 	void printStatementTable();
 	void printConstantTable();
 

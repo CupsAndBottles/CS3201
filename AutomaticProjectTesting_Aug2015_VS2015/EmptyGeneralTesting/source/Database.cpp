@@ -214,7 +214,12 @@ Tnode *Database::expr(vector<string> &tokens, vector<string>::iterator start, ve
 				break;
 			}
 		}
-		--it;
+		if (it == start) {
+			break;
+		}
+		else {
+			it--;
+		}
 	}
 	if (op == NULL) {
 		op = term(tokens, start, end);
@@ -245,7 +250,12 @@ Tnode *Database::term(vector<string> &tokens, vector<string>::iterator start, ve
 				break;
 			}
 		}
-		--it;
+		if (it == start) {
+			break;
+		}
+		else {
+			it--;
+		}
 	}
 	if (t == NULL) {
 		t = factor(tokens, start, end);
@@ -358,7 +368,8 @@ Tnode *Database::getAbstractSyntaxTreeRoot()
 //returns the root of the expression tree
 Tnode* Database::getExpressionTree(vector<string> exprList)
 {
-	return expr(exprList, exprList.begin(), exprList.end()-1);
+	Database tempDB = Database();
+	return tempDB.expr(exprList, exprList.begin(), exprList.end()-1);
 }
 
 vector<Tnode*>* Database::getStatementTable()
@@ -385,7 +396,8 @@ vector<vector<Tnode*>> Database::printAbstractSyntaxTree(Tnode* root)
 {
 	vector<vector<Tnode*>> notSoSimple;
 	vector<Tnode*> simple;
-	printAbstractSyntaxTreeCall(notSoSimple, simple, root, 0);
+	Database tempDB = Database();
+	tempDB.printAbstractSyntaxTreeCall(notSoSimple, simple, root, 0);
 	for (unsigned int i = 2; i < notSoSimple.size(); i++) {
 		simple = vector<Tnode*>();
 		for (unsigned int k = 0; k < notSoSimple.at(i-1).size(); k++) {
