@@ -100,7 +100,7 @@ namespace UnitTesting
 			outputFile << "call Proc;"; //line 4
 			outputFile << "}" << endl;
 			outputFile << "procedure Another {";
-			outputFile << "x = 2;"; //line 4
+			outputFile << "x = 2;"; //line 5
 			outputFile << "}";
 			outputFile.close();
 
@@ -131,6 +131,165 @@ namespace UnitTesting
 			vector<string> callees = pkb.getProceduresCalledBy("Proc");
 			Assert::AreEqual(1, int(callees.size()));
 			Assert::AreEqual(string("Another"), callees[0]);		
+		}
+
+		TEST_METHOD(testPKBCallStar) {
+			string fileName = "programCall.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure A {";
+			outputFile << "call B;";
+			outputFile << "call C;";
+			outputFile << "}" << endl;
+			outputFile << "procedure B {";
+			outputFile << "call D;";
+			outputFile << "}" << endl;
+			outputFile << "procedure C {";
+			outputFile << "call D;";
+			outputFile << "}" << endl;
+			outputFile << "procedure D {";
+			outputFile << "x = 2;";
+			outputFile << "}";
+			outputFile << "procedure E {";
+			outputFile << "call D;";
+			outputFile << "}";
+			outputFile << "procedure F {";
+			outputFile << "call E;";
+			outputFile << "}";
+			outputFile << "procedure G {";
+			outputFile << "x = 1;";
+			outputFile << "}";
+			outputFile.close();
+			
+			/*
+			    A
+			   / \
+			  B   C
+			   \ / 
+			    D <-- E <-- F
+
+				G
+			*/
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+
+			Assert::IsFalse(pkb.callsStar("A", "A"));
+			Assert::IsTrue(pkb.callsStar("A", "B"));
+			Assert::IsTrue(pkb.callsStar("A", "C"));
+			Assert::IsTrue(pkb.callsStar("A", "D"));
+			Assert::IsFalse(pkb.callsStar("A", "E"));
+			Assert::IsFalse(pkb.callsStar("A", "F"));
+			Assert::IsFalse(pkb.callsStar("A", "G"));
+
+			Assert::IsFalse(pkb.callsStar("B", "A"));
+			Assert::IsFalse(pkb.callsStar("B", "B"));
+			Assert::IsFalse(pkb.callsStar("B", "C"));
+			Assert::IsTrue(pkb.callsStar("B", "D"));
+			Assert::IsFalse(pkb.callsStar("B", "E"));
+			Assert::IsFalse(pkb.callsStar("B", "F"));
+			Assert::IsFalse(pkb.callsStar("B", "G"));
+
+			Assert::IsFalse(pkb.callsStar("C", "A"));
+			Assert::IsFalse(pkb.callsStar("C", "B"));
+			Assert::IsFalse(pkb.callsStar("C", "C"));
+			Assert::IsTrue(pkb.callsStar("C", "D"));
+			Assert::IsFalse(pkb.callsStar("C", "E"));
+			Assert::IsFalse(pkb.callsStar("C", "F"));
+			Assert::IsFalse(pkb.callsStar("C", "G"));
+
+			Assert::IsFalse(pkb.callsStar("D", "A"));
+			Assert::IsFalse(pkb.callsStar("D", "B"));
+			Assert::IsFalse(pkb.callsStar("D", "C"));
+			Assert::IsFalse(pkb.callsStar("D", "D"));
+			Assert::IsFalse(pkb.callsStar("D", "E"));
+			Assert::IsFalse(pkb.callsStar("D", "F"));
+			Assert::IsFalse(pkb.callsStar("D", "G"));
+
+			Assert::IsFalse(pkb.callsStar("E", "A"));
+			Assert::IsFalse(pkb.callsStar("E", "B"));
+			Assert::IsFalse(pkb.callsStar("E", "C"));
+			Assert::IsTrue(pkb.callsStar("E", "D"));
+			Assert::IsFalse(pkb.callsStar("E", "E"));
+			Assert::IsFalse(pkb.callsStar("E", "F"));
+			Assert::IsFalse(pkb.callsStar("E", "G"));
+
+			Assert::IsFalse(pkb.callsStar("F", "A"));
+			Assert::IsFalse(pkb.callsStar("F", "B"));
+			Assert::IsFalse(pkb.callsStar("F", "C"));
+			Assert::IsTrue(pkb.callsStar("F", "D"));
+			Assert::IsTrue(pkb.callsStar("F", "E"));
+			Assert::IsFalse(pkb.callsStar("F", "F"));
+			Assert::IsFalse(pkb.callsStar("F", "G"));
+
+			Assert::IsFalse(pkb.callsStar("G", "A"));
+			Assert::IsFalse(pkb.callsStar("G", "B"));
+			Assert::IsFalse(pkb.callsStar("G", "C"));
+			Assert::IsFalse(pkb.callsStar("G", "D"));
+			Assert::IsFalse(pkb.callsStar("G", "E"));
+			Assert::IsFalse(pkb.callsStar("G", "F"));
+			Assert::IsFalse(pkb.callsStar("G", "G"));
+			
+			vector<string> callersA = pkb.getProceduresThatCallStar("A");
+			Assert::AreEqual(0, int(callersA.size()));
+
+			vector<string> callersB = pkb.getProceduresThatCallStar("B");
+			Assert::AreEqual(1, int(callersB.size()));
+			Assert::AreEqual(string("A"), callersB[0]);
+
+			vector<string> callersC = pkb.getProceduresThatCallStar("C");
+			Assert::AreEqual(1, int(callersC.size()));
+			Assert::AreEqual(string("A"), callersC[0]);
+
+			vector<string> callersD = pkb.getProceduresThatCallStar("D");
+			Assert::AreEqual(5, int(callersD.size()));
+			Assert::IsTrue(find(callersD.begin(), callersD.end(), string("A")) != callersD.end());
+			Assert::IsTrue(find(callersD.begin(), callersD.end(), string("B")) != callersD.end());
+			Assert::IsTrue(find(callersD.begin(), callersD.end(), string("C")) != callersD.end());
+			Assert::IsTrue(find(callersD.begin(), callersD.end(), string("E")) != callersD.end());
+			Assert::IsTrue(find(callersD.begin(), callersD.end(), string("F")) != callersD.end());
+
+			vector<string> callersE = pkb.getProceduresThatCallStar("E");
+			Assert::AreEqual(1, int(callersE.size()));
+			Assert::AreEqual(string("F"), callersE[0]);
+
+			vector<string> callersF = pkb.getProceduresThatCallStar("F");
+			Assert::AreEqual(0, int(callersF.size()));
+			
+			vector<string> callersG = pkb.getProceduresThatCallStar("G");
+			Assert::AreEqual(0, int(callersG.size()));
+
+			vector<string> calleesA = pkb.getProceduresCallStarredBy("A");
+			Assert::AreEqual(3, int(calleesA.size()));
+			Assert::IsTrue(find(calleesA.begin(), calleesA.end(), string("B")) != calleesA.end());
+			Assert::IsTrue(find(calleesA.begin(), calleesA.end(), string("C")) != calleesA.end());
+			Assert::IsTrue(find(calleesA.begin(), calleesA.end(), string("D")) != calleesA.end());
+
+			vector<string> calleesB = pkb.getProceduresCallStarredBy("B");
+			Assert::AreEqual(1, int(calleesB.size()));
+			Assert::AreEqual(string("D"), calleesB[0]);
+
+			vector<string> calleesC = pkb.getProceduresCallStarredBy("C");
+			Assert::AreEqual(1, int(calleesC.size()));
+			Assert::AreEqual(string("D"), calleesC[0]);
+
+			vector<string> calleesD = pkb.getProceduresCallStarredBy("D");
+			Assert::AreEqual(0, int(calleesD.size()));
+
+			vector<string> calleesE = pkb.getProceduresCallStarredBy("E");
+			Assert::AreEqual(1, int(calleesE.size()));
+			Assert::AreEqual(string("D"), calleesE[0]);
+
+			vector<string> calleesF = pkb.getProceduresCallStarredBy("F");
+			Assert::AreEqual(2, int(calleesF.size()));
+			Assert::IsTrue(find(calleesF.begin(), calleesF.end(), string("D")) != calleesF.end());
+			Assert::IsTrue(find(calleesF.begin(), calleesF.end(), string("E")) != calleesF.end());
+
+			vector<string> calleesG = pkb.getProceduresCallStarredBy("G");
+			Assert::AreEqual(0, int(calleesG.size()));
 		}
 
 		TEST_METHOD(testPKBCallWithWildcards) {
