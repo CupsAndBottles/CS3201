@@ -16,7 +16,51 @@ simpleParser::simpleParser(vector<string> program) {
 }
 
 bool simpleParser::endOfProgram() {
-	return index >= tokenizedProgram.size() - 1;
+	return index >= tokenizedProgram.size();
+}
+
+bool simpleParser::parseFactor() {
+	if (endOfProgram()) {
+		cout << "End of program reached while attempting to parse factor.\n";
+		return false;
+	}
+
+	string token = tokenizedProgram[index];
+
+	if ((*rules).isVarName(token) || (*rules).isConstValue(token)) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool simpleParser::parseTerm() {
+	if (endOfProgram()) {
+		cout << "End of program reached while attempting to parse term.\n";
+		return false;
+	}
+
+	string token = tokenizedProgram[index];
+
+	if (parseFactor()) {
+		index += 1;
+		if (endOfProgram()) {
+			cout << "Error: No delimiter in term.\n";
+			return false;
+		}
+		else if (tokenizedProgram[index] == ";") {
+			return true;
+		}
+		else if (tokenizedProgram[index] == "*") {
+			index += 1;
+			return parseFactor();
+		}
+	}
+	else {
+		cout << "Error: Invalid term.\n";
+		return false;
+	}
 }
 
 bool simpleParser::parseExpression() {
@@ -27,18 +71,16 @@ bool simpleParser::parseExpression() {
 
 	string token = tokenizedProgram[index];
 
-	if ((*rules).isFactor(token)) {
-		index += 1;
-		if (tokenizedProgram[index] == ";") {
+	if (parseTerm()) {
+		if (endOfProgram()) {
+			cout << "Error: No delimiter.\n";
+			return false;
+		}
+		else if (tokenizedProgram[index] == ";") {
 			return true;
 		}
-		// Make sure we don't have consecutive factors.
-		else if (!(*rules).isFactor(tokenizedProgram[index-2])) {
-			parseExpression();
-		}
 		else {
-			cout << "Invalid expression: Consecutive factors.\n";
-			return false;
+			return parseExpression();
 		}
 	}
 	else if ((*rules).isOperator(token)) {
@@ -66,15 +108,18 @@ bool simpleParser::parseAssign() {
 
 	string token = tokenizedProgram[index];
 
-	if (!(*rules).isName(token)) {
+	if (!(*rules).isVarName(token)) {
 		cout << "Assign statement does not have a valid variable name.\n";
 		return false;
 	}
 
 	index += 1;
-	token = tokenizedProgram[index];
 
-	if (token != "="){
+	if (endOfProgram()) {
+		cout << "Error: Incomplete assign statement.\n";
+		return false;
+	}
+	else if (tokenizedProgram[index] != "="){
 		cout << "Assign statement does not have an equal sign.\n";
 		return false;
 	}
@@ -82,10 +127,11 @@ bool simpleParser::parseAssign() {
 	index += 1;
 
 	if (parseExpression()) {
-		string previous_token = tokenizedProgram[index - 1];
-		token = tokenizedProgram[index];
-
-		if ((*rules).isFactor(previous_token) && token == ";") {
+		if (endOfProgram()) {
+			cout << "Error: No delimiter.\n";
+			return false;
+		}
+		else if (tokenizedProgram[index] == ";") {
 			index += 1;
 			return true;
 		}
@@ -114,6 +160,10 @@ bool simpleParser::parseIf() {
 	}
 
 	index += 1;
+	if (endOfProgram()) {
+		cout << "Error: Incomplete If statement.\n";
+		return false;
+	}
 	token = tokenizedProgram[index];
 
 	if (token != "then") {
@@ -122,6 +172,10 @@ bool simpleParser::parseIf() {
 	}
 
 	index += 1;
+	if (endOfProgram()) {
+		cout << "Error: Incomplete If statement.\n";
+		return false;
+	}
 	token = tokenizedProgram[index];
 
 	if (token != "{") {
@@ -143,6 +197,10 @@ bool simpleParser::parseIf() {
 	}
 
 	index += 1;
+	if (endOfProgram()) {
+		cout << "Error: Incomplete If statement.\n";
+		return false;
+	}
 	token = tokenizedProgram[index];
 
 	if (token != "else") {
@@ -151,6 +209,10 @@ bool simpleParser::parseIf() {
 	}
 
 	index += 1;
+	if (endOfProgram()) {
+		cout << "Error: Incomplete If statement.\n";
+		return false;
+	}
 	token = tokenizedProgram[index];
 
 	if (token != "{") {
@@ -214,9 +276,15 @@ bool simpleParser::parseCall() {
 	}
 
 	string token = tokenizedProgram[index];
-	string next_token = tokenizedProgram[index + 1];
+	index += 1;
+	if (endOfProgram()) {
+		cout << "Error: End of program.\n";
+		return false;
+	}
+	string next_token = tokenizedProgram[index];
+
 	if ((*rules).isProcName(token) && next_token == ";") {
-		index += 2;
+		index += 1;
 		return true;
 	}
 	else {
@@ -247,6 +315,11 @@ bool simpleParser::parseStmt() {
 
 // Keep parsing statements until closing brace of procedure is encountered.
 bool simpleParser::parseStmtList() {
+	if (endOfProgram()) {
+		cout << "End of program reached while attempting to parse statement list.\n";
+		return false;
+	}
+
 	if (parseStmt()) {
 		if (tokenizedProgram[index] == "}") {
 			return true;

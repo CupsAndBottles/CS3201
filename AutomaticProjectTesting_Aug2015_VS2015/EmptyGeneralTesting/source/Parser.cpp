@@ -87,7 +87,6 @@ vector<string> Parser::splitByDelimiters(vector<string> program) {
 	program = splitByDelimiter(program, '+');
 	program = splitByDelimiter(program, '-');
 	program = splitByDelimiter(program, '*');
-	program = splitByDelimiter(program, '/');
 	program = splitByDelimiter(program, '\t');
 
 	return program;

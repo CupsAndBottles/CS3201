@@ -73,21 +73,10 @@ bool simpleRules::isConstValue(string token) {
 	}
 }
 
-// Defines a valid factor in SIMPLE.
-bool simpleRules::isFactor(string token) {
-	if (isVarName(token) || isConstValue(token)) {
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-
 bool simpleRules::isOperator(string token) {
 	if (token == "+"
 		|| token == "-"
-		|| token == "*"
-		|| token == "/") {
+		|| token == "*") {
 		return true;
 	}
 	else {

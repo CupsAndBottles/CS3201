@@ -14,6 +14,44 @@ namespace UnitTesting
 	TEST_CLASS(TestParser)
 	{
 	public:
+
+		TEST_METHOD(testGoodFactor) {
+			vector<string> factor;
+			factor.push_back("x");
+
+			simpleParser *p = new simpleParser(factor);
+			Assert::AreEqual(true, (*p).parseFactor());
+
+			factor.clear();
+			factor.push_back("10");
+			simpleParser *q = new simpleParser(factor);
+			Assert::AreEqual(true, (*q).parseFactor());
+		}
+
+		TEST_METHOD(testGoodTerm) {
+			vector<string> term;
+			term.push_back("x");
+			term.push_back("*");
+			term.push_back("y");
+			term.push_back("*");
+			term.push_back("z");
+			term.push_back(";");
+
+			simpleParser *p = new simpleParser(term);
+			Assert::AreEqual(true, (*p).parseTerm());
+		}
+
+		TEST_METHOD(testGoodExpression) {
+			vector<string> expr;
+			expr.push_back("x");
+			expr.push_back("+");
+			expr.push_back("1");
+			expr.push_back(";");
+
+			simpleParser *p = new simpleParser(expr);
+			Assert::AreEqual(true, (*p).parseExpression());
+		}
+
 		TEST_METHOD(testGoodAssign) {
 			vector<string> stmt;
 			stmt.push_back("x");
@@ -65,6 +103,27 @@ namespace UnitTesting
 
 		TEST_METHOD(testGoodIf) {
 			vector<string> ifStmt;
+
+			ifStmt.push_back("if");
+			ifStmt.push_back("i");
+			ifStmt.push_back("then");
+			ifStmt.push_back("{");
+			ifStmt.push_back("call");
+			ifStmt.push_back("a");
+			ifStmt.push_back(";");
+			ifStmt.push_back("}");
+			ifStmt.push_back("else");
+			ifStmt.push_back("{");
+			ifStmt.push_back("call");
+			ifStmt.push_back("b");
+			ifStmt.push_back(";");
+			ifStmt.push_back("}");
+
+			simpleParser *p = new simpleParser(ifStmt);
+			Assert::AreEqual(true, (*p).parseStmt());
+
+			ifStmt.clear();
+
 			ifStmt.push_back("if");
 			ifStmt.push_back("i");
 			ifStmt.push_back("then");
@@ -83,8 +142,23 @@ namespace UnitTesting
 			ifStmt.push_back(";");
 			ifStmt.push_back("}");
 
+			simpleParser *q = new simpleParser(ifStmt);
+			Assert::AreEqual(true, (*q).parseStmt());
+		}
+
+		TEST_METHOD(testEmptyIf) {
+			vector<string> ifStmt;
+			ifStmt.push_back("if");
+			ifStmt.push_back("i");
+			ifStmt.push_back("then");
+			ifStmt.push_back("{");
+			ifStmt.push_back("}");
+			ifStmt.push_back("else");
+			ifStmt.push_back("{");
+			ifStmt.push_back("}");
+
 			simpleParser *p = new simpleParser(ifStmt);
-			Assert::AreEqual(true, (*p).parseStmt());
+			Assert::AreEqual(false, (*p).parseStmt());
 		}
 
 		TEST_METHOD(testGoodWhile) {
