@@ -614,6 +614,14 @@ vector<string> ProgramKnowledgeBase::getProceduresCalledBy(string proc) {
 }
 
 bool ProgramKnowledgeBase::callsStar(string p1, string p2) {
+	if (p1 == WILDCARD && p2 == WILDCARD) {
+		return this->callsRelationIndexedByCallers.size() > 0;
+	} else if (p1 == WILDCARD) {
+		return this->callsRelationIndexedByCallees.count(p2) != 0;
+	} else if (p2 == WILDCARD) {
+		return this->callsRelationIndexedByCallers.count(p1) != 0;
+	}
+
 	if (getNodeWithProcedureName(p1) == NULL || getNodeWithProcedureName(p2) == NULL) {
 		return false;
 	}
@@ -652,6 +660,10 @@ bool ProgramKnowledgeBase::callsStar(string p1, string p2) {
 }
 
 vector<string> ProgramKnowledgeBase::getProceduresThatCallStar(string proc) {
+	if (proc == WILDCARD) {
+		return getProceduresThatCall(proc);
+	}
+
 	unordered_set<string> callerNames;
 	unordered_set<string>* moreCallerNames;
 	unordered_set<string> results;
@@ -681,6 +693,10 @@ vector<string> ProgramKnowledgeBase::getProceduresThatCallStar(string proc) {
 }
 
 vector<string> ProgramKnowledgeBase::getProceduresCallStarredBy(string proc) {
+	if (proc == WILDCARD) {
+		return getProceduresCalledBy(proc);
+	}
+
 	unordered_set<string> calleeNames;
 	unordered_set<string>* moreCalleeNames;
 	unordered_set<string> results;
