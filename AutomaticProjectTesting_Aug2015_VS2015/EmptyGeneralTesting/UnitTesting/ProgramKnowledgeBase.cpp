@@ -334,16 +334,17 @@ namespace UnitTesting
 			Assert::IsTrue(pkb.modifies("Other", "y"));
 
 			vector<int> modders = pkb.getStatementsThatModify("y");
-			Assert::AreEqual(1, int(modders.size()));
-			Assert::AreEqual(3, modders[0]);
+			Assert::AreEqual(2, int(modders.size()));
+			Assert::AreEqual(2, modders[0]);
+			Assert::AreEqual(3, modders[1]);
 
 			vector<string> variables = pkb.getVariablesModifiedBy(3);
 			Assert::AreEqual(string("y"), variables[0]);
 
 			vector<string> moddersProcs = pkb.getProceduresThatModify("y");
 			Assert::AreEqual(2, int(moddersProcs.size()));
-			Assert::AreEqual(string("Other"), moddersProcs[0]);
 			Assert::AreEqual(string("Proc"), moddersProcs[0]);
+			Assert::AreEqual(string("Other"), moddersProcs[1]);
 
 			vector<string> variablesProcs = pkb.getVariablesModifiedBy("Proc");
 			Assert::AreEqual(2, int(variablesProcs.size()));
