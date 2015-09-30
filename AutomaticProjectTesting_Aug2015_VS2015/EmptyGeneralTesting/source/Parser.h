@@ -13,11 +13,11 @@ class Parser
 public:
 	Parser();
 	vector<string> parseSimpleProgram(string filename);
-	vector<string> splitByDelimiters(vector<string> program);
+	static vector<string> splitByDelimiters(vector<string> program);
 
 private:
-	vector<string> split(string str, char delimiter);
-	vector<string> splitByDelimiter(vector<string> original, char delimiter);
+	static vector<string> split(string str, char delimiter);
+	static vector<string> splitByDelimiter(vector<string> original, char delimiter);
 	vector<string> readProgram(string file);
 };
 
