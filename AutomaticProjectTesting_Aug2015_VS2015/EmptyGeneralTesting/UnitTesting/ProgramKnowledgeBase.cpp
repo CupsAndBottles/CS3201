@@ -325,6 +325,82 @@ namespace UnitTesting
 			Assert::AreEqual(string("Other"), callees[0]);
 		}
 
+		TEST_METHOD(testPKBCallStarWithWildcards) {
+			string fileName = "programCall.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure A {";
+			outputFile << "call B;";
+			outputFile << "call C;";
+			outputFile << "}" << endl;
+			outputFile << "procedure B {";
+			outputFile << "call D;";
+			outputFile << "}" << endl;
+			outputFile << "procedure C {";
+			outputFile << "call D;";
+			outputFile << "}" << endl;
+			outputFile << "procedure D {";
+			outputFile << "x = 2;";
+			outputFile << "}";
+			outputFile << "procedure E {";
+			outputFile << "call D;";
+			outputFile << "}";
+			outputFile << "procedure F {";
+			outputFile << "call E;";
+			outputFile << "}";
+			outputFile << "procedure G {";
+			outputFile << "x = 1;";
+			outputFile << "}";
+			outputFile.close();
+
+			/*
+			A
+			/ \
+			B   C
+			\ /
+			D <-- E <-- F
+
+			G
+			*/
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+
+			Assert::IsFalse(pkb.callsStar("_", "A"));
+			Assert::IsTrue(pkb.callsStar("_", "B"));
+			Assert::IsTrue(pkb.callsStar("_", "C"));
+			Assert::IsTrue(pkb.callsStar("_", "D"));
+			Assert::IsTrue(pkb.callsStar("_", "E"));
+			Assert::IsFalse(pkb.callsStar("_", "F"));
+			Assert::IsFalse(pkb.callsStar("_", "G"));
+
+			Assert::IsTrue(pkb.callsStar("A", "_"));
+			Assert::IsTrue(pkb.callsStar("B", "_"));
+			Assert::IsTrue(pkb.callsStar("C", "_"));
+			Assert::IsFalse(pkb.callsStar("D", "_"));
+			Assert::IsTrue(pkb.callsStar("E", "_"));
+			Assert::IsTrue(pkb.callsStar("F", "_"));
+			Assert::IsFalse(pkb.callsStar("G", "_"));
+
+			vector<string> callers = pkb.getProceduresThatCall("_");
+			Assert::AreEqual(5, int(callers.size()));
+			Assert::IsTrue(find(callers.begin(), callers.end(), string("A")) != callers.end());
+			Assert::IsTrue(find(callers.begin(), callers.end(), string("B")) != callers.end());
+			Assert::IsTrue(find(callers.begin(), callers.end(), string("C")) != callers.end());
+			Assert::IsTrue(find(callers.begin(), callers.end(), string("E")) != callers.end());
+			Assert::IsTrue(find(callers.begin(), callers.end(), string("F")) != callers.end());
+
+			vector<string> callees = pkb.getProceduresCalledBy("_");
+			Assert::AreEqual(4, int(callees.size()));
+			Assert::IsTrue(find(callers.begin(), callers.end(), string("B")) != callers.end());
+			Assert::IsTrue(find(callers.begin(), callers.end(), string("C")) != callers.end());
+			Assert::IsTrue(find(callers.begin(), callers.end(), string("D")) != callers.end());
+			Assert::IsTrue(find(callers.begin(), callers.end(), string("E")) != callers.end());
+		}
+
 		TEST_METHOD(testPKBGetParent) {
 			string fileName = "programGetParent.txt";
 			ofstream outputFile(fileName, ofstream::trunc);
