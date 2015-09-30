@@ -231,7 +231,7 @@ namespace UnitTesting
 			Tnode::createLink(Tnode::PARENT, *T2, *T1);
 			Tnode::createLink(Tnode::RIGHTSIB, *T1, *T3);
 
-			Assert::IsFalse(T2->contains(exprRoot));
+			Assert::IsFalse(exprRoot->contains(T2));
 
 			Tnode *T11;
 			T11 = Tnode::createNode(Tnode::VARIABLE, "x");
@@ -244,6 +244,13 @@ namespace UnitTesting
 
 			Assert::IsTrue(exprRoot->contains(T22));
 
+
+
+			exprRoot = Database::getExpressionTree({"x", "+", "y", "*", "1" });
+
+			T1 = Tnode::createNode(Tnode::VARIABLE, "x");
+
+			Assert::IsTrue(exprRoot->contains(T1));
 		}
 	};
 }
