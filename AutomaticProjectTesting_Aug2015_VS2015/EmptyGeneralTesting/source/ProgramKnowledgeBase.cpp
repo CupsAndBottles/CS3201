@@ -614,15 +614,102 @@ vector<string> ProgramKnowledgeBase::getProceduresCalledBy(string proc) {
 }
 
 bool ProgramKnowledgeBase::callsStar(string p1, string p2) {
+	if (getNodeWithProcedureName(p1) == NULL || getNodeWithProcedureName(p2) == NULL) {
+		return false;
+	}
+
+	unordered_set<string> currCallees;
+	unordered_set<string> callersQueue;
+	try {
+		currCallees = this->callsRelationIndexedByCallers.at(p1);
+		unordered_set<string> callerNames = this->callsRelationIndexedByCallees.at(p2);
+		if (currCallees.count(p2) == 1) {
+			return true;
+		} else {
+			callersQueue.insert(currCallees.begin(), currCallees.end());
+		}
+	} catch (out_of_range) {
+		return false;
+	}
+
+	string currCaller = "";
+	while (!callersQueue.empty()) {
+		currCaller = *callersQueue.begin();
+		callersQueue.erase(currCaller);
+		try {
+			currCallees = this->callsRelationIndexedByCallers.at(currCaller);
+			if (currCallees.count(p2) == 1) {
+				return true;
+			} else {
+				callersQueue.insert(currCallees.begin(), currCallees.end());
+			}
+		} catch (out_of_range) {
+			// do nothing
+		}
+	}
+
 	return false;
 }
 
 vector<string> ProgramKnowledgeBase::getProceduresThatCallStar(string proc) {
-	return vector<string>();
+	unordered_set<string> callerNames;
+	unordered_set<string>* moreCallerNames;
+	unordered_set<string> results;
+	string currName = "";
+
+	try {
+		callerNames = this->callsRelationIndexedByCallees.at(proc);
+	} catch (out_of_range) {
+		return vector<string>();
+	}
+
+	while (!callerNames.empty()){
+		currName = *callerNames.begin();
+		callerNames.erase(currName);
+		if (results.count(currName) > 0) {
+			continue;
+		}
+		results.insert(currName);
+		try {
+			moreCallerNames = &this->callsRelationIndexedByCallees.at(currName);
+			callerNames.insert(moreCallerNames->begin(), moreCallerNames->end());
+		} catch (out_of_range e) {
+			// do nothing
+		}
+	}
+	return vector<string>(results.begin(), results.end());
 }
 
 vector<string> ProgramKnowledgeBase::getProceduresCallStarredBy(string proc) {
-	return vector<string>();
+	unordered_set<string> calleeNames;
+	unordered_set<string>* moreCalleeNames;
+	unordered_set<string> results;
+	string currName = "";
+
+	try {
+		calleeNames = this->callsRelationIndexedByCallers.at(proc);
+	}
+	catch (out_of_range) {
+		return vector<string>();
+	}
+
+	while (!calleeNames.empty()) {
+		currName = *calleeNames.begin();
+		calleeNames.erase(currName);
+		if (results.count(currName) > 0) {
+			continue;
+		}
+		results.insert(currName);
+		try {
+			moreCalleeNames = &this->callsRelationIndexedByCallers.at(currName);
+			calleeNames.insert(moreCalleeNames->begin(), moreCalleeNames->end());
+		}
+		catch (out_of_range e) {
+			// do nothing
+		}
+	}
+
+	return vector<string>(results.begin(), results.end());
 }
 
 vector<string> ProgramKnowledgeBase::flattenNodeVectorToStringVector(const vector<Tnode*>* inp){
