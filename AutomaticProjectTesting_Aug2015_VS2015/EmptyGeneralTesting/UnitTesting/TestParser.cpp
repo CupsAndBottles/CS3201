@@ -180,7 +180,6 @@ namespace UnitTesting
 
 		TEST_METHOD(testGoodProcedure) {
 			vector<string> proc;
-			proc.push_back("procedure");
 			proc.push_back("p");
 			proc.push_back("{");
 			proc.push_back("x");
@@ -192,7 +191,7 @@ namespace UnitTesting
 			proc.push_back("}");
 
 			simpleParser *p = new simpleParser(proc);
-			Assert::AreEqual(false, (*p).parseProcedure());
+			Assert::AreEqual(true, (*p).parseProcedure());
 		}
 
 		TEST_METHOD(testEmptyProcedure) {
@@ -203,6 +202,16 @@ namespace UnitTesting
 			proc.push_back("}");
 
 			simpleParser *p = new simpleParser(proc);
+			Assert::AreEqual(false, (*p).parseProcedure());
+		}
+
+		TEST_METHOD(testParserIsCaseSensitive) {
+			vector<string> prog;
+			prog.push_back("Call");
+			prog.push_back("procName");
+			prog.push_back(";");
+
+			simpleParser *p = new simpleParser(prog);
 			Assert::AreEqual(false, (*p).parseProcedure());
 		}
 	};

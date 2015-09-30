@@ -341,10 +341,15 @@ bool simpleParser::parseProcedure() {
 	}
 
 	string token = tokenizedProgram[index];
-	string next_token = tokenizedProgram[index + 1];
+	index += 1;
+	if (endOfProgram()) {
+		cout << "End of program reached while attempting to parse procedure.\n";
+		return false;
+	}
+	string next_token = tokenizedProgram[index];
 
-	if((*rules).isName(token) && next_token == "{"){
-		index += 2;
+	if((*rules).isProcName(token) && next_token == "{"){
+		index += 1;
 
 		if (!parseStmtList()) {
 			cout << "There was an error parsing this procedure's statement list.\n";
