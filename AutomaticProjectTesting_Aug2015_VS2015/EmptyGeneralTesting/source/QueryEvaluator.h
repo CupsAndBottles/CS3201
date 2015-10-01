@@ -27,7 +27,7 @@ public:
 
 	string getSelectClause();
 
-	string getEntitiyType(string s);
+	string getEntityType(string s);
 
 	vector<string> evaluation();
 
@@ -35,9 +35,21 @@ public:
 
 	vector<string> evaluateConditionClause(string first,string second,string third);
 
-	vector<string> recordSelectClause();
+	vector<string> recordSelectClause(string s);
 
 	vector<string> parent(string leftArgument, string rightArgument);
+
+	vector<string> parentT(string leftArgument, string rightArgument);
+
+	vector<string> follow(string leftArgument, string rightArgument);
+
+	vector<string> followT(string leftArgument, string rightArgument);
+
+	vector<string> modify(string leftArgument, string rightArgument);
+
+	vector<string> uses(string leftArgument, string rightArgument);
+
+	vector<string> patternA(string condition, string leftArgument, string rightArgument);
 
 private:
 	vector<string> getSelect;

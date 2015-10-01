@@ -35,24 +35,25 @@ void QueryEvaluator:: getQueryData() {
 string QueryEvaluator::getSelectClause() {
 	return getSelect.front(); //todo: is it better to be a single string
 }
-string QueryEvaluator::getEntitiyType(string s) {
+string QueryEvaluator::getEntityType(string s) {
 	return declaration.getType(s);
 }
 
 vector<string> QueryEvaluator::evaluation() {
 	vector<string>output;
 	if (conditionClause.size() == 0) {
-		return output = recordSelectClause();
+		string select = getSelectClause();
+		return output = recordSelectClause(getEntityType(select));
 	}
 	else if (conditionClause.size() == 1) {
-		if (formatter.stringEqual(getEntitiyType(getSelectClause()), "stmt")
-			|| formatter.stringEqual(getEntitiyType(getSelectClause()), "prog_line")) {
+		if (formatter.stringEqual(getEntityType(getSelectClause()), "stmt")
+			|| formatter.stringEqual(getEntityType(getSelectClause()), "prog_line")) {
 			return output = recordConditionClause();
 		}
 		else {
 			vector<string>temp1;
 			vector<string>temp2;
-			temp1= recordSelectClause();
+			temp1= recordSelectClause(getSelectClause());
 			temp2 = recordConditionClause();//do intersection and output in formatter
 			output = formatter.intersection(temp1, temp2);
 			return output;
@@ -66,9 +67,9 @@ vector<string> QueryEvaluator::evaluation() {
 	}
 }
 
-vector<string> QueryEvaluator::recordSelectClause() {
+vector<string> QueryEvaluator::recordSelectClause(string s) {
 	vector<string> selectResult;
-	if (formatter.stringEqual(getEntitiyType(getSelectClause()), "stmt")) {
+	if (formatter.stringEqual(s, "stmt")) {
 		//non-existant 
 		//"stmt","assign","while","if","procedure","variable","constant","prog_line"
 		vector<string>tempAssign;
@@ -88,22 +89,22 @@ vector<string> QueryEvaluator::recordSelectClause() {
 		return selectResult;
 	}
 
-	if (formatter.stringEqual(getEntitiyType(getSelectClause()), "assign")) {
+	if (formatter.stringEqual(s, "assign")) {
 		return selectResult = formatter.integerVectorToString(database.getStatementsOfType(Tnode::STMT_ASSIGN));
 	}
-	else if (formatter.stringEqual(getEntitiyType(getSelectClause()), "while")) {
+	else if (formatter.stringEqual(s, "while")) {
 		return selectResult = formatter.integerVectorToString(database.getStatementsOfType(Tnode::STMT_WHILE));
 	}
-	else if (formatter.stringEqual(getEntitiyType(getSelectClause()), "if")) {
+	else if (formatter.stringEqual(s, "if")) {
 		return selectResult = formatter.integerVectorToString(database.getStatementsOfType(Tnode::STMT_IF));
 	}
-	else if (formatter.stringEqual(getEntitiyType(getSelectClause()), "constant")) {
+	else if (formatter.stringEqual(s, "constant")) {
 		return selectResult = formatter.integerVectorToString(database.getStatementsOfType(Tnode::CONSTANT));
 	}
-	else if (formatter.stringEqual(getEntitiyType(getSelectClause()), "variable")) {
+	else if (formatter.stringEqual(s, "variable")) {
 		return selectResult = database.getVariableNames();
 	}
-	else if (formatter.stringEqual(getEntitiyType(getSelectClause()), "procedure")) {
+	else if (formatter.stringEqual(s, "procedure")) {
 		return selectResult = database.getProcedureNames();
 	}
 	else {
@@ -126,22 +127,25 @@ vector<string> QueryEvaluator::recordConditionClause() {
 vector<string> QueryEvaluator::evaluateConditionClause(string first,string second,string third) {
 	vector<string> output;
 	if (formatter.stringEqual(first, "Modifies")) {
-		return output;
+		return output = modify(second, third);
 	}
 	else if (formatter.stringEqual(first, "Uses")) {
-		return output;
+		return output = uses(second, third);
 	}
 	else if (formatter.stringEqual(first, "Parent")) {
 		return output = parent(second, third);
 	}
 	else if (formatter.stringEqual(first, "Parent*")) {
-		return output;
+		return output = parentT(second, third);
 	}
 	else if (formatter.stringEqual(first, "Follows")) {
-		return output;
+		return output = follow(second, third);
 	}
 	else if (formatter.stringEqual(first, "Follows*")) {
-		return output;
+		return output = followT(second, third);
+	}
+	else if (formatter.stringEqual(getEntityType(first), "assign")) {
+		return output = patternA(first,second,third);
 	}
 	else {
 		return output;
@@ -150,24 +154,337 @@ vector<string> QueryEvaluator::evaluateConditionClause(string first,string secon
 
 vector<string> QueryEvaluator::parent(string leftArgument, string rightArgument) {
 	vector<string> output;
-	if ( !(formatter.stringEqual(getEntitiyType(leftArgument),"non-existant"))
-		 && !(formatter.stringEqual(getEntitiyType(rightArgument), "non-existant")) ) {
+	if ( formatter.stringEqual(getEntityType(leftArgument),"non-existant")==false
+		 && formatter.stringEqual(getEntityType(rightArgument), "non-existant")==false ) {
 		//both synonyms
-		return output;
+		if (formatter.stringEqual(leftArgument, getSelectClause())) {
+			vector<string> temp = recordSelectClause(rightArgument);
+			for (size_t i = 0; i < temp.size(); i++) {
+				vector<string>temp1 = formatter.integerVectorToString(database.getParentOf(stoi(temp[i])));
+				vector<string>temp2=formatter.join(output, temp1);
+				output = temp2;
+			}
+			return output;
+		}
+		else if(formatter.stringEqual(rightArgument,getSelectClause())){
+			vector<string> temp = recordSelectClause(leftArgument);
+			for (size_t i = 0; i < temp.size(); i++) {
+				vector<string>temp1 = formatter.integerVectorToString(database.getChildrenOf(stoi(temp[i])));
+				vector<string>temp2 = formatter.join(output, temp1);
+				output = temp2;
+			}
+			return output;
+		}
+		else {
+			return output;
+		}
 	}
-	/*else if (formatter.stringEqual(getEntitiyType(leftArgument), "non-existant")
-		&& formatter.stringEqual(getEntitiyType(rightArgument), "non-existant")) {
-		//both non-synonyms, parent(1,2)
-		database.isParent(stoi(leftArgument), stoi(rightArgument));
-		return output;
-	}*/
-	else if(formatter.stringEqual(getEntitiyType(leftArgument), "non-existant")){
+	else if(formatter.stringEqual(getEntityType(leftArgument), "non-existant")
+		&& formatter.stringEqual(getEntityType(rightArgument),"non-existant")==false){
 		//left is known, only right is synonyms, todo:: add assert that left is integer
 		return output = formatter.integerVectorToString(database.getChildrenOf(stoi(leftArgument)));
 	}
-	else if (formatter.stringEqual(getEntitiyType(rightArgument), "non-existant")) {
+	else if (formatter.stringEqual(getEntityType(rightArgument), "non-existant")
+		&& formatter.stringEqual(getEntityType(leftArgument), "non-existant") == false) {
 		//right is known, only left is synonyms, todo:: add assert that right is integer
 		return output = formatter.integerVectorToString(database.getParentOf(stoi(rightArgument)));
+	}
+	else {
+		return output;
+	}
+}
+
+vector<string> QueryEvaluator::parentT(string leftArgument, string rightArgument) {
+	vector<string> output;
+	if (formatter.stringEqual(getEntityType(leftArgument), "non-existant") == false
+		&& formatter.stringEqual(getEntityType(rightArgument), "non-existant") == false) {
+		//both synonyms
+		if (formatter.stringEqual(leftArgument, getSelectClause())) {
+			vector<string> temp = recordSelectClause(rightArgument);
+			for (size_t i = 0; i < temp.size(); i++) {
+				vector<string>temp1 = formatter.integerVectorToString(database.getParentsStarOf(stoi(temp[i])));
+				vector<string>temp2 = formatter.join(output, temp1);
+				output = temp2;
+			}
+			return output;
+		}
+		else if (formatter.stringEqual(rightArgument, getSelectClause())) {
+			vector<string> temp = recordSelectClause(leftArgument);
+			for (size_t i = 0; i < temp.size(); i++) {
+				vector<string>temp1 = formatter.integerVectorToString(database.getChildrenStarOf(stoi(temp[i])));
+				vector<string>temp2 = formatter.join(output, temp1);
+				output = temp2;
+			}
+			return output;
+		}
+		else {
+			return output;
+		}
+	}
+	else if (formatter.stringEqual(getEntityType(leftArgument), "non-existant")
+		&& formatter.stringEqual(getEntityType(rightArgument), "non-existant") == false) {
+		//left is known, only right is synonyms, todo:: add assert that left is integer
+		return output = formatter.integerVectorToString(database.getChildrenStarOf(stoi(leftArgument)));
+	}
+	else if (formatter.stringEqual(getEntityType(rightArgument), "non-existant")
+		&& formatter.stringEqual(getEntityType(leftArgument), "non-existant") == false) {
+		//right is known, only left is synonyms, todo:: add assert that right is integer
+		return output = formatter.integerVectorToString(database.getParentsStarOf(stoi(rightArgument)));
+	}
+	else {
+		return output;
+	}
+}
+
+vector<string> QueryEvaluator::follow(string leftArgument, string rightArgument) {
+	vector<string> output;
+	if (formatter.stringEqual(getEntityType(leftArgument), "non-existant") == false
+		&& formatter.stringEqual(getEntityType(rightArgument), "non-existant") == false) {
+		//both synonyms
+		if (formatter.stringEqual(leftArgument, getSelectClause())) {
+			vector<string> temp = recordSelectClause(rightArgument);
+			for (size_t i = 0; i < temp.size(); i++) {
+				vector<string>temp1 = formatter.integerVectorToString(database.getStatementFollowedBy(stoi(temp[i])));
+				vector<string>temp2 = formatter.join(output, temp1);
+				output = temp2;
+			}
+			return output;
+		}
+		else if (formatter.stringEqual(rightArgument, getSelectClause())) {
+			vector<string> temp = recordSelectClause(leftArgument);
+			for (size_t i = 0; i < temp.size(); i++) {
+				vector<string>temp1 = formatter.integerVectorToString(database.getStatementThatFollows(stoi(temp[i])));
+				vector<string>temp2 = formatter.join(output, temp1);
+				output = temp2;
+			}
+			return output;
+		}
+		else {
+			return output;
+		}
+	}
+	else if (formatter.stringEqual(getEntityType(leftArgument), "non-existant")
+		&& formatter.stringEqual(getEntityType(rightArgument), "non-existant") == false) {
+		//left is known, only right is synonyms, todo:: add assert that left is integer
+		return output = formatter.integerVectorToString(database.getStatementThatFollows(stoi(leftArgument)));
+	}
+	else if (formatter.stringEqual(getEntityType(rightArgument), "non-existant")
+		&& formatter.stringEqual(getEntityType(leftArgument), "non-existant") == false) {
+		//right is known, only left is synonyms, todo:: add assert that right is integer
+		return output = formatter.integerVectorToString(database.getStatementFollowedBy(stoi(rightArgument)));
+	}
+	else {
+		return output;
+	}
+}
+
+vector<string> QueryEvaluator::followT(string leftArgument, string rightArgument) {
+	vector<string> output;
+	if (formatter.stringEqual(getEntityType(leftArgument), "non-existant") == false
+		&& formatter.stringEqual(getEntityType(rightArgument), "non-existant") == false) {
+		//both synonyms
+		if (formatter.stringEqual(leftArgument, getSelectClause())) {
+			vector<string> temp = recordSelectClause(rightArgument);
+			for (size_t i = 0; i < temp.size(); i++) {
+				vector<string>temp1 = formatter.integerVectorToString(database.getStatementsFollowStarredBy(stoi(temp[i])));
+				vector<string>temp2 = formatter.join(output, temp1);
+				output = temp2;
+			}
+			return output;
+		}
+		else if (formatter.stringEqual(rightArgument, getSelectClause())) {
+			vector<string> temp = recordSelectClause(leftArgument);
+			for (size_t i = 0; i < temp.size(); i++) {
+				vector<string>temp1 = formatter.integerVectorToString(database.getStatementsThatFollowStar(stoi(temp[i])));
+				vector<string>temp2 = formatter.join(output, temp1);
+				output = temp2;
+			}
+			return output;
+		}
+		else {
+			return output;
+		}
+	}
+	else if (formatter.stringEqual(getEntityType(leftArgument), "non-existant")
+		&& formatter.stringEqual(getEntityType(rightArgument), "non-existant") == false) {
+		//left is known, only right is synonyms, todo:: add assert that left is integer
+		return output = formatter.integerVectorToString(database.getStatementsThatFollowStar(stoi(leftArgument)));
+	}
+	else if (formatter.stringEqual(getEntityType(rightArgument), "non-existant")
+		&& formatter.stringEqual(getEntityType(leftArgument), "non-existant") == false) {
+		//right is known, only left is synonyms, todo:: add assert that right is integer
+		return output = formatter.integerVectorToString(database.getStatementsFollowStarredBy(stoi(rightArgument)));
+	}
+	else {
+		return output;
+	}
+}
+
+vector<string> QueryEvaluator::modify(string leftArgument, string rightArgument) {
+	vector<string> output;
+	if (formatter.stringEqual(getEntityType(leftArgument), "non-existant") == false
+		&& formatter.stringEqual(getEntityType(rightArgument), "variable")) {
+		if (formatter.stringEqual(rightArgument, getSelectClause())) {
+			if (formatter.stringEqual(getEntityType(leftArgument), "procedure")) {
+				vector<string> temp = database.getProcedureNames();
+				for (size_t i = 0; i < temp.size(); i++) {
+					vector<string>temp1 = database.getVariablesModifiedBy(temp[i]);
+					vector<string>temp2 = formatter.join(output, temp1);
+					output = temp2;
+				}
+				return output;
+			}
+			else {
+				vector<string> temp = recordSelectClause(leftArgument);
+				for (size_t i = 0; i < temp.size(); i++) {
+					vector<string>temp1 = database.getVariablesModifiedBy(stoi(temp[i]));
+					vector<string>temp2 = formatter.join(output, temp1);
+					output = temp2;
+				}
+				return output;
+			}
+		}
+		else if (formatter.stringEqual(leftArgument, getSelectClause())) {
+			if (formatter.stringEqual(getEntityType(leftArgument), "procedure")) {
+				vector<string> temp = database.getVariableNames();
+				for (size_t i = 0; i < temp.size(); i++) {
+					vector<string>temp1 = database.getProceduresThatModify(temp[i]);
+					vector<string>temp2 = formatter.join(output, temp1);
+					output = temp2;
+				}
+				return output;
+			}
+			else {
+				vector<string> temp = database.getVariableNames();
+				for (size_t i = 0; i < temp.size(); i++) {
+					vector<string>temp1 = formatter.integerVectorToString(database.getStatementsThatModify(temp[i]));
+					vector<string>temp2 = formatter.join(output, temp1);
+					output = temp2;
+				}
+				return output;
+			}
+		}
+		else {
+			return output;
+		}
+	}
+
+	else if (formatter.stringEqual(getEntityType(leftArgument), "non-existant")
+		&& formatter.stringEqual(getEntityType(rightArgument), "variable")) {
+		//check double quote, if yes for left, do proc, else do stmt
+		if (formatter.isDoubleQuote(leftArgument)) {
+			string procedure = formatter.removeQuotes(leftArgument);
+			return output = database.getVariablesModifiedBy(procedure);
+		}
+		else if (formatter.isNumericString(leftArgument)) {
+			return output = database.getVariablesModifiedBy(stoi(leftArgument));
+		}
+	}
+
+	else if (formatter.isDoubleQuote(rightArgument)
+		&& formatter.stringEqual(getEntityType(leftArgument), "non-existant") == false) {
+		string varName = formatter.removeQuotes(rightArgument);
+		if (formatter.stringEqual(getEntityType(leftArgument), "procedure")) { 			
+			return output = database.getProceduresThatModify(varName);
+		}
+		else {
+			return output = formatter.integerVectorToString(database.getStatementsThatModify(varName));
+		}
+	}
+	else {
+		return output;
+	}
+}
+
+vector<string> QueryEvaluator::uses(string leftArgument, string rightArgument) {
+	vector<string> output;
+	if (formatter.stringEqual(getEntityType(leftArgument), "non-existant") == false
+		&& formatter.stringEqual(getEntityType(rightArgument), "variable")) {
+		if (formatter.stringEqual(rightArgument, getSelectClause())) {
+			if (formatter.stringEqual(getEntityType(leftArgument), "procedure")) {
+				vector<string> temp = database.getProcedureNames();
+				for (size_t i = 0; i < temp.size(); i++) {
+					vector<string>temp1 = database.getVariablesUsedBy(temp[i]);
+					vector<string>temp2 = formatter.join(output, temp1);
+					output = temp2;
+				}
+				return output;
+			}
+			else {
+				vector<string> temp = recordSelectClause(leftArgument);
+				for (size_t i = 0; i < temp.size(); i++) {
+					vector<string>temp1 = database.getVariablesUsedBy(stoi(temp[i]));
+					vector<string>temp2 = formatter.join(output, temp1);
+					output = temp2;
+				}
+				return output;
+			}
+		}
+		else if (formatter.stringEqual(leftArgument, getSelectClause())) {
+			if (formatter.stringEqual(getEntityType(leftArgument), "procedure")) {
+				vector<string> temp = database.getVariableNames();
+				for (size_t i = 0; i < temp.size(); i++) {
+					vector<string>temp1 = database.getProceduresThatUse(temp[i]);
+					vector<string>temp2 = formatter.join(output, temp1);
+					output = temp2;
+				}
+				return output;
+			}
+			else {
+				vector<string> temp = database.getVariableNames();
+				for (size_t i = 0; i < temp.size(); i++) {
+					vector<string>temp1 = formatter.integerVectorToString(database.getStatementsThatUse(temp[i]));
+					vector<string>temp2 = formatter.join(output, temp1);
+					output = temp2;
+				}
+				return output;
+			}
+		}
+		else {
+			return output;
+		}
+	}
+
+	else if (formatter.stringEqual(getEntityType(leftArgument), "non-existant")
+		&& formatter.stringEqual(getEntityType(rightArgument), "variable")) {
+		//check double quote, if yes for left, do proc, else do stmt
+		if (formatter.isDoubleQuote(leftArgument)) {
+			string procedure = formatter.removeQuotes(leftArgument);
+			return output = database.getVariablesUsedBy(procedure);
+		}
+		else if (formatter.isNumericString(leftArgument)) {
+			return output = database.getVariablesUsedBy(stoi(leftArgument));
+		}
+	}
+
+	else if (formatter.isDoubleQuote(rightArgument)
+		&& formatter.stringEqual(getEntityType(leftArgument), "non-existant") == false) {
+		string varName = formatter.removeQuotes(rightArgument);
+		if (formatter.stringEqual(getEntityType(leftArgument), "procedure")) {
+			return output = database.getProceduresThatUse(varName);
+		}
+		else {
+			return output = formatter.integerVectorToString(database.getStatementsThatUse(varName));
+		}
+	}
+	else {
+		return output;
+	}
+}
+
+vector<string> QueryEvaluator::patternA(string condition, string leftArgument, string rightArgument) {
+	vector<string> output;
+	if (formatter.isDoubleQuote(leftArgument) && formatter.isDoubleQuote(rightArgument)) {
+		string left = formatter.removeQuotes(leftArgument);
+		string right = formatter.removeQuotes(rightArgument);
+		return output = formatter.integerVectorToString(database.getStatementsThatMatchPattern(Tnode::STMT_ASSIGN,left,right));
+	}
+	else if (formatter.isDoubleQuote(leftArgument) && formatter.stringEqual(rightArgument, "_")) {
+		string varName = formatter.removeQuotes(leftArgument);
+		return output = formatter.integerVectorToString(database.getStatementsThatModify(varName));
+	}
+	else if (formatter.stringEqual(leftArgument, "_") && formatter.stringEqual(rightArgument, "_") ){
+		return output = formatter.integerVectorToString(database.getStatementsOfType(Tnode::STMT_ASSIGN));
 	}
 	else {
 		return output;
