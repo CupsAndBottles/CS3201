@@ -145,6 +145,7 @@ vector<string> QueryEvaluator::evaluateConditionClause(string first,string secon
 		return output = followT(second, third);
 	}
 	else if (formatter.stringEqual(getEntityType(first), "assign")) {
+		
 		return output = patternA(first,second,third);
 	}
 	else {
@@ -479,7 +480,7 @@ vector<string> QueryEvaluator::patternA(string condition, string leftArgument, s
 		string right = formatter.removeQuotes(rightArgument);
 		return output = formatter.integerVectorToString(database.getStatementsThatMatchPattern(Tnode::STMT_ASSIGN,left,right));
 	}
-	else if (formatter.isDoubleQuote(leftArgument) && formatter.isUnderscore(rightArgument)) {
+	else if (formatter.isDoubleQuote(leftArgument) && formatter.isUnderscore(rightArgument)&&rightArgument.length()>1 ) {
 		string left = formatter.removeQuotes(leftArgument);
 		string right = formatter.removeUnderscore(rightArgument);
 		return output = formatter.integerVectorToString(database.getStatementsThatContainPattern(Tnode::STMT_ASSIGN, left, right));
