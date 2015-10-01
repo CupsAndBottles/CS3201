@@ -158,7 +158,7 @@ vector<string> QueryEvaluator::parent(string leftArgument, string rightArgument)
 		 && formatter.stringEqual(getEntityType(rightArgument), "non-existant")==false ) {
 		//both synonyms
 		if (formatter.stringEqual(leftArgument, getSelectClause())) {
-			vector<string> temp = recordSelectClause(rightArgument);
+			vector<string> temp = recordSelectClause(getEntityType(rightArgument));
 			for (size_t i = 0; i < temp.size(); i++) {
 				vector<string>temp1 = formatter.integerVectorToString(database.getParentOf(stoi(temp[i])));
 				vector<string>temp2=formatter.join(output, temp1);
@@ -167,7 +167,7 @@ vector<string> QueryEvaluator::parent(string leftArgument, string rightArgument)
 			return output;
 		}
 		else if(formatter.stringEqual(rightArgument,getSelectClause())){
-			vector<string> temp = recordSelectClause(leftArgument);
+			vector<string> temp = recordSelectClause(getEntityType(leftArgument));
 			for (size_t i = 0; i < temp.size(); i++) {
 				vector<string>temp1 = formatter.integerVectorToString(database.getChildrenOf(stoi(temp[i])));
 				vector<string>temp2 = formatter.join(output, temp1);
@@ -200,7 +200,7 @@ vector<string> QueryEvaluator::parentT(string leftArgument, string rightArgument
 		&& formatter.stringEqual(getEntityType(rightArgument), "non-existant") == false) {
 		//both synonyms
 		if (formatter.stringEqual(leftArgument, getSelectClause())) {
-			vector<string> temp = recordSelectClause(rightArgument);
+			vector<string> temp = recordSelectClause(getEntityType(rightArgument));
 			for (size_t i = 0; i < temp.size(); i++) {
 				vector<string>temp1 = formatter.integerVectorToString(database.getParentsStarOf(stoi(temp[i])));
 				vector<string>temp2 = formatter.join(output, temp1);
@@ -209,7 +209,7 @@ vector<string> QueryEvaluator::parentT(string leftArgument, string rightArgument
 			return output;
 		}
 		else if (formatter.stringEqual(rightArgument, getSelectClause())) {
-			vector<string> temp = recordSelectClause(leftArgument);
+			vector<string> temp = recordSelectClause(getEntityType(leftArgument));
 			for (size_t i = 0; i < temp.size(); i++) {
 				vector<string>temp1 = formatter.integerVectorToString(database.getChildrenStarOf(stoi(temp[i])));
 				vector<string>temp2 = formatter.join(output, temp1);
@@ -242,7 +242,7 @@ vector<string> QueryEvaluator::follow(string leftArgument, string rightArgument)
 		&& formatter.stringEqual(getEntityType(rightArgument), "non-existant") == false) {
 		//both synonyms
 		if (formatter.stringEqual(leftArgument, getSelectClause())) {
-			vector<string> temp = recordSelectClause(rightArgument);
+			vector<string> temp = recordSelectClause(getEntityType(rightArgument));
 			for (size_t i = 0; i < temp.size(); i++) {
 				vector<string>temp1 = formatter.integerVectorToString(database.getStatementFollowedBy(stoi(temp[i])));
 				vector<string>temp2 = formatter.join(output, temp1);
@@ -251,7 +251,7 @@ vector<string> QueryEvaluator::follow(string leftArgument, string rightArgument)
 			return output;
 		}
 		else if (formatter.stringEqual(rightArgument, getSelectClause())) {
-			vector<string> temp = recordSelectClause(leftArgument);
+			vector<string> temp = recordSelectClause(getEntityType(leftArgument));
 			for (size_t i = 0; i < temp.size(); i++) {
 				vector<string>temp1 = formatter.integerVectorToString(database.getStatementThatFollows(stoi(temp[i])));
 				vector<string>temp2 = formatter.join(output, temp1);
@@ -284,7 +284,7 @@ vector<string> QueryEvaluator::followT(string leftArgument, string rightArgument
 		&& formatter.stringEqual(getEntityType(rightArgument), "non-existant") == false) {
 		//both synonyms
 		if (formatter.stringEqual(leftArgument, getSelectClause())) {
-			vector<string> temp = recordSelectClause(rightArgument);
+			vector<string> temp = recordSelectClause(getEntityType(rightArgument));
 			for (size_t i = 0; i < temp.size(); i++) {
 				vector<string>temp1 = formatter.integerVectorToString(database.getStatementsFollowStarredBy(stoi(temp[i])));
 				vector<string>temp2 = formatter.join(output, temp1);
@@ -293,7 +293,7 @@ vector<string> QueryEvaluator::followT(string leftArgument, string rightArgument
 			return output;
 		}
 		else if (formatter.stringEqual(rightArgument, getSelectClause())) {
-			vector<string> temp = recordSelectClause(leftArgument);
+			vector<string> temp = recordSelectClause(getEntityType(leftArgument));
 			for (size_t i = 0; i < temp.size(); i++) {
 				vector<string>temp1 = formatter.integerVectorToString(database.getStatementsThatFollowStar(stoi(temp[i])));
 				vector<string>temp2 = formatter.join(output, temp1);
@@ -335,7 +335,7 @@ vector<string> QueryEvaluator::modify(string leftArgument, string rightArgument)
 				return output;
 			}
 			else {
-				vector<string> temp = recordSelectClause(leftArgument);
+				vector<string> temp = recordSelectClause(getEntityType(leftArgument));
 				for (size_t i = 0; i < temp.size(); i++) {
 					vector<string>temp1 = database.getVariablesModifiedBy(stoi(temp[i]));
 					vector<string>temp2 = formatter.join(output, temp1);
@@ -411,7 +411,7 @@ vector<string> QueryEvaluator::uses(string leftArgument, string rightArgument) {
 				return output;
 			}
 			else {
-				vector<string> temp = recordSelectClause(leftArgument);
+				vector<string> temp = recordSelectClause(getEntityType(leftArgument));
 				for (size_t i = 0; i < temp.size(); i++) {
 					vector<string>temp1 = database.getVariablesUsedBy(stoi(temp[i]));
 					vector<string>temp2 = formatter.join(output, temp1);
@@ -496,6 +496,15 @@ vector<string> QueryEvaluator::patternA(string condition, string leftArgument, s
 		for (size_t i = 0; i < temp.size(); i++) {
 			vector<string>temp1 = formatter.integerVectorToString(database.getStatementsThatContainPattern(Tnode::STMT_ASSIGN,temp[i],formatter.removeUnderscore(rightArgument)));
 			vector<string>temp2=formatter.join(output, temp1);
+			output = temp2;
+		}
+		return output;
+	}
+	else if (formatter.stringEqual(leftArgument, "_") && formatter.isDoubleQuote(rightArgument)) {
+		vector<string>temp = database.getVariableNames();
+		for (size_t i = 0; i < temp.size(); i++) {
+			vector<string>temp1 = formatter.integerVectorToString(database.getStatementsThatMatchPattern(Tnode::STMT_ASSIGN, temp[i], formatter.removeQuotes(rightArgument)));
+			vector<string>temp2 = formatter.join(output, temp1);
 			output = temp2;
 		}
 		return output;
