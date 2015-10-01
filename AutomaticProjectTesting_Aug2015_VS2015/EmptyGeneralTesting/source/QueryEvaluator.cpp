@@ -486,6 +486,7 @@ vector<string> QueryEvaluator::patternA(string condition, string leftArgument, s
 	}
 	else if (formatter.isDoubleQuote(leftArgument) && formatter.stringEqual(rightArgument, "_")) {
 		string varName = formatter.removeQuotes(leftArgument);
+		cout << varName << endl;
 		return output = formatter.integerVectorToString(database.getStatementsThatModify(varName));
 	}
 	else if (formatter.stringEqual(leftArgument, "_") && formatter.stringEqual(rightArgument, "_") ){
