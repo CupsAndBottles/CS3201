@@ -77,14 +77,14 @@ namespace UnitTesting
 			Assert::AreEqual(string(""), output);
 		}
 		TEST_METHOD(testIntersectionString) {
-			vector<string> v1{ "a","b","c" };
-			vector<string> v2{ "b","c" };
+			vector<string> v1{ "1","11","12","13","14","15","16","17","24","5","7","9" };
+			vector<string> v2{ "7","8","9" };
 			vector<string> output=formatter.intersection(v1, v2);
 			string temp = "";
 			for (string n : output) {
 				temp += n;
 			}
-			Assert::AreEqual(string("bc"), temp);
+			Assert::AreEqual(string("7a"), temp);
 
 			vector<string> v3{ "2","3","1","3","A","a","BC"};
 			vector<string> v4{ "1","3","a","2","A","3","1","2","1","BC" };

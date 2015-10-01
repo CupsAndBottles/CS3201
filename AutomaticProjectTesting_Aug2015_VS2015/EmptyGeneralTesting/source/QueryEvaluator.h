@@ -31,7 +31,7 @@ public:
 
 	vector<string> evaluation();
 
-	vector<string> recordConditionClause();
+	vector<string> recordConditionClause(QueryObject temp);
 
 	vector<string> evaluateConditionClause(string first,string second,string third);
 

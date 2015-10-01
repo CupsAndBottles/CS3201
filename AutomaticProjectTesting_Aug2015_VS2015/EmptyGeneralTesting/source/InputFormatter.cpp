@@ -73,3 +73,18 @@ vector<string> InputFormatter::join( vector<string>a, vector<string> b) {
 	set_union(a.begin(), a.end(), b.begin(), b.end(), back_inserter(c));
 	return c;
 }
+
+bool InputFormatter::isUnderscore(string s) {
+	size_t i = s.length();
+	if ((s[0] == '_') && (s[i - 1] == '_')) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+string InputFormatter::removeUnderscore(string s) {
+	string substring = s.substr(1, s.length() - 2);
+	return removeQuotes(substring);
+}

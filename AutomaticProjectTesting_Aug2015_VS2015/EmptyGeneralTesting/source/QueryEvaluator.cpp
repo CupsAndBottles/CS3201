@@ -48,22 +48,29 @@ vector<string> QueryEvaluator::evaluation() {
 	else if (conditionClause.size() == 1) {
 		if (formatter.stringEqual(getEntityType(getSelectClause()), "stmt")
 			|| formatter.stringEqual(getEntityType(getSelectClause()), "prog_line")) {
-			return output = recordConditionClause();
+			return output = recordConditionClause(conditionClause.at(0));
 		}
 		else {
 			vector<string>temp1;
 			vector<string>temp2;
 			string select = getSelectClause();
-			temp1= recordSelectClause(select);
-			temp2 = recordConditionClause();//do intersection and output in formatter
+			temp1= recordSelectClause(getEntityType(select));
+			temp2 = recordConditionClause(conditionClause.at(0));//do intersection and output in formatter
 			output = formatter.intersection(temp1, temp2);
 			return output;
 		}
 	}
 	else if (conditionClause.size() == 2) {
+		string select = getSelectClause();
+		vector<string> temp1 = recordSelectClause(getEntityType(select));
+		vector<string> temp2 = recordConditionClause(conditionClause.at(0));
+		vector<string> temp3 = recordConditionClause(conditionClause.at(1));
+		vector<string> temp4 = formatter.intersection(temp1, temp2);
+		output = formatter.intersection(temp4, temp3);
 		return output;  //pattern not working as yet
 	}
 	else {
+		cout << "here2"<< endl;
 		return output; //multiple condition clauses, not done yet
 	}
 }
@@ -109,15 +116,12 @@ vector<string> QueryEvaluator::recordSelectClause(string s) {
 	}
 }
 
-vector<string> QueryEvaluator::recordConditionClause() {
+vector<string> QueryEvaluator::recordConditionClause(QueryObject temp) {
 	vector<string> output;
-	for (size_t i = 0; i < conditionClause.size(); i++) {
-		QueryObject temp = conditionClause.at(i);
-		string first = temp.getFirst();
-		string second = temp.getSecond();
-		string third = temp.getThird();
-		output=evaluateConditionClause(first, second, third);
-	}
+	string first = temp.getFirst();
+	string second = temp.getSecond();
+	string third = temp.getThird();
+	output=evaluateConditionClause(first, second, third);
 	return output;
 }
 vector<string> QueryEvaluator::evaluateConditionClause(string first,string second,string third) {
@@ -475,12 +479,26 @@ vector<string> QueryEvaluator::patternA(string condition, string leftArgument, s
 		string right = formatter.removeQuotes(rightArgument);
 		return output = formatter.integerVectorToString(database.getStatementsThatMatchPattern(Tnode::STMT_ASSIGN,left,right));
 	}
+	else if (formatter.isDoubleQuote(leftArgument) && formatter.isUnderscore(rightArgument)) {
+		string left = formatter.removeQuotes(leftArgument);
+		string right = formatter.removeUnderscore(rightArgument);
+		return output = formatter.integerVectorToString(database.getStatementsThatContainPattern(Tnode::STMT_ASSIGN, left, right));
+	}
 	else if (formatter.isDoubleQuote(leftArgument) && formatter.stringEqual(rightArgument, "_")) {
 		string varName = formatter.removeQuotes(leftArgument);
 		return output = formatter.integerVectorToString(database.getStatementsThatModify(varName));
 	}
 	else if (formatter.stringEqual(leftArgument, "_") && formatter.stringEqual(rightArgument, "_") ){
 		return output = formatter.integerVectorToString(database.getStatementsOfType(Tnode::STMT_ASSIGN));
+	}
+	else if (formatter.stringEqual(leftArgument, "_") && formatter.isUnderscore(rightArgument)) {
+		vector<string>temp = database.getVariableNames();
+		for (size_t i = 0; i < temp.size(); i++) {
+			vector<string>temp1 = formatter.integerVectorToString(database.getStatementsThatContainPattern(Tnode::STMT_ASSIGN,temp[i],formatter.removeUnderscore(rightArgument)));
+			vector<string>temp2=formatter.join(output, temp1);
+			output = temp2;
+		}
+		return output;
 	}
 	else {
 		return output;
