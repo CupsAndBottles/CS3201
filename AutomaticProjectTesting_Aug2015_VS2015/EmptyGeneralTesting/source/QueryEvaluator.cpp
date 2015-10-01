@@ -53,7 +53,8 @@ vector<string> QueryEvaluator::evaluation() {
 		else {
 			vector<string>temp1;
 			vector<string>temp2;
-			temp1= recordSelectClause(getSelectClause());
+			string select = getSelectClause();
+			temp1= recordSelectClause(select);
 			temp2 = recordConditionClause();//do intersection and output in formatter
 			output = formatter.intersection(temp1, temp2);
 			return output;
@@ -82,10 +83,6 @@ vector<string> QueryEvaluator::recordSelectClause(string s) {
 		
 		temp= formatter.join(tempAssign, tempWhile);
 		selectResult = formatter.join(temp, tempIf);
-		
-		/*selectResult.insert(selectResult.end(), tempAssign.begin(), tempAssign.end());
-		selectResult.insert(selectResult.end(), tempWhile.begin(), tempWhile.end());
-		selectResult.insert(selectResult.end(), tempIf.begin(), tempIf.end());*/
 		return selectResult;
 	}
 
@@ -119,7 +116,6 @@ vector<string> QueryEvaluator::recordConditionClause() {
 		string first = temp.getFirst();
 		string second = temp.getSecond();
 		string third = temp.getThird();
-		// todo: output.push(evaluateCondition)
 		output=evaluateConditionClause(first, second, third);
 	}
 	return output;
