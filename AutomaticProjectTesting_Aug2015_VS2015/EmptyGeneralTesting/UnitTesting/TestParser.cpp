@@ -15,7 +15,7 @@ namespace UnitTesting
 	{
 	public:
 
-		TEST_METHOD(testGoodFactor) {
+		TEST_METHOD(testGoodBasicFactor) {
 			vector<string> factor;
 			factor.push_back("x");
 
@@ -28,6 +28,22 @@ namespace UnitTesting
 			Assert::AreEqual(true, (*q).parseFactor());
 		}
 
+		TEST_METHOD(testGoodFactorWithBrackets) {
+			vector<string> factor;
+			factor.push_back("(");
+			factor.push_back("x");
+			factor.push_back("+");
+			factor.push_back("(");
+			factor.push_back("y");
+			factor.push_back("+");
+			factor.push_back("z");
+			factor.push_back(")");
+			factor.push_back(")");
+
+			simpleParser *p = new simpleParser(factor);
+			Assert::AreEqual(true, (*p).parseFactor());
+		}
+
 		TEST_METHOD(testGoodTerm) {
 			vector<string> term;
 			term.push_back("x");
@@ -35,7 +51,6 @@ namespace UnitTesting
 			term.push_back("y");
 			term.push_back("*");
 			term.push_back("z");
-			term.push_back(";");
 
 			simpleParser *p = new simpleParser(term);
 			Assert::AreEqual(true, (*p).parseTerm());
@@ -59,6 +74,25 @@ namespace UnitTesting
 			stmt.push_back("y");
 			stmt.push_back("+");
 			stmt.push_back("1");
+			stmt.push_back(";");
+
+			simpleParser *p = new simpleParser(stmt);
+			Assert::AreEqual(true, (*p).parseAssign());
+		}
+
+		TEST_METHOD(testGoodAssignWithBrackets) {
+			vector<string> stmt;
+			stmt.push_back("x");
+			stmt.push_back("=");
+			stmt.push_back("(");
+			stmt.push_back("x");
+			stmt.push_back("+");
+			stmt.push_back("(");
+			stmt.push_back("y");
+			stmt.push_back("+");
+			stmt.push_back("z");
+			stmt.push_back(")");
+			stmt.push_back(")");
 			stmt.push_back(";");
 
 			simpleParser *p = new simpleParser(stmt);

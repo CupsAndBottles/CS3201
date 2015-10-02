@@ -28,7 +28,32 @@ bool simpleParser::parseFactor() {
 	string token = tokenizedProgram[index];
 
 	if ((*rules).isVarName(token) || (*rules).isConstValue(token)) {
+		index += 1;
 		return true;
+	}
+	else if (token == "(") {
+		index += 1;
+		if (parseExpression()) {
+			if (endOfProgram()) {
+				cout << "End of program reached while attempting to parse factor.\n";
+				return false;
+			}
+
+			token = tokenizedProgram[index];
+
+			if (token == ")") {
+				index += 1;
+				return true;
+			}
+			else {
+				cout << "Error: no closing bracket in factor.\n";
+				return false;
+			}
+		}
+		else {
+			cout << "Error parsing expression in factor.\n";
+			return false;
+		}
 	}
 	else {
 		return false;
@@ -41,24 +66,20 @@ bool simpleParser::parseTerm() {
 		return false;
 	}
 
-	string token = tokenizedProgram[index];
-
 	if (parseFactor()) {
-		index += 1;
 		if (endOfProgram()) {
 			cout << "Error: No delimiter in term.\n";
 			return false;
-		}
-		else if (tokenizedProgram[index] == ";") {
-			return true;
 		}
 		else if (tokenizedProgram[index] == "*") {
 			index += 1;
 			return parseFactor();
 		}
+		else {
+			return true; 
+		}
 	}
 	else {
-		cout << "Error: Invalid term.\n";
 		return false;
 	}
 }
@@ -69,33 +90,21 @@ bool simpleParser::parseExpression() {
 		return false;
 	}
 
-	string token = tokenizedProgram[index];
-
 	if (parseTerm()) {
 		if (endOfProgram()) {
-			cout << "Error: No delimiter.\n";
+			cout << "End of program reached while attempting to parse expression.\n";
 			return false;
 		}
-		else if (tokenizedProgram[index] == ";") {
-			return true;
-		}
-		else {
-			return parseExpression();
-		}
-	}
-	else if ((*rules).isOperator(token)) {
-		// Make sure we don't have consecutive operators
-		if (!(*rules).isOperator(tokenizedProgram[index - 1])) {
+		else if (tokenizedProgram[index] == "+" 
+				|| tokenizedProgram[index] == "-") {
 			index += 1;
-			return parseExpression();
+			return parseTerm();
 		}
 		else {
-			cout << "Invalid expression: Consecutive operators.\n";
-			return false;
+			return true;
 		}
 	}
 	else {
-		cout << "Invalid expression.\n";
 		return false;
 	}
 }
