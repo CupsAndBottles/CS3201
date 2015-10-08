@@ -1,3 +1,4 @@
+#include <thread>
 #include "TestWrapper.h"
 
 // implementation code of WrapperFactory - do NOT modify the next 5 lines
@@ -8,7 +9,7 @@ AbstractWrapper* WrapperFactory::createWrapper() {
 }
 // Do not modify the following line
 volatile bool TestWrapper::GlobalStop = false;
-
+thread t;
 // a default constructor
 TestWrapper::TestWrapper() {
   // create any objects here as instance variables of this class
@@ -27,7 +28,8 @@ void TestWrapper::parse(std::string filename) {
 		db->buildDatabase(tokenizedProgram);
 		cout << "Successfully constructed AST.\n";
 		
-		//viewAST(db->printAbstractSyntaxTree(db->getAbstractSyntaxTreeRoot()), filename);
+		t = thread(viewAST, db->printAbstractSyntaxTree(db->getAbstractSyntaxTreeRoot()), filename);
+		t.detach();
 		pkbPointer = ProgramKnowledgeBase(db);
 
 		cout << "Successfully constructed PKB.\n";
