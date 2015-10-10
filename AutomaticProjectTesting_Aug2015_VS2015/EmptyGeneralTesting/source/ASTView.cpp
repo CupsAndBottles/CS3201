@@ -19,6 +19,7 @@ vector<vector<Tnode*>> astVector;
 vector<vector<int>> window;
 vector<vector<int>> starting;
 int spacing = 35;
+static boolean glutInited = false;
 
 void init(void)
 {
@@ -212,11 +213,14 @@ string enumToPrintable(int enumVal)
 }
 
 int viewASTCall(vector<vector<Tnode*>> inputVector, string fileName) {
-	char fakeParam[] = "fake";
-	char *fakeargv[] = { fakeParam, NULL };
-	int fakeargc = 1;
-	glutInit(&fakeargc, fakeargv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+	if (!glutInited) {
+		char fakeParam[] = "fake";
+		char *fakeargv[] = { fakeParam, NULL };
+		int fakeargc = 1;
+		glutInit(&fakeargc, fakeargv);
+		glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+		glutInited = true;
+	}
 	int horizontal = 0;
 	int vertical = 0;
 	GetDesktopResolution(horizontal, vertical);
