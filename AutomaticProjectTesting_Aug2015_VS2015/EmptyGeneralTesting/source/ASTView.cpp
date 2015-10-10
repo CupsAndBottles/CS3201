@@ -2,6 +2,7 @@
 #include <GL\glew.h>
 #include <GL\freeglut.h>
 #include <iostream>
+#include <thread>
 
 #include "Database.h"
 #include "ASTView.h"
@@ -210,8 +211,7 @@ string enumToPrintable(int enumVal)
 	}
 }
 
-int viewAST(vector<vector<Tnode*>> inputVector, string fileName)
-{
+int viewASTCall(vector<vector<Tnode*>> inputVector, string fileName) {
 	char fakeParam[] = "fake";
 	char *fakeargv[] = { fakeParam, NULL };
 	int fakeargc = 1;
@@ -244,5 +244,11 @@ int viewAST(vector<vector<Tnode*>> inputVector, string fileName)
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 	glutMainLoop();
 
+	return 0;
+}
+
+int viewAST(vector<vector<Tnode*>> inputVector, string fileName)
+{
+	thread(viewASTCall, inputVector, fileName).detach();
 	return 0;
 }
