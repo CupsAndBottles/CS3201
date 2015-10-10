@@ -45,19 +45,16 @@ void Gnode::setNextWhile(Gnode* parent, Gnode* lastchild, Gnode* other){
 	lastchild->right = parent;
 }
 
-vector<Gnode *> Gnode::getNext(Gnode *node) {
-	vector<Gnode*> vec;
-	vec.clear();
+int Gnode::getNext(Gnode *node) {
+	return (node->right == NULL) ? 0 : node->right->value;
+}
 
-	if (node->type == STMT_IF) {
-		vec.push_back(node->left);
-		vec.push_back(node->right);
-		return vec;
-	} else {
-		vec.push_back(node->right);
-		return vec;
-	}	
-	return vector<Gnode *>();
+vector<int> Gnode::getNextIfWhile(Gnode *node) {
+	vector<int> vec;
+	vec.push_back(node->left->value);
+	vec.push_back(node->right->value);
+
+	return vec;
 }
 
 int Gnode::getValue() {

@@ -25,7 +25,8 @@ public:
 	static void setNext(Gnode *curr, Gnode *next);
 	static void setNextIf(Gnode *curr, Gnode *next1, Gnode *next2, Gnode *other);
 	static void setNextWhile(Gnode* parent, Gnode* lastchild, Gnode* other);
-	static vector<Gnode *> getNext(Gnode *node);
+	static int getNext(Gnode *node);
+	static vector<int> getNextIfWhile(Gnode *node);
 
 	static void printVector(vector<Gnode *> nodeVector);
 
