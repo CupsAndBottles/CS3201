@@ -440,7 +440,7 @@ void Database::printStatementTable()
 	}
 }
 
-void Database::buildControlFlowGraph()
+Gnode* Database::buildControlFlowGraph()
 {
 	// Create Gnodes
 	vector<Gnode*> vGnodes;
@@ -484,6 +484,8 @@ void Database::buildControlFlowGraph()
 			}
 		}
 	}
+
+	return cfgRoot;
 }
 
 void Database::printConstantTable()
