@@ -467,9 +467,9 @@ Gnode* Database::buildControlFlowGraph()
 		if (vGnodes.at(index)->getRight() == NULL) {
 			if (vGnodes.at(index)->getType() == Gnode::STMT_IF) {
 				Gnode *curr  = vGnodes.at(index);
-				Gnode *next1 = vGnodes.at(index+1);
-				Gnode *next2 = vGnodes.at(index+2);
-				Gnode *other = vGnodes.at(index+3);
+				Gnode *next1 = (i+1 >= vGnodes.size()) ? NULL : vGnodes.at(index+1);
+				Gnode *next2 = (i+2 >= vGnodes.size()) ? NULL : vGnodes.at(index+2);
+				Gnode *other = (i+3 >= vGnodes.size()) ? NULL : vGnodes.at(index+3);
 				Gnode::setNextIf(curr, next1, next2, other);
 			} else if (vGnodes.at(index)->getType() == Gnode::STMT_WHILE) {
 				parent = vGnodes.at(index);
@@ -479,7 +479,7 @@ Gnode* Database::buildControlFlowGraph()
 				Gnode::setNextWhile(parent, last_child, next);
 			} else {
 				Gnode *curr = vGnodes.at(index);
-				Gnode *next = vGnodes.at(index+1);
+				Gnode *next = (i+1 >= vGnodes.size()) ? NULL : vGnodes.at(index+1);
 				Gnode::setNext(curr, next);
 			}
 		}
