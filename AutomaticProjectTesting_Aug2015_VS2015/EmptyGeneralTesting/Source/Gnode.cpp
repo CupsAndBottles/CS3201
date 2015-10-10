@@ -16,13 +16,13 @@ Gnode::Gnode() {
 
 Gnode::~Gnode() {}
 
-Gnode *Gnode::createNode(int num) {
+Gnode *Gnode::createGnode(int num) {
 	Gnode *node = new Gnode;
 	node->value = num;
 	return node;
 }
 
-Gnode *Gnode::createNode(Type t, int num) {
+Gnode *Gnode::createGnode(Type t, int num) {
 	Gnode *node = new Gnode;
 	node->value = num;
 	node->type = t;
@@ -33,16 +33,16 @@ void Gnode::setNext(Gnode *curr, Gnode *next) {
         curr->right = next;
 }
 
-void Gnode::setNext(Gnode *curr, Gnode *next, Gnode *other) {
-	if (curr->type == STMT_WHILE) {
-		curr->right = next;
-		curr->left = other;
-		next->right = curr;
-	}
-	if (curr->type == STMT_IF) {
-		curr->left = next;
-		curr->right = other;
-	}
+void Gnode::setNextIf(Gnode *curr, Gnode *next1, Gnode *next2, Gnode *other) {
+	curr->left = next1;
+	curr->right = next2;
+	next1->right = other;
+	next2->right = other;
+}
+
+void Gnode::setNextWhile(Gnode* parent, Gnode* lastchild, Gnode* other){
+	parent->left = other;
+	lastchild->right = parent;
 }
 
 vector<Gnode *> Gnode::getNext(Gnode *node) {
@@ -70,6 +70,10 @@ Gnode *Gnode::getRight() {
 
 Gnode *Gnode::getLeft() {
 	return left;
+}
+
+Type Gnode::getType() {
+	return type;
 }
 
 void printVector(vector<Gnode *> nodeVector) {

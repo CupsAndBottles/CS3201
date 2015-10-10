@@ -1,5 +1,6 @@
 #pragma once
 #include "Tnode.h"
+#include "Gnode.h"
 #include "ProcTable.h"
 #include "VarTable.h"
 
@@ -19,6 +20,7 @@ public:
 	string toUpperCase(string s);
 	bool isNumber(string &s);
 	Tnode* getAbstractSyntaxTreeRoot();
+	Gnode* getControlFlowGraphRoot();
 	static Tnode* getExpressionTree(vector<string> exprList);
 	vector<Tnode*>* getStatementTable();
 	unordered_map<int, vector<Tnode*>>* getConstantTable();
@@ -29,6 +31,7 @@ public:
 	void printConstantTable();
 
 private:
+	Gnode* cfgRoot;
 	Tnode* astRoot;
 	vector<Tnode*> *stmtTable;
 	unordered_map<int, vector<Tnode*>> *constTable;

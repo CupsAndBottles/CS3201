@@ -12,6 +12,7 @@ public:
 	enum Type {
 		STMT_WHILE,
 		STMT_IF,
+		LAST_CHILD,
 
 		NOTYPE
 	};
@@ -19,10 +20,11 @@ public:
 	Gnode();
 	~Gnode();
 
-	static Gnode *createNode(int num);
-	static Gnode *createNode(Type t, int num);
+	static Gnode *createGnode(int num);
+	static Gnode *createGnode(Type t, int num);
 	static void setNext(Gnode *curr, Gnode *next);
-	static void setNext(Gnode *curr, Gnode *next, Gnode *other);
+	static void setNextIf(Gnode *curr, Gnode *next1, Gnode *next2, Gnode *other);
+	static void setNextWhile(Gnode* parent, Gnode* lastchild, Gnode* other);
 	static vector<Gnode *> getNext(Gnode *node);
 
 	static void printVector(vector<Gnode *> nodeVector);
@@ -30,6 +32,7 @@ public:
 	Gnode* getRight();
 	Gnode* getLeft();
 	int getValue();
+	Type getType();
 
 private:
 	Gnode *left;

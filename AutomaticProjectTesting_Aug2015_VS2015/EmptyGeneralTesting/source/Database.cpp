@@ -1,7 +1,7 @@
 #include "Database.h"
 
-/*
-//stub main
+
+/*//stub main
 int main()
 {
 	cout << "initilizing..." << endl;
@@ -34,11 +34,12 @@ int main()
 	db -> getProcedureTable() -> printProcedureTable();
 	db -> getVariableTable() -> printVariableTable();
 	return 0;
-}
-*/
+}*/
+
 
 Database::Database()
 {
+	this -> cfgRoot = NULL;
 	this -> astRoot = NULL;
 	this -> stmtTable = new vector<Tnode*>;
 	this-> constTable = new unordered_map<int, vector<Tnode*>>;
@@ -433,6 +434,56 @@ void Database::printStatementTable()
 		cout << "Statement :" << (i - stmtTable -> begin()) << ", Address: <" << *i << ">" << ", StmtNum: " << (**i).getStatementNumber() <<endl;
 	}
 }
+
+Gnode* Database::getControlFlowGraphRoot()
+{
+	// Create Gnodes
+	vector<Gnode*> vGnodes;
+	for (vector<Tnode*>::iterator i = stmtTable -> begin()+1; i != stmtTable -> end(); i++) {
+		if ((**i).getType() == Tnode::STMT_IF) {
+			Gnode *nodeif = Gnode::createGnode(Gnode::STMT_IF, (**i).getStatementNumber());
+			vGnodes.push_back(nodeif);
+		} else if ((**i).getType() == Tnode::STMT_WHILE) {
+			Gnode *nodewhile = Gnode::createGnode(Gnode::STMT_WHILE, (**i).getStatementNumber());
+			vGnodes.push_back(nodewhile);
+		} else if ((**i).isLastChild()) {
+			Gnode *lastchild = Gnode::createGnode(Gnode::LAST_CHILD, (**i).getStatementNumber());
+			vGnodes.push_back(lastchild);
+		}
+		Gnode *node = Gnode::createGnode((**i).getStatementNumber());
+		vGnodes.push_back(node);
+	}
+
+	cfgRoot = vGnodes.at(1);
+	Gnode::setNext(cfgRoot, vGnodes.at(2));
+
+	Node *parent = NULL
+	for (int index=2; index<vGnodes.size(); index++) {
+		if (vGnodes.at(index)->getRight() == NULL) {
+			if (vGnodes.at(index)->getType() == Gnode::STMT_IF) {
+				Gnode *curr  = vGnodes.at(index);
+				Gnode *next1 = vGnodes.at(index+1);
+				Gnode *next2 = vGnodes.at(index+2);
+				Gnode *other = vGnodes.at(index+3);
+				Gnode::setNextIf(curr, next1, next2, other);
+			} else if (vGnodes.at(index)->getType() == Gnode::STMT_WHILE) {
+				parent = vGnodes.at(index);
+			} else if (vGnodes.at(index)->getType() == Gnode::LAST_CHILD) {
+				Gnode *last_child = vGnodes.at(i);
+				Gnode *next = (i+1 >= vGnodes.size()) ? NULL : vGnodes.at(index+1);
+				Gnode::setNextWhile(parent, last_child, next);
+			} else {
+				Gnode *curr = vGnodes.at(index);
+				Gnode *next = vGnodes.at(index+1);
+				Gnode::setNext(curr, next);
+			}
+		}
+	}
+
+	return cfgRoot;
+}
+
+
 
 void Database::printConstantTable()
 {
