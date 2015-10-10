@@ -361,6 +361,11 @@ bool Database::isNumber(string &s)
 	return true;
 }
 
+Gnode *Database::getControlFlowGraphRoot()
+{
+	return cfgRoot;
+}
+
 Tnode *Database::getAbstractSyntaxTreeRoot()
 {
 	return astRoot;
@@ -435,7 +440,7 @@ void Database::printStatementTable()
 	}
 }
 
-Gnode* Database::getControlFlowGraphRoot()
+void Database::buildControlFlowGraph()
 {
 	// Create Gnodes
 	vector<Gnode*> vGnodes;
@@ -479,11 +484,7 @@ Gnode* Database::getControlFlowGraphRoot()
 			}
 		}
 	}
-
-	return cfgRoot;
 }
-
-
 
 void Database::printConstantTable()
 {

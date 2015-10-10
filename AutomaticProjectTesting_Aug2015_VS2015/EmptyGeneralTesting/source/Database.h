@@ -17,6 +17,7 @@ public:
 	~Database();
 
 	void buildDatabase(vector<string> tokens);
+	void buildControlFlowGraph();
 	string toUpperCase(string s);
 	bool isNumber(string &s);
 	Tnode* getAbstractSyntaxTreeRoot();
