@@ -4,7 +4,7 @@
 
 ProcTable::ProcTable()
 {
-	this->procTable = new unordered_map< string, Tnode*>;
+	this->procTable = new unordered_map< string, pair<Tnode*, Gnode*>>;
 }
 
 
@@ -19,8 +19,14 @@ int ProcTable::getSize()
 
 int ProcTable::addProcedure(string procName, Tnode *procNode)
 {
-	procTable->insert({ procName, procNode });
+	procTable->insert({ procName, make_pair(procNode, (Gnode*)NULL) });
 	return distance(procTable -> begin(),procTable -> find(procName));
+}
+
+int ProcTable::addProcedureCFGRoot(string procName, Gnode * root)
+{
+	procTable->at(procName).second = root;
+	return distance(procTable->begin(), procTable->find(procName));
 }
 
 string ProcTable::getProcedureName(int i)
@@ -55,7 +61,23 @@ Tnode* ProcTable::getProcedureAddress(int i)
 Tnode* ProcTable::getProcedureAddress(string procName)
 {
 	try {
-		return procTable -> at(procName);
+		return procTable -> at(procName).first;
+	}
+	catch (...) {
+		return NULL;
+	}
+}
+
+Gnode * ProcTable::getCFGRoot(int i)
+{
+
+	return getCFGRoot(getProcedureName(i));
+}
+
+Gnode * ProcTable::getCFGRoot(string procName)
+{
+	try {
+		return procTable->at(procName).second;
 	}
 	catch (...) {
 		return NULL;
@@ -65,7 +87,7 @@ Tnode* ProcTable::getProcedureAddress(string procName)
 void ProcTable::printProcedureTable()
 {
 	cout << endl << "<---------------------------------------- Procedure Table: ----------------------------------------> Size: " << procTable -> size() << endl << endl;
-	for (unordered_map<string, Tnode*>::iterator i = (*procTable).begin(); i != (*procTable).end(); i++) {
-		cout << "Index :" << distance(procTable->begin(), i) << ", Name: " << (*i).first << ", Address: <" << (*i).second << ">" << endl;
+	for (auto i = (*procTable).begin(); i != (*procTable).end(); i++) {
+		cout << "Index :" << distance(procTable->begin(), i) << ", Name: " << (*i).first << ", AST Address: <" << (*i).second.first << ">" << ", CFG Root: <" << (*i).second.second << ">" << endl;
 	}
 }
