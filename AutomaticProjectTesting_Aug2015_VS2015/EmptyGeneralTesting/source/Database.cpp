@@ -454,11 +454,15 @@ Gnode* Database::buildControlFlowGraph()
 		} else if ((**i).isLastChild()) {
 			Gnode *lastchild = Gnode::createGnode(Gnode::LAST_CHILD, (**i).getStatementNumber());
 			vGnodes.push_back(lastchild);
-		}
-		Gnode *node = Gnode::createGnode((**i).getStatementNumber());
-		vGnodes.push_back(node);
+		} else if (((**i).isWhile()) && ((**i).isLastChild())) {
+			Gnode *whileLastChild = Gnode::createGnode(Gnode::STMT_WHILE_AND_LAST_CHILD, (**i).getStatementNumber());
+		} else {
+			Gnode *node = Gnode::createGnode((**i).getStatementNumber());
+			vGnodes.push_back(node);
+		}	
 	}
 
+	// Begin linking Gnodes to create CFG
 	cfgRoot = vGnodes.at(1);
 	Gnode::setNext(cfgRoot, vGnodes.at(2));
 
@@ -473,10 +477,20 @@ Gnode* Database::buildControlFlowGraph()
 				Gnode::setNextIf(curr, next1, next2, other);
 			} else if (vGnodes.at(index)->getType() == Gnode::STMT_WHILE) {
 				parent = vGnodes.at(index);
+				Node *next = (i+1 >= vGnodes.size()) ? NULL : vGnodes.at(index+1);
+				Gnode::setNext(parent, next);
 			} else if (vGnodes.at(index)->getType() == Gnode::LAST_CHILD) {
 				Gnode *last_child = vGnodes.at(i);
 				Gnode *next = (i+1 >= vGnodes.size()) ? NULL : vGnodes.at(index+1);
 				Gnode::setNextWhile(parent, last_child, next);
+			} else if (vGnodes.at(index)->getType() == Gnode::STMT_WHILE_AND_LAST_CHILD) {
+				Gnode* last_child = NULL;
+				for (int j=0; j<vGnodes.size(); j++) {
+					last_child = (vGnodes.at(j)->getType() == Gnode::LAST_CHILD) ? vGnodes.at(j) : NULL;
+				}
+				Gnode *parent_last_child = vGnodes.at(index);
+				Gnode *next = parent;
+				Gnode::setNextWhile(parent_last_child, last_child, next);
 			} else {
 				Gnode *curr = vGnodes.at(index);
 				Gnode *next = (i+1 >= vGnodes.size()) ? NULL : vGnodes.at(index+1);
