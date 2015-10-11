@@ -466,22 +466,22 @@ Gnode* Database::buildControlFlowGraph()
 	cfgRoot = vGnodes.at(1);
 	Gnode::setNext(cfgRoot, vGnodes.at(2));
 
-	Node *parent = NULL
+	Gnode *parent = NULL;
 	for (int index=2; index<vGnodes.size(); index++) {
 		if (vGnodes.at(index)->getRight() == NULL) {
 			if (vGnodes.at(index)->getType() == Gnode::STMT_IF) {
 				Gnode *curr  = vGnodes.at(index);
-				Gnode *next1 = (i+1 >= vGnodes.size()) ? NULL : vGnodes.at(index+1);
-				Gnode *next2 = (i+2 >= vGnodes.size()) ? NULL : vGnodes.at(index+2);
-				Gnode *other = (i+3 >= vGnodes.size()) ? NULL : vGnodes.at(index+3);
+				Gnode *next1 = (index+1 >= vGnodes.size()) ? NULL : vGnodes.at(index+1);
+				Gnode *next2 = (index+2 >= vGnodes.size()) ? NULL : vGnodes.at(index+2);
+				Gnode *other = (index+3 >= vGnodes.size()) ? NULL : vGnodes.at(index+3);
 				Gnode::setNextIf(curr, next1, next2, other);
 			} else if (vGnodes.at(index)->getType() == Gnode::STMT_WHILE) {
 				parent = vGnodes.at(index);
-				Node *next = (i+1 >= vGnodes.size()) ? NULL : vGnodes.at(index+1);
+				Gnode *next = (index+1 >= vGnodes.size()) ? NULL : vGnodes.at(index+1);
 				Gnode::setNext(parent, next);
 			} else if (vGnodes.at(index)->getType() == Gnode::LAST_CHILD) {
-				Gnode *last_child = vGnodes.at(i);
-				Gnode *next = (i+1 >= vGnodes.size()) ? NULL : vGnodes.at(index+1);
+				Gnode *last_child = vGnodes.at(index);
+				Gnode *next = (index+1 >= vGnodes.size()) ? NULL : vGnodes.at(index+1);
 				Gnode::setNextWhile(parent, last_child, next);
 			} else if (vGnodes.at(index)->getType() == Gnode::STMT_WHILE_AND_LAST_CHILD) {
 				Gnode* last_child = NULL;
@@ -493,7 +493,7 @@ Gnode* Database::buildControlFlowGraph()
 				Gnode::setNextWhile(parent_last_child, last_child, next);
 			} else {
 				Gnode *curr = vGnodes.at(index);
-				Gnode *next = (i+1 >= vGnodes.size()) ? NULL : vGnodes.at(index+1);
+				Gnode *next = (index+1 >= vGnodes.size()) ? NULL : vGnodes.at(index+1);
 				Gnode::setNext(curr, next);
 			}
 		}
