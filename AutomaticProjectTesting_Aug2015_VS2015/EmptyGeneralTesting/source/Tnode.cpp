@@ -100,12 +100,15 @@ Tnode * Tnode::getChild(int childNum)
 		return NULL;
 	}
 	Tnode* curNode = this->getFirstChild();
-	for (int i = 1; curNode->hasRightSilbing() && i <= childNum; i++) {
+	for (int i = 1; i <= childNum; i++) {
 		if (i == childNum) {
 			return curNode;
 		}
 		else {
 			curNode = curNode->getRightSibling();
+			if (curNode == NULL) {
+				return curNode;
+			}
 		}
 	}
 	return NULL;
