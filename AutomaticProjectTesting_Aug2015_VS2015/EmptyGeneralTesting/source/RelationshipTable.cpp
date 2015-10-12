@@ -2,12 +2,18 @@
 
 void RelationshipTable::initRelTable() {
 
+	//13/10/15: need to change modifies, uses stmtRef to stmtAndEntRef
 	vector<string> Modifies = { "stmtRef", "entRef" };
 	vector<string> Uses = { "stmtRef", "entRef" };
 	vector<string> Parent = { "stmtRef", "stmtRef" };
 	vector<string> ParentT = { "stmtRef", "stmtRef" };
 	vector<string> Follows = { "stmtRef", "stmtRef" };
 	vector<string> FollowsT = { "stmtRef", "stmtRef" };
+
+	vector<string> Calls = { "entRef", "entRef" };
+	vector<string> CallsT = { "entRef", "entRef" };
+	vector<string> Next = { "lineRef", "lineRef" };
+	vector<string> NextT = { "lineRef", "lineRef" };
 
 	relTable.insert(make_pair("modifies", Modifies));
 	relTable.insert(make_pair("uses", Uses));
@@ -16,6 +22,10 @@ void RelationshipTable::initRelTable() {
 	relTable.insert(make_pair("follows", Follows));
 	relTable.insert(make_pair("follows*", FollowsT));
 
+	relTable.insert(make_pair("calls", Calls));
+	relTable.insert(make_pair("calls*", CallsT));
+	relTable.insert(make_pair("next", Next));
+	relTable.insert(make_pair("next*", NextT));
 }
 
 vector<string> RelationshipTable::getArguments(string name) {
