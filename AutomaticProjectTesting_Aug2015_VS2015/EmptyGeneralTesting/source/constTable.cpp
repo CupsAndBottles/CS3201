@@ -26,6 +26,7 @@ int ConstTable::addConstant(int i,Tnode *constNode)
 		vector<Tnode*> listNode = { constNode };
 		constTable->insert({ i, listNode });
 	}
+	return distance(constTable->begin(), constTable->find(i));
 }
 
 vector<Tnode*>* ConstTable::getConstAddress(int i)
