@@ -69,7 +69,7 @@ Gnode *Gnode::getLeft() {
 	return left;
 }
 
-Type Gnode::getType() {
+Gnode::Type Gnode::getType() {
 	return type;
 }
 
@@ -80,4 +80,8 @@ void printVector(vector<Gnode *> nodeVector) {
 	for (vector<Gnode *>::iterator node = nodeVector.begin(); node != nodeVector.end(); ++node) {
 		cout << (**node).getValue() << endl;
 	}
+}
+
+int main() {
+
 }

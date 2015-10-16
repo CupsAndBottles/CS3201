@@ -14,7 +14,6 @@ public:
 		STMT_IF,
 		STMT_WHILE_AND_LAST_CHILD,
 		LAST_CHILD,
-
 		NOTYPE
 	};
 
