@@ -51,6 +51,7 @@ namespace UnitTesting
 			term.push_back("y");
 			term.push_back("*");
 			term.push_back("z");
+			term.push_back(";");
 
 			simpleParser *p = new simpleParser(term);
 			Assert::AreEqual(true, (*p).parseTerm());
@@ -80,10 +81,48 @@ namespace UnitTesting
 			Assert::AreEqual(true, (*p).parseAssign());
 		}
 
+		TEST_METHOD(testGoodLongAssign) {
+			vector<string> stmt;
+			stmt.push_back("x");
+			stmt.push_back("=");
+			stmt.push_back("y");
+			stmt.push_back("+");
+			stmt.push_back("1");
+			stmt.push_back("-");
+			stmt.push_back("2");
+			stmt.push_back("+");
+			stmt.push_back("z");
+			stmt.push_back(";");
+
+			simpleParser *p = new simpleParser(stmt);
+			Assert::AreEqual(true, (*p).parseAssign());
+		}
+
 		TEST_METHOD(testGoodAssignWithBrackets) {
 			vector<string> stmt;
 			stmt.push_back("x");
 			stmt.push_back("=");
+			stmt.push_back("(");
+			stmt.push_back("x");
+			stmt.push_back("+");
+			stmt.push_back("(");
+			stmt.push_back("y");
+			stmt.push_back("+");
+			stmt.push_back("z");
+			stmt.push_back(")");
+			stmt.push_back(")");
+			stmt.push_back(";");
+
+			simpleParser *p = new simpleParser(stmt);
+			Assert::AreEqual(true, (*p).parseAssign());
+		}
+
+		TEST_METHOD(testGoodComplexAssign) {
+			vector<string> stmt;
+			stmt.push_back("x");
+			stmt.push_back("=");
+			stmt.push_back("z");
+			stmt.push_back("*");
 			stmt.push_back("(");
 			stmt.push_back("x");
 			stmt.push_back("+");
@@ -127,17 +166,22 @@ namespace UnitTesting
 
 		TEST_METHOD(testGoodCall) {
 			vector<string> call;
+			call.push_back("p");
+			call.push_back("{");
 			call.push_back("call");
 			call.push_back("procName");
 			call.push_back(";");
+			call.push_back("}");
 
 			simpleParser *p = new simpleParser(call);
-			Assert::AreEqual(true, (*p).parseStmt());
+			Assert::AreEqual(true, (*p).parseProcedure());
 		}
 
 		TEST_METHOD(testGoodIf) {
 			vector<string> ifStmt;
 
+			ifStmt.push_back("p");
+			ifStmt.push_back("{");
 			ifStmt.push_back("if");
 			ifStmt.push_back("i");
 			ifStmt.push_back("then");
@@ -152,12 +196,15 @@ namespace UnitTesting
 			ifStmt.push_back("b");
 			ifStmt.push_back(";");
 			ifStmt.push_back("}");
+			ifStmt.push_back("}");
 
 			simpleParser *p = new simpleParser(ifStmt);
-			Assert::AreEqual(true, (*p).parseStmt());
+			Assert::AreEqual(true, (*p).parseProcedure());
 
 			ifStmt.clear();
 
+			ifStmt.push_back("p");
+			ifStmt.push_back("{");
 			ifStmt.push_back("if");
 			ifStmt.push_back("i");
 			ifStmt.push_back("then");
@@ -175,9 +222,10 @@ namespace UnitTesting
 			ifStmt.push_back("1");
 			ifStmt.push_back(";");
 			ifStmt.push_back("}");
+			ifStmt.push_back("}");
 
 			simpleParser *q = new simpleParser(ifStmt);
-			Assert::AreEqual(true, (*q).parseStmt());
+			Assert::AreEqual(true, (*q).parseProcedure());
 		}
 
 		TEST_METHOD(testEmptyIf) {
@@ -239,11 +287,144 @@ namespace UnitTesting
 			Assert::AreEqual(false, (*p).parseProcedure());
 		}
 
+		TEST_METHOD(testProcedureList) {
+			vector<string> proc;
+			proc.push_back("p");
+			proc.push_back("{");
+			proc.push_back("x");
+			proc.push_back("=");
+			proc.push_back("y");
+			proc.push_back("+");
+			proc.push_back("1");
+			proc.push_back(";");
+			proc.push_back("}");
+
+			string procName = "p";
+
+			simpleParser *p = new simpleParser(proc);
+			Assert::AreEqual(true, (*p).parseProcedure());
+			Assert::AreEqual(procName, (*p).procList[0]);
+		}
+
+		TEST_METHOD(testCallList) {
+			vector<string> proc;
+			proc.push_back("p");
+			proc.push_back("{");
+			proc.push_back("call");
+			proc.push_back("q");
+			proc.push_back(";");
+			proc.push_back("}");
+
+			string proc1 = "p";
+			string proc2 = "q";
+
+			simpleParser *p = new simpleParser(proc);
+			Assert::AreEqual(true, (*p).parseProcedure());
+			Assert::AreEqual(proc1, (*p).procList[0]);
+			Assert::AreEqual(1, (int)(*p).callList.count("p"));
+			Assert::AreEqual(proc2, (*p).callList["p"][0]);
+		}
+
+		TEST_METHOD(testCallExistingProcedure) {
+			vector<string> prog;
+			simpleParser *p = new simpleParser(prog);
+
+			string proc1 = "p";
+			string proc2 = "q";
+			vector<string> called;
+			called.push_back(proc2);
+			(*p).procList = called;
+			(*p).callList[proc1] = called;
+
+			Assert::AreEqual(true, (*p).checkProcedureExistence());
+		}
+
+		TEST_METHOD(testCallNonexistentProcedure) {
+			vector<string> prog;
+			simpleParser *p = new simpleParser(prog);
+
+			string proc1 = "p";
+			string proc2 = "q";
+			vector<string> called;
+			called.push_back(proc2);
+			(*p).callList[proc1] = called;
+			called.clear();
+			called.push_back(proc1);
+			(*p).procList = called;
+
+			Assert::AreEqual(false, (*p).checkProcedureExistence());
+		}
+
+		TEST_METHOD(testSimpleRecursion) {
+			vector<string> prog;
+			simpleParser *p = new simpleParser(prog);
+
+			string proc1 = "p";
+			vector<string> called;
+			called.push_back(proc1);
+			(*p).procList = called;
+			(*p).callList[proc1] = called;
+
+			Assert::AreEqual(false, (*p).checkSimpleRecursion());
+		}
+
+		TEST_METHOD(testNoSimpleRecursion) {
+			vector<string> prog;
+			simpleParser *p = new simpleParser(prog);
+
+			string proc1 = "p";
+			string proc2 = "q";
+			vector<string> called;
+			called.push_back(proc1);
+			(*p).callList[proc2] = called;
+
+			Assert::AreEqual(true, (*p).checkSimpleRecursion());
+		}
+
+		TEST_METHOD(testMutualRecursion) {
+			vector<string> prog;
+			simpleParser *p = new simpleParser(prog);
+
+			string proc1 = "p";
+			string proc2 = "q";
+			vector<string> called;
+
+			called.push_back(proc1);
+			(*p).callList[proc2] = called;
+			called.clear();
+			called.push_back(proc2);
+			(*p).callList[proc1] = called;
+
+			Assert::AreEqual(false, (*p).checkMutualRecursion());
+		}
+
+		TEST_METHOD(testNoMutualRecursion) {
+			vector<string> prog;
+			simpleParser *p = new simpleParser(prog);
+
+			string proc1 = "p";
+			string proc2 = "q";
+			string proc3 = "r";
+			vector<string> called;
+
+			called.push_back(proc1);
+			called.push_back(proc3);
+			(*p).callList[proc2] = called;
+			called.clear();
+			called.push_back(proc3);
+			(*p).callList[proc1] = called;
+
+			Assert::AreEqual(true, (*p).checkMutualRecursion());
+		}
+
 		TEST_METHOD(testParserIsCaseSensitive) {
 			vector<string> prog;
+			prog.push_back("p");
+			prog.push_back("{");
 			prog.push_back("Call");
 			prog.push_back("procName");
 			prog.push_back(";");
+			prog.push_back("}");
 
 			simpleParser *p = new simpleParser(prog);
 			Assert::AreEqual(false, (*p).parseProcedure());

@@ -3,6 +3,7 @@
 #ifndef SIMPLEParser
 #define SIMPLEParser
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -25,6 +26,13 @@ public:
 	bool parseStmt();
 	bool parseStmtList();
 	bool parseProcedure();
+
+	bool checkProcedureExistence();
+	bool checkSimpleRecursion();
+	bool checkMutualRecursion();
+
+	vector<string> procList;
+	map<string, vector<string>> callList;
 
 private:
 	vector<string> tokenizedProgram;

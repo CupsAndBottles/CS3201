@@ -73,7 +73,7 @@ bool simpleParser::parseTerm() {
 		}
 		else if (tokenizedProgram[index] == "*") {
 			index += 1;
-			return parseFactor();
+			return parseTerm();
 		}
 		else {
 			return true; 
@@ -98,7 +98,7 @@ bool simpleParser::parseExpression() {
 		else if (tokenizedProgram[index] == "+" 
 				|| tokenizedProgram[index] == "-") {
 			index += 1;
-			return parseTerm();
+			return parseExpression();
 		}
 		else {
 			return true;
@@ -293,6 +293,18 @@ bool simpleParser::parseCall() {
 	string next_token = tokenizedProgram[index];
 
 	if ((*rules).isProcName(token) && next_token == ";") {
+		// Get the procedure this call statement is in
+		string procName = procList.back();
+		cout << "Parent procedure is " << procName << "\n";
+		vector<string> called;
+
+		// Store the calling procedure as key and vector of called procedures as value
+		if (callList.find(procName) != callList.end()) {
+			vector<string> called = callList[procName];
+		}
+		called.push_back(token);
+		callList[procName] = called;
+
 		index += 1;
 		return true;
 	}
@@ -358,6 +370,7 @@ bool simpleParser::parseProcedure() {
 	string next_token = tokenizedProgram[index];
 
 	if((*rules).isProcName(token) && next_token == "{"){
+		procList.push_back(token);
 		index += 1;
 
 		if (!parseStmtList()) {
@@ -380,6 +393,73 @@ bool simpleParser::parseProcedure() {
 	}
 }
 
+// Check that all called procedures exist
+bool simpleParser::checkProcedureExistence() {
+	string procName;
+
+	// Check all procedures that call a procedure
+	for (map<string, vector<string>>::iterator it = callList.begin(); it != callList.end(); ++it) {
+		// Check all procedures called by the current procedure
+		vector<string> called = it->second;
+		for (int i = 0; i < called.size(); i++) {
+			for (int j = 0; j < procList.size(); j++) {
+				if (procList[j] == called[i]) {
+					break;
+				}
+				else {
+					if (j == procList.size() - 1) {
+						return false;
+					}
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+// Check that a procedure does not call itself
+bool simpleParser::checkSimpleRecursion() {
+	for (map<string, vector<string>>::iterator it = callList.begin(); it != callList.end(); ++it) {
+		string caller = it->first;
+		vector<string> called = it->second;
+
+		for (int i = 0; i < called.size(); i++) {
+			if (caller == called[i]) {
+				cout << "Error: procedure " << called[i] << " calls itself.\n";
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+// Check that any 2 procedures do not call each other
+bool simpleParser::checkMutualRecursion() {
+	// Check each procedure that calls others
+	for (map<string, vector<string>>::iterator it = callList.begin(); it != callList.end(); ++it) {
+		string callingProc = it->first;
+		vector<string> calledProc = it->second;
+
+		// Check the procedures called by the current procedure
+		for (int i = 0; i < calledProc.size(); i++) {
+			if(callList.find(calledProc[i]) != callList.end()) {
+				// Check the procedures called by the current called procedure
+				// Check if they match the original calling procedure
+				vector<string> calledByCalledProc = callList[calledProc[i]];
+				for (int j = 0; j < calledByCalledProc.size(); j++) {
+					if (calledByCalledProc[j] == callingProc) {
+						cout << "Error: procedure " << callingProc << " and " << calledProc[i] << " are mutually recursive.\n";
+						return false;
+					}
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
 bool simpleParser::parseProgram() {
 	while (!endOfProgram()) {
 		string token = tokenizedProgram[index];
@@ -398,6 +478,16 @@ bool simpleParser::parseProgram() {
 			tokenizedProgram.clear();
 			return false;
 		}
+	}
+
+	if (!checkProcedureExistence()) {
+		return false;
+	}
+	if (!checkSimpleRecursion()) {
+		return false;
+	}
+	if (!checkMutualRecursion()) {
+		return false;
 	}
 
 	return true;
