@@ -149,6 +149,7 @@ vector<string> QueryPreProcessor::mergeQuotations(vector<string> temp) {
 }
 
 //takes in rel-clause / pattern-clause to check for ( , ) format before returning a vector of 3 arguments in a form rel, arg1, arg2
+//or ( , , ) format for if pattern
 vector<string> QueryPreProcessor::checkForBracketsAndComma(vector<string> argVector) {
 
 	string mergedString;
@@ -182,10 +183,21 @@ vector<string> QueryPreProcessor::checkForBracketsAndComma(vector<string> argVec
 			cout << "missing brackets or commas" << endl;
 		}
 	}
+	//particularly for if pattern i.e. if(_,_,_) is correct, will return a argVect object: (ifstat, "eg" , _)
+	else if (checkVector.size() == 8) {
+		if (checkVector[1].compare("(") == 0 && checkVector[3].compare(",") == 0 && checkVector[5].compare(")") == 0 && checkVector[7].compare(")") == 0) {
+			argVector.push_back(checkVector[0]);
+			argVector.push_back(checkVector[2]);
+			argVector.push_back(checkVector[4]);
+			//cout << "brackets and commas in place" << endl;
+		}
+		else {
+			cout << "missing brackets or commas" << endl;
+		}
+	}
 	else {
 		cout << "num arguments invalid (or) missing brackets/commas" << endl;
 	}
-
 	checkVector.clear();
 	mergedString.erase();
 	return argVector;
@@ -224,17 +236,19 @@ bool QueryPreProcessor::query(string s) {
 	for (size_t i = 0; i < selectCl.size(); i++) {
 	cout << selectCl.at(i) << endl;
 	}*/
-	vector<string> tempSelectCl2 = removeAndTokens(tempSelectCl);
-	vector<string> selectCl = mergeQuotations(tempSelectCl2);
+
+	//vector<string> tempSelectCl2 = removeAndTokens(tempSelectCl);
+	//vector<string> selectCl = mergeQuotations(tempSelectCl2);
+	vector<string> selectCl = mergeQuotations(tempSelectCl);
 
 	//first must be a Select, else return false
 	if (toLowerCase(selectCl.at(0)).compare("select") == 0) {
 		//cout << "'Select' found" << endl;
 		size_t i = 1;
 
-		//second phase must be a result-clause synonym (<tuple>, boolean - optional for now), verify synonym, else false
+		//second phase must be a result-clause synonym (<tuple>, boolean), verify synonym, else false
 		//cout << "result-clause: ";
-		while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0)) {
+		while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0 || toLowerCase(selectCl.at(i)).compare("with")==0)) {
 			//cout << selectCl.at(i) + " ";
 			if (sCheck.isSynonym(selectCl.at(i), entityTable) || (toLowerCase(selectCl.at(i)).compare("boolean") == 0) ) {
 				entityList.push_back(selectCl.at(i));
@@ -254,7 +268,7 @@ bool QueryPreProcessor::query(string s) {
 			return false;
 		}
 
-		//third phase: followed by suchthat | pattern | (with-optional for now), else error
+		//third phase: followed by suchthat | pattern | with, else error
 		vector<string> argVector;
 		vector<string> queryVector;
 		while (i < selectCl.size()) {
@@ -267,7 +281,8 @@ bool QueryPreProcessor::query(string s) {
 					i++;
 					//cout << "suchthat-cl: ";
 					//extract relCond
-					while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0)) {
+					while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0 
+						|| toLowerCase(selectCl.at(i)).compare("and") == 0 || toLowerCase(selectCl.at(i)).compare("with") == 0)) {
 						//cout << selectCl.at(i) + " ";
 						argVector.push_back(selectCl.at(i));
 						i++;
@@ -276,18 +291,10 @@ bool QueryPreProcessor::query(string s) {
 						}
 					}
 					queryVector = checkForBracketsAndComma(argVector);
-					if (!queryVector.empty()) {
-						if (verifySuchThatQuery(queryVector)) {
-							addQueryObject(queryVector);
-							queryVector.clear();
-							argVector.clear();
-						}
-						else {
-							cout << "invalid such that query" << endl;
-							queryVector.clear();
-							argVector.clear();
-							return false;
-						}
+					if (verifySuchThatQuery(queryVector)) {
+						addQueryObject(queryVector);
+						queryVector.clear();
+						argVector.clear();
 					}
 					else {
 						cout << "invalid such that query" << endl;
@@ -307,7 +314,8 @@ bool QueryPreProcessor::query(string s) {
 				i++;
 				//cout << "pattern-cl: ";
 				//extract patternCond
-				while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0)) {
+				while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0
+					|| toLowerCase(selectCl.at(i)).compare("and") == 0 || toLowerCase(selectCl.at(i)).compare("with") == 0)) {
 					//cout << selectCl.at(i) + " ";
 					argVector.push_back(selectCl.at(i));
 					i++;
@@ -316,11 +324,44 @@ bool QueryPreProcessor::query(string s) {
 					}
 				}
 				queryVector = checkForBracketsAndComma(argVector);
-				if (!queryVector.empty()) {
-					if (verifyPatternQuery(queryVector)) {
-						addQueryObject(queryVector);
-						queryVector.clear();
-						argVector.clear();
+				if (verifyPatternQuery(queryVector)) {
+					addQueryObject(queryVector);
+					queryVector.clear();
+					argVector.clear();
+				}
+				else {
+					cout << "invalid pattern query" << endl;
+					queryVector.clear();
+					argVector.clear();
+					return false;
+				}
+
+				//pattern-cl cont: check cases where after pattern, there is another pattern following but did not declare the word pattern and use only and
+				//i.e. pattern a( , ) and a2( , )
+				if (toLowerCase(selectCl.at(i)).compare("and") == 0) {
+					//extract patternCond
+					while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0
+						|| toLowerCase(selectCl.at(i)).compare("and") == 0 || toLowerCase(selectCl.at(i)).compare("with") == 0)) {
+						//cout << selectCl.at(i) + " ";
+						argVector.push_back(selectCl.at(i));
+						i++;
+						if (selectCl.size() == i) {
+							break;
+						}
+					}
+					queryVector = checkForBracketsAndComma(argVector);
+					if (!queryVector.empty()) {
+						if (verifyPatternQuery(queryVector)) {
+							addQueryObject(queryVector);
+							queryVector.clear();
+							argVector.clear();
+						}
+						else {
+							cout << "invalid pattern query" << endl;
+							queryVector.clear();
+							argVector.clear();
+							return false;
+						}
 					}
 					else {
 						cout << "invalid pattern query" << endl;
@@ -329,17 +370,67 @@ bool QueryPreProcessor::query(string s) {
 						return false;
 					}
 				}
-				else {
-					cout << "invalid pattern query" << endl;
-					queryVector.clear();
-					argVector.clear();
-					return false;
-				}
 			}
-			//else nothing found (don't care about 'with' for now)
+			//find with-cl
+			else if (toLowerCase(selectCl.at(i)).compare("with") == 0) {
+				i++;
+				while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0
+					|| toLowerCase(selectCl.at(i)).compare("and") == 0 || toLowerCase(selectCl.at(i)).compare("with") == 0)) {
+					argVector.push_back(selectCl.at(i));
+					i++;
+					if (selectCl.size() == i) {
+						break;
+					}
+				}
+
+				//13/10/15:MAKE SURE WITH-CL SYNTAX IS CORRECT
+
+			}
+			//"and" is present, next clause is definitely a suchthat-cl or a with-clause.
 			else {
 				i++;
-				cout << "no suchthat-cl / pattern-cl found" << endl;
+				//if is with-cl
+				if (toLowerCase(selectCl.at(i)).compare("with") == 0) {
+					i++;
+					while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0
+						|| toLowerCase(selectCl.at(i)).compare("and") == 0 || toLowerCase(selectCl.at(i)).compare("with") == 0)) {
+						argVector.push_back(selectCl.at(i));
+						i++;
+						if (selectCl.size() == i) {
+							break;
+						}
+					}
+
+					//13/10/15: MAKE SURE WITH-CL SYNTAX IS CORRECT
+
+				}
+				//else is a suchthat-cl
+				else {
+					i++;
+					//extract relCond
+					while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0
+						|| toLowerCase(selectCl.at(i)).compare("and") == 0 || toLowerCase(selectCl.at(i)).compare("with") == 0)) {
+						//cout << selectCl.at(i) + " ";
+						argVector.push_back(selectCl.at(i));
+						i++;
+						if (selectCl.size() == i) {
+							break;
+						}
+					}
+					queryVector = checkForBracketsAndComma(argVector);
+					if (verifySuchThatQuery(queryVector)) {
+						addQueryObject(queryVector);
+						queryVector.clear();
+						argVector.clear();
+					}
+					else {
+						cout << "invalid such that query" << endl;
+						queryVector.clear();
+						argVector.clear();
+						return false;
+					}
+				}
+				cout << "no suchthat-cl / pattern-cl / with-cl found" << endl;
 			}
 
 		}
@@ -355,13 +446,6 @@ bool QueryPreProcessor::query(string s) {
 	return true;
 }
 
-/*
-void QueryPreProcessor::printSCL(vector<string> s) {
-	for (size_t i = 0; i < s.size(); i++) {
-		cout << s.at(i);
-	}
-	cout << endl;
-}*/
 
 EntTable QueryPreProcessor::getEntityTable() {
 	return entityTable;

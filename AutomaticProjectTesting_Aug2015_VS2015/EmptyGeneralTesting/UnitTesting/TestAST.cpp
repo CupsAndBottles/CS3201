@@ -252,5 +252,29 @@ namespace UnitTesting
 
 			Assert::IsTrue(exprRoot->contains(T1));
 		}
+
+		TEST_METHOD(TestGetChild)
+		{
+			Tnode* T1 = Tnode::createNode(Tnode::STMTLST, "");
+			Tnode* T2 = Tnode::createNode(Tnode::STMT_ASSIGN, "");
+			Tnode* T3 = Tnode::createNode(Tnode::STMT_ASSIGN, "");
+			Tnode* T4 = Tnode::createNode(Tnode::STMT_ASSIGN, "");
+			Tnode* T5 = Tnode::createNode(Tnode::STMT_ASSIGN, "");
+			Tnode* T6 = Tnode::createNode(Tnode::STMT_ASSIGN, "");
+			Tnode* T7 = Tnode::createNode(Tnode::STMT_ASSIGN, "");
+			Tnode::createLink(Tnode::PARENT, *T1, *T2);
+			Tnode::createLink(Tnode::RIGHTSIB, *T2, *T3);
+			Tnode::createLink(Tnode::RIGHTSIB, *T3, *T4);
+			Tnode::createLink(Tnode::RIGHTSIB, *T4, *T5);
+			Tnode::createLink(Tnode::RIGHTSIB, *T5, *T6);
+			Tnode::createLink(Tnode::RIGHTSIB, *T6, *T7);
+
+			Assert::AreEqual((int)T1->getFirstChild(),(int)T2);
+			Assert::AreEqual((int)T1->getChild(6), (int)T7);
+			Assert::AreEqual((int)T1->getChild(1), (int)T2);
+			Assert::AreEqual((int)T1->getChild(7), NULL);
+			Assert::AreEqual((int)T1->getChild(0), NULL);
+
+		}
 	};
 }

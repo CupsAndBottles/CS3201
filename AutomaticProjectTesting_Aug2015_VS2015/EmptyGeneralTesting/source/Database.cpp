@@ -1,7 +1,7 @@
 #include "Database.h"
 
-/*
-//stub main
+
+/*//stub main
 int main()
 {
 	cout << "initilizing..." << endl;
@@ -34,14 +34,15 @@ int main()
 	db -> getProcedureTable() -> printProcedureTable();
 	db -> getVariableTable() -> printVariableTable();
 	return 0;
-}
-*/
+}*/
+
 
 Database::Database()
 {
+	this -> cfgRoot = NULL;
 	this -> astRoot = NULL;
-	this -> stmtTable = new vector<Tnode*>;
-	this-> constTable = new unordered_map<int, vector<Tnode*>>;
+	this -> stmtTable = new StmtTable;
+	this-> constTable = new ConstTable;
 	this -> procTable = new ProcTable;
 	this -> varTable = new VarTable;
 }
@@ -132,7 +133,7 @@ Tnode* Database::stmt(vector<string> &tokens, vector<string>::iterator &it)
 		st = Tnode::createNode(Tnode::STMT_ASSIGN, "");
 		Tnode::createLink(Tnode::PARENT, *st, *assign(tokens,it));
 	}
-	addToStatementTable(st);
+	stmtTable -> addStatement(st);
 	return st;
 }
 
@@ -278,7 +279,7 @@ Tnode *Database::factor(vector<string> &tokens, vector<string>::iterator start, 
 	else if (start == end) {
 		if (isNumber(*start)) {
 			fac = Tnode::createNode(stoi(*start));
-			addToConstTable(stoi(*start), fac);
+			constTable->addConstant(stoi(*start), fac);
 		}
 		else {
 			fac = createVariable(Tnode::VARIABLE, *start);
@@ -293,25 +294,6 @@ Tnode * Database::createVariable(Tnode::Type t, string n)
 	varNode = Tnode::createNode(Tnode::VARIABLE, n);
 	varTable->addVariable(n, varNode);
 	return varNode;
-}
-
-void Database::addToStatementTable(Tnode* stmtNode)
-{
-	if (stmtTable->size() < (unsigned)stmtNode->getStatementNumber()+1) {
-		stmtTable->resize(stmtNode->getStatementNumber()+1);
-	}
-	stmtTable->at(stmtNode->getStatementNumber()) = stmtNode;
-}
-
-void Database::addToConstTable(int i, Tnode * constNode)
-{
-	if (constTable->find(i) != constTable->end()) {
-		(constTable->at(i)).push_back(constNode);
-	}
-	else {
-		vector<Tnode*> listNode = { constNode };
-		constTable->insert({ i, listNode });
-	}
 }
 
 void Database::match(vector<string>::iterator &it, string token)
@@ -360,6 +342,11 @@ bool Database::isNumber(string &s)
 	return true;
 }
 
+Gnode *Database::getControlFlowGraphRoot()
+{
+	return cfgRoot;
+}
+
 Tnode *Database::getAbstractSyntaxTreeRoot()
 {
 	return astRoot;
@@ -372,12 +359,12 @@ Tnode* Database::getExpressionTree(vector<string> exprList)
 	return tempDB.expr(exprList, exprList.begin(), exprList.end()-1);
 }
 
-vector<Tnode*>* Database::getStatementTable()
+StmtTable* Database::getStatementTable()
 {
 	return stmtTable;
 }
 
-unordered_map<int, vector<Tnode*>>* Database::getConstantTable()
+ConstTable* Database::getConstantTable()
 {
 	return constTable;
 }
@@ -424,21 +411,4 @@ vector<vector<Tnode*>> Database::printAbstractSyntaxTree(Tnode* root)
 	}
 	*/
 	return notSoSimple;
-}
-
-void Database::printStatementTable()
-{
-	cout << endl << "<---------------------------------------- Statement Table: ---------------------------------------->" << endl << endl;
-	for (vector<Tnode*>::iterator i = stmtTable -> begin()+1; i != stmtTable -> end(); i++) {
-		cout << "Statement :" << (i - stmtTable -> begin()) << ", Address: <" << *i << ">" << ", StmtNum: " << (**i).getStatementNumber() <<endl;
-	}
-}
-
-void Database::printConstantTable()
-{
-	cout << endl << "<---------------------------------------- Constant Table: ---------------------------------------->" << endl << endl;
-	for (auto i = (*constTable).begin(); i != (*constTable).end(); i++) {
-		cout << "Index :" << distance(constTable->begin(), i) << ", Value: " << (*i).first << ", Address: ";
-		varTable->printNodeVector((*i).second);
-	}
 }

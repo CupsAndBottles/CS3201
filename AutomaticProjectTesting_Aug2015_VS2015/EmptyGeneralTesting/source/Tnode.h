@@ -49,6 +49,7 @@ public:
 	Tnode *getFirstChild();
 	Tnode *getLeftSibling();
 	Tnode *getRightSibling();
+	Tnode *getChild(int childNum);
 	Type getType();
 	string getName();
 	int getValue();
@@ -70,6 +71,7 @@ public:
 	bool isProgram();
 	bool isFirstChild();
 	bool isLastChild();
+	bool hasRightSilbing();
 	bool isExpression();
 	bool isVariable();
 	bool isConstant();

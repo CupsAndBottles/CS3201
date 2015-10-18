@@ -94,6 +94,26 @@ Tnode *Tnode::getRightSibling()
 	return rightSibNode;
 }
 
+Tnode * Tnode::getChild(int childNum)
+{
+	if (childNum <= 0) {
+		return NULL;
+	}
+	Tnode* curNode = this->getFirstChild();
+	for (int i = 1; i <= childNum; i++) {
+		if (i == childNum) {
+			return curNode;
+		}
+		else {
+			curNode = curNode->getRightSibling();
+			if (curNode == NULL) {
+				return curNode;
+			}
+		}
+	}
+	return NULL;
+}
+
 Tnode::Type Tnode::getType()
 {
 	return type;
@@ -303,6 +323,11 @@ bool Tnode::isFirstChild() {
 bool Tnode::isLastChild()
 {
 	return this->getRightSibling() == NULL;
+}
+
+bool Tnode::hasRightSilbing()
+{
+	return this->getRightSibling()!= NULL;
 }
 
 bool Tnode::isExpression()

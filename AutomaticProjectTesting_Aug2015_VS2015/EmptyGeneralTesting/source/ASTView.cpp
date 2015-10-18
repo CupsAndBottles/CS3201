@@ -2,6 +2,7 @@
 #include <GL\glew.h>
 #include <GL\freeglut.h>
 #include <iostream>
+#include <thread>
 
 #include "Database.h"
 #include "ASTView.h"
@@ -18,6 +19,7 @@ vector<vector<Tnode*>> astVector;
 vector<vector<int>> window;
 vector<vector<int>> starting;
 int spacing = 35;
+static boolean glutInited = false;
 
 void init(void)
 {
@@ -210,13 +212,15 @@ string enumToPrintable(int enumVal)
 	}
 }
 
-int viewAST(vector<vector<Tnode*>> inputVector, string fileName)
-{
-	char fakeParam[] = "fake";
-	char *fakeargv[] = { fakeParam, NULL };
-	int fakeargc = 1;
-	glutInit(&fakeargc, fakeargv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+int viewASTCall(vector<vector<Tnode*>> inputVector, string fileName) {
+	if (!glutInited) {
+		char fakeParam[] = "fake";
+		char *fakeargv[] = { fakeParam, NULL };
+		int fakeargc = 1;
+		glutInit(&fakeargc, fakeargv);
+		glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+		glutInited = true;
+	}
 	int horizontal = 0;
 	int vertical = 0;
 	GetDesktopResolution(horizontal, vertical);
@@ -244,5 +248,11 @@ int viewAST(vector<vector<Tnode*>> inputVector, string fileName)
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 	glutMainLoop();
 
+	return 0;
+}
+
+int viewAST(vector<vector<Tnode*>> inputVector, string fileName)
+{
+	thread(viewASTCall, inputVector, fileName).detach();
 	return 0;
 }
