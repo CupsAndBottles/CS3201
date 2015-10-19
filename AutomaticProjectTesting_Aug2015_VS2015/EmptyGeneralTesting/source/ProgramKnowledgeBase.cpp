@@ -1,7 +1,5 @@
 #include "ProgramKnowledgeBase.h"
 
-const string ProgramKnowledgeBase::WILDCARD = "_";
-
 ProgramKnowledgeBase::ProgramKnowledgeBase() {
 	abstractSyntaxTree = NULL;
 	statementTable = NULL;
@@ -46,7 +44,7 @@ bool ProgramKnowledgeBase::modifies(int stmt, string var){
 
 vector<int> ProgramKnowledgeBase::getStatementsThatModify(string var){
 	try{
-		return flattenIntSetToIntVector(&modifiesRelationIndexedByVariables.at(var));
+		return Helpers::flattenIntSetToIntVector(&modifiesRelationIndexedByVariables.at(var));
 	} catch (std::out_of_range){
 		return vector<int>();
 	}
@@ -54,7 +52,7 @@ vector<int> ProgramKnowledgeBase::getStatementsThatModify(string var){
 
 vector<string> ProgramKnowledgeBase::getVariablesModifiedBy(int stmt){
 	try{
-		return flattenStringSetToStringVector(&modifiesRelationIndexedByStatements.at(stmt));
+		return Helpers::flattenStringSetToStringVector(&modifiesRelationIndexedByStatements.at(stmt));
 	} catch (std::out_of_range){
 		return vector<string>();
 	}
@@ -111,7 +109,7 @@ bool ProgramKnowledgeBase::uses(int stmt, string var){
 
 vector<int> ProgramKnowledgeBase::getStatementsThatUse(string var){
 	try{
-		return flattenIntSetToIntVector(&usesRelationIndexedByVariables.at(var));
+		return Helpers::flattenIntSetToIntVector(&usesRelationIndexedByVariables.at(var));
 	} catch (std::out_of_range){
 		return vector<int>();
 	}
@@ -119,7 +117,7 @@ vector<int> ProgramKnowledgeBase::getStatementsThatUse(string var){
 
 vector<string> ProgramKnowledgeBase::getVariablesUsedBy(int stmt){
 	try{
-		return flattenStringSetToStringVector(&usesRelationIndexedByStatements.at(stmt));
+		return Helpers::flattenStringSetToStringVector(&usesRelationIndexedByStatements.at(stmt));
 	} catch (std::out_of_range){
 		return vector<string>();
 	}
@@ -306,7 +304,7 @@ vector<int> ProgramKnowledgeBase::getParentsStarOf(int stmt, vector<Tnode*>* par
 		parents->push_back(parent);
 		parent = parent->getSPAParent();
 	}
-	return flattenNodeVectorToIntVector(parents);
+	return Helpers::flattenNodeVectorToIntVector(parents);
 }
 
 vector<int> ProgramKnowledgeBase::getChildrenOf(int stmt){
@@ -332,8 +330,8 @@ vector<int> ProgramKnowledgeBase::getChildrenOf(int stmt){
 			children.push_back(child->getStatementNumber());
 		} //else conditional variable, do nothing
 		child = child->getRightSibling();
-	} 
-	
+	}
+
 	return children;
 }
 
@@ -351,10 +349,10 @@ vector<int> ProgramKnowledgeBase::getChildrenStarOf(int stmt){
 		return vector<int>();
 	}
 
-	return flattenNodeVectorToIntVector(populateChildrenStarOf(node));
+	return Helpers::flattenNodeVectorToIntVector(populateChildrenStarOf(node));
 }
 
-vector<Tnode*>* ProgramKnowledgeBase::populateChildrenStarOf(Tnode* currNode, vector<Tnode*>* children){ 
+vector<Tnode*>* ProgramKnowledgeBase::populateChildrenStarOf(Tnode* currNode, vector<Tnode*>* children){
 	if (currNode == NULL) {
 		return children;
 	}
@@ -362,7 +360,7 @@ vector<Tnode*>* ProgramKnowledgeBase::populateChildrenStarOf(Tnode* currNode, ve
 	if (!currNode->isContainer() && !currNode->isStatementList()) {
 		return children;
 	}
-	
+
 	Tnode* child = currNode->getFirstChild();
 	while (child != NULL) {
 		if (child->isContainer()){
@@ -373,7 +371,7 @@ vector<Tnode*>* ProgramKnowledgeBase::populateChildrenStarOf(Tnode* currNode, ve
 		} else if (child->isStatement()) { //but not container
 			children->push_back(child);
 		}
-		
+
 		child = child->getRightSibling();
 	}
 	return children;
@@ -396,7 +394,7 @@ vector<Tnode*> ProgramKnowledgeBase::getAssignsThatMatchPattern(string var, stri
 
 vector<Tnode*> ProgramKnowledgeBase::getWhilesThatMatchPattern(string var) {
 	vector<Tnode*> whiles = getNodesOfType(Tnode::STMT_WHILE);
-	if (var == WILDCARD) {
+	if (var == Helpers::WILDCARD) {
 		return whiles;
 	} else {
 		vector<Tnode*> results = vector<Tnode*>();
@@ -411,7 +409,7 @@ vector<Tnode*> ProgramKnowledgeBase::getWhilesThatMatchPattern(string var) {
 
 vector<Tnode*> ProgramKnowledgeBase::getIfsThatMatchPattern(string var) {
 	vector<Tnode*> ifs = getNodesOfType(Tnode::STMT_IF);
-	if (var == WILDCARD) {
+	if (var == Helpers::WILDCARD) {
 		return ifs;
 	}
 	else {
@@ -525,7 +523,7 @@ vector<int> ProgramKnowledgeBase::getStatementsFollowStarredBy(int stmt)
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsOfType(Tnode::Type type){
-	return flattenNodeVectorToIntVector(&getNodesOfType(type));
+	return Helpers::flattenNodeVectorToIntVector(&getNodesOfType(type));
 }
 
 vector<string> ProgramKnowledgeBase::getVariableNames(){
@@ -547,11 +545,11 @@ vector<string> ProgramKnowledgeBase::getProcedureNames() {
 vector<int> ProgramKnowledgeBase::getStatementsThatMatchPattern(Tnode::Type type, string var, string expr) {
 	switch (type) {
 		case Tnode::STMT_WHILE:
-			return flattenNodeVectorToIntVector(&getWhilesThatMatchPattern(var));
+			return Helpers::flattenNodeVectorToIntVector(&getWhilesThatMatchPattern(var));
 		case Tnode::STMT_IF:
-			return flattenNodeVectorToIntVector(&getIfsThatMatchPattern(var));
+			return Helpers::flattenNodeVectorToIntVector(&getIfsThatMatchPattern(var));
 		case Tnode::STMT_ASSIGN:
-			return flattenNodeVectorToIntVector(&getAssignsThatMatchPattern(var, expr));
+			return Helpers::flattenNodeVectorToIntVector(&getAssignsThatMatchPattern(var, expr));
 		default:
 			return vector<int>();
 	}
@@ -559,7 +557,7 @@ vector<int> ProgramKnowledgeBase::getStatementsThatMatchPattern(Tnode::Type type
 
 vector<int> ProgramKnowledgeBase::getStatementsThatContainPattern(Tnode::Type type, string var, string expr) {
 	if (type == Tnode::STMT_ASSIGN) {
-		return flattenNodeVectorToIntVector(&getAssignsThatContainPattern(var, expr));
+		return Helpers::flattenNodeVectorToIntVector(&getAssignsThatContainPattern(var, expr));
 	} else {
 		return vector<int>();
 	}
@@ -567,11 +565,11 @@ vector<int> ProgramKnowledgeBase::getStatementsThatContainPattern(Tnode::Type ty
 
 bool ProgramKnowledgeBase::calls(string p1, string p2) {
 	try {
-		if (p1 == WILDCARD && p2 == WILDCARD) {
+		if (p1 == Helpers::WILDCARD && p2 == Helpers::WILDCARD) {
 			return callsRelationIndexedByCallers.size() != 0;
-		} else if (p1 == WILDCARD) {
+		} else if (p1 == Helpers::WILDCARD) {
 			return callsRelationIndexedByCallees.at(p2).size() != 0;
-		} else if (p2 == WILDCARD) {
+		} else if (p2 == Helpers::WILDCARD) {
 			return callsRelationIndexedByCallers.at(p1).size() != 0;
 		} else {
 			return callsRelationIndexedByCallers.at(p1).count(p2) == 1;
@@ -582,7 +580,7 @@ bool ProgramKnowledgeBase::calls(string p1, string p2) {
 }
 
 vector<string> ProgramKnowledgeBase::getProceduresThatCall(string proc) {
-	if (proc == WILDCARD) {
+	if (proc == Helpers::WILDCARD) {
 		vector<string> callers = vector<string>();
 		for (auto kv : callsRelationIndexedByCallers) {
 			callers.push_back(kv.first);
@@ -590,7 +588,7 @@ vector<string> ProgramKnowledgeBase::getProceduresThatCall(string proc) {
 		return callers;
 	} else {
 		try {
-			return flattenStringSetToStringVector(&callsRelationIndexedByCallees.at(proc));
+			return Helpers::flattenStringSetToStringVector(&callsRelationIndexedByCallees.at(proc));
 		} catch (out_of_range) {
 			return vector<string>();
 		}
@@ -598,7 +596,7 @@ vector<string> ProgramKnowledgeBase::getProceduresThatCall(string proc) {
 }
 
 vector<string> ProgramKnowledgeBase::getProceduresCalledBy(string proc) {
-	if (proc == WILDCARD) {
+	if (proc == Helpers::WILDCARD) {
 		vector<string> callees = vector<string>();
 		for (auto kv : callsRelationIndexedByCallees) {
 			callees.push_back(kv.first);
@@ -606,7 +604,7 @@ vector<string> ProgramKnowledgeBase::getProceduresCalledBy(string proc) {
 		return callees;
 	} else {
 		try {
-			return flattenStringSetToStringVector(&callsRelationIndexedByCallers.at(proc));
+			return Helpers::flattenStringSetToStringVector(&callsRelationIndexedByCallers.at(proc));
 		} catch (out_of_range) {
 			return vector<string>();
 		}
@@ -614,11 +612,11 @@ vector<string> ProgramKnowledgeBase::getProceduresCalledBy(string proc) {
 }
 
 bool ProgramKnowledgeBase::callsStar(string p1, string p2) {
-	if (p1 == WILDCARD && p2 == WILDCARD) {
+	if (p1 == Helpers::WILDCARD && p2 == Helpers::WILDCARD) {
 		return this->callsRelationIndexedByCallers.size() > 0;
-	} else if (p1 == WILDCARD) {
+	} else if (p1 == Helpers::WILDCARD) {
 		return this->callsRelationIndexedByCallees.count(p2) != 0;
-	} else if (p2 == WILDCARD) {
+	} else if (p2 == Helpers::WILDCARD) {
 		return this->callsRelationIndexedByCallers.count(p1) != 0;
 	}
 
@@ -660,7 +658,7 @@ bool ProgramKnowledgeBase::callsStar(string p1, string p2) {
 }
 
 vector<string> ProgramKnowledgeBase::getProceduresThatCallStar(string proc) {
-	if (proc == WILDCARD) {
+	if (proc == Helpers::WILDCARD) {
 		return getProceduresThatCall(proc);
 	}
 
@@ -693,7 +691,7 @@ vector<string> ProgramKnowledgeBase::getProceduresThatCallStar(string proc) {
 }
 
 vector<string> ProgramKnowledgeBase::getProceduresCallStarredBy(string proc) {
-	if (proc == WILDCARD) {
+	if (proc == Helpers::WILDCARD) {
 		return getProceduresCalledBy(proc);
 	}
 
@@ -726,54 +724,6 @@ vector<string> ProgramKnowledgeBase::getProceduresCallStarredBy(string proc) {
 	}
 
 	return vector<string>(results.begin(), results.end());
-}
-
-vector<string> ProgramKnowledgeBase::flattenNodeVectorToStringVector(const vector<Tnode*>* inp){
-	vector<string> results = vector<string>();
-	for (auto it : *inp) {
-		results.push_back(it->getName());
-	}
-	return results;
-}
-
-//return vector of indices that have true values in input vector
-vector<int> ProgramKnowledgeBase::flattenBoolVectorToIntVector(const vector<bool> inp) {
-	vector<int> results = vector<int>();
-	int len = inp.size();
-	for (int i = 0; i < len; i++) {
-		if (inp.at(i)) {
-			results.push_back(i);
-		}
-	}
-	return results;
-}
-
-//return vector of strings that have true values in input unordered map
-vector<string> ProgramKnowledgeBase::flattenBoolMapToStringVector(const unordered_map<string, bool> inp) {
-	vector<string> results = vector<string>();
-	for (auto it : inp) {
-		if (it.second) {
-			results.push_back(it.first);
-		}
-	}
-	return results;
-}
-
-//return vector of statement numbers of the nodes in input vector.
-vector<int> ProgramKnowledgeBase::flattenNodeVectorToIntVector(const vector<Tnode*>* inp) {
-	vector<int> results = vector<int>();
-	for (auto it : *inp) {
-		results.push_back(it->getStatementNumber());
-	}
-	return results;
-}
-
-vector<int> ProgramKnowledgeBase::flattenIntSetToIntVector(const unordered_set<int>* inp) {
-	return vector<int> (inp->begin(), inp->end());
-}
-
-vector<string> ProgramKnowledgeBase::flattenStringSetToStringVector(const unordered_set<string>* inp) {
-	return vector<string> (inp->begin(), inp->end());
 }
 
 vector<Tnode*> ProgramKnowledgeBase::getNodesOfType(Tnode::Type type){
@@ -896,7 +846,7 @@ void ProgramKnowledgeBase::updateUses(const vector<Tnode*> users, Tnode* used){
 			updateUses(users, vc);
 		}
 	} else { // conditional variables or single variables extracted from expressions
-		for (Tnode* n : users) { 
+		for (Tnode* n : users) {
 			if (!n->isProgram() && !n->isProcedure() && !n->isStatementList()) {
 				updateUses(n, used);
 			}
