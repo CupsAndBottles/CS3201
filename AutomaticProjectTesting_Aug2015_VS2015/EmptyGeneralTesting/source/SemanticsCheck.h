@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <string>
 #include <iostream>
+#include <sstream>
 
 using namespace std;
 
@@ -25,14 +26,20 @@ public:
 	bool isStmtOrEntRef(string s, EntTable et);
 	bool isSynWhile(string s, EntTable et);
 	bool isSynIf(string s, EntTable et);
+	bool isRef(string s, EntTable et);
+	bool isAttrRef(string s, EntTable et);
+	bool isProgLine(string s, EntTable et);
+	bool wrappedInQuotation(string s);
+	bool isInteger(string s);
 
 private:
-	bool isInteger(string s);
-	bool wrappedInQuotation(string s);
 	bool wrappedInUnderscore(string s);
 	bool isName(string s);
 	bool isLetter(char c);
 	bool isDigit(char c);
 	bool isExpression(char c);
+	
+	//Iteration 2 onwards
+	vector<string> split(string s, string delim);
 };
 

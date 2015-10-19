@@ -103,5 +103,23 @@ namespace UnitTesting
 			Assert::IsTrue(qpp.query("assign a, a1; stmt s; prog_line n, n1; procedure p, q; if ifstat; while w; Select a pattern a(_,_) and ifstat(\"x\",_,_) and w(\"y\",_) such that Next(20, n) and Parent*(s,6) and Calls(p,q)")); qpp.clearAll();
 			Assert::IsTrue(qpp.query("assign a, a1; stmt s; prog_line n, n1; procedure p, q; if ifstat; while w; Select a pattern a(_,_) and ifstat(\"x\",_,_) and w(\"y\",_) such that Next(20, n) and Parent*(s,6) and Calls(p,q) with q.procName = \"Second\"")); qpp.clearAll();
 		}
+
+		TEST_METHOD(testWithClauses) {
+			qpp.clearAll();
+			Assert::IsTrue(qpp.query("stmt s; prog_line n; procedure p; variable v; constant c; assign a; Select s with p.procName = \"second\"")); qpp.clearAll();
+			Assert::IsTrue(qpp.query("stmt s; prog_line n; procedure p; variable v; constant c; assign a; Select s with v.varName = \"x\"")); qpp.clearAll();
+			Assert::IsTrue(qpp.query("stmt s; prog_line n; procedure p; variable v; constant c; assign a; Select s with c.value = 10")); qpp.clearAll();
+			Assert::IsTrue(qpp.query("stmt s; prog_line n; procedure p; variable v; constant c; assign a; Select s with s.stmt# = 5")); qpp.clearAll();
+			Assert::IsTrue(qpp.query("stmt s; prog_line n; procedure p; variable v; constant c; assign a; Select s with a.stmt# = 12")); qpp.clearAll();
+			Assert::IsTrue(qpp.query("stmt s; prog_line n; procedure p; variable v; constant c; assign a; Select s with n=20")); qpp.clearAll();
+
+			Assert::IsTrue(qpp.query("stmt s; prog_line n; procedure p; variable v; constant c; assign a; Select s with v.varName = p.procName")); qpp.clearAll();
+			Assert::IsTrue(qpp.query("stmt s; prog_line n; procedure p; variable v; constant c; assign a; Select s with s.stmt# = c.value")); qpp.clearAll();
+
+			Assert::IsFalse(qpp.query("stmt s; prog_line n; procedure p; variable v; constant c; assign a; Select s with p.procName = 10")); qpp.clearAll();
+			Assert::IsFalse(qpp.query("stmt s; prog_line n; procedure p; variable v; constant c; assign a; Select s with p.procName = c.value")); qpp.clearAll();
+			Assert::IsFalse(qpp.query("stmt s; prog_line n; procedure p; variable v; constant c; assign a; Select s with s.stmt# = v.varName")); qpp.clearAll();
+
+		}
 	};
 }

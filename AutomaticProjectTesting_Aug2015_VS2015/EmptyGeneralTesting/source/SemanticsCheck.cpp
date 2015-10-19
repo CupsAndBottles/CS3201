@@ -279,4 +279,77 @@ bool SemanticsCheck::isStmtOrEntRef(string s, EntTable et) {
 	}
 }
 
+bool SemanticsCheck::isRef(string s, EntTable et) {
+	if (isProgLine(s, et)) {
+		return true;
+	}
+	else if (wrappedInQuotation(s)) {
+		string substring = s.substr(1, s.length() - 2);
+		if (isIdent(substring)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	else if (isInteger(s)) {
+		return true;
+	}
+	else if (isAttrRef(s, et)) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
 
+bool SemanticsCheck::isAttrRef(string s, EntTable et) {
+	vector<string> temp = split(s, ".");
+	if (temp.size() != 2) {
+		return false;
+	}
+
+	if (et.getType(temp[0]) == "procedure" && temp[1].compare("procName") == 0) {
+		return true;
+	}
+	else if (et.getType(temp[0]) == "variable" && temp[1].compare("varName") == 0) {
+		return true;
+	}
+	else if (et.getType(temp[0]) == "constant" && temp[1].compare("value") == 0) {
+		return true;
+	}
+	else if ( (et.getType(temp[0]) == "stmt" || et.getType(temp[0]) == "assign") && temp[1].compare("stmt#") == 0) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool SemanticsCheck::isProgLine(string s, EntTable et) {
+	if (et.getType(s).compare("prog_line") == 0) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+vector<string> SemanticsCheck::split(string s, string delim) {
+	stringstream stringStream(s);
+	string line;
+	vector<string> wordVector;
+	while (getline(stringStream, line))
+	{
+		size_t prev = 0, pos;
+		while ((pos = line.find_first_of(delim, prev)) != string::npos)
+		{
+			if (pos > prev)
+				wordVector.push_back(line.substr(prev, pos - prev));
+			prev = pos + 1;
+		}
+		if (prev < line.length())
+			wordVector.push_back(line.substr(prev, string::npos));
+	}
+	return wordVector;
+}

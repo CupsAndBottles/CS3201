@@ -242,12 +242,55 @@ vector<string> QueryPreProcessor::formatWithQuery(vector<string> temp) {
 	return newVect;
 }
 
+string QueryPreProcessor::getTypeOfRef(string s) {
+	string result;
+	if (sCheck.isAttrRef(s, entityTable)) {
+		vector<string> temp = split(s, ".");
+		if (temp[1] == "procName" || temp[1] == "varName") {
+			result = "string";
+			return result;
+		}
+		else if (temp[1] == "value" || temp[1] == "stmt#") {
+			result = "integer";
+			return result;
+		}
+	}
+	else if (sCheck.isProgLine(s, entityTable)) {
+		result = "integer";
+		return result;
+	}
+	else if (sCheck.wrappedInQuotation(s)) {
+		string substring = s.substr(1, s.length() - 2);
+		if (sCheck.isIdent(substring)) {
+			result = "string";
+			return result;
+		}
+	}
+	else if (sCheck.isInteger(s)) {
+		result = "integer";
+		return result;
+	}
+}
+
 bool QueryPreProcessor::verifyWithQuery(vector<string> temp) {
 	if (temp.size() != 3) {
 		return false;
 	}
-
-	return true;
+	string leftAttr = temp[1];
+	string rightAttr = temp[2];
+	if (sCheck.isRef(leftAttr, entityTable) && sCheck.isRef(rightAttr, entityTable)) {
+		string type1 = getTypeOfRef(leftAttr);
+		string type2 = getTypeOfRef(rightAttr);
+		if (type1.compare(type2) == 0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	else {
+		return false;
+	}
 }
 
 bool QueryPreProcessor::query(string s) {
