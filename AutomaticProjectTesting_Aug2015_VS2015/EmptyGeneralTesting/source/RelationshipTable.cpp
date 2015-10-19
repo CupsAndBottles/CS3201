@@ -2,9 +2,8 @@
 
 void RelationshipTable::initRelTable() {
 
-	//13/10/15: need to change modifies, uses stmtRef to stmtAndEntRef
-	vector<string> Modifies = { "stmtRef", "entRef" };
-	vector<string> Uses = { "stmtRef", "entRef" };
+	vector<string> Modifies = { "stmtOrEntRef", "entRef" };
+	vector<string> Uses = { "stmtOrEntRef", "entRef" };
 	vector<string> Parent = { "stmtRef", "stmtRef" };
 	vector<string> ParentT = { "stmtRef", "stmtRef" };
 	vector<string> Follows = { "stmtRef", "stmtRef" };

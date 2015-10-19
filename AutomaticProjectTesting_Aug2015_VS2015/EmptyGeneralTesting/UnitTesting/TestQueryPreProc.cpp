@@ -39,15 +39,16 @@ namespace UnitTesting
 
 			//Test Parent*
 			Assert::IsTrue(qpp.query("stmt ss; select ss such that parent*(ss, 16)")); qpp.clearAll();
-
+			
 			//Test Pattern
 			Assert::IsTrue(qpp.query("assign a, a1; Select a1 pattern a(\"x\", _\"y\"_)")); qpp.clearAll();
 			Assert::IsTrue(qpp.query("assign a1; Select a1 pattern a1 ( _ , _ )")); qpp.clearAll();
+			
 
 			//Test combination of such that, pattern
 			Assert::IsTrue(qpp.query("assign a; Select a such that uses(a, \"y\") Pattern a (\"m\", _)")); qpp.clearAll();
 			Assert::IsTrue(qpp.query("assign a, a1; variable v; Select a such that Uses(a, v) pattern a1(v, _)")); qpp.clearAll();
-
+			
 			//Test combination of such that, and, pattern
 			Assert::IsTrue(qpp.query("assign a; Select a such that Modifies (a, \"y\") and Pattern a (\"m\", _)")); qpp.clearAll();
 			Assert::IsTrue(qpp.query("assign a; stmt s; Select s such that Parent(s, 6) and pattern a(_, \"d\")")); qpp.clearAll();
@@ -92,5 +93,15 @@ namespace UnitTesting
 			Assert::IsTrue(sCheck.isExpressionSpec("\"1\""));
 		}
 
+		TEST_METHOD(testLongQueries) {
+			qpp.clearAll();
+			Assert::IsTrue(qpp.query("assign a, a1; prog_line n, n1; procedure p, q; if ifstat; while w; Select a pattern a(_,_) and ifstat(\"x\",_,_) and w(\"y\",_)")); qpp.clearAll();
+			Assert::IsTrue(qpp.query("assign a, a1; prog_line n, n1; procedure p, q; if ifstat; while w; Select a pattern a(_,_) and ifstat(\"x\",_,_) and Pattern w(\"y\",_)")); qpp.clearAll();
+			Assert::IsTrue(qpp.query("assign a, a1; prog_line n, n1; procedure p, q; if ifstat; while w; Select a pattern a(_,_) and ifstat(\"x\",_,_) and w(\"y\",_) such that Next(20, n)")); qpp.clearAll();
+			Assert::IsTrue(qpp.query("assign a, a1; prog_line n, n1; procedure p, q; if ifstat; while w; Select a pattern a(_,_) and ifstat(\"x\",_,_) and w(\"y\",_) and such that Next(20, n)")); qpp.clearAll();
+			Assert::IsTrue(qpp.query("assign a, a1; prog_line n, n1; procedure p, q; if ifstat; while w; Select a pattern a(_,_) and ifstat(\"x\",_,_) and w(\"y\",_) and Next(20, n)")); qpp.clearAll();
+			Assert::IsTrue(qpp.query("assign a, a1; stmt s; prog_line n, n1; procedure p, q; if ifstat; while w; Select a pattern a(_,_) and ifstat(\"x\",_,_) and w(\"y\",_) such that Next(20, n) and Parent*(s,6) and Calls(p,q)")); qpp.clearAll();
+			Assert::IsTrue(qpp.query("assign a, a1; stmt s; prog_line n, n1; procedure p, q; if ifstat; while w; Select a pattern a(_,_) and ifstat(\"x\",_,_) and w(\"y\",_) such that Next(20, n) and Parent*(s,6) and Calls(p,q) with q.procName = \"Second\"")); qpp.clearAll();
+		}
 	};
 }

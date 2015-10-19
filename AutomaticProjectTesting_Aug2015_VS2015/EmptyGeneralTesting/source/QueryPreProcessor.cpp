@@ -92,6 +92,7 @@ bool QueryPreProcessor::verifyPatternQuery(vector<string> temp) {
 		return false;
 	}
 
+	//assign pattern
 	if (sCheck.isSynAssign(temp[0], entityTable)) {
 		if (sCheck.isEntRef(temp[1], entityTable)) {
 			if (sCheck.isExpressionSpec(temp[2])) {
@@ -99,7 +100,22 @@ bool QueryPreProcessor::verifyPatternQuery(vector<string> temp) {
 			}
 		}
 	}
-
+	//if pattern
+	else if (sCheck.isSynIf(temp[0], entityTable)) {
+		if (sCheck.isEntRef(temp[1], entityTable)) {
+			if (temp[2].compare("_") == 0) {
+				return true;
+			}
+		}
+	}
+	//while pattern
+	else if (sCheck.isSynWhile(temp[0], entityTable)) {
+		if (sCheck.isEntRef(temp[1], entityTable)) {
+			if (temp[2].compare("_") == 0) {
+				return true;
+			}
+		}
+	}
 	cout << "pattern arguments mismatch" << endl;
 	return false;
 }
@@ -183,9 +199,9 @@ vector<string> QueryPreProcessor::checkForBracketsAndComma(vector<string> argVec
 			cout << "missing brackets or commas" << endl;
 		}
 	}
-	//particularly for if pattern i.e. if(_,_,_) is correct, will return a argVect object: (ifstat, "eg" , _)
+	//particularly for if pattern i.e. ifstat(_,_,_) is correct, will return a argVect object: (ifstat, "x" , _)
 	else if (checkVector.size() == 8) {
-		if (checkVector[1].compare("(") == 0 && checkVector[3].compare(",") == 0 && checkVector[5].compare(")") == 0 && checkVector[7].compare(")") == 0) {
+		if (checkVector[1].compare("(") == 0 && checkVector[3].compare(",") == 0 && checkVector[5].compare(",") == 0 && checkVector[7].compare(")") == 0) {
 			argVector.push_back(checkVector[0]);
 			argVector.push_back(checkVector[2]);
 			argVector.push_back(checkVector[4]);
@@ -211,6 +227,27 @@ vector<string> QueryPreProcessor::removeAndTokens(vector<string> temp) {
 		}
 	}
 	return newVect;
+}
+
+vector<string> QueryPreProcessor::formatWithQuery(vector<string> temp) {
+	vector<string> newVect;
+	string mergedString;
+	for (size_t i = 0; i < temp.size(); i++) {
+		mergedString = mergedString + temp[i];
+	}
+	vector<string> withVector = split(mergedString, " =");
+	newVect.push_back("with");
+	newVect.push_back(withVector[0]);
+	newVect.push_back(withVector[1]);
+	return newVect;
+}
+
+bool QueryPreProcessor::verifyWithQuery(vector<string> temp) {
+	if (temp.size() != 3) {
+		return false;
+	}
+
+	return true;
 }
 
 bool QueryPreProcessor::query(string s) {
@@ -336,40 +373,6 @@ bool QueryPreProcessor::query(string s) {
 					return false;
 				}
 
-				//pattern-cl cont: check cases where after pattern, there is another pattern following but did not declare the word pattern and use only and
-				//i.e. pattern a( , ) and a2( , )
-				if (toLowerCase(selectCl.at(i)).compare("and") == 0) {
-					//extract patternCond
-					while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0
-						|| toLowerCase(selectCl.at(i)).compare("and") == 0 || toLowerCase(selectCl.at(i)).compare("with") == 0)) {
-						//cout << selectCl.at(i) + " ";
-						argVector.push_back(selectCl.at(i));
-						i++;
-						if (selectCl.size() == i) {
-							break;
-						}
-					}
-					queryVector = checkForBracketsAndComma(argVector);
-					if (!queryVector.empty()) {
-						if (verifyPatternQuery(queryVector)) {
-							addQueryObject(queryVector);
-							queryVector.clear();
-							argVector.clear();
-						}
-						else {
-							cout << "invalid pattern query" << endl;
-							queryVector.clear();
-							argVector.clear();
-							return false;
-						}
-					}
-					else {
-						cout << "invalid pattern query" << endl;
-						queryVector.clear();
-						argVector.clear();
-						return false;
-					}
-				}
 			}
 			//find with-cl
 			else if (toLowerCase(selectCl.at(i)).compare("with") == 0) {
@@ -382,32 +385,88 @@ bool QueryPreProcessor::query(string s) {
 						break;
 					}
 				}
-
-				//13/10/15:MAKE SURE WITH-CL SYNTAX IS CORRECT
+				queryVector = formatWithQuery(argVector);
+				if (verifyWithQuery(queryVector)) {
+					addQueryObject(queryVector);
+					queryVector.clear();
+					argVector.clear();
+				}
+				else {
+					cout << "invalid with query" << endl;
+					queryVector.clear();
+					argVector.clear();
+					return false;
+				}
 
 			}
-			//"and" is present, next clause is definitely a suchthat-cl or a with-clause.
-			else {
+			//"and" is present, next clause can be a suchthat-cl or pattern-cl
+			else if (toLowerCase(selectCl.at(i)).compare("and") == 0) {
 				i++;
-				//if is with-cl
-				if (toLowerCase(selectCl.at(i)).compare("with") == 0) {
+				//i.e. and Pattern a(...
+				if (toLowerCase(selectCl.at(i)).compare("pattern") == 0) {
 					i++;
+					//cout << "pattern-cl: ";
+					//extract patternCond
 					while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0
 						|| toLowerCase(selectCl.at(i)).compare("and") == 0 || toLowerCase(selectCl.at(i)).compare("with") == 0)) {
+						//cout << selectCl.at(i) + " ";
 						argVector.push_back(selectCl.at(i));
 						i++;
 						if (selectCl.size() == i) {
 							break;
 						}
 					}
-
-					//13/10/15: MAKE SURE WITH-CL SYNTAX IS CORRECT
+					queryVector = checkForBracketsAndComma(argVector);
+					if (verifyPatternQuery(queryVector)) {
+						addQueryObject(queryVector);
+						queryVector.clear();
+						argVector.clear();
+					}
+					else {
+						cout << "invalid pattern query" << endl;
+						queryVector.clear();
+						argVector.clear();
+						return false;
+					}
 
 				}
-				//else is a suchthat-cl
-				else {
+				//i.e. and such that Parent(...
+				else if (toLowerCase(selectCl.at(i)).compare("such") == 0) {
 					i++;
-					//extract relCond
+					if (toLowerCase(selectCl.at(i)).compare("that") == 0) {
+						i++;
+						//cout << "suchthat-cl: ";
+						//extract relCond
+						while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0
+							|| toLowerCase(selectCl.at(i)).compare("and") == 0 || toLowerCase(selectCl.at(i)).compare("with") == 0)) {
+							//cout << selectCl.at(i) + " ";
+							argVector.push_back(selectCl.at(i));
+							i++;
+							if (selectCl.size() == i) {
+								break;
+							}
+						}
+						queryVector = checkForBracketsAndComma(argVector);
+						if (verifySuchThatQuery(queryVector)) {
+							addQueryObject(queryVector);
+							queryVector.clear();
+							argVector.clear();
+						}
+						else {
+							cout << "invalid such that query" << endl;
+							queryVector.clear();
+							argVector.clear();
+							return false;
+						}
+					}
+					else {
+						cout << "found 'such' but no 'that'";
+						return false;
+					}
+				}
+				else {
+					//i.e. and Parent(...
+					//i.e. and a2( , )
 					while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0
 						|| toLowerCase(selectCl.at(i)).compare("and") == 0 || toLowerCase(selectCl.at(i)).compare("with") == 0)) {
 						//cout << selectCl.at(i) + " ";
@@ -422,17 +481,24 @@ bool QueryPreProcessor::query(string s) {
 						addQueryObject(queryVector);
 						queryVector.clear();
 						argVector.clear();
+					} 
+					else if (verifyPatternQuery(queryVector)) {
+						addQueryObject(queryVector);
+						queryVector.clear();
+						argVector.clear();
 					}
 					else {
-						cout << "invalid such that query" << endl;
+						cout << "invalid such that / pattern query" << endl;
 						queryVector.clear();
 						argVector.clear();
 						return false;
 					}
+
 				}
+			}
+			else {
 				cout << "no suchthat-cl / pattern-cl / with-cl found" << endl;
 			}
-
 		}
 
 	}

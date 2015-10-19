@@ -19,6 +19,13 @@ public:
 	bool isExpressionSpec(string s);
 	bool initSemanticsCheck(string s, string argType, EntTable et);
 
+	//Iteration 2 onwards
+	bool isLineRef(string s, EntTable et);
+	bool isVarRef(string s, EntTable et);
+	bool isStmtOrEntRef(string s, EntTable et);
+	bool isSynWhile(string s, EntTable et);
+	bool isSynIf(string s, EntTable et);
+
 private:
 	bool isInteger(string s);
 	bool wrappedInQuotation(string s);

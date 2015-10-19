@@ -42,5 +42,7 @@ private:
 	vector<string> mergeQuotations(vector<string> temp);
 	vector<string> removeAndTokens(vector<string> temp);
 
+	vector<string> formatWithQuery(vector<string> temp);
+	bool verifyWithQuery(vector<string> temp);
 };
 

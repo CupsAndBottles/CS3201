@@ -85,6 +85,21 @@ bool SemanticsCheck::isStmtRef(string s, EntTable et) {
 	}
 }
 
+bool SemanticsCheck::isLineRef(string s, EntTable et) {
+	if (isSynonym(s, et)) {
+		return true;
+	}
+	else if (isInteger(s)) {
+		return true;
+	}
+	else if (s.length() == 1 && (s[0] == '_')) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
 bool SemanticsCheck::wrappedInQuotation(string s) {
 	size_t i = s.length();
 	if ((s[0] == '\"') && (s[i-1] == '\"')) {
@@ -121,6 +136,30 @@ bool SemanticsCheck::isEntRef(string s, EntTable et) {
 	else if (s.length() == 1 && (s[0] == '_')) {
 		return true;
 	}
+	else if (isInteger(s)) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool SemanticsCheck::isVarRef(string s, EntTable et) {
+	if (isSynonym(s, et)) {
+		return true;
+	}
+	else if (wrappedInQuotation(s)) {
+		string substring = s.substr(1, s.length() - 2);
+		if (isIdent(substring)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	else if (s.length() == 1 && (s[0] == '_')) {
+		return true;
+	}
 	else {
 		return false;
 	}
@@ -136,6 +175,36 @@ bool SemanticsCheck::isSynAssign(string s, EntTable et) {
 			cout << "is synonym but not assign" << endl;
 		}
 	}	
+	else {
+		return false;
+	}
+}
+
+bool SemanticsCheck::isSynWhile(string s, EntTable et) {
+	if (isSynonym(s, et)) {
+		if (et.getType(s) == "while") {
+			return true;
+		}
+		else {
+			return false;
+			cout << "is synonym but not assign" << endl;
+		}
+	}
+	else {
+		return false;
+	}
+}
+
+bool SemanticsCheck::isSynIf(string s, EntTable et) {
+	if (isSynonym(s, et)) {
+		if (et.getType(s) == "if") {
+			return true;
+		}
+		else {
+			return false;
+			cout << "is synonym but not assign" << endl;
+		}
+	}
 	else {
 		return false;
 	}
@@ -185,8 +254,29 @@ bool SemanticsCheck::initSemanticsCheck(string s, string argType, EntTable et) {
 	else if (argType == "entRef") {
 		boolean = isEntRef(s, et);
 	}
+	else if (argType == "lineRef") {
+		boolean = isLineRef(s, et);
+	}
+	else if (argType == "stmtOrEntRef") {
+		boolean = isStmtOrEntRef(s, et);
+	}
+	else {
+		boolean = false;
+	}
 	
 	return boolean;
+}
+
+bool SemanticsCheck::isStmtOrEntRef(string s, EntTable et) {
+	if (isStmtRef(s, et)) {
+		return true;
+	}
+	else if (isEntRef(s, et)) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 
