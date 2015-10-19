@@ -3,6 +3,8 @@
 #include "Database.h"
 #include "VarTable.h"
 #include "ProcTable.h"
+#include "StmtTable.h"
+#include "constTable.h"
 #include "Tnode.h"
 #include "Parser.h"
 #include <vector>
@@ -78,7 +80,7 @@ public:
 
 private:
 	Tnode* abstractSyntaxTree;
-	vector<Tnode*>* statementTable;
+	StmtTable* statementTable;
 	VarTable* varTable;
 	ProcTable* procTable;
 	void initializeTables();

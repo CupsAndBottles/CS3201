@@ -778,8 +778,8 @@ vector<string> ProgramKnowledgeBase::flattenStringSetToStringVector(const unorde
 
 vector<Tnode*> ProgramKnowledgeBase::getNodesOfType(Tnode::Type type){
 	vector<Tnode*> results = vector<Tnode*>();
-	for (int i = 1; i < this->statementTable->size(); i++) {
-		Tnode* node = this->statementTable->at(i);
+	for (int i = 1; i < this->statementTable->getSize(); i++) {
+		Tnode* node = this->statementTable->getStmtAddress(i);
 		if (node->getType() == type){
 			results.push_back(node);
 		}
@@ -789,7 +789,7 @@ vector<Tnode*> ProgramKnowledgeBase::getNodesOfType(Tnode::Type type){
 
 Tnode* ProgramKnowledgeBase::getNodeWithStatementNumber(int num) {
 	try {
-		return this->statementTable->at(num);
+		return this->statementTable->getStmtAddress(num);
 	} catch (out_of_range e) {
 		return NULL;
 	}
