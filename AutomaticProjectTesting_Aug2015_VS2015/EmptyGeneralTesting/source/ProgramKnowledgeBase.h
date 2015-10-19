@@ -5,14 +5,9 @@
 #include "ProcTable.h"
 #include "StmtTable.h"
 #include "constTable.h"
-#include "Tnode.h"
 #include "Parser.h"
-#include <vector>
-#include <string>
-#include <unordered_map>
-#include <unordered_set>
+#include "Helpers.h"
 #include <iostream>
-#include <algorithm>
 #include <stack>
 
 using namespace std;
@@ -97,13 +92,6 @@ private:
 
 	bool containsContainer(Tnode * node); //not used
 
-	vector<string> flattenNodeVectorToStringVector(const vector<Tnode*>* inp);
-	vector<int> flattenBoolVectorToIntVector(const vector<bool> inp);
-	vector<string> flattenBoolMapToStringVector(const unordered_map<string, bool> inp);
-	vector<int> flattenNodeVectorToIntVector(const vector<Tnode*>* inp);
-	vector<int> flattenIntSetToIntVector(const unordered_set<int>* inp);
-	vector<string> flattenStringSetToStringVector(const unordered_set<string>* inp);
-
 	vector<Tnode*> getNodesOfType(Tnode::Type type);
 	Tnode * getNodeWithStatementNumber(int num);
 	Tnode * getNodeWithProcedureName(string procName);
@@ -116,7 +104,6 @@ private:
 	Tnode * getNextStatementNode(Tnode * currNode);
 	vector<Tnode*>* populateChildrenStarOf(Tnode* currNode, vector<Tnode*>* children = &vector<Tnode*>());
 
-	static const string WILDCARD;
 	vector<Tnode*> getAssignsThatMatchPattern(string var, string expr);
 	vector<Tnode*> getWhilesThatMatchPattern(string var);
 	vector<Tnode*> getIfsThatMatchPattern(string var);
