@@ -368,7 +368,7 @@ namespace UnitTesting
 			Database* db = new Database();
 			db->buildDatabase(parsedProgram);
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
-
+			
 			Assert::IsFalse(pkb.callsStar("_", "A"));
 			Assert::IsTrue(pkb.callsStar("_", "B"));
 			Assert::IsTrue(pkb.callsStar("_", "C"));
@@ -392,13 +392,13 @@ namespace UnitTesting
 			Assert::IsTrue(find(callers.begin(), callers.end(), string("C")) != callers.end());
 			Assert::IsTrue(find(callers.begin(), callers.end(), string("E")) != callers.end());
 			Assert::IsTrue(find(callers.begin(), callers.end(), string("F")) != callers.end());
-
+			
 			vector<string> callees = pkb.getProceduresCalledBy("_");
 			Assert::AreEqual(4, int(callees.size()));
-			Assert::IsTrue(find(callers.begin(), callers.end(), string("B")) != callers.end());
-			Assert::IsTrue(find(callers.begin(), callers.end(), string("C")) != callers.end());
-			Assert::IsTrue(find(callers.begin(), callers.end(), string("D")) != callers.end());
-			Assert::IsTrue(find(callers.begin(), callers.end(), string("E")) != callers.end());
+			Assert::IsTrue(find(callees.begin(), callees.end(), string("B")) != callees.end());
+			Assert::IsTrue(find(callees.begin(), callees.end(), string("C")) != callees.end());
+			Assert::IsTrue(find(callees.begin(), callees.end(), string("D")) != callees.end());
+			Assert::IsTrue(find(callees.begin(), callees.end(), string("E")) != callees.end());
 		}
 
 		TEST_METHOD(testPKBGetParent) {
