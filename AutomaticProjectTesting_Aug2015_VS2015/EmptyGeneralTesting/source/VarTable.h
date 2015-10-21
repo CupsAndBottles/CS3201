@@ -13,11 +13,11 @@ public:
 	~VarTable();
 
 	int getSize();
-	int addVariable(string procName, Tnode* procNode);
+	int addVariable(string varName, Tnode* varNode);
 	string getVariableName(int i);
-	int getVariableIndex(string procName);
+	int getVariableIndex(string varName);
 	vector<Tnode*>* getVariableAddress(int i);
-	vector<Tnode*>* getVariableAddress(string procName);
+	vector<Tnode*>* getVariableAddress(string varName);
 	void printVariableTable();
 	void printNodeVector(vector<Tnode*> list);
 
