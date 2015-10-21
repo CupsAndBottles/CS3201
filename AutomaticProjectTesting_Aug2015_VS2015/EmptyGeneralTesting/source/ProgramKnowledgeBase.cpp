@@ -121,6 +121,9 @@ vector<string> ProgramKnowledgeBase::getVariablesModifiedBy(string procName){
 
 bool ProgramKnowledgeBase::uses(int stmt, string var){
 	try{
+		if (var == Helpers::WILDCARD) {
+			return usesRelationIndexedByStatements.at(stmt).size() > 0;
+		}
 		return usesRelationIndexedByStatements.at(stmt).count(var) == 1;
 	} catch (std::out_of_range){
 		return false;
@@ -129,7 +132,17 @@ bool ProgramKnowledgeBase::uses(int stmt, string var){
 
 vector<int> ProgramKnowledgeBase::getStatementsThatUse(string var){
 	try{
-		return Helpers::flattenIntSetToIntVector(&usesRelationIndexedByVariables.at(var));
+		if (var == Helpers::WILDCARD) {
+			std::vector<int> keys;
+			keys.reserve(usesRelationIndexedByStatements.size());
+			for (auto kv : usesRelationIndexedByStatements) {
+				keys.push_back(kv.first);
+			}
+			return keys;
+		}
+		else {
+			return Helpers::flattenIntSetToIntVector(&usesRelationIndexedByVariables.at(var));
+		}
 	} catch (std::out_of_range){
 		return vector<int>();
 	}
@@ -145,6 +158,12 @@ vector<string> ProgramKnowledgeBase::getVariablesUsedBy(int stmt){
 
 bool ProgramKnowledgeBase::uses(string procName, string var)
 {
+	if (procName == Helpers::WILDCARD) {
+		return getProceduresThatUse(var).size() > 0;
+	} else if (var == Helpers::WILDCARD) {
+		return getVariablesUsedBy(procName).size() > 0;
+	}
+
 	Tnode* procNode = getNodeWithProcedureName(procName);
 	if (procNode == NULL) {
 		return false;

@@ -668,6 +668,43 @@ namespace UnitTesting
 			Assert::AreEqual(string("y"), variablesProcs[0]);
 		}
 
+		TEST_METHOD(testPKBUsesWithWildcards) {
+			string fileName = "programSimpleUses.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc {";
+			outputFile << "x = y + 1;";
+			outputFile << "z = y + 1;";
+			outputFile << "}";
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+
+			Assert::IsTrue(pkb.uses("Proc", "_"));
+			Assert::IsTrue(pkb.uses(1, "_"));
+			Assert::IsTrue(pkb.uses(2, "_"));
+			Assert::IsFalse(pkb.uses("_", "x"));
+			Assert::IsTrue(pkb.uses("_", "y"));
+			Assert::IsTrue(pkb.uses("_", "_"));
+
+			vector<int> users = pkb.getStatementsThatUse("_");
+			Assert::AreEqual(2, int(users.size()));
+			Assert::AreEqual(1, users[0]);
+			Assert::AreEqual(2, users[1]);
+
+			vector<string> usersProcs = pkb.getProceduresThatUse("_");
+			Assert::AreEqual(1, int(usersProcs.size()));
+			Assert::AreEqual(string("Proc"), usersProcs[0]);
+
+			vector<string> variablesProcs = pkb.getVariablesUsedBy("_");
+			Assert::AreEqual(1, int(variablesProcs.size()));
+			Assert::AreEqual(string("y"), variablesProcs[0]);
+		}
+
 		TEST_METHOD(testPKBFollows) {
 			string fileName = "programFollows.txt";
 			ofstream outputFile(fileName, ofstream::trunc);
