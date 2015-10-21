@@ -37,13 +37,18 @@ int StmtTable::addStmtCFGNode(int stmtNum, Gnode * CFGnode)
 
 Tnode* StmtTable::getStmtAddress(int i)
 {
+	if (i >= stmtTable->size()) {
+		return NULL;
+	}
 	return stmtTable -> at(i).first;
 }
 
 
 Gnode * StmtTable::getCFGNode(int i)
 {
-
+	if (i >= stmtTable->size()) {
+		return NULL;
+	}
 	return stmtTable->at(i).second;
 }
 
