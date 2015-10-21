@@ -36,7 +36,11 @@ void ProgramKnowledgeBase::updateDBFile() {
 
 bool ProgramKnowledgeBase::modifies(int stmt, string var){
 	try{
-		return modifiesRelationIndexedByStatements.at(stmt).count(var) == 1;
+		if (var == Helpers::WILDCARD) {
+			return modifiesRelationIndexedByStatements.at(stmt).size() > 0;
+		} else {
+			return modifiesRelationIndexedByStatements.at(stmt).count(var) == 1;
+		}
 	} catch (std::out_of_range){
 		return false;
 	}
@@ -44,7 +48,16 @@ bool ProgramKnowledgeBase::modifies(int stmt, string var){
 
 vector<int> ProgramKnowledgeBase::getStatementsThatModify(string var){
 	try{
-		return Helpers::flattenIntSetToIntVector(&modifiesRelationIndexedByVariables.at(var));
+		if (var == Helpers::WILDCARD) {
+			std::vector<int> keys;
+			keys.reserve(modifiesRelationIndexedByStatements.size());
+			for (auto kv : modifiesRelationIndexedByStatements) {
+				keys.push_back(kv.first);
+			}
+			return keys;
+		} else {
+			return Helpers::flattenIntSetToIntVector(&modifiesRelationIndexedByVariables.at(var));
+		}
 	} catch (std::out_of_range){
 		return vector<int>();
 	}
@@ -59,10 +72,17 @@ vector<string> ProgramKnowledgeBase::getVariablesModifiedBy(int stmt){
 }
 
 bool ProgramKnowledgeBase::modifies(string procName, string var){
+	if (procName == Helpers::WILDCARD) {
+		return getProceduresThatModify(var).size() > 0;
+	} else if (var == Helpers::WILDCARD) {
+		return getVariablesModifiedBy(procName).size() > 0;
+	} 
+	
 	Tnode* procNode = getNodeWithProcedureName(procName);
 	if (procNode == NULL) {
 		return false;
 	}
+
 	int procRangeStart = procNode->getFirstChild()->getFirstChild()->getStatementNumber();
 	int procRangeEnd = getLastContainedStatement(procNode)->getStatementNumber();
 	vector<int> statementsThatModifyVar = getStatementsThatModify(var);

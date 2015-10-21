@@ -587,6 +587,48 @@ namespace UnitTesting
 			Assert::AreEqual(string("y"), variablesProcs[1]);
 		}
 
+		TEST_METHOD(testPKBModifyWithWildcards) {
+			string fileName = "programMultiProcedureModify.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc {";
+			outputFile << "x = 1;"; //line 1
+			outputFile << "call Other;"; //line 2
+			outputFile << "}" << endl;
+			outputFile << "procedure Other {";
+			outputFile << "y = 1;"; //line 3
+			outputFile << "}";
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+
+			Assert::IsTrue(pkb.modifies("Proc", "_"));
+			Assert::IsTrue(pkb.modifies("Other", "_"));
+			Assert::IsTrue(pkb.modifies("_", "x"));
+			Assert::IsTrue(pkb.modifies("_", "y"));
+			Assert::IsTrue(pkb.modifies("_", "_"));
+			
+			vector<string> vars = pkb.getVariablesModifiedBy("_");
+			Assert::AreEqual(2, (int)vars.size());
+			Assert::IsTrue(find(vars.begin(), vars.end(), "x") != vars.end());
+			Assert::IsTrue(find(vars.begin(), vars.end(), "y") != vars.end());
+
+			vector<string> procs = pkb.getProceduresThatModify("_");
+			Assert::AreEqual(2, (int)procs.size());
+			Assert::IsTrue(find(procs.begin(), procs.end(), "Other") != procs.end());
+			Assert::IsTrue(find(procs.begin(), procs.end(), "Proc") != procs.end());
+
+			vector<int> stmts = pkb.getStatementsThatModify("_");
+			Assert::AreEqual(3, (int)stmts.size());
+			Assert::IsTrue(find(stmts.begin(), stmts.end(), 1) != stmts.end());
+			Assert::IsTrue(find(stmts.begin(), stmts.end(), 2) != stmts.end());
+			Assert::IsTrue(find(stmts.begin(), stmts.end(), 3) != stmts.end());
+		}
+
 		TEST_METHOD(testPKBSimpleUses) {
 			string fileName = "programSimpleUses.txt";
 			ofstream outputFile(fileName, ofstream::trunc);
