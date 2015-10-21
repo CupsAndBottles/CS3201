@@ -295,7 +295,6 @@ bool simpleParser::parseCall() {
 	if ((*rules).isProcName(token) && next_token == ";") {
 		// Get the procedure this call statement is in
 		string procName = procList.back();
-		cout << "Parent procedure is " << procName << "\n";
 		vector<string> called;
 
 		// Store the calling procedure as key and vector of called procedures as value
