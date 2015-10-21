@@ -759,6 +759,7 @@ namespace UnitTesting
 			outputFile << "x = y + 1 + x;"; // line 4
 			outputFile << "x = y + x * 2;"; // line 5
 			outputFile << "x = x * 2 + y;"; // line 6
+			outputFile << "a = b;"; // line 7
 			outputFile << "}";
 			outputFile.close();
 

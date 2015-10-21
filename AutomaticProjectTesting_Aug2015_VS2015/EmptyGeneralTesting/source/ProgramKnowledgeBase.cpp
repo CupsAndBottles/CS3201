@@ -383,9 +383,11 @@ vector<Tnode*> ProgramKnowledgeBase::getAssignsThatMatchPattern(string var, stri
 	vector<Tnode*> assigns = getNodesOfType(Tnode::STMT_ASSIGN);
 	vector<Tnode*> results = vector<Tnode*>();
 	Tnode* expression = NULL;
+	Tnode* variable = NULL;
 	for (Tnode* assign : assigns) {
 		expression = assign->getFirstChild()->getRightSibling();
-		if (expression->isEquals(expressionTreeRoot)) {
+		variable = assign->getFirstChild();
+		if (variable->getName() == var && expression->isEquals(expressionTreeRoot)) {
 			results.push_back(assign);
 		}
 	}
@@ -429,9 +431,11 @@ vector<Tnode*> ProgramKnowledgeBase::getAssignsThatContainPattern(string var, st
 	vector<Tnode*> assigns = getNodesOfType(Tnode::STMT_ASSIGN);
 	vector<Tnode*> results = vector<Tnode*>();
 	Tnode* expression = NULL;
+	Tnode* variable = NULL;
 	for (Tnode* assign : assigns) {
 		expression = assign->getFirstChild()->getRightSibling();
-		if (expression->contains(expressionTreeRoot)) {
+		variable = assign->getFirstChild();
+		if (variable->getName() == var && expression->contains(expressionTreeRoot)) {
 			results.push_back(assign);
 		}
 	}
