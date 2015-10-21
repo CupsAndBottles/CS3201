@@ -28,6 +28,9 @@ int StmtTable::addStatement(Tnode *stmtNode)
 
 int StmtTable::addStmtCFGNode(int stmtNum, Gnode * CFGnode)
 {
+	if (stmtNum >= stmtTable->size()) {
+		return 0;
+	}
 	stmtTable->at(stmtNum).second = CFGnode;
 	return stmtNum;
 }
