@@ -20,6 +20,7 @@ public:
 
 	void buildDatabase(vector<string> tokens);
 	Gnode* buildControlFlowGraph();
+	vector<Gnode*> createControlFlowGraphNodes();
 	string toUpperCase(string s);
 	bool isNumber(string &s);
 	Tnode* getAbstractSyntaxTreeRoot();

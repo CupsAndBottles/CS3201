@@ -412,3 +412,28 @@ vector<vector<Tnode*>> Database::printAbstractSyntaxTree(Tnode* root)
 	*/
 	return notSoSimple;
 }
+
+vector<Gnode*> Database::createControlFlowGraphNodes() {
+
+	vector<Gnode*> listOfCfgNodes;
+
+	for(int i=1; i<stmtTable->getSize(); i++) {
+		if (stmtTable->getStmtAddress(i)->isIf()) {
+			Gnode *nodeIf = Gnode::createGnode(Gnode::STMT_IF, stmtTable->getStmtAddress(i)->getStatementNumber());
+			listOfCfgNodes.push_back(nodeIf);
+		} else if (stmtTable->getStmtAddress(i)->isWhile()) {
+			Gnode *nodeWhile = Gnode::createGnode(Gnode::STMT_WHILE, stmtTable->getStmtAddress(i)->getStatementNumber());
+			listOfCfgNodes.push_back(nodeWhile);
+		} else {
+			Gnode *node = Gnode::createGnode(stmtTable->getStmtAddress(i)->getStatementNumber());
+			listOfCfgNodes.push_back(node);
+		}
+	}
+
+	return listOfCfgNodes;
+}
+
+Gnode* Database::buildControlFlowGraph() {
+
+	return cfgRoot;
+}
