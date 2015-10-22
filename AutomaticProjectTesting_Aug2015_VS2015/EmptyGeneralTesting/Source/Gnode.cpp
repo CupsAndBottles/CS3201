@@ -33,11 +33,11 @@ void Gnode::setNext(Gnode *curr, Gnode *next) {
         curr->right = next;
 }
 
-void Gnode::setNextIf(Gnode *curr, Gnode *next1, Gnode *next2, Gnode *other) {
-	curr->left = next1;
-	curr->right = next2;
-	next1->right = other;
-	next2->right = other;
+void Gnode::setNextIf(Gnode *curr, Gnode *lastChildThen, Gnode *lastChildElse, Gnode *other) {
+	curr->left = lastChildThen;
+	curr->right = lastChildElse;
+	lastChildThen->right = other;
+	lastChildElse->right = other;
 }
 
 void Gnode::setNextWhile(Gnode* parent, Gnode* lastchild, Gnode* other){
