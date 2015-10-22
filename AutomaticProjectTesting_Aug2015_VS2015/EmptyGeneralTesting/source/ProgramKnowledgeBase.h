@@ -58,6 +58,14 @@ public:
 	vector<int> getStatementsThatFollowStar(int stmt);
 	vector<int> getStatementsFollowStarredBy(int stmt);
 
+	bool affects(int s1, int s2);
+	vector<int> getStatementsAffectedBy(int stmt);
+	vector<int> getStatementsThatAffect(int stmt);
+
+	bool affectsStar(int s1, int s2);
+	vector<int> getStatementsAffectStarredBy(int stmt);
+	vector<int> getStatementsThatAffectStar(int stmt);
+
 	vector<int> getStatementsOfType(Tnode::Type type);
 	vector<string> getVariableNames();
 	vector<string> getProcedureNames();

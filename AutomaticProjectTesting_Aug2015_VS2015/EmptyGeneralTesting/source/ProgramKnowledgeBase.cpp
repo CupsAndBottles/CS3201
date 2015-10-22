@@ -565,6 +565,30 @@ vector<int> ProgramKnowledgeBase::getStatementsFollowStarredBy(int stmt)
 	return results;
 }
 
+bool ProgramKnowledgeBase::affects(int s1, int s2){
+	return false;
+}
+
+vector<int> ProgramKnowledgeBase::getStatementsAffectedBy(int stmt){
+	return vector<int>();
+}
+
+vector<int> ProgramKnowledgeBase::getStatementsThatAffect(int stmt){
+	return vector<int>();
+}
+
+bool ProgramKnowledgeBase::affectsStar(int s1, int s2){
+	return false;
+}
+
+vector<int> ProgramKnowledgeBase::getStatementsAffectStarredBy(int stmt){
+	return vector<int>();
+}
+
+vector<int> ProgramKnowledgeBase::getStatementsThatAffectStar(int stmt){
+	return vector<int>();
+}
+
 vector<int> ProgramKnowledgeBase::getStatementsOfType(Tnode::Type type){
 	return Helpers::flattenNodeVectorToIntVector(&getNodesOfType(type));
 }
