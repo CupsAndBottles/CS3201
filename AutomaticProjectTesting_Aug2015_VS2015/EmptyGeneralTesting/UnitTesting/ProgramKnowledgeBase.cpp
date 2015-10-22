@@ -588,7 +588,7 @@ namespace UnitTesting
 		}
 
 		TEST_METHOD(testPKBModifyWithWildcards) {
-			string fileName = "programMultiProcedureModify.txt";
+			string fileName = "programModifyWithWildcards.txt";
 			ofstream outputFile(fileName, ofstream::trunc);
 			outputFile << "procedure Proc {";
 			outputFile << "x = 1;"; //line 1
@@ -669,7 +669,7 @@ namespace UnitTesting
 		}
 
 		TEST_METHOD(testPKBUsesWithWildcards) {
-			string fileName = "programSimpleUses.txt";
+			string fileName = "programUsesWithWildcards.txt";
 			ofstream outputFile(fileName, ofstream::trunc);
 			outputFile << "procedure Proc {";
 			outputFile << "x = y + 1;";
