@@ -73,63 +73,6 @@ Gnode::Type Gnode::getType() {
 	return type;
 }
 
-Gnode *Gnode::getLastChildOf(Tnode* parent) {
-
-	int start = (parent).first->getStatementNumber()+1;
-	Gnode* lastChild;
-
-	StatementTable* stmtTable = Database::getStatementTable();
-
-	for (int i = start; i != stmtTable->getSize(); i++) {
-		if ((*i).isLastChild() == TRUE) {
-			lastChild = Gnode::createGnode((*i).first->getStatementNumber());
-		}
-	}
-
-	return lastChild;
-}
-
-vector<Gnode*> Gnode::createCfgNodes() {
-
-	vector<Gnode*> listOfGnodes;
-
-	StatementTable* stmtTable = Database::getStatementTable();
-
-	for (auto i = stmtTable->begin() + 1; i != stmtTable->end(); i++) {
-		if ((*i).first->getType() == Tnode::STMT_IF) {
-			Gnode *nodeif = Gnode::createGnode(Gnode::STMT_IF, (*i).first->getStatementNumber());
-			listOfGnodes.push_back(nodeif);
-		} else if ((*i).first->getType() == Tnode::STMT_WHILE) {
-			Gnode *nodeWhile = Gnode::createGnode(Gnode::STMT_WHILE, (*i).first->getStatementNumber());
-			listOfGnodes.push_back(nodeWhile);
-		} else {
-			Gnode *node = Gnode::createGnode((*i).first->getStatementNumber());
-			listOfGnodes.push_back(node);
-		}	
-	}
-
-	return listOfGnodes;
-}
-
-Gnode* Gnode::buildCfg(){
-
-	vector<Gnode*> listCfgNodes = Gnode::createCfgNodes();
-
-	for (int i=0; i<listCfgNodes.size(); i++) {
-		if (listCfgNodes.at(i)->getType() == Gnode::STMT_WHILE) {
-			Gnode *parent = listCfgNodes.at(i);
-			Gnode *lastChild = Gnode::getLastChildOf(parent);
-			Gnode *other  = listCfgNodes.at(((lastChild).getValue())+1);
-			Gnode::setNextWhile(parent, lastChild, other);
-		} else {
-			Gnode *curr = listCfgNodes.at(i);
-			Gnode *next = (i+1 >= listCfgNodes.size()) ? NULL : listCfgNodes.at(i+1);
-			Gnode::setNext(curr, next);
-		}
-	}
-
-}
-
 void printVector(vector<Gnode *> nodeVector) {
 
 	cout << "vec size: " << nodeVector.size() << "\n";
@@ -137,8 +80,4 @@ void printVector(vector<Gnode *> nodeVector) {
 	for (vector<Gnode *>::iterator node = nodeVector.begin(); node != nodeVector.end(); ++node) {
 		cout << (**node).getValue() << endl;
 	}
-}
-
-int main() {
-
 }
