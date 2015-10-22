@@ -565,6 +565,30 @@ vector<int> ProgramKnowledgeBase::getStatementsFollowStarredBy(int stmt)
 	return results;
 }
 
+bool ProgramKnowledgeBase::next(int s1, int s2){
+	return false;
+}
+
+vector<int> ProgramKnowledgeBase::getNextStatement(int stmt){
+	return vector<int>();
+}
+
+vector<int> ProgramKnowledgeBase::getStatementBefore(int stmt){
+	return vector<int>();
+}
+
+bool ProgramKnowledgeBase::nextStar(int s1, int s2){
+	return false;
+}
+
+vector<int> ProgramKnowledgeBase::getNextStatements(int stmt){
+	return vector<int>();
+}
+
+vector<int> ProgramKnowledgeBase::getStatementsBefore(int stmt){
+	return vector<int>();
+}
+
 bool ProgramKnowledgeBase::affects(int s1, int s2){
 	return false;
 }
