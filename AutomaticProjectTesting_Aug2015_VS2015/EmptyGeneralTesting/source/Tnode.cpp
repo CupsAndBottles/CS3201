@@ -100,6 +100,9 @@ Tnode * Tnode::getChild(int childNum)
 		return NULL;
 	}
 	Tnode* curNode = this->getFirstChild();
+	if (curNode == NULL) {
+		return curNode;
+	}
 	for (int i = 1; i <= childNum; i++) {
 		if (i == childNum) {
 			return curNode;
@@ -112,6 +115,18 @@ Tnode * Tnode::getChild(int childNum)
 		}
 	}
 	return NULL;
+}
+
+Tnode * Tnode::getLastChild()
+{
+	Tnode* curNode = this->getFirstChild();
+	if (curNode == NULL) {
+		return curNode;
+	}
+	while (curNode->hasRightSilbing()) {
+		curNode = curNode->getRightSibling();
+	}
+	return curNode;
 }
 
 Tnode::Type Tnode::getType()
