@@ -3,7 +3,6 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include "StmtTable.h"
 
 using namespace std;
 
@@ -29,12 +28,7 @@ public:
 	static int getNext(Gnode *node);
 	static vector<int> getNextIfWhile(Gnode *node);
 
-	static vector<Gnode*> createCfgNodes();
-	static Gnode* buildCfg();
-
 	static void printVector(vector<Gnode *> nodeVector);
-
-	static Gnode* getLastChildOf(Tnode* parent);
 
 	Gnode* getRight();
 	Gnode* getLeft();
