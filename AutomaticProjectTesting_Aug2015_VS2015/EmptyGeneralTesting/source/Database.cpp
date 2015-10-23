@@ -418,7 +418,17 @@ vector<Gnode*> Database::createControlFlowGraphNodes() {
 	vector<Gnode*> listOfCfgNodes;
 
 	for(int i=1; i<stmtTable->getSize(); i++) {
-		Gnode *node = Gnode::createGnode(i);
+		if (stmtTable->getStmtAddress(i)->isIf()) {
+			Gnode *nodeIf = Gnode::createGnode(Gnode::STMT_IF, i);
+			listOfCfgNodes.push_back(nodeIf);
+		} else if (stmtTable->getStmtAddress(i)->isWhile()) {
+			Gnode *nodeWhile = Gnode::createGnode(Gnode::STMT_WHILE, i);
+			listOfCfgNodes.push_back(nodeWhile);
+		} else {
+			Gnode *node = Gnode::createGnode(i);
+			listOfCfgNodes.push_back(node);
+		}
+		
 	}
 
 	return listOfCfgNodes;
