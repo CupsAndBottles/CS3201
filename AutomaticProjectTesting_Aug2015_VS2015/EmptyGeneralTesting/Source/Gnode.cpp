@@ -45,6 +45,10 @@ int Gnode::getNext(Gnode *node) {
 	return (node->right == NULL) ? 0 : node->right->value;
 }
 
+int Gnode::getNextIf(Gnode *node) {
+	return (node->left == NULL) ? 0 : node->left->value;
+}
+
 vector<int> Gnode::getNextIfWhile(Gnode *node) {
 	vector<int> vec;
 	vec.push_back(node->left->value);
