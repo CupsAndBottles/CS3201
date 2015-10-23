@@ -418,22 +418,53 @@ vector<Gnode*> Database::createControlFlowGraphNodes() {
 	vector<Gnode*> listOfCfgNodes;
 
 	for(int i=1; i<stmtTable->getSize(); i++) {
-		if (stmtTable->getStmtAddress(i)->isIf()) {
-			Gnode *nodeIf = Gnode::createGnode(Gnode::STMT_IF, stmtTable->getStmtAddress(i)->getStatementNumber());
-			listOfCfgNodes.push_back(nodeIf);
-		} else if (stmtTable->getStmtAddress(i)->isWhile()) {
-			Gnode *nodeWhile = Gnode::createGnode(Gnode::STMT_WHILE, stmtTable->getStmtAddress(i)->getStatementNumber());
-			listOfCfgNodes.push_back(nodeWhile);
-		} else {
-			Gnode *node = Gnode::createGnode(stmtTable->getStmtAddress(i)->getStatementNumber());
-			listOfCfgNodes.push_back(node);
-		}
+		Gnode *node = Gnode::createGnode(i);
 	}
 
 	return listOfCfgNodes;
 }
 
 Gnode* Database::buildControlFlowGraph() {
+
+	vector<Gnode*> listOfCfgNodes = Database::createControlFlowGraphNodes();
+
+	cfgRoot = listOfCfgNodes.at(0);
+	Gnode *next = listOfCfgNodes.at(1);
+	Gnode::setNext(cfgRoot, next);
+
+	for (int i=1; i<stmtTable->getSize(); i++) {
+		Gnode *node = listOfCfgNodes.at(i);
+		if (node->getRight() == NULL) {
+			if (stmtTable->getStmtAddress(i)->isIf()) {
+				// Link the head of if
+				int firstIfChildNum = stmtTable->getStmtAddress(i)->getFirstChild()->getRightSibling()->getFirstChild()->getStatementNumber();
+				int firstElseChildNum = stmtTable->getStmtAddress(i)->getFirstChild()->getRightSibling()->getRightSibling()->getFirstChild()->getStatementNumber();
+				Gnode *curr = listOfCfgNodes.at(i);
+				Gnode *firstIfChild = listOfCfgNodes.at(firstIfChildNum);
+				Gnode *firstElseChild = listOfCfgNodes.at(firstElseChildNum);
+				Gnode::setNextIf(curr, firstIfChild, firstElseChild);
+				// Link the tail of if
+				int lastIfChildNum = stmtTable->getStmtAddress(i)->getFirstChild()->getRightSibling()->getLastChild()->getStatementNumber();
+				int lastElseChildNum = stmtTable->getStmtAddress(i)->getFirstChild()->getRightSibling()->getRightSibling()->getLastChild()->getStatementNumber();
+				Gnode *lastIfChild   = listOfCfgNodes.at(lastIfChildNum);
+				Gnode *lastElseChild = listOfCfgNodes.at(lastElseChildNum);
+				Gnode *other         = listOfCfgNodes.at(lastElseChildNum+1);
+				Gnode::setNextEndIf(lastIfChild, lastElseChild, other);
+			} else if (stmtTable->getStmtAddress(i)->isWhile()) {
+				Gnode *parent = listOfCfgNodes.at(i);
+				Gnode *next = listOfCfgNodes.at(i+1);
+				int lastChildNum = (stmtTable->getStmtAddress(i)->getLastChild())->getStatementNumber();
+				Gnode *lastChild = listOfCfgNodes.at(lastChildNum);
+				Gnode *other = listOfCfgNodes.at(lastChildNum+1);
+				Gnode::setNext(parent, next);
+				Gnode::setNextWhile(parent, lastChild, other);
+			} else {
+				Gnode *curr = listOfCfgNodes.at(i);
+				Gnode *next = listOfCfgNodes.at(i+1);
+				Gnode::setNext(curr, next);
+			}
+		}
+	}
 
 	return cfgRoot;
 }

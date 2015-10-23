@@ -23,7 +23,8 @@ public:
 	static Gnode *createGnode(int num);
 	static Gnode *createGnode(Type t, int num);
 	static void setNext(Gnode *curr, Gnode *next);
-	static void setNextIf(Gnode *curr, Gnode *lastChildThen, Gnode *lastChildElse, Gnode *other);
+	static void setNextIf(Gnode *curr, Gnode *ifNode, Gnode *elseNode);
+	static void setNextEndIf(Gnode *lastChildThen, Gnode *lastChildElse, Gnode *other);
 	static void setNextWhile(Gnode* parent, Gnode* lastchild, Gnode* other);
 	static int getNext(Gnode *node);
 	static vector<int> getNextIfWhile(Gnode *node);

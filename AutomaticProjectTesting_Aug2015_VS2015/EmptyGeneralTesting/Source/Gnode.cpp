@@ -1,12 +1,5 @@
 #include "Gnode.h"
 
-// stmtTable.at(i) -> getType() == Tnode::STMT_IF
-
-/* for (vector<Tnode*>::iterator i = stmtTable -> begin()+1; i != stmtTable -> end(); i++) {
-		cout << "Statement :" << (i - stmtTable -> begin()) << ", Address: <" << *i << ">" << ", StmtNum: " << (**i).getStatementNumber() <<endl;
-	}
-*/
-
 Gnode::Gnode() {
 	value = -1;
 	left = NULL;
@@ -33,9 +26,12 @@ void Gnode::setNext(Gnode *curr, Gnode *next) {
         curr->right = next;
 }
 
-void Gnode::setNextIf(Gnode *curr, Gnode *lastChildThen, Gnode *lastChildElse, Gnode *other) {
-	curr->left = lastChildThen;
-	curr->right = lastChildElse;
+void Gnode::setNextIf(Gnode *curr, Gnode *ifNode, Gnode *elseNode) {
+	curr->left = ifNode;
+	curr->right = elseNode;
+}
+
+void Gnode::setNextEndIf(Gnode *lastChildThen, Gnode *lastChildElse, Gnode *other) {
 	lastChildThen->right = other;
 	lastChildElse->right = other;
 }
