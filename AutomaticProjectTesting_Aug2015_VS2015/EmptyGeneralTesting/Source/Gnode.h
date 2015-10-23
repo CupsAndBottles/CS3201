@@ -26,12 +26,10 @@ public:
 	static void setNextIf(Gnode *curr, Gnode *ifNode, Gnode *elseNode);
 	static void setNextEndIf(Gnode *lastChildThen, Gnode *lastChildElse, Gnode *other);
 	static void setNextWhile(Gnode* parent, Gnode* lastchild, Gnode* other);
-	static int getNext(Gnode *node);
-	static int getNextIf(Gnode *node);
-	static vector<int> getNextIfWhile(Gnode *node);
-
 	static void printVector(vector<Gnode *> nodeVector);
 
+	Gnode* getNext();
+	Gnode* getNextIf();
 	Gnode* getRight();
 	Gnode* getLeft();
 	int getValue();
