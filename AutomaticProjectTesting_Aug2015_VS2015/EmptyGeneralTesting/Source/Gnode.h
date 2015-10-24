@@ -28,8 +28,7 @@ public:
 	static void setNextWhile(Gnode* parent, Gnode* lastchild, Gnode* other);
 	static void printVector(vector<Gnode *> nodeVector);
 
-	Gnode* getNext();
-	Gnode* getNextIf();
+	vector <Gnode *> getNext();
 	Gnode* getRight();
 	Gnode* getLeft();
 	int getValue();
