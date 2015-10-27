@@ -566,11 +566,29 @@ vector<int> ProgramKnowledgeBase::getStatementsFollowStarredBy(int stmt)
 }
 
 bool ProgramKnowledgeBase::next(int s1, int s2){
-	return false;
+	Gnode* node1 = statementTable->getCFGNode(s1);
+	Gnode* node2 = statementTable->getCFGNode(s2);
+	if (node1 == NULL || node2 == NULL) {
+		return false;
+	} else {
+		vector<Gnode*> nexts = node1->getNext();
+		return find(nexts.begin(), nexts.end(), node2) != nexts.end();
+	}
 }
 
 vector<int> ProgramKnowledgeBase::getNextStatements(int stmt){
-	return vector<int>();
+	vector<int> results = vector<int>();
+	Gnode* node = statementTable->getCFGNode(stmt);
+	if (node != NULL) {
+		vector<Gnode*> next = node->getNext();
+		if (next.size() > 0) {
+			for (Gnode* nextNode : next) {
+				results.push_back(nextNode->getValue());
+			}
+		}
+	}
+
+	return results;
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsBefore(int stmt){
