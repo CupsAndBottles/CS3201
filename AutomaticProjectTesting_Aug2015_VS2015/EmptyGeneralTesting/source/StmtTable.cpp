@@ -35,7 +35,7 @@ int StmtTable::addStmtCFGNode(int stmtNum, Gnode * CFGnode)
 	return stmtNum;
 }
 
-Tnode* StmtTable::getStmtAddress(int i)
+Tnode* StmtTable::getASTNode(int i)
 {
 	if (i >= stmtTable->size()) {
 		return NULL;
