@@ -4,7 +4,7 @@
 #include "VarTable.h"
 #include "ProcTable.h"
 #include "StmtTable.h"
-#include "constTable.h"
+#include "ConstTable.h"
 #include "Parser.h"
 #include "Helpers.h"
 #include <iostream>

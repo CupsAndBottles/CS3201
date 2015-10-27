@@ -12,7 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\ASTView.h" />
-    <ClInclude Include="..\source\constTable.h" />
+    <ClInclude Include="..\source\ConstTable.h" />
     <ClInclude Include="..\Source\Database.h" />
     <ClInclude Include="..\Source\EntityTable.h" />
     <ClInclude Include="..\source\Gnode.h" />
@@ -34,7 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\ASTView.cpp" />
-    <ClCompile Include="..\source\constTable.cpp" />
+    <ClCompile Include="..\source\ConstTable.cpp" />
     <ClCompile Include="..\Source\Database.cpp" />
     <ClCompile Include="..\Source\EntityTable.cpp" />
     <ClCompile Include="..\source\Gnode.cpp" />
