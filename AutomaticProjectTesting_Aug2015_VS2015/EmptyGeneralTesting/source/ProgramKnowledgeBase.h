@@ -55,12 +55,12 @@ public:
 	vector<int> getStatementsFollowStarredBy(int stmt);
 
 	bool next(int s1, int s2);
-	vector<int> getNextStatement(int stmt);
-	vector<int> getStatementBefore(int stmt);
-
-	bool nextStar(int s1, int s2);
 	vector<int> getNextStatements(int stmt);
 	vector<int> getStatementsBefore(int stmt);
+
+	bool nextStar(int s1, int s2);
+	vector<int> getNextStarStatements(int stmt);
+	vector<int> getStatementsBeforeStar(int stmt);
 
 	bool affects(int s1, int s2);
 	vector<int> getStatementsAffectedBy(int stmt);

@@ -569,11 +569,11 @@ bool ProgramKnowledgeBase::next(int s1, int s2){
 	return false;
 }
 
-vector<int> ProgramKnowledgeBase::getNextStatement(int stmt){
+vector<int> ProgramKnowledgeBase::getNextStatements(int stmt){
 	return vector<int>();
 }
 
-vector<int> ProgramKnowledgeBase::getStatementBefore(int stmt){
+vector<int> ProgramKnowledgeBase::getStatementsBefore(int stmt){
 	return vector<int>();
 }
 
@@ -581,11 +581,11 @@ bool ProgramKnowledgeBase::nextStar(int s1, int s2){
 	return false;
 }
 
-vector<int> ProgramKnowledgeBase::getNextStatements(int stmt){
+vector<int> ProgramKnowledgeBase::getNextStarStatements(int stmt){
 	return vector<int>();
 }
 
-vector<int> ProgramKnowledgeBase::getStatementsBefore(int stmt){
+vector<int> ProgramKnowledgeBase::getStatementsBeforeStar(int stmt){
 	return vector<int>();
 }
 
