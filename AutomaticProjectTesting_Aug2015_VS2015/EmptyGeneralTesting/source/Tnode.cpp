@@ -129,6 +129,26 @@ Tnode * Tnode::getLastChild()
 	return curNode;
 }
 
+Tnode * Tnode::getLastContainedStatement()
+{
+	if (!this->isContainer() && !this->isProcedure() && !this->isStatementList()) {
+		return NULL;
+	} else {
+		Tnode* lastNode = this->getFirstChild();
+		if (this->isProcedure()) {
+			lastNode = lastNode->getFirstChild();
+		}
+		while (!lastNode->isLastChild()) {
+			lastNode = lastNode->getRightSibling();
+		}
+		if (lastNode->isContainer() || lastNode->isStatementList()) {
+			return lastNode->getLastContainedStatement();
+		} else {
+			return lastNode;
+		}
+	}
+}
+
 Tnode::Type Tnode::getType()
 {
 	return type;

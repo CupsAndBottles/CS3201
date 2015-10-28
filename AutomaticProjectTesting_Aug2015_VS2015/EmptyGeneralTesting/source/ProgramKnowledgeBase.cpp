@@ -84,7 +84,7 @@ bool ProgramKnowledgeBase::modifies(string procName, string var){
 	}
 
 	int procRangeStart = procNode->getFirstChild()->getFirstChild()->getStatementNumber();
-	int procRangeEnd = getLastContainedStatement(procNode)->getStatementNumber();
+	int procRangeEnd = procNode->getLastContainedStatement()->getStatementNumber();
 	vector<int> statementsThatModifyVar = getStatementsThatModify(var);
 	for (int i : statementsThatModifyVar) {
 		if (procRangeStart <= i && i <= procRangeEnd) {
@@ -169,7 +169,7 @@ bool ProgramKnowledgeBase::uses(string procName, string var)
 		return false;
 	}
 	int procRangeStart = procNode->getFirstChild()->getFirstChild()->getStatementNumber();
-	int procRangeEnd = getLastContainedStatement(procNode)->getStatementNumber();
+	int procRangeEnd = procNode->getLastContainedStatement()->getStatementNumber();
 	vector<int> statementsThatUseVar = getStatementsThatUse(var);
 	for (int i : statementsThatUseVar) {
 		if (procRangeStart <= i && i <= procRangeEnd) {
@@ -217,7 +217,7 @@ bool ProgramKnowledgeBase::isParent(int s1, int s2){
 // linearly searches procedures for the procedure that contains the target.
 Tnode* ProgramKnowledgeBase::getProcedureContaining(int targetStmtNum){
 	Tnode* proc = this->abstractSyntaxTree->getFirstChild();
-	int procLastStmtNum = getLastContainedStatement(proc)->getStatementNumber();
+	int procLastStmtNum = proc->getLastContainedStatement()->getStatementNumber();
 	while (targetStmtNum > procLastStmtNum){
 		Tnode* nextProc = proc->getRightSibling();
 		if(nextProc != NULL){
@@ -225,7 +225,7 @@ Tnode* ProgramKnowledgeBase::getProcedureContaining(int targetStmtNum){
 		} else {
 			return NULL;
 		}
-		procLastStmtNum = getLastContainedStatement(proc)->getStatementNumber();
+		procLastStmtNum = proc->getLastContainedStatement()->getStatementNumber();
 	}
 	return proc;
 }
@@ -239,25 +239,6 @@ Tnode* ProgramKnowledgeBase::getParentProcedure(Tnode* node){
 		candidate = candidate->getSPAParent();
 	}
 	return candidate;
-}
-
-Tnode* ProgramKnowledgeBase::getLastContainedStatement(Tnode* node){
-	if (!node->isContainer() && !node->isProcedure() && !node->isStatementList()){
-		return NULL;
-	} else {
-		Tnode* lastNode = node->getFirstChild();
-		if (node->isProcedure()) {
-			lastNode = lastNode->getFirstChild();
-		}
-		while (!lastNode->isLastChild()){
-			lastNode = lastNode->getRightSibling();
-		}
-		if (lastNode->isContainer() || lastNode->isStatementList()){
-			return getLastContainedStatement(lastNode);
-		} else {
-			return lastNode;
-		}
-	}
 }
 
 Tnode* ProgramKnowledgeBase::getLastSibling(Tnode* node){

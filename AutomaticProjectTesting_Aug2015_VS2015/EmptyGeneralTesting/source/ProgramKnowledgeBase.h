@@ -110,7 +110,6 @@ private:
 	Tnode * getParentNode(Tnode * node);
 	Tnode * getProcedureContaining(int targetStmtNum); //DON'T NEED
 	Tnode * getParentProcedure(Tnode * node); //DON'T NEED
-	Tnode * getLastContainedStatement(Tnode * node);
 	Tnode * getLastSibling(Tnode * node); //not used
 	Tnode * getPreviousStatementNode(Tnode * currNode);
 	Tnode * getNextStatementNode(Tnode * currNode);
