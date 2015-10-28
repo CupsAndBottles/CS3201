@@ -4,7 +4,7 @@ Gnode::Gnode() {
 	value = -1;
 	left = NULL;
 	right = NULL;
-	prev = NULL;
+	prev = vector<Gnode*>();
 	otherPrev = NULL;
 	type = NOTYPE;
 }
@@ -26,28 +26,28 @@ Gnode *Gnode::createGnode(Type t, int num) {
 
 void Gnode::setNext(Gnode *curr, Gnode *next) {
         curr->right = next;
-        next->prev = curr;
+        next->prev.push_back(curr);
 }
 
 void Gnode::setNextIf(Gnode *curr, Gnode *ifNode, Gnode *elseNode) {
 	curr->left = ifNode;
 	curr->right = elseNode;
-	ifNode->prev = curr;
-	elseNode->prev = curr;
+	ifNode->prev.push_back(curr);
+	elseNode->prev.push_back(curr);
 }
 
 void Gnode::setNextEndIf(Gnode *lastChildThen, Gnode *lastChildElse, Gnode *other) {
 	lastChildThen->right = other;
 	lastChildElse->right = other;
-	other->prev = lastChildElse;
+	other->prev.push_back(lastChildElse);
 	other->otherPrev = lastChildThen;
 }
 
 void Gnode::setNextWhile(Gnode* parent, Gnode* lastchild, Gnode* other){
 	parent->left = other;
 	lastchild->right = parent;
-	other->prev = parent;
-	parent->prev = lastchild;
+	other->prev.push_back(parent);
+	parent->prev.push_back(lastchild);
 }
 
 vector <Gnode *> Gnode::getNext() {
@@ -64,16 +64,12 @@ vector <Gnode *> Gnode::getNext() {
 }
 
 vector <Gnode *> Gnode::getPrev() {
-	vector<Gnode*> prevGnodes;
 
-	if (prev != NULL) {
-		prevGnodes.push_back(prev);
-	}
-	if (otherPrev != NULL) {
-		prevGnodes.push_back(otherPrev);
+	if ((!prev.empty()) && (otherPrev != NULL)) {
+		prev.push_back(otherPrev);
 	}
 
-	return prevGnodes;
+	return prev;
 }
 
 int Gnode::getValue() {

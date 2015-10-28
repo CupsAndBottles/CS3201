@@ -39,7 +39,7 @@ public:
 private:
 	Gnode *left;
 	Gnode *right;
-	Gnode *prev;
+	vector<Gnode*> prev;
 	Gnode *otherPrev;
 	Type type;
 	int value;
