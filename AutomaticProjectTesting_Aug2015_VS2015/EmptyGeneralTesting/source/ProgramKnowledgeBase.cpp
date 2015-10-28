@@ -133,10 +133,15 @@ vector<string> ProgramKnowledgeBase::getVariablesModifiedBy(string procName){
 
 bool ProgramKnowledgeBase::uses(int stmt, string var){
 	try{
-		if (var == Helpers::WILDCARD_STRING) {
+		if (stmt == Helpers::WILDCARD_INT && var == Helpers::WILDCARD_STRING) {
+			return usesRelationIndexedByVariables.size() > 0;
+		} else if (stmt == Helpers::WILDCARD_INT) {
+			return usesRelationIndexedByVariables.at(var).size() > 0;
+		} else if (var == Helpers::WILDCARD_STRING) {
 			return usesRelationIndexedByStatements.at(stmt).size() > 0;
+		} else {
+			return usesRelationIndexedByStatements.at(stmt).count(var) == 1;
 		}
-		return usesRelationIndexedByStatements.at(stmt).count(var) == 1;
 	} catch (std::out_of_range){
 		return false;
 	}
@@ -162,7 +167,17 @@ vector<int> ProgramKnowledgeBase::getStatementsThatUse(string var){
 
 vector<string> ProgramKnowledgeBase::getVariablesUsedBy(int stmt){
 	try{
-		return Helpers::flattenStringSetToStringVector(&usesRelationIndexedByStatements.at(stmt));
+		if (stmt == Helpers::WILDCARD_INT) {
+			vector<string> results = vector<string>();
+			for (pair<string, unordered_set<int>> keyVals : usesRelationIndexedByVariables) {
+				if (keyVals.second.size() > 0) {
+					results.push_back(keyVals.first);
+				}
+			}
+			return results;
+		} else {
+			return Helpers::flattenStringSetToStringVector(&usesRelationIndexedByStatements.at(stmt));
+		}
 	} catch (std::out_of_range){
 		return vector<string>();
 	}
