@@ -52,10 +52,10 @@ void Gnode::setNextWhile(Gnode* parent, Gnode* lastchild, Gnode* other){
 vector <Gnode *> Gnode::getNext() {
 	vector<Gnode*> gnodes;
 
-	if (right != NULL) {
+	if ((right != NULL) && (right->getValue() != -1)) {
 		gnodes.push_back(right);
 	}
-	if (left != NULL) {
+	if ((left != NULL) && (left->getValue() != -1)) {
 		gnodes.push_back(left);
 	}
 
