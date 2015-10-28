@@ -36,7 +36,7 @@ void ProgramKnowledgeBase::updateDBFile() {
 
 bool ProgramKnowledgeBase::modifies(int stmt, string var){
 	try{
-		if (var == Helpers::WILDCARD) {
+		if (var == Helpers::WILDCARD_STRING) {
 			return modifiesRelationIndexedByStatements.at(stmt).size() > 0;
 		} else {
 			return modifiesRelationIndexedByStatements.at(stmt).count(var) == 1;
@@ -48,7 +48,7 @@ bool ProgramKnowledgeBase::modifies(int stmt, string var){
 
 vector<int> ProgramKnowledgeBase::getStatementsThatModify(string var){
 	try{
-		if (var == Helpers::WILDCARD) {
+		if (var == Helpers::WILDCARD_STRING) {
 			std::vector<int> keys;
 			keys.reserve(modifiesRelationIndexedByStatements.size());
 			for (auto kv : modifiesRelationIndexedByStatements) {
@@ -72,9 +72,9 @@ vector<string> ProgramKnowledgeBase::getVariablesModifiedBy(int stmt){
 }
 
 bool ProgramKnowledgeBase::modifies(string procName, string var){
-	if (procName == Helpers::WILDCARD) {
+	if (procName == Helpers::WILDCARD_STRING) {
 		return getProceduresThatModify(var).size() > 0;
-	} else if (var == Helpers::WILDCARD) {
+	} else if (var == Helpers::WILDCARD_STRING) {
 		return getVariablesModifiedBy(procName).size() > 0;
 	} 
 	
@@ -121,7 +121,7 @@ vector<string> ProgramKnowledgeBase::getVariablesModifiedBy(string procName){
 
 bool ProgramKnowledgeBase::uses(int stmt, string var){
 	try{
-		if (var == Helpers::WILDCARD) {
+		if (var == Helpers::WILDCARD_STRING) {
 			return usesRelationIndexedByStatements.at(stmt).size() > 0;
 		}
 		return usesRelationIndexedByStatements.at(stmt).count(var) == 1;
@@ -132,7 +132,7 @@ bool ProgramKnowledgeBase::uses(int stmt, string var){
 
 vector<int> ProgramKnowledgeBase::getStatementsThatUse(string var){
 	try{
-		if (var == Helpers::WILDCARD) {
+		if (var == Helpers::WILDCARD_STRING) {
 			std::vector<int> keys;
 			keys.reserve(usesRelationIndexedByStatements.size());
 			for (auto kv : usesRelationIndexedByStatements) {
@@ -158,9 +158,9 @@ vector<string> ProgramKnowledgeBase::getVariablesUsedBy(int stmt){
 
 bool ProgramKnowledgeBase::uses(string procName, string var)
 {
-	if (procName == Helpers::WILDCARD) {
+	if (procName == Helpers::WILDCARD_STRING) {
 		return getProceduresThatUse(var).size() > 0;
-	} else if (var == Helpers::WILDCARD) {
+	} else if (var == Helpers::WILDCARD_STRING) {
 		return getVariablesUsedBy(procName).size() > 0;
 	}
 
@@ -416,7 +416,7 @@ vector<Tnode*> ProgramKnowledgeBase::getAssignsThatMatchPattern(string var, stri
 
 vector<Tnode*> ProgramKnowledgeBase::getWhilesThatMatchPattern(string var) {
 	vector<Tnode*> whiles = getNodesOfType(Tnode::STMT_WHILE);
-	if (var == Helpers::WILDCARD) {
+	if (var == Helpers::WILDCARD_STRING) {
 		return whiles;
 	} else {
 		vector<Tnode*> results = vector<Tnode*>();
@@ -431,7 +431,7 @@ vector<Tnode*> ProgramKnowledgeBase::getWhilesThatMatchPattern(string var) {
 
 vector<Tnode*> ProgramKnowledgeBase::getIfsThatMatchPattern(string var) {
 	vector<Tnode*> ifs = getNodesOfType(Tnode::STMT_IF);
-	if (var == Helpers::WILDCARD) {
+	if (var == Helpers::WILDCARD_STRING) {
 		return ifs;
 	}
 	else {
@@ -666,11 +666,11 @@ vector<int> ProgramKnowledgeBase::getStatementsThatContainPattern(Tnode::Type ty
 
 bool ProgramKnowledgeBase::calls(string p1, string p2) {
 	try {
-		if (p1 == Helpers::WILDCARD && p2 == Helpers::WILDCARD) {
+		if (p1 == Helpers::WILDCARD_STRING && p2 == Helpers::WILDCARD_STRING) {
 			return callsRelationIndexedByCallers.size() != 0;
-		} else if (p1 == Helpers::WILDCARD) {
+		} else if (p1 == Helpers::WILDCARD_STRING) {
 			return callsRelationIndexedByCallees.at(p2).size() != 0;
-		} else if (p2 == Helpers::WILDCARD) {
+		} else if (p2 == Helpers::WILDCARD_STRING) {
 			return callsRelationIndexedByCallers.at(p1).size() != 0;
 		} else {
 			return callsRelationIndexedByCallers.at(p1).count(p2) == 1;
@@ -681,7 +681,7 @@ bool ProgramKnowledgeBase::calls(string p1, string p2) {
 }
 
 vector<string> ProgramKnowledgeBase::getProceduresThatCall(string proc) {
-	if (proc == Helpers::WILDCARD) {
+	if (proc == Helpers::WILDCARD_STRING) {
 		vector<string> callers = vector<string>();
 		for (auto kv : callsRelationIndexedByCallers) {
 			callers.push_back(kv.first);
@@ -697,7 +697,7 @@ vector<string> ProgramKnowledgeBase::getProceduresThatCall(string proc) {
 }
 
 vector<string> ProgramKnowledgeBase::getProceduresCalledBy(string proc) {
-	if (proc == Helpers::WILDCARD) {
+	if (proc == Helpers::WILDCARD_STRING) {
 		vector<string> callees = vector<string>();
 		for (auto kv : callsRelationIndexedByCallees) {
 			callees.push_back(kv.first);
@@ -713,11 +713,11 @@ vector<string> ProgramKnowledgeBase::getProceduresCalledBy(string proc) {
 }
 
 bool ProgramKnowledgeBase::callsStar(string p1, string p2) {
-	if (p1 == Helpers::WILDCARD && p2 == Helpers::WILDCARD) {
+	if (p1 == Helpers::WILDCARD_STRING && p2 == Helpers::WILDCARD_STRING) {
 		return this->callsRelationIndexedByCallers.size() > 0;
-	} else if (p1 == Helpers::WILDCARD) {
+	} else if (p1 == Helpers::WILDCARD_STRING) {
 		return this->callsRelationIndexedByCallees.count(p2) != 0;
-	} else if (p2 == Helpers::WILDCARD) {
+	} else if (p2 == Helpers::WILDCARD_STRING) {
 		return this->callsRelationIndexedByCallers.count(p1) != 0;
 	}
 
@@ -759,7 +759,7 @@ bool ProgramKnowledgeBase::callsStar(string p1, string p2) {
 }
 
 vector<string> ProgramKnowledgeBase::getProceduresThatCallStar(string proc) {
-	if (proc == Helpers::WILDCARD) {
+	if (proc == Helpers::WILDCARD_STRING) {
 		return getProceduresThatCall(proc);
 	}
 
@@ -792,7 +792,7 @@ vector<string> ProgramKnowledgeBase::getProceduresThatCallStar(string proc) {
 }
 
 vector<string> ProgramKnowledgeBase::getProceduresCallStarredBy(string proc) {
-	if (proc == Helpers::WILDCARD) {
+	if (proc == Helpers::WILDCARD_STRING) {
 		return getProceduresCalledBy(proc);
 	}
 
