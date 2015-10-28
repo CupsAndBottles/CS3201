@@ -34,6 +34,7 @@ public:
 	Gnode* getLeft();
 	int getValue();
 	Type getType();
+	bool isEndNode();
 
 private:
 	Gnode *left;

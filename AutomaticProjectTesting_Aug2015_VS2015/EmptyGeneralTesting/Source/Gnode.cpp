@@ -91,6 +91,14 @@ Gnode::Type Gnode::getType() {
 	return type;
 }
 
+bool Gnode::isEndNode() {
+	if (((right != NULL) && (right->getValue() == -1)) ||  
+			((left != NULL) && (left->getValue() == -1))) {
+		return true;
+	}
+	return false;
+}
+
 void printVector(vector<Gnode *> nodeVector) {
 
 	cout << "vec size: " << nodeVector.size() << "\n";
