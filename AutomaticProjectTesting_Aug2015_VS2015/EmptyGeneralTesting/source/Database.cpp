@@ -462,8 +462,8 @@ Gnode* Database::buildControlFlowGraph() {
 				Gnode *firstElseChild = listOfCfgNodes.at(firstElseChildNum);
 				Gnode::setNextIf(curr, firstIfChild, firstElseChild);
 				// Link the tail of if
-				int lastIfChildNum = stmtTable->getASTNode(i)->getFirstChild()->getRightSibling()->getLastChild()->getStatementNumber();
-				int lastElseChildNum = stmtTable->getASTNode(i)->getFirstChild()->getRightSibling()->getRightSibling()->getLastChild()->getStatementNumber();
+				int lastIfChildNum = stmtTable->getASTNode(i)->getFirstChild()->getRightSibling()->getLastContainedStatement()->getStatementNumber();
+				int lastElseChildNum = stmtTable->getASTNode(i)->getFirstChild()->getRightSibling()->getRightSibling()->getLastContainedStatement()->getStatementNumber();
 				Gnode *lastIfChild   = listOfCfgNodes.at(lastIfChildNum);
 				Gnode *lastElseChild = listOfCfgNodes.at(lastElseChildNum);
 				Gnode *other         = (lastElseChildNum+1 >= listOfCfgNodes.size()) ? endNode : listOfCfgNodes.at(lastElseChildNum+1);
@@ -471,7 +471,7 @@ Gnode* Database::buildControlFlowGraph() {
 			} else if (stmtTable->getASTNode(i)->isWhile()) {
 				Gnode *parent = listOfCfgNodes.at(i);
 				Gnode *next = (i+1 >= listOfCfgNodes.size()) ? endNode : listOfCfgNodes.at(i+1);
-				int lastChildNum = stmtTable->getASTNode(i)->getLastChild()->getStatementNumber();
+				int lastChildNum = stmtTable->getASTNode(i)->getLastContainedStatement()->getStatementNumber();
 				Gnode *lastChild = listOfCfgNodes.at(lastChildNum);
 				Gnode *other = (lastChildNum+1 >= listOfCfgNodes.size()) ? endNode: listOfCfgNodes.at(lastChildNum+1);
 				Gnode::setNext(parent, next);
