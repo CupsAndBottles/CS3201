@@ -29,14 +29,18 @@ public:
 	static void printVector(vector<Gnode *> nodeVector);
 
 	vector <Gnode *> getNext();
-	Gnode* getRight();
-	Gnode* getLeft();
+	vector <Gnode *> getPrev();
 	int getValue();
 	Type getType();
 
 private:
 	Gnode *left;
 	Gnode *right;
+	Gnode *prev;
+	Gnode *otherPrev;
 	Type type;
 	int value;
+
+	Gnode* getRight();
+	Gnode* getLeft();
 };
