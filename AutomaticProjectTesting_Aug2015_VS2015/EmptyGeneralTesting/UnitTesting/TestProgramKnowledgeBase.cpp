@@ -904,12 +904,20 @@ namespace UnitTesting
 			outputFile << "while d {"; // 10
 			outputFile << "e = f;"; // 11
 			outputFile << "f = g;}"; // 12
+			outputFile << "if y then {"; // 13
+			outputFile << "h = 1; }"; // 14
+			outputFile << "else {";
+			outputFile << "h = 2; }"; // 15
+			outputFile << "}";
+			outputFile << "procedure Other {";
+			outputFile << "y = 1;"; //line 16
 			outputFile << "}";
 			outputFile.close();
 
 			Parser *parse = new Parser();
 			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
 			remove(fileName.c_str());
+			Assert::AreNotEqual(0, (int)parsedProgram.size());
 			Database* db = new Database();
 			db->buildDatabase(parsedProgram);
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
@@ -930,10 +938,7 @@ namespace UnitTesting
 			Assert::IsFalse(pkb.next(3, 6));
 			Assert::IsFalse(pkb.next(11, 10));
 			Assert::IsFalse(pkb.next(10, 12));
-
-			vector<int> next10 = pkb.getNextStatements(10);
-			Assert::AreEqual(1, (int)next10.size());
-			Assert::AreEqual(11, next10[0]);
+			Assert::IsFalse(pkb.next(15, 16));
 
 			vector<int> next3 = pkb.getNextStatements(3);
 			Assert::AreEqual(2, (int)next3.size());
@@ -944,6 +949,53 @@ namespace UnitTesting
 			Assert::AreEqual(2, (int)next5.size());
 			Assert::IsTrue(find(next5.begin(), next5.end(), 6) != next5.end());
 			Assert::IsTrue(find(next5.begin(), next5.end(), 8) != next5.end());
+
+			vector<int> next10 = pkb.getNextStatements(10);
+			Assert::AreEqual(2, (int)next10.size());
+			Assert::IsTrue(find(next10.begin(), next10.end(), 11) != next10.end());
+			Assert::IsTrue(find(next10.begin(), next10.end(), 13) != next10.end());
+
+			vector<int> next14 = pkb.getNextStatements(14);
+			Assert::AreEqual(0, (int)next14.size());
+
+			vector<int> next15 = pkb.getNextStatements(15);
+			Assert::AreEqual(0, (int)next15.size());
+
+			vector<int> prev1 = pkb.getStatementsBefore(1);
+			Assert::AreEqual(0, (int)prev1.size());
+
+			vector<int> prev2 = pkb.getStatementsBefore(2);
+			Assert::AreEqual(1, (int)prev2.size());
+			Assert::IsTrue(find(prev2.begin(), prev2.end(), 1) != prev2.end());
+
+			vector<int> prev4 = pkb.getStatementsBefore(4);
+			Assert::AreEqual(1, (int)prev4.size());
+			Assert::IsTrue(find(prev4.begin(), prev4.end(), 3) != prev4.end());
+
+			vector<int> prev5 = pkb.getStatementsBefore(5);
+			Assert::AreEqual(1, (int)prev5.size());
+			Assert::IsTrue(find(prev5.begin(), prev5.end(), 3) != prev5.end());
+
+			vector<int> prev7 = pkb.getStatementsBefore(7);
+			Assert::AreEqual(1, (int)prev7.size());
+			Assert::IsTrue(find(prev7.begin(), prev7.end(), 6) != prev7.end());
+
+			vector<int> prev8 = pkb.getStatementsBefore(8);
+			Assert::AreEqual(1, (int)prev8.size());
+			Assert::IsTrue(find(prev8.begin(), prev8.end(), 5) != prev8.end());
+
+			vector<int> prev10 = pkb.getStatementsBefore(10);
+			Assert::AreEqual(3, (int)prev10.size());
+			Assert::IsTrue(find(prev10.begin(), prev10.end(), 7) != prev10.end());
+			Assert::IsTrue(find(prev10.begin(), prev10.end(), 9) != prev10.end());
+			Assert::IsTrue(find(prev10.begin(), prev10.end(), 12) != prev10.end());
+
+			vector<int> prev11 = pkb.getStatementsBefore(11);
+			Assert::AreEqual(1, (int)prev11.size());
+			Assert::IsTrue(find(prev11.begin(), prev11.end(), 10) != prev11.end());
+		
+			vector<int> prev16 = pkb.getStatementsBefore(16);
+			Assert::AreEqual(0, (int)prev16.size());
 		}
 
 	};
