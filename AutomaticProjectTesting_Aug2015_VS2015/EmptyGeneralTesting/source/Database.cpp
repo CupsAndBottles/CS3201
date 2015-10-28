@@ -57,7 +57,11 @@ void Database::buildDatabase(vector<string> tokens)
 {
 	program(tokens);
 	Tnode::curStmtNum = 1;
-	buildControlFlowGraph();
+	if (stmtTable->getSize() == 2) {
+		cfgRoot = Gnode::createGnode(1);
+	} else {
+		buildControlFlowGraph();
+	}
 }
 
 void Database::program(vector<string> &tokens)
