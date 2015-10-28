@@ -438,9 +438,9 @@ vector<Gnode*> Database::createControlFlowGraphNodes() {
 	return listOfCfgNodes;
 }
 
-void Database::buildControlFlowGraph() {
+Gnode* Database::buildControlFlowGraph() {
 
-	vector<Gnode*> listOfCfgNodes = Database::createControlFlowGraphNodes();
+	vector<Gnode*> listOfCfgNodes = createControlFlowGraphNodes();
 
 	Gnode *endNode = Gnode::createGnode(-1);
 
@@ -482,7 +482,7 @@ void Database::buildControlFlowGraph() {
 		}
 	}
 
-	return;
+	return cfgRoot;
 }
 
 // void Database::printControlFlowGraph(Gnode *cfgRoot) {
