@@ -421,12 +421,15 @@ vector<Gnode*> Database::createControlFlowGraphNodes() {
 		if (stmtTable->getASTNode(i)->isIf()) {
 			Gnode *nodeIf = Gnode::createGnode(Gnode::STMT_IF, i);
 			listOfCfgNodes.push_back(nodeIf);
+			stmtTable->addStmtCFGNode(i, nodeIf);
 		} else if (stmtTable->getASTNode(i)->isWhile()) {
 			Gnode *nodeWhile = Gnode::createGnode(Gnode::STMT_WHILE, i);
 			listOfCfgNodes.push_back(nodeWhile);
+			stmtTable->addStmtCFGNode(i, nodeWhile);
 		} else {
 			Gnode *node = Gnode::createGnode(i);
 			listOfCfgNodes.push_back(node);
+			stmtTable->addStmtCFGNode(i, node);
 		}
 		
 	}
@@ -480,3 +483,7 @@ Gnode* Database::buildControlFlowGraph() {
 
 	return cfgRoot;
 }
+
+// void Database::printControlFlowGraph(Gnode *cfgRoot) {
+	
+// }

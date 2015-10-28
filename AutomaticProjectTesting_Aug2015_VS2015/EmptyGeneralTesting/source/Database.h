@@ -31,6 +31,7 @@ public:
 	ProcTable* getProcedureTable();
 	VarTable* getVariableTable();
 	static vector<vector<Tnode*>> printAbstractSyntaxTree(Tnode* root);
+	// static void printControlFlowGraph(Gnode *cfgRoot);
 
 private:
 	Gnode* cfgRoot;
