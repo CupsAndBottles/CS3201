@@ -573,7 +573,18 @@ vector<int> ProgramKnowledgeBase::getNextStatements(int stmt){
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsBefore(int stmt){
-	return vector<int>();
+	vector<int> results = vector<int>();
+	Gnode* node = statementTable->getCFGNode(stmt);
+	if (node != NULL) {
+		vector<Gnode*> before = node->getPrev();
+		if (before.size() > 0) {
+			for (Gnode* prevNode : before) {
+				results.push_back(prevNode->getValue());
+			}
+		}
+	} 
+
+	return results;
 }
 
 bool ProgramKnowledgeBase::nextStar(int s1, int s2){
