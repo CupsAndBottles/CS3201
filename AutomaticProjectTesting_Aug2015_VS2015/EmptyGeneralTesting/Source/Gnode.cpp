@@ -47,6 +47,7 @@ void Gnode::setNextWhile(Gnode* parent, Gnode* lastchild, Gnode* other){
 	parent->left = other;
 	lastchild->right = parent;
 	other->prev = parent;
+	parent->prev = lastchild;
 }
 
 vector <Gnode *> Gnode::getNext() {
