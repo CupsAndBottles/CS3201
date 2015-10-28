@@ -417,6 +417,8 @@ vector<vector<Tnode*>> Database::printAbstractSyntaxTree(Tnode* root)
 vector<Gnode*> Database::createControlFlowGraphNodes() {
 
 	vector<Gnode*> listOfCfgNodes;
+	Gnode *stubNode = Gnode::createGnode(0);
+	listOfCfgNodes.push_back(stubNode);
 
 	for(int i=1; i<stmtTable->getSize(); i++) {
 		if (stmtTable->getASTNode(i)->isIf()) {
@@ -444,11 +446,11 @@ Gnode* Database::buildControlFlowGraph() {
 
 	Gnode *endNode = Gnode::createGnode(-1);
 
-	cfgRoot = listOfCfgNodes.at(0);
-	Gnode *next = listOfCfgNodes.at(1);
+	cfgRoot = listOfCfgNodes.at(1);
+	Gnode *next = listOfCfgNodes.at(2);
 	Gnode::setNext(cfgRoot, next);
 
-	for (int i=1; i<stmtTable->getSize(); i++) {
+	for (int i=2; i<stmtTable->getSize(); i++) {
 		Gnode *node = listOfCfgNodes.at(i);
 		if (node->getRight() == NULL) {
 			if (stmtTable->getASTNode(i)->isIf()) {
