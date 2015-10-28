@@ -107,12 +107,12 @@ private:
 	vector<Tnode*> getNodesOfType(Tnode::Type type);
 	Tnode * getNodeWithStatementNumber(int num);
 	Tnode * getNodeWithProcedureName(string procName);
-	Tnode * getParentNode(Tnode * node);
+	Tnode * getParentNode(Tnode * node); //not used
 	Tnode * getProcedureContaining(int targetStmtNum); //DON'T NEED
 	Tnode * getParentProcedure(Tnode * node); //DON'T NEED
 	Tnode * getLastSibling(Tnode * node); //not used
-	Tnode * getPreviousStatementNode(Tnode * currNode);
-	Tnode * getNextStatementNode(Tnode * currNode);
+	Tnode * getPreviousStatementNode(Tnode * currNode); //not used
+	Tnode * getNextStatementNode(Tnode * currNode); //not used
 	vector<Tnode*>* populateChildrenStarOf(Tnode* currNode, vector<Tnode*>* children = &vector<Tnode*>());
 
 	vector<Tnode*> getAssignsThatMatchPattern(string var, string expr);
