@@ -30,6 +30,8 @@ public:
 
 	vector <Gnode *> getNext();
 	vector <Gnode *> getPrev();
+	Gnode* getRight();
+	Gnode* getLeft();
 	int getValue();
 	Type getType();
 
@@ -40,7 +42,4 @@ private:
 	Gnode *otherPrev;
 	Type type;
 	int value;
-
-	Gnode* getRight();
-	Gnode* getLeft();
 };

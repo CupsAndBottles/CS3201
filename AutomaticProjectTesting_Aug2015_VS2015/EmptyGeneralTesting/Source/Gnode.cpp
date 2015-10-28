@@ -99,7 +99,3 @@ void printVector(vector<Gnode *> nodeVector) {
 		cout << (**node).getValue() << endl;
 	}
 }
-
-int main() {
-	
-}
