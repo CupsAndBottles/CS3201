@@ -36,8 +36,12 @@ void ProgramKnowledgeBase::updateDBFile() {
 
 bool ProgramKnowledgeBase::modifies(int stmt, string var){
 	try{
-		if (var == Helpers::WILDCARD_STRING) {
+		if (var == Helpers::WILDCARD_STRING && stmt == Helpers::WILDCARD_INT) {
+			return modifiesRelationIndexedByVariables.size() > 0;
+		} else if (var == Helpers::WILDCARD_STRING) {
 			return modifiesRelationIndexedByStatements.at(stmt).size() > 0;
+		} else if (stmt == Helpers::WILDCARD_INT){
+			return modifiesRelationIndexedByVariables.at(var).size() > 0;
 		} else {
 			return modifiesRelationIndexedByStatements.at(stmt).count(var) == 1;
 		}
@@ -65,6 +69,14 @@ vector<int> ProgramKnowledgeBase::getStatementsThatModify(string var){
 
 vector<string> ProgramKnowledgeBase::getVariablesModifiedBy(int stmt){
 	try{
+		if (stmt == Helpers::WILDCARD_INT) {
+			vector<string> results = vector<string>();
+			for (pair<string, unordered_set<int>> keyVals : modifiesRelationIndexedByVariables) {
+				if (keyVals.second.size() > 0) {
+					results.push_back(keyVals.first);
+				}
+			}
+		}
 		return Helpers::flattenStringSetToStringVector(&modifiesRelationIndexedByStatements.at(stmt));
 	} catch (std::out_of_range){
 		return vector<string>();
