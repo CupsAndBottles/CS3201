@@ -917,7 +917,6 @@ namespace UnitTesting
 			Assert::IsTrue(pkb.next(1, 2));
 			Assert::IsTrue(pkb.next(3, 4));
 			Assert::IsTrue(pkb.next(3, 5));
-			Assert::IsTrue(pkb.next(4, 5));
 			Assert::IsTrue(pkb.next(4, 3));
 			Assert::IsTrue(pkb.next(5, 6));
 			Assert::IsTrue(pkb.next(5, 8));
