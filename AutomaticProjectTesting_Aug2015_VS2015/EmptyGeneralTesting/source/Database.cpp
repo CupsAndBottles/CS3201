@@ -57,6 +57,7 @@ void Database::buildDatabase(vector<string> tokens)
 {
 	program(tokens);
 	Tnode::curStmtNum = 1;
+	buildControlFlowGraph();
 }
 
 void Database::program(vector<string> &tokens)
@@ -437,7 +438,7 @@ vector<Gnode*> Database::createControlFlowGraphNodes() {
 	return listOfCfgNodes;
 }
 
-Gnode* Database::buildControlFlowGraph() {
+void Database::buildControlFlowGraph() {
 
 	vector<Gnode*> listOfCfgNodes = Database::createControlFlowGraphNodes();
 
@@ -481,7 +482,7 @@ Gnode* Database::buildControlFlowGraph() {
 		}
 	}
 
-	return cfgRoot;
+	return;
 }
 
 // void Database::printControlFlowGraph(Gnode *cfgRoot) {

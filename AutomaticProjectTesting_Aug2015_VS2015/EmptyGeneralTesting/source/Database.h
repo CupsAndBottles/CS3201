@@ -19,7 +19,7 @@ public:
 	~Database();
 
 	void buildDatabase(vector<string> tokens);
-	Gnode* buildControlFlowGraph();
+	void buildControlFlowGraph();
 	vector<Gnode*> createControlFlowGraphNodes();
 	string toUpperCase(string s);
 	bool isNumber(string &s);
