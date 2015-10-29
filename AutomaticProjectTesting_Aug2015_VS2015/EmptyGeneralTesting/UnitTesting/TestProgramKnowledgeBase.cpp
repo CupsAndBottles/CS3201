@@ -1043,9 +1043,9 @@ namespace UnitTesting
 
 			vector<int> prevS1 = pkb.getStatementsBeforeStar(1);
 			Assert::AreEqual(0, (int)prevS1.size());
-
+			
 			vector<int> prevS15 = pkb.getStatementsBeforeStar(15);
-			Assert::AreEqual(12, (int)prevS1.size());
+			Assert::AreEqual(13, (int)prevS15.size());
 		}
 	};
 }
