@@ -17,7 +17,7 @@ public:
 	static vector<int> flattenBoolVectorToIntVector(const vector<bool> inp);
 	static vector<string> flattenBoolMapToStringVector(const unordered_map<string, bool> inp);
 	static vector<int> flattenASTNodeVectorToIntVector(const vector<Tnode*>* inp);
-	static vector<int> flattenCFGnodeVectorToIntVector(const vector<Gnode*>* inp);
+	static vector<int> flattenCFGNodeVectorToIntVector(const vector<Gnode*>* inp);
 	static vector<int> flattenIntSetToIntVector(const unordered_set<int>* inp);
 	static vector<string> flattenStringSetToStringVector(const unordered_set<string>* inp);
 };

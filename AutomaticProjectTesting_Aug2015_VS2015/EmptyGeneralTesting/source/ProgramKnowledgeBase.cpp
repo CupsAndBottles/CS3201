@@ -589,12 +589,12 @@ bool ProgramKnowledgeBase::next(int s1, int s2){
 
 vector<int> ProgramKnowledgeBase::getNextStatements(int stmt){
 	Gnode* startNode = statementTable->getCFGNode(stmt);
-	return Helpers::flattenCFGnodeVectorToIntVector(&startNode->getNext());
+	return Helpers::flattenCFGNodeVectorToIntVector(&startNode->getNext());
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsBefore(int stmt) {
 	Gnode* startNode = statementTable->getCFGNode(stmt);
-	return Helpers::flattenCFGnodeVectorToIntVector(&startNode->getPrev());
+	return Helpers::flattenCFGNodeVectorToIntVector(&startNode->getPrev());
 }
 
 bool ProgramKnowledgeBase::nextStar(int s1, int s2){

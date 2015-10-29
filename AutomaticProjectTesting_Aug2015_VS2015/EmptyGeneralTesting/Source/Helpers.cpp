@@ -40,7 +40,7 @@ vector<int> Helpers::flattenASTNodeVectorToIntVector(const vector<Tnode*>* inp) 
 	return results;
 }
 
-vector<int> Helpers::flattenCFGnodeVectorToIntVector(const vector<Gnode*>* inp)
+vector<int> Helpers::flattenCFGNodeVectorToIntVector(const vector<Gnode*>* inp)
 {
 	vector<int> results = vector<int>();
 	for (auto it : *inp) {
