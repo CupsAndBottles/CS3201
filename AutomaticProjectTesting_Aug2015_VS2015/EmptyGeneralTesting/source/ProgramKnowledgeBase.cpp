@@ -617,7 +617,7 @@ bool ProgramKnowledgeBase::nextStar(int s1, int s2){
 			if (next->getValue() == s2) {
 				return true;
 			}
-			if (processedNodes.find(next) != processedNodes.end()) {
+			if (processedNodes.find(next) == processedNodes.end()) {
 				nodesToBeProcessed.push(next);
 			}
 		}
