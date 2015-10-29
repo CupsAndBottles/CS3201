@@ -14,7 +14,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting
 {
-	TEST_CLASS(TestPKB)
+	TEST_CLASS(TestQueryEvaluator)
 	{
 	public:
 		TEST_METHOD(testQueryEvaluatorSelect) {
