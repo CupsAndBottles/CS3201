@@ -627,6 +627,26 @@ vector<Gnode*> ProgramKnowledgeBase::getGnodesBefore(Gnode* node) {
 }
 
 bool ProgramKnowledgeBase::nextStar(int s1, int s2){
+	Gnode* node1 = statementTable->getCFGNode(s1);
+	queue<Gnode*> nodesToBeProcessed = queue<Gnode*>();
+	unordered_set<Gnode*> processedNodes = unordered_set<Gnode*>();
+	nodesToBeProcessed.push(node1);
+	vector<Gnode*> nexts;
+	Gnode* curr;
+	while (!nodesToBeProcessed.empty()) {
+		curr = nodesToBeProcessed.front();
+		nodesToBeProcessed.pop();
+		nexts = getNextGNodes(curr);
+		for (Gnode* next : nexts) {
+			if (next->getValue() == s2) {
+				return true;
+			}
+			if (find(processedNodes.begin(), processedNodes.end(), next) == processedNodes.end()) {
+				nodesToBeProcessed.push(next);
+			}
+		}
+		processedNodes.insert(curr);
+	}
 	return false;
 }
 
