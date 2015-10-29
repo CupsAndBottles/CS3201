@@ -1,0 +1,30 @@
+procedure Proc1 {
+1	x = y + ( z * ( y - a ) + b );
+2	call Proc2;
+3	call Proc3;
+4	call Proc4;
+}
+
+procedure Proc2 {
+5	while x {
+6		while y {
+7			while z {
+8				y = ( x * ( a * b ) );
+			}
+		}
+	}
+9	call Proc3;
+10	call Proc4;
+}
+
+procedure Proc3 {
+11	call Proc4;
+}
+
+procedure Proc4 {
+12	z = 1 + (2 + ( 3 + 4 ) );
+13	if z then {
+14	z = z+1; }
+15	else {
+16	z = 1; }
+}

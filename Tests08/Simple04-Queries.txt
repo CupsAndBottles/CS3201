@@ -1,0 +1,125 @@
+1 - Test for Calls
+procedure p;
+Select p such that Calls(p, "Proc2")
+Proc1
+5000
+2 - Test for Calls with 'With'
+procedure p;
+Select p such that Calls(p, q) with q.procName ="proc2"
+Proc1
+5000
+3 - Test for multiple Calls
+procedure p,p1;
+Select p such that Calls(p, p1) and Calls(p1,"Proc3") such that Calls(p1,"Proc4")
+Proc1
+5000 
+4 - Test for Calls*
+procedure p;
+Select p such that Calls*(p, _)
+Proc1, Proc2, Proc3
+5000
+5 - Test for Calls* with other clause
+procedure p;
+Select p such that Calls*(p,_) and Uses(12, "z")
+Proc1, Proc2, Proc3
+5000
+6 - Test for Next
+prog_line n;
+Select n such that Next(9, n)
+10
+5000
+7 - Test for Next with '_'
+prog_line n;
+Select n such that Next(_, n)
+2,3,4,5,6,7,8,9,10
+5000
+8 - Test for BOOLEAN and Next
+prog_line n;
+Select BOOLEAN such that Next(9,10)
+True
+5000
+9 - Test for multiple Next clauses
+prog_line n;
+Select n such that Next(n,4) and Next(2,n)
+3
+5000
+10 - Test for Next*
+prog_line n;
+Select n such that Next*(n,4)
+1,2,3
+5000
+11 - Test for multiple Next* clauses
+prog_line n;
+Select n such that Next*(5,n) and Next*(n,10)
+6,7,8,9
+5000
+12 - Test 'With' clauses with prog_line synonym
+prog_line n; stmt s;
+Select s such that Follows*(n,s) with n=2
+3,4
+5000
+13 - Test 'With' clauses with stmt synonym
+stmt s, s1;
+Select s1 such that Follows*(s,s1) with s.stmt#=2
+3,4
+5000
+14 - Test 'With" clauses with variable synonym
+variable v; stmt s;
+Select s such that Modifies(s, v) with v.varName="z"
+12
+5000
+15 - Test 'With' clauses with constant synonym
+constant c; variable v;
+Select v such that Uses(c,v) with c.value=1
+y,z,a,b
+5000
+16 - Test complex 'with' clause
+stmt s; constant c;
+Select s with s.stmt#=c.value
+1,2,3,4
+5000
+17 - Test complex 'with' clause (wrong types that should return false)
+constant c; procedure p;
+Select p with p.procName=c.value
+none
+5000
+18 - Test while pattern
+while w;
+Select w pattern w("x", _)
+5
+5000
+19 - Test while pattern with both underscores
+while w;
+Select w pattern w(_,_)
+5,6,7
+5000
+20 - Test while pattern wrong syntax
+while w;
+Select w pattern w("y","z")
+none
+5000
+21 - Test multiple while pattern
+while w, w1, w2;
+Select w pattern w1("y",_) and pattern w2("z",_) and Parent*(w,w1) such that Parent*(w,w2)
+5
+5000
+22 - Test if pattern
+if ifstat;
+Select ifstat such that pattern ifstat("z",_,_)
+13
+5000
+23 - Test if pattern
+if ifstat;
+Select ifstat such that pattern ifstat("y",_,_)
+none
+5000
+24 - Test if pattern wrong syntax
+if ifstat;
+Select ifstat such that pattern ifstat("z",_,"z=1")
+none
+5000
+25 - Test multiple patterns
+if ifstat; assign a; stmt s; while w;
+Select s pattern a(_,"z+1") and ifstat("z",_,_) and pattern w("x",_)
+1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16
+5000
