@@ -385,12 +385,25 @@ vector<int> ProgramKnowledgeBase::getChildrenOf(int stmt){
 	return children;
 }
 
-bool ProgramKnowledgeBase::isParentStar(int s1, int s2)
-{
-	vector<int> parents = getParentsStarOf(s2);
-	std::vector<int>::iterator it;
-	it = find(parents.begin(), parents.end(), s1);
-	return it != parents.end();
+bool ProgramKnowledgeBase::isParentStar(int s1, int s2){
+	Tnode* node2 = getNodeWithStatementNumber(s2);
+	Tnode* node1 = getNodeWithStatementNumber(s1);
+	if (node1 == NULL || node2 == NULL) {
+		return false;
+	}
+
+	Tnode* parent = node2->getSPAParent();
+	if (parent == NULL) {
+		return false;
+	}
+
+	while (parent != NULL) {
+		if (parent->getStatementNumber() == s1) {
+			return true;
+		} 
+		parent = parent->getSPAParent();
+	}
+	return false;
 }
 
 vector<int> ProgramKnowledgeBase::getChildrenStarOf(int stmt){
