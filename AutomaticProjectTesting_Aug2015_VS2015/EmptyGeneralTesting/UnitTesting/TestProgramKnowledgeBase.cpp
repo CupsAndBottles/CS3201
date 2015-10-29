@@ -998,5 +998,54 @@ namespace UnitTesting
 			Assert::AreEqual(0, (int)prev16.size());
 		}
 
+		TEST_METHOD(testPKBNextStar) {
+			string fileName = "programNextStar.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc {";
+			outputFile << "x = 1;"; // 1
+			outputFile << "z = y;"; // 2
+			outputFile << "while a {"; // 3
+			outputFile << "a = a - 1;}"; // 4 
+			outputFile << "if x then {"; // 5
+			outputFile << "a = b;"; // 6
+			outputFile << "z = 1; }"; // 7
+			outputFile << "else {";
+			outputFile << "c = a;"; // 8 
+			outputFile << "x = 1;}"; // 9
+			outputFile << "while d {"; // 10
+			outputFile << "e = f;"; // 11
+			outputFile << "f = g;}"; // 12
+			outputFile << "if y then {"; // 13
+			outputFile << "h = 1; }"; // 14
+			outputFile << "else {";
+			outputFile << "h = 2; }"; // 15
+			outputFile << "}";
+			outputFile << "procedure Other {";
+			outputFile << "z = 2;"; // 16
+			outputFile << "}";
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Assert::AreNotEqual(0, (int)parsedProgram.size());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+
+			Assert::IsTrue(pkb.nextStar(1, 2));
+			Assert::IsTrue(pkb.nextStar(1, 15));
+
+			Assert::IsFalse(pkb.nextStar(1, 16));
+
+			vector<int> nextS1 = pkb.getNextStarStatements(1);
+			Assert::AreEqual(14, (int)nextS1.size());
+
+			vector<int> prevS1 = pkb.getStatementsBeforeStar(1);
+			Assert::AreEqual(0, (int)prevS1.size());
+
+			vector<int> prevS15 = pkb.getStatementsBeforeStar(15);
+			Assert::AreEqual(12, (int)prevS1.size());
+		}
 	};
 }
