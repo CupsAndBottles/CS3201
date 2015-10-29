@@ -627,11 +627,55 @@ bool ProgramKnowledgeBase::nextStar(int s1, int s2){
 }
 
 vector<int> ProgramKnowledgeBase::getNextStarStatements(int stmt){
-	return vector<int>();
+	Gnode* startNode = statementTable->getCFGNode(stmt);
+	queue<Gnode*> nodesToBeProcessed = queue<Gnode*>();
+	unordered_set<Gnode*> processedNodes = unordered_set<Gnode*>();
+	nodesToBeProcessed.push(startNode);
+	vector<Gnode*> nexts;
+	Gnode* curr;
+	bool first = true;
+	while (!nodesToBeProcessed.empty()) {
+		curr = nodesToBeProcessed.front();
+		nodesToBeProcessed.pop();
+		nexts = curr->getNext();
+		for (Gnode* next : nexts) {
+			if (processedNodes.find(next) == processedNodes.end()) {
+				nodesToBeProcessed.push(next);
+			}
+		}
+		if (!first) {
+			processedNodes.insert(curr);
+		} else {
+			first = false;
+		}
+	}
+	return Helpers::flattenCFGNodeSetToIntVector(processedNodes);
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsBeforeStar(int stmt){
-	return vector<int>();
+	Gnode* startNode = statementTable->getCFGNode(stmt);
+	queue<Gnode*> nodesToBeProcessed = queue<Gnode*>();
+	unordered_set<Gnode*> processedNodes = unordered_set<Gnode*>();
+	nodesToBeProcessed.push(startNode);
+	vector<Gnode*> prevs;
+	Gnode* curr;
+	bool first = true;
+	while (!nodesToBeProcessed.empty()) {
+		curr = nodesToBeProcessed.front();
+		nodesToBeProcessed.pop();
+		prevs = curr->getPrev();
+		for (Gnode* prev : prevs) {
+			if (processedNodes.find(prev) == processedNodes.end()) {
+				nodesToBeProcessed.push(prev);
+			}
+		}
+		if (!first) {
+			processedNodes.insert(curr);
+		} else {
+			first = false;
+		}
+	}
+	return Helpers::flattenCFGNodeSetToIntVector(processedNodes);
 }
 
 bool ProgramKnowledgeBase::affects(int s1, int s2){
