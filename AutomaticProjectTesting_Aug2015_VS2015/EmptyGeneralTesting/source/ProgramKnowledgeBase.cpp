@@ -599,6 +599,11 @@ vector<int> ProgramKnowledgeBase::getStatementsBefore(int stmt) {
 
 bool ProgramKnowledgeBase::nextStar(int s1, int s2){
 	Gnode* node1 = statementTable->getCFGNode(s1);
+	Gnode* node2 = statementTable->getCFGNode(s2);
+	if (node1 == NULL || node2 == NULL) {
+		return false;
+	}
+
 	queue<Gnode*> nodesToBeProcessed = queue<Gnode*>();
 	unordered_set<Gnode*> processedNodes = unordered_set<Gnode*>();
 	nodesToBeProcessed.push(node1);
