@@ -56,3 +56,12 @@ vector<int> Helpers::flattenIntSetToIntVector(const unordered_set<int>* inp) {
 vector<string> Helpers::flattenStringSetToStringVector(const unordered_set<string>* inp) {
 	return vector<string>(inp->begin(), inp->end());
 }
+
+vector<int> Helpers::flattenCFGNodeSetToIntVector(const unordered_set<Gnode*> inp)
+{
+	vector<int> results = vector<int>();
+	for (Gnode* node : inp) {
+		results.push_back(node->getValue());
+	}
+	return results;
+}
