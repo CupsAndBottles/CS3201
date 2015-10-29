@@ -10,6 +10,9 @@ using namespace std;
 
 class ProgramKnowledgeBase{
 public:
+	static const string WILDCARD_STRING;
+	static const int WILDCARD_INT;
+
 	ProgramKnowledgeBase();
 	ProgramKnowledgeBase(Database* db);
 	ProgramKnowledgeBase(string filePath);

@@ -12,9 +12,6 @@ using namespace std;
 
 class Helpers {
 public:
-	static const string WILDCARD_STRING;
-	static const int Helpers::WILDCARD_INT;
-
 	static vector<string> flattenNodeVectorToStringVector(const vector<Tnode*>* inp);
 	static vector<int> flattenBoolVectorToIntVector(const vector<bool> inp);
 	static vector<string> flattenBoolMapToStringVector(const unordered_map<string, bool> inp);

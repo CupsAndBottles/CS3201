@@ -1,8 +1,5 @@
 #include "Helpers.h"
 
-const string Helpers::WILDCARD_STRING = "_";
-const int Helpers::WILDCARD_INT = -1;
-
 //return vector of indices that have true values in input vector
 vector<int> Helpers::flattenBoolVectorToIntVector(const vector<bool> inp) {
 	vector<int> results = vector<int>();
