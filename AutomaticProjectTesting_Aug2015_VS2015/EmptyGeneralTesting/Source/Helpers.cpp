@@ -32,10 +32,19 @@ vector<string> Helpers::flattenNodeVectorToStringVector(const vector<Tnode*>* in
 }
 
 //return vector of statement numbers of the nodes in input vector.
-vector<int> Helpers::flattenNodeVectorToIntVector(const vector<Tnode*>* inp) {
+vector<int> Helpers::flattenASTNodeVectorToIntVector(const vector<Tnode*>* inp) {
 	vector<int> results = vector<int>();
 	for (auto it : *inp) {
 		results.push_back(it->getStatementNumber());
+	}
+	return results;
+}
+
+vector<int> Helpers::flattenCFGnodeVectorToIntVector(const vector<Gnode*>* inp)
+{
+	vector<int> results = vector<int>();
+	for (auto it : *inp) {
+		results.push_back(it->getValue());
 	}
 	return results;
 }

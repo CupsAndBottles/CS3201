@@ -354,7 +354,7 @@ vector<int> ProgramKnowledgeBase::getParentsStarOf(int stmt, vector<Tnode*>* par
 		parents->push_back(parent);
 		parent = parent->getSPAParent();
 	}
-	return Helpers::flattenNodeVectorToIntVector(parents);
+	return Helpers::flattenASTNodeVectorToIntVector(parents);
 }
 
 vector<int> ProgramKnowledgeBase::getChildrenOf(int stmt){
@@ -399,7 +399,7 @@ vector<int> ProgramKnowledgeBase::getChildrenStarOf(int stmt){
 		return vector<int>();
 	}
 
-	return Helpers::flattenNodeVectorToIntVector(populateChildrenStarOf(node));
+	return Helpers::flattenASTNodeVectorToIntVector(populateChildrenStarOf(node));
 }
 
 vector<Tnode*>* ProgramKnowledgeBase::populateChildrenStarOf(Tnode* currNode, vector<Tnode*>* children){
@@ -654,7 +654,7 @@ vector<int> ProgramKnowledgeBase::getStatementsThatAffectStar(int stmt){
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsOfType(Tnode::Type type){
-	return Helpers::flattenNodeVectorToIntVector(&getNodesOfType(type));
+	return Helpers::flattenASTNodeVectorToIntVector(&getNodesOfType(type));
 }
 
 vector<string> ProgramKnowledgeBase::getVariableNames(){
@@ -676,11 +676,11 @@ vector<string> ProgramKnowledgeBase::getProcedureNames() {
 vector<int> ProgramKnowledgeBase::getStatementsThatMatchPattern(Tnode::Type type, string var, string expr) {
 	switch (type) {
 		case Tnode::STMT_WHILE:
-			return Helpers::flattenNodeVectorToIntVector(&getWhilesThatMatchPattern(var));
+			return Helpers::flattenASTNodeVectorToIntVector(&getWhilesThatMatchPattern(var));
 		case Tnode::STMT_IF:
-			return Helpers::flattenNodeVectorToIntVector(&getIfsThatMatchPattern(var));
+			return Helpers::flattenASTNodeVectorToIntVector(&getIfsThatMatchPattern(var));
 		case Tnode::STMT_ASSIGN:
-			return Helpers::flattenNodeVectorToIntVector(&getAssignsThatMatchPattern(var, expr));
+			return Helpers::flattenASTNodeVectorToIntVector(&getAssignsThatMatchPattern(var, expr));
 		default:
 			return vector<int>();
 	}
@@ -688,7 +688,7 @@ vector<int> ProgramKnowledgeBase::getStatementsThatMatchPattern(Tnode::Type type
 
 vector<int> ProgramKnowledgeBase::getStatementsThatContainPattern(Tnode::Type type, string var, string expr) {
 	if (type == Tnode::STMT_ASSIGN) {
-		return Helpers::flattenNodeVectorToIntVector(&getAssignsThatContainPattern(var, expr));
+		return Helpers::flattenASTNodeVectorToIntVector(&getAssignsThatContainPattern(var, expr));
 	} else {
 		return vector<int>();
 	}
