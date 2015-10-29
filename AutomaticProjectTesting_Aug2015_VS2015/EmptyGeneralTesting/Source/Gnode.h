@@ -23,21 +23,24 @@ public:
 	static Gnode *createGnode(int num);
 	static Gnode *createGnode(Type t, int num);
 	static void setNext(Gnode *curr, Gnode *next);
-	static void setNextIf(Gnode *curr, Gnode *next1, Gnode *next2, Gnode *other);
+	static void setNextIf(Gnode *curr, Gnode *ifNode, Gnode *elseNode);
+	static void setNextEndIf(Gnode *lastChildThen, Gnode *lastChildElse, Gnode *other);
 	static void setNextWhile(Gnode* parent, Gnode* lastchild, Gnode* other);
-	static int getNext(Gnode *node);
-	static vector<int> getNextIfWhile(Gnode *node);
-
 	static void printVector(vector<Gnode *> nodeVector);
 
+	vector <Gnode *> getNext();
+	vector <Gnode *> getPrev();
 	Gnode* getRight();
 	Gnode* getLeft();
 	int getValue();
 	Type getType();
+	bool isEndNode();
 
 private:
 	Gnode *left;
 	Gnode *right;
+	vector<Gnode*> prev;
+	Gnode *otherPrev;
 	Type type;
 	int value;
 };

@@ -28,19 +28,27 @@ int StmtTable::addStatement(Tnode *stmtNode)
 
 int StmtTable::addStmtCFGNode(int stmtNum, Gnode * CFGnode)
 {
+	if (stmtNum >= stmtTable->size()) {
+		return 0;
+	}
 	stmtTable->at(stmtNum).second = CFGnode;
 	return stmtNum;
 }
 
-Tnode* StmtTable::getStmtAddress(int i)
+Tnode* StmtTable::getASTNode(int i)
 {
+	if (i >= stmtTable->size()) {
+		return NULL;
+	}
 	return stmtTable -> at(i).first;
 }
 
 
 Gnode * StmtTable::getCFGNode(int i)
 {
-
+	if (i >= stmtTable->size()) {
+		return NULL;
+	}
 	return stmtTable->at(i).second;
 }
 

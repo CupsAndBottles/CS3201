@@ -100,6 +100,9 @@ Tnode * Tnode::getChild(int childNum)
 		return NULL;
 	}
 	Tnode* curNode = this->getFirstChild();
+	if (curNode == NULL) {
+		return curNode;
+	}
 	for (int i = 1; i <= childNum; i++) {
 		if (i == childNum) {
 			return curNode;
@@ -112,6 +115,38 @@ Tnode * Tnode::getChild(int childNum)
 		}
 	}
 	return NULL;
+}
+
+Tnode * Tnode::getLastChild()
+{
+	Tnode* curNode = this->getFirstChild();
+	if (curNode == NULL) {
+		return curNode;
+	}
+	while (curNode->hasRightSilbing()) {
+		curNode = curNode->getRightSibling();
+	}
+	return curNode;
+}
+
+Tnode * Tnode::getLastContainedStatement()
+{
+	if (!this->isContainer() && !this->isProcedure() && !this->isStatementList()) {
+		return NULL;
+	} else {
+		Tnode* lastNode = this->getFirstChild();
+		if (this->isProcedure()) {
+			lastNode = lastNode->getFirstChild();
+		}
+		while (!lastNode->isLastChild()) {
+			lastNode = lastNode->getRightSibling();
+		}
+		if (lastNode->isContainer() || lastNode->isStatementList()) {
+			return lastNode->getLastContainedStatement();
+		} else {
+			return lastNode;
+		}
+	}
 }
 
 Tnode::Type Tnode::getType()

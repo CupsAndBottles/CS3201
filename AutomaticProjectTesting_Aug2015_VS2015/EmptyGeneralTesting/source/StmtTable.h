@@ -16,7 +16,7 @@ public:
 	int getSize();
 	int addStatement(Tnode* stmtNode);
 	int addStmtCFGNode(int stmtNum, Gnode * CFGnode);
-	Tnode* getStmtAddress(int i);
+	Tnode* getASTNode(int i);
 	Gnode* getCFGNode(int i);
 	void printStmtTable();
 

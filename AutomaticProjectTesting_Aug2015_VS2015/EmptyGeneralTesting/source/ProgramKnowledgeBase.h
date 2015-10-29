@@ -1,19 +1,19 @@
 #pragma once
 
 #include "Database.h"
-#include "VarTable.h"
-#include "ProcTable.h"
-#include "StmtTable.h"
-#include "constTable.h"
 #include "Parser.h"
 #include "Helpers.h"
 #include <iostream>
 #include <stack>
+#include <queue>
 
 using namespace std;
 
 class ProgramKnowledgeBase{
 public:
+	static const string WILDCARD_STRING;
+	static const int WILDCARD_INT;
+
 	ProgramKnowledgeBase();
 	ProgramKnowledgeBase(Database* db);
 	ProgramKnowledgeBase(string filePath);
@@ -58,6 +58,22 @@ public:
 	vector<int> getStatementsThatFollowStar(int stmt);
 	vector<int> getStatementsFollowStarredBy(int stmt);
 
+	bool next(int s1, int s2);
+	vector<int> getNextStatements(int stmt);
+	vector<int> getStatementsBefore(int stmt);
+
+	bool nextStar(int s1, int s2);
+	vector<int> getNextStarStatements(int stmt);
+	vector<int> getStatementsBeforeStar(int stmt);
+
+	bool affects(int s1, int s2);
+	vector<int> getStatementsAffectedBy(int stmt);
+	vector<int> getStatementsThatAffect(int stmt);
+
+	bool affectsStar(int s1, int s2);
+	vector<int> getStatementsAffectStarredBy(int stmt);
+	vector<int> getStatementsThatAffectStar(int stmt);
+
 	vector<int> getStatementsOfType(Tnode::Type type);
 	vector<string> getVariableNames();
 	vector<string> getProcedureNames();
@@ -90,18 +106,19 @@ private:
 	unordered_map<string, unordered_set<string>> callsRelationIndexedByCallers;
 	unordered_map<string, unordered_set<string>> callsRelationIndexedByCallees;
 
-	bool containsContainer(Tnode * node); //not used
+	vector<Gnode*> getNextGNodes(Gnode* node);
+	vector<Gnode*> getGnodesBefore(Gnode* node);
 
+	bool containsContainer(Tnode * node); //not used
 	vector<Tnode*> getNodesOfType(Tnode::Type type);
 	Tnode * getNodeWithStatementNumber(int num);
 	Tnode * getNodeWithProcedureName(string procName);
-	Tnode * getParentNode(Tnode * node);
+	Tnode * getParentNode(Tnode * node); //not used
 	Tnode * getProcedureContaining(int targetStmtNum); //DON'T NEED
 	Tnode * getParentProcedure(Tnode * node); //DON'T NEED
-	Tnode * getLastContainedStatement(Tnode * node);
 	Tnode * getLastSibling(Tnode * node); //not used
-	Tnode * getPreviousStatementNode(Tnode * currNode);
-	Tnode * getNextStatementNode(Tnode * currNode);
+	Tnode * getPreviousStatementNode(Tnode * currNode); //not used
+	Tnode * getNextStatementNode(Tnode * currNode); //not used
 	vector<Tnode*>* populateChildrenStarOf(Tnode* currNode, vector<Tnode*>* children = &vector<Tnode*>());
 
 	vector<Tnode*> getAssignsThatMatchPattern(string var, string expr);

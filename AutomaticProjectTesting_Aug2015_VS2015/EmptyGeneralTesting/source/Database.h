@@ -4,7 +4,7 @@
 #include "ProcTable.h"
 #include "VarTable.h"
 #include "StmtTable.h"
-#include "constTable.h"
+#include "ConstTable.h"
 
 #include <vector>
 #include <string>
@@ -20,6 +20,7 @@ public:
 
 	void buildDatabase(vector<string> tokens);
 	Gnode* buildControlFlowGraph();
+	vector<Gnode*> createControlFlowGraphNodes();
 	string toUpperCase(string s);
 	bool isNumber(string &s);
 	Tnode* getAbstractSyntaxTreeRoot();
@@ -30,6 +31,7 @@ public:
 	ProcTable* getProcedureTable();
 	VarTable* getVariableTable();
 	static vector<vector<Tnode*>> printAbstractSyntaxTree(Tnode* root);
+	// static void printControlFlowGraph(Gnode *cfgRoot);
 
 private:
 	Gnode* cfgRoot;

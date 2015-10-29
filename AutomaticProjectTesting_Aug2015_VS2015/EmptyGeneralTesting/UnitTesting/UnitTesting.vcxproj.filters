@@ -35,9 +35,6 @@
     <ClCompile Include="TestAST.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProgramKnowledgeBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TestProcTable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -48,6 +45,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestQueryEvaluator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestProgramKnowledgeBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

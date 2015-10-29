@@ -1,0 +1,26 @@
+procedure Proc1 {
+	x = y + ( z * ( y - a ) + b );
+	call Proc2;
+	call Proc3;
+	call Proc4;
+}
+
+procedure Proc2 {
+	while x {
+		while y {
+			while z {
+				y = ( x * ( a * b ) );
+			}
+		}
+	}
+	call Proc3;
+	call Proc4;
+}
+
+procedure Proc3 {
+	call Proc4;
+}
+
+procedure Proc4 {
+	z = 1 + (2 + ( 3 + 4 ) );
+}

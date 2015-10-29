@@ -50,6 +50,8 @@ public:
 	Tnode *getLeftSibling();
 	Tnode *getRightSibling();
 	Tnode *getChild(int childNum);
+	Tnode *getLastChild();
+	Tnode *getLastContainedStatement();
 	Type getType();
 	string getName();
 	int getValue();

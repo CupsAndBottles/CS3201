@@ -587,6 +587,48 @@ namespace UnitTesting
 			Assert::AreEqual(string("y"), variablesProcs[1]);
 		}
 
+		TEST_METHOD(testPKBModifyWithWildcards) {
+			string fileName = "programModifyWithWildcards.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc {";
+			outputFile << "x = 1;"; //line 1
+			outputFile << "call Other;"; //line 2
+			outputFile << "}" << endl;
+			outputFile << "procedure Other {";
+			outputFile << "y = 1;"; //line 3
+			outputFile << "}";
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+
+			Assert::IsTrue(pkb.modifies("Proc", "_"));
+			Assert::IsTrue(pkb.modifies("Other", "_"));
+			Assert::IsTrue(pkb.modifies("_", "x"));
+			Assert::IsTrue(pkb.modifies("_", "y"));
+			Assert::IsTrue(pkb.modifies("_", "_"));
+			
+			vector<string> vars = pkb.getVariablesModifiedBy("_");
+			Assert::AreEqual(2, (int)vars.size());
+			Assert::IsTrue(find(vars.begin(), vars.end(), "x") != vars.end());
+			Assert::IsTrue(find(vars.begin(), vars.end(), "y") != vars.end());
+
+			vector<string> procs = pkb.getProceduresThatModify("_");
+			Assert::AreEqual(2, (int)procs.size());
+			Assert::IsTrue(find(procs.begin(), procs.end(), "Other") != procs.end());
+			Assert::IsTrue(find(procs.begin(), procs.end(), "Proc") != procs.end());
+
+			vector<int> stmts = pkb.getStatementsThatModify("_");
+			Assert::AreEqual(3, (int)stmts.size());
+			Assert::IsTrue(find(stmts.begin(), stmts.end(), 1) != stmts.end());
+			Assert::IsTrue(find(stmts.begin(), stmts.end(), 2) != stmts.end());
+			Assert::IsTrue(find(stmts.begin(), stmts.end(), 3) != stmts.end());
+		}
+
 		TEST_METHOD(testPKBSimpleUses) {
 			string fileName = "programSimpleUses.txt";
 			ofstream outputFile(fileName, ofstream::trunc);
@@ -622,6 +664,43 @@ namespace UnitTesting
 			Assert::AreEqual(string("Proc"), usersProcs[0]);
 
 			vector<string> variablesProcs = pkb.getVariablesUsedBy("Proc");
+			Assert::AreEqual(1, int(variablesProcs.size()));
+			Assert::AreEqual(string("y"), variablesProcs[0]);
+		}
+
+		TEST_METHOD(testPKBUsesWithWildcards) {
+			string fileName = "programUsesWithWildcards.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc {";
+			outputFile << "x = y + 1;";
+			outputFile << "z = y + 1;";
+			outputFile << "}";
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+
+			Assert::IsTrue(pkb.uses("Proc", "_"));
+			Assert::IsTrue(pkb.uses(1, "_"));
+			Assert::IsTrue(pkb.uses(2, "_"));
+			Assert::IsFalse(pkb.uses("_", "x"));
+			Assert::IsTrue(pkb.uses("_", "y"));
+			Assert::IsTrue(pkb.uses("_", "_"));
+
+			vector<int> users = pkb.getStatementsThatUse("_");
+			Assert::AreEqual(2, int(users.size()));
+			Assert::AreEqual(1, users[0]);
+			Assert::AreEqual(2, users[1]);
+
+			vector<string> usersProcs = pkb.getProceduresThatUse("_");
+			Assert::AreEqual(1, int(usersProcs.size()));
+			Assert::AreEqual(string("Proc"), usersProcs[0]);
+
+			vector<string> variablesProcs = pkb.getVariablesUsedBy("_");
 			Assert::AreEqual(1, int(variablesProcs.size()));
 			Assert::AreEqual(string("y"), variablesProcs[0]);
 		}
@@ -759,6 +838,7 @@ namespace UnitTesting
 			outputFile << "x = y + 1 + x;"; // line 4
 			outputFile << "x = y + x * 2;"; // line 5
 			outputFile << "x = x * 2 + y;"; // line 6
+			outputFile << "a = b;"; // line 7
 			outputFile << "}";
 			outputFile.close();
 
@@ -805,6 +885,167 @@ namespace UnitTesting
 			Assert::AreEqual(2, int(containersTimes.size()));
 			Assert::IsTrue(find(containersTimes.begin(), containersTimes.end(), 5) != containersTimes.end());
 			Assert::IsTrue(find(containersTimes.begin(), containersTimes.end(), 6) != containersTimes.end());
+		}
+
+		TEST_METHOD(testPKBNext) {
+			string fileName = "programNext.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc {";
+			outputFile << "x = 1;"; // 1
+			outputFile << "z = y;"; // 2
+			outputFile << "while a {"; // 3
+			outputFile << "a = a - 1;}"; // 4 
+			outputFile << "if x then {"; // 5
+			outputFile << "a = b;"; // 6
+			outputFile << "z = 1; }"; // 7
+			outputFile << "else {";
+			outputFile << "c = a;"; // 8 
+			outputFile << "x = 1;}"; // 9
+			outputFile << "while d {"; // 10
+			outputFile << "e = f;"; // 11
+			outputFile << "f = g;}"; // 12
+			outputFile << "if y then {"; // 13
+			outputFile << "h = 1; }"; // 14
+			outputFile << "else {";
+			outputFile << "h = 2; }"; // 15
+			outputFile << "}";
+			outputFile << "procedure Other {";
+			outputFile << "y = 1;"; //line 16
+			outputFile << "}";
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Assert::AreNotEqual(0, (int)parsedProgram.size());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+
+			Assert::IsTrue(pkb.next(1, 2));
+			Assert::IsTrue(pkb.next(3, 4));
+			Assert::IsTrue(pkb.next(3, 5));
+			Assert::IsTrue(pkb.next(4, 3));
+			Assert::IsTrue(pkb.next(5, 6));
+			Assert::IsTrue(pkb.next(5, 8));
+			Assert::IsTrue(pkb.next(6, 7));
+			Assert::IsTrue(pkb.next(7, 10));
+			Assert::IsTrue(pkb.next(8, 9));
+			Assert::IsTrue(pkb.next(9, 10));
+			Assert::IsTrue(pkb.next(12, 10));
+
+			Assert::IsFalse(pkb.next(1, 3));
+			Assert::IsFalse(pkb.next(3, 6));
+			Assert::IsFalse(pkb.next(11, 10));
+			Assert::IsFalse(pkb.next(10, 12));
+			Assert::IsFalse(pkb.next(15, 16));
+
+			vector<int> next3 = pkb.getNextStatements(3);
+			Assert::AreEqual(2, (int)next3.size());
+			Assert::IsTrue(find(next3.begin(), next3.end(), 4) != next3.end());
+			Assert::IsTrue(find(next3.begin(), next3.end(), 5) != next3.end());
+
+			vector<int> next5 = pkb.getNextStatements(5);
+			Assert::AreEqual(2, (int)next5.size());
+			Assert::IsTrue(find(next5.begin(), next5.end(), 6) != next5.end());
+			Assert::IsTrue(find(next5.begin(), next5.end(), 8) != next5.end());
+
+			vector<int> next10 = pkb.getNextStatements(10);
+			Assert::AreEqual(2, (int)next10.size());
+			Assert::IsTrue(find(next10.begin(), next10.end(), 11) != next10.end());
+			Assert::IsTrue(find(next10.begin(), next10.end(), 13) != next10.end());
+
+			vector<int> next14 = pkb.getNextStatements(14);
+			Assert::AreEqual(0, (int)next14.size());
+
+			vector<int> next15 = pkb.getNextStatements(15);
+			Assert::AreEqual(0, (int)next15.size());
+
+			vector<int> prev1 = pkb.getStatementsBefore(1);
+			Assert::AreEqual(0, (int)prev1.size());
+
+			vector<int> prev2 = pkb.getStatementsBefore(2);
+			Assert::AreEqual(1, (int)prev2.size());
+			Assert::IsTrue(find(prev2.begin(), prev2.end(), 1) != prev2.end());
+
+			vector<int> prev4 = pkb.getStatementsBefore(4);
+			Assert::AreEqual(1, (int)prev4.size());
+			Assert::IsTrue(find(prev4.begin(), prev4.end(), 3) != prev4.end());
+
+			vector<int> prev5 = pkb.getStatementsBefore(5);
+			Assert::AreEqual(1, (int)prev5.size());
+			Assert::IsTrue(find(prev5.begin(), prev5.end(), 3) != prev5.end());
+
+			vector<int> prev7 = pkb.getStatementsBefore(7);
+			Assert::AreEqual(1, (int)prev7.size());
+			Assert::IsTrue(find(prev7.begin(), prev7.end(), 6) != prev7.end());
+
+			vector<int> prev8 = pkb.getStatementsBefore(8);
+			Assert::AreEqual(1, (int)prev8.size());
+			Assert::IsTrue(find(prev8.begin(), prev8.end(), 5) != prev8.end());
+
+			vector<int> prev10 = pkb.getStatementsBefore(10);
+			Assert::AreEqual(3, (int)prev10.size());
+			Assert::IsTrue(find(prev10.begin(), prev10.end(), 7) != prev10.end());
+			Assert::IsTrue(find(prev10.begin(), prev10.end(), 9) != prev10.end());
+			Assert::IsTrue(find(prev10.begin(), prev10.end(), 12) != prev10.end());
+
+			vector<int> prev11 = pkb.getStatementsBefore(11);
+			Assert::AreEqual(1, (int)prev11.size());
+			Assert::IsTrue(find(prev11.begin(), prev11.end(), 10) != prev11.end());
+		
+			vector<int> prev16 = pkb.getStatementsBefore(16);
+			Assert::AreEqual(0, (int)prev16.size());
+		}
+
+		TEST_METHOD(testPKBNextStar) {
+			string fileName = "programNextStar.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc {";
+			outputFile << "x = 1;"; // 1
+			outputFile << "z = y;"; // 2
+			outputFile << "while a {"; // 3
+			outputFile << "a = a - 1;}"; // 4 
+			outputFile << "if x then {"; // 5
+			outputFile << "a = b;"; // 6
+			outputFile << "z = 1; }"; // 7
+			outputFile << "else {";
+			outputFile << "c = a;"; // 8 
+			outputFile << "x = 1;}"; // 9
+			outputFile << "while d {"; // 10
+			outputFile << "e = f;"; // 11
+			outputFile << "f = g;}"; // 12
+			outputFile << "if y then {"; // 13
+			outputFile << "h = 1; }"; // 14
+			outputFile << "else {";
+			outputFile << "h = 2; }"; // 15
+			outputFile << "}";
+			outputFile << "procedure Other {";
+			outputFile << "z = 2;"; // 16
+			outputFile << "}";
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Assert::AreNotEqual(0, (int)parsedProgram.size());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+
+			Assert::IsTrue(pkb.nextStar(1, 2));
+			Assert::IsTrue(pkb.nextStar(1, 15));
+
+			Assert::IsFalse(pkb.nextStar(1, 16));
+
+			vector<int> nextS1 = pkb.getNextStarStatements(1);
+			Assert::AreEqual(14, (int)nextS1.size());
+
+			vector<int> prevS1 = pkb.getStatementsBeforeStar(1);
+			Assert::AreEqual(0, (int)prevS1.size());
+
+			vector<int> prevS15 = pkb.getStatementsBeforeStar(15);
+			Assert::AreEqual(12, (int)prevS1.size());
 		}
 	};
 }

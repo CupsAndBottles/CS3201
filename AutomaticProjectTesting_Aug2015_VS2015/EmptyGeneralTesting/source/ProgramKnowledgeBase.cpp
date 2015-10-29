@@ -1,5 +1,8 @@
 #include "ProgramKnowledgeBase.h"
 
+const string ProgramKnowledgeBase::WILDCARD_STRING = "_";
+const int ProgramKnowledgeBase::WILDCARD_INT = -1;
+
 ProgramKnowledgeBase::ProgramKnowledgeBase() {
 	abstractSyntaxTree = NULL;
 	statementTable = NULL;
@@ -36,7 +39,15 @@ void ProgramKnowledgeBase::updateDBFile() {
 
 bool ProgramKnowledgeBase::modifies(int stmt, string var){
 	try{
-		return modifiesRelationIndexedByStatements.at(stmt).count(var) == 1;
+		if (var == ProgramKnowledgeBase::WILDCARD_STRING && stmt == ProgramKnowledgeBase::WILDCARD_INT) {
+			return modifiesRelationIndexedByVariables.size() > 0;
+		} else if (var == ProgramKnowledgeBase::WILDCARD_STRING) {
+			return modifiesRelationIndexedByStatements.at(stmt).size() > 0;
+		} else if (stmt == ProgramKnowledgeBase::WILDCARD_INT){
+			return modifiesRelationIndexedByVariables.at(var).size() > 0;
+		} else {
+			return modifiesRelationIndexedByStatements.at(stmt).count(var) == 1;
+		}
 	} catch (std::out_of_range){
 		return false;
 	}
@@ -44,7 +55,16 @@ bool ProgramKnowledgeBase::modifies(int stmt, string var){
 
 vector<int> ProgramKnowledgeBase::getStatementsThatModify(string var){
 	try{
-		return Helpers::flattenIntSetToIntVector(&modifiesRelationIndexedByVariables.at(var));
+		if (var == ProgramKnowledgeBase::WILDCARD_STRING) {
+			std::vector<int> keys;
+			keys.reserve(modifiesRelationIndexedByStatements.size());
+			for (auto kv : modifiesRelationIndexedByStatements) {
+				keys.push_back(kv.first);
+			}
+			return keys;
+		} else {
+			return Helpers::flattenIntSetToIntVector(&modifiesRelationIndexedByVariables.at(var));
+		}
 	} catch (std::out_of_range){
 		return vector<int>();
 	}
@@ -52,6 +72,14 @@ vector<int> ProgramKnowledgeBase::getStatementsThatModify(string var){
 
 vector<string> ProgramKnowledgeBase::getVariablesModifiedBy(int stmt){
 	try{
+		if (stmt == ProgramKnowledgeBase::WILDCARD_INT) {
+			vector<string> results = vector<string>();
+			for (pair<string, unordered_set<int>> keyVals : modifiesRelationIndexedByVariables) {
+				if (keyVals.second.size() > 0) {
+					results.push_back(keyVals.first);
+				}
+			}
+		}
 		return Helpers::flattenStringSetToStringVector(&modifiesRelationIndexedByStatements.at(stmt));
 	} catch (std::out_of_range){
 		return vector<string>();
@@ -59,12 +87,19 @@ vector<string> ProgramKnowledgeBase::getVariablesModifiedBy(int stmt){
 }
 
 bool ProgramKnowledgeBase::modifies(string procName, string var){
+	if (procName == ProgramKnowledgeBase::WILDCARD_STRING) {
+		return getProceduresThatModify(var).size() > 0;
+	} else if (var == ProgramKnowledgeBase::WILDCARD_STRING) {
+		return getVariablesModifiedBy(procName).size() > 0;
+	}
+
 	Tnode* procNode = getNodeWithProcedureName(procName);
 	if (procNode == NULL) {
 		return false;
 	}
+
 	int procRangeStart = procNode->getFirstChild()->getFirstChild()->getStatementNumber();
-	int procRangeEnd = getLastContainedStatement(procNode)->getStatementNumber();
+	int procRangeEnd = procNode->getLastContainedStatement()->getStatementNumber();
 	vector<int> statementsThatModifyVar = getStatementsThatModify(var);
 	for (int i : statementsThatModifyVar) {
 		if (procRangeStart <= i && i <= procRangeEnd) {
@@ -101,7 +136,15 @@ vector<string> ProgramKnowledgeBase::getVariablesModifiedBy(string procName){
 
 bool ProgramKnowledgeBase::uses(int stmt, string var){
 	try{
-		return usesRelationIndexedByStatements.at(stmt).count(var) == 1;
+		if (stmt == ProgramKnowledgeBase::WILDCARD_INT && var == ProgramKnowledgeBase::WILDCARD_STRING) {
+			return usesRelationIndexedByVariables.size() > 0;
+		} else if (stmt == ProgramKnowledgeBase::WILDCARD_INT) {
+			return usesRelationIndexedByVariables.at(var).size() > 0;
+		} else if (var == ProgramKnowledgeBase::WILDCARD_STRING) {
+			return usesRelationIndexedByStatements.at(stmt).size() > 0;
+		} else {
+			return usesRelationIndexedByStatements.at(stmt).count(var) == 1;
+		}
 	} catch (std::out_of_range){
 		return false;
 	}
@@ -109,7 +152,17 @@ bool ProgramKnowledgeBase::uses(int stmt, string var){
 
 vector<int> ProgramKnowledgeBase::getStatementsThatUse(string var){
 	try{
-		return Helpers::flattenIntSetToIntVector(&usesRelationIndexedByVariables.at(var));
+		if (var == ProgramKnowledgeBase::WILDCARD_STRING) {
+			std::vector<int> keys;
+			keys.reserve(usesRelationIndexedByStatements.size());
+			for (auto kv : usesRelationIndexedByStatements) {
+				keys.push_back(kv.first);
+			}
+			return keys;
+		}
+		else {
+			return Helpers::flattenIntSetToIntVector(&usesRelationIndexedByVariables.at(var));
+		}
 	} catch (std::out_of_range){
 		return vector<int>();
 	}
@@ -117,7 +170,17 @@ vector<int> ProgramKnowledgeBase::getStatementsThatUse(string var){
 
 vector<string> ProgramKnowledgeBase::getVariablesUsedBy(int stmt){
 	try{
-		return Helpers::flattenStringSetToStringVector(&usesRelationIndexedByStatements.at(stmt));
+		if (stmt == ProgramKnowledgeBase::WILDCARD_INT) {
+			vector<string> results = vector<string>();
+			for (pair<string, unordered_set<int>> keyVals : usesRelationIndexedByVariables) {
+				if (keyVals.second.size() > 0) {
+					results.push_back(keyVals.first);
+				}
+			}
+			return results;
+		} else {
+			return Helpers::flattenStringSetToStringVector(&usesRelationIndexedByStatements.at(stmt));
+		}
 	} catch (std::out_of_range){
 		return vector<string>();
 	}
@@ -125,12 +188,18 @@ vector<string> ProgramKnowledgeBase::getVariablesUsedBy(int stmt){
 
 bool ProgramKnowledgeBase::uses(string procName, string var)
 {
+	if (procName == ProgramKnowledgeBase::WILDCARD_STRING) {
+		return getProceduresThatUse(var).size() > 0;
+	} else if (var == ProgramKnowledgeBase::WILDCARD_STRING) {
+		return getVariablesUsedBy(procName).size() > 0;
+	}
+
 	Tnode* procNode = getNodeWithProcedureName(procName);
 	if (procNode == NULL) {
 		return false;
 	}
 	int procRangeStart = procNode->getFirstChild()->getFirstChild()->getStatementNumber();
-	int procRangeEnd = getLastContainedStatement(procNode)->getStatementNumber();
+	int procRangeEnd = procNode->getLastContainedStatement()->getStatementNumber();
 	vector<int> statementsThatUseVar = getStatementsThatUse(var);
 	for (int i : statementsThatUseVar) {
 		if (procRangeStart <= i && i <= procRangeEnd) {
@@ -178,7 +247,7 @@ bool ProgramKnowledgeBase::isParent(int s1, int s2){
 // linearly searches procedures for the procedure that contains the target.
 Tnode* ProgramKnowledgeBase::getProcedureContaining(int targetStmtNum){
 	Tnode* proc = this->abstractSyntaxTree->getFirstChild();
-	int procLastStmtNum = getLastContainedStatement(proc)->getStatementNumber();
+	int procLastStmtNum = proc->getLastContainedStatement()->getStatementNumber();
 	while (targetStmtNum > procLastStmtNum){
 		Tnode* nextProc = proc->getRightSibling();
 		if(nextProc != NULL){
@@ -186,7 +255,7 @@ Tnode* ProgramKnowledgeBase::getProcedureContaining(int targetStmtNum){
 		} else {
 			return NULL;
 		}
-		procLastStmtNum = getLastContainedStatement(proc)->getStatementNumber();
+		procLastStmtNum = proc->getLastContainedStatement()->getStatementNumber();
 	}
 	return proc;
 }
@@ -200,25 +269,6 @@ Tnode* ProgramKnowledgeBase::getParentProcedure(Tnode* node){
 		candidate = candidate->getSPAParent();
 	}
 	return candidate;
-}
-
-Tnode* ProgramKnowledgeBase::getLastContainedStatement(Tnode* node){
-	if (!node->isContainer() && !node->isProcedure() && !node->isStatementList()){
-		return NULL;
-	} else {
-		Tnode* lastNode = node->getFirstChild();
-		if (node->isProcedure()) {
-			lastNode = lastNode->getFirstChild();
-		}
-		while (!lastNode->isLastChild()){
-			lastNode = lastNode->getRightSibling();
-		}
-		if (lastNode->isContainer() || lastNode->isStatementList()){
-			return getLastContainedStatement(lastNode);
-		} else {
-			return lastNode;
-		}
-	}
 }
 
 Tnode* ProgramKnowledgeBase::getLastSibling(Tnode* node){
@@ -304,7 +354,7 @@ vector<int> ProgramKnowledgeBase::getParentsStarOf(int stmt, vector<Tnode*>* par
 		parents->push_back(parent);
 		parent = parent->getSPAParent();
 	}
-	return Helpers::flattenNodeVectorToIntVector(parents);
+	return Helpers::flattenASTNodeVectorToIntVector(parents);
 }
 
 vector<int> ProgramKnowledgeBase::getChildrenOf(int stmt){
@@ -349,7 +399,7 @@ vector<int> ProgramKnowledgeBase::getChildrenStarOf(int stmt){
 		return vector<int>();
 	}
 
-	return Helpers::flattenNodeVectorToIntVector(populateChildrenStarOf(node));
+	return Helpers::flattenASTNodeVectorToIntVector(populateChildrenStarOf(node));
 }
 
 vector<Tnode*>* ProgramKnowledgeBase::populateChildrenStarOf(Tnode* currNode, vector<Tnode*>* children){
@@ -383,9 +433,11 @@ vector<Tnode*> ProgramKnowledgeBase::getAssignsThatMatchPattern(string var, stri
 	vector<Tnode*> assigns = getNodesOfType(Tnode::STMT_ASSIGN);
 	vector<Tnode*> results = vector<Tnode*>();
 	Tnode* expression = NULL;
+	Tnode* variable = NULL;
 	for (Tnode* assign : assigns) {
 		expression = assign->getFirstChild()->getRightSibling();
-		if (expression->isEquals(expressionTreeRoot)) {
+		variable = assign->getFirstChild();
+		if (variable->getName() == var && expression->isEquals(expressionTreeRoot)) {
 			results.push_back(assign);
 		}
 	}
@@ -394,7 +446,7 @@ vector<Tnode*> ProgramKnowledgeBase::getAssignsThatMatchPattern(string var, stri
 
 vector<Tnode*> ProgramKnowledgeBase::getWhilesThatMatchPattern(string var) {
 	vector<Tnode*> whiles = getNodesOfType(Tnode::STMT_WHILE);
-	if (var == Helpers::WILDCARD) {
+	if (var == ProgramKnowledgeBase::WILDCARD_STRING) {
 		return whiles;
 	} else {
 		vector<Tnode*> results = vector<Tnode*>();
@@ -409,7 +461,7 @@ vector<Tnode*> ProgramKnowledgeBase::getWhilesThatMatchPattern(string var) {
 
 vector<Tnode*> ProgramKnowledgeBase::getIfsThatMatchPattern(string var) {
 	vector<Tnode*> ifs = getNodesOfType(Tnode::STMT_IF);
-	if (var == Helpers::WILDCARD) {
+	if (var == ProgramKnowledgeBase::WILDCARD_STRING) {
 		return ifs;
 	}
 	else {
@@ -429,9 +481,11 @@ vector<Tnode*> ProgramKnowledgeBase::getAssignsThatContainPattern(string var, st
 	vector<Tnode*> assigns = getNodesOfType(Tnode::STMT_ASSIGN);
 	vector<Tnode*> results = vector<Tnode*>();
 	Tnode* expression = NULL;
+	Tnode* variable = NULL;
 	for (Tnode* assign : assigns) {
 		expression = assign->getFirstChild()->getRightSibling();
-		if (expression->contains(expressionTreeRoot)) {
+		variable = assign->getFirstChild();
+		if (variable->getName() == var && expression->contains(expressionTreeRoot)) {
 			results.push_back(assign);
 		}
 	}
@@ -522,8 +576,114 @@ vector<int> ProgramKnowledgeBase::getStatementsFollowStarredBy(int stmt)
 	return results;
 }
 
+bool ProgramKnowledgeBase::next(int s1, int s2){
+	Gnode* node1 = statementTable->getCFGNode(s1);
+	Gnode* node2 = statementTable->getCFGNode(s2);
+	if (node1 == NULL || node2 == NULL) {
+		return false;
+	} else {
+		vector<Gnode*> nexts = node1->getNext();
+		return find(nexts.begin(), nexts.end(), node2) != nexts.end();
+	}
+}
+
+vector<int> ProgramKnowledgeBase::getNextStatements(int stmt){
+	Gnode* startNode = statementTable->getCFGNode(stmt);
+	return Helpers::flattenCFGnodeVectorToIntVector(&getNextGNodes(startNode));
+}
+
+
+vector<Gnode*> ProgramKnowledgeBase::getNextGNodes(Gnode* node) {
+	vector<Gnode*> results = vector<Gnode*>();
+	if (node != NULL) {
+		vector<Gnode*> next = node->getNext();
+		if (next.size() > 0) {
+			for (Gnode* nextNode : next) {
+				results.push_back(nextNode);
+			}
+		}
+	}
+
+	return results;
+}
+
+vector<int> ProgramKnowledgeBase::getStatementsBefore(int stmt) {
+	Gnode* startNode = statementTable->getCFGNode(stmt);
+	return Helpers::flattenCFGnodeVectorToIntVector(&getGnodesBefore(startNode));
+}
+
+vector<Gnode*> ProgramKnowledgeBase::getGnodesBefore(Gnode* node) {
+	vector<Gnode*> results = vector<Gnode*>();
+	if (node != NULL) {
+		vector<Gnode*> before = node->getPrev();
+		if (before.size() > 0) {
+			for (Gnode* prevNode : before) {
+				results.push_back(prevNode);
+			}
+		}
+	}
+
+	return results;
+}
+
+bool ProgramKnowledgeBase::nextStar(int s1, int s2){
+	Gnode* node1 = statementTable->getCFGNode(s1);
+	queue<Gnode*> nodesToBeProcessed = queue<Gnode*>();
+	unordered_set<Gnode*> processedNodes = unordered_set<Gnode*>();
+	nodesToBeProcessed.push(node1);
+	vector<Gnode*> nexts;
+	Gnode* curr;
+	while (!nodesToBeProcessed.empty()) {
+		curr = nodesToBeProcessed.front();
+		nodesToBeProcessed.pop();
+		nexts = getNextGNodes(curr);
+		for (Gnode* next : nexts) {
+			if (next->getValue() == s2) {
+				return true;
+			}
+			if (find(processedNodes.begin(), processedNodes.end(), next) == processedNodes.end()) {
+				nodesToBeProcessed.push(next);
+			}
+		}
+		processedNodes.insert(curr);
+	}
+	return false;
+}
+
+vector<int> ProgramKnowledgeBase::getNextStarStatements(int stmt){
+	return vector<int>();
+}
+
+vector<int> ProgramKnowledgeBase::getStatementsBeforeStar(int stmt){
+	return vector<int>();
+}
+
+bool ProgramKnowledgeBase::affects(int s1, int s2){
+	return false;
+}
+
+vector<int> ProgramKnowledgeBase::getStatementsAffectedBy(int stmt){
+	return vector<int>();
+}
+
+vector<int> ProgramKnowledgeBase::getStatementsThatAffect(int stmt){
+	return vector<int>();
+}
+
+bool ProgramKnowledgeBase::affectsStar(int s1, int s2){
+	return false;
+}
+
+vector<int> ProgramKnowledgeBase::getStatementsAffectStarredBy(int stmt){
+	return vector<int>();
+}
+
+vector<int> ProgramKnowledgeBase::getStatementsThatAffectStar(int stmt){
+	return vector<int>();
+}
+
 vector<int> ProgramKnowledgeBase::getStatementsOfType(Tnode::Type type){
-	return Helpers::flattenNodeVectorToIntVector(&getNodesOfType(type));
+	return Helpers::flattenASTNodeVectorToIntVector(&getNodesOfType(type));
 }
 
 vector<string> ProgramKnowledgeBase::getVariableNames(){
@@ -545,11 +705,11 @@ vector<string> ProgramKnowledgeBase::getProcedureNames() {
 vector<int> ProgramKnowledgeBase::getStatementsThatMatchPattern(Tnode::Type type, string var, string expr) {
 	switch (type) {
 		case Tnode::STMT_WHILE:
-			return Helpers::flattenNodeVectorToIntVector(&getWhilesThatMatchPattern(var));
+			return Helpers::flattenASTNodeVectorToIntVector(&getWhilesThatMatchPattern(var));
 		case Tnode::STMT_IF:
-			return Helpers::flattenNodeVectorToIntVector(&getIfsThatMatchPattern(var));
+			return Helpers::flattenASTNodeVectorToIntVector(&getIfsThatMatchPattern(var));
 		case Tnode::STMT_ASSIGN:
-			return Helpers::flattenNodeVectorToIntVector(&getAssignsThatMatchPattern(var, expr));
+			return Helpers::flattenASTNodeVectorToIntVector(&getAssignsThatMatchPattern(var, expr));
 		default:
 			return vector<int>();
 	}
@@ -557,7 +717,7 @@ vector<int> ProgramKnowledgeBase::getStatementsThatMatchPattern(Tnode::Type type
 
 vector<int> ProgramKnowledgeBase::getStatementsThatContainPattern(Tnode::Type type, string var, string expr) {
 	if (type == Tnode::STMT_ASSIGN) {
-		return Helpers::flattenNodeVectorToIntVector(&getAssignsThatContainPattern(var, expr));
+		return Helpers::flattenASTNodeVectorToIntVector(&getAssignsThatContainPattern(var, expr));
 	} else {
 		return vector<int>();
 	}
@@ -565,11 +725,11 @@ vector<int> ProgramKnowledgeBase::getStatementsThatContainPattern(Tnode::Type ty
 
 bool ProgramKnowledgeBase::calls(string p1, string p2) {
 	try {
-		if (p1 == Helpers::WILDCARD && p2 == Helpers::WILDCARD) {
+		if (p1 == ProgramKnowledgeBase::WILDCARD_STRING && p2 == ProgramKnowledgeBase::WILDCARD_STRING) {
 			return callsRelationIndexedByCallers.size() != 0;
-		} else if (p1 == Helpers::WILDCARD) {
+		} else if (p1 == ProgramKnowledgeBase::WILDCARD_STRING) {
 			return callsRelationIndexedByCallees.at(p2).size() != 0;
-		} else if (p2 == Helpers::WILDCARD) {
+		} else if (p2 == ProgramKnowledgeBase::WILDCARD_STRING) {
 			return callsRelationIndexedByCallers.at(p1).size() != 0;
 		} else {
 			return callsRelationIndexedByCallers.at(p1).count(p2) == 1;
@@ -580,7 +740,7 @@ bool ProgramKnowledgeBase::calls(string p1, string p2) {
 }
 
 vector<string> ProgramKnowledgeBase::getProceduresThatCall(string proc) {
-	if (proc == Helpers::WILDCARD) {
+	if (proc == ProgramKnowledgeBase::WILDCARD_STRING) {
 		vector<string> callers = vector<string>();
 		for (auto kv : callsRelationIndexedByCallers) {
 			callers.push_back(kv.first);
@@ -596,7 +756,7 @@ vector<string> ProgramKnowledgeBase::getProceduresThatCall(string proc) {
 }
 
 vector<string> ProgramKnowledgeBase::getProceduresCalledBy(string proc) {
-	if (proc == Helpers::WILDCARD) {
+	if (proc == ProgramKnowledgeBase::WILDCARD_STRING) {
 		vector<string> callees = vector<string>();
 		for (auto kv : callsRelationIndexedByCallees) {
 			callees.push_back(kv.first);
@@ -612,11 +772,11 @@ vector<string> ProgramKnowledgeBase::getProceduresCalledBy(string proc) {
 }
 
 bool ProgramKnowledgeBase::callsStar(string p1, string p2) {
-	if (p1 == Helpers::WILDCARD && p2 == Helpers::WILDCARD) {
+	if (p1 == ProgramKnowledgeBase::WILDCARD_STRING && p2 == ProgramKnowledgeBase::WILDCARD_STRING) {
 		return this->callsRelationIndexedByCallers.size() > 0;
-	} else if (p1 == Helpers::WILDCARD) {
+	} else if (p1 == ProgramKnowledgeBase::WILDCARD_STRING) {
 		return this->callsRelationIndexedByCallees.count(p2) != 0;
-	} else if (p2 == Helpers::WILDCARD) {
+	} else if (p2 == ProgramKnowledgeBase::WILDCARD_STRING) {
 		return this->callsRelationIndexedByCallers.count(p1) != 0;
 	}
 
@@ -658,7 +818,7 @@ bool ProgramKnowledgeBase::callsStar(string p1, string p2) {
 }
 
 vector<string> ProgramKnowledgeBase::getProceduresThatCallStar(string proc) {
-	if (proc == Helpers::WILDCARD) {
+	if (proc == ProgramKnowledgeBase::WILDCARD_STRING) {
 		return getProceduresThatCall(proc);
 	}
 
@@ -691,7 +851,7 @@ vector<string> ProgramKnowledgeBase::getProceduresThatCallStar(string proc) {
 }
 
 vector<string> ProgramKnowledgeBase::getProceduresCallStarredBy(string proc) {
-	if (proc == Helpers::WILDCARD) {
+	if (proc == ProgramKnowledgeBase::WILDCARD_STRING) {
 		return getProceduresCalledBy(proc);
 	}
 
@@ -729,7 +889,7 @@ vector<string> ProgramKnowledgeBase::getProceduresCallStarredBy(string proc) {
 vector<Tnode*> ProgramKnowledgeBase::getNodesOfType(Tnode::Type type){
 	vector<Tnode*> results = vector<Tnode*>();
 	for (int i = 1; i < this->statementTable->getSize(); i++) {
-		Tnode* node = this->statementTable->getStmtAddress(i);
+		Tnode* node = this->statementTable->getASTNode(i);
 		if (node->getType() == type){
 			results.push_back(node);
 		}
@@ -739,7 +899,7 @@ vector<Tnode*> ProgramKnowledgeBase::getNodesOfType(Tnode::Type type){
 
 Tnode* ProgramKnowledgeBase::getNodeWithStatementNumber(int num) {
 	try {
-		return this->statementTable->getStmtAddress(num);
+		return this->statementTable->getASTNode(num);
 	} catch (out_of_range e) {
 		return NULL;
 	}
