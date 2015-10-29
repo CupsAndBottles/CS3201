@@ -105,8 +105,10 @@ private:
 	unordered_map<string, unordered_set<string>> callsRelationIndexedByCallers;
 	unordered_map<string, unordered_set<string>> callsRelationIndexedByCallees;
 
-	bool containsContainer(Tnode * node); //not used
+	vector<Gnode*> getNextGNodes(Gnode* node);
+	vector<Gnode*> getGnodesBefore(Gnode* node);
 
+	bool containsContainer(Tnode * node); //not used
 	vector<Tnode*> getNodesOfType(Tnode::Type type);
 	Tnode * getNodeWithStatementNumber(int num);
 	Tnode * getNodeWithProcedureName(string procName);

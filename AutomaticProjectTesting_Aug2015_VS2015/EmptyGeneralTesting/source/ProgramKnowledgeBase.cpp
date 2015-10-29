@@ -588,13 +588,18 @@ bool ProgramKnowledgeBase::next(int s1, int s2){
 }
 
 vector<int> ProgramKnowledgeBase::getNextStatements(int stmt){
-	vector<int> results = vector<int>();
-	Gnode* node = statementTable->getCFGNode(stmt);
+	Gnode* startNode = statementTable->getCFGNode(stmt);
+	return Helpers::flattenCFGnodeVectorToIntVector(&getNextGNodes(startNode));
+}
+
+
+vector<Gnode*> ProgramKnowledgeBase::getNextGNodes(Gnode* node) {
+	vector<Gnode*> results = vector<Gnode*>();
 	if (node != NULL) {
 		vector<Gnode*> next = node->getNext();
 		if (next.size() > 0) {
 			for (Gnode* nextNode : next) {
-				results.push_back(nextNode->getValue());
+				results.push_back(nextNode);
 			}
 		}
 	}
@@ -602,14 +607,18 @@ vector<int> ProgramKnowledgeBase::getNextStatements(int stmt){
 	return results;
 }
 
-vector<int> ProgramKnowledgeBase::getStatementsBefore(int stmt){
-	vector<int> results = vector<int>();
-	Gnode* node = statementTable->getCFGNode(stmt);
+vector<int> ProgramKnowledgeBase::getStatementsBefore(int stmt) {
+	Gnode* startNode = statementTable->getCFGNode(stmt);
+	return Helpers::flattenCFGnodeVectorToIntVector(&getGnodesBefore(startNode));
+}
+
+vector<Gnode*> ProgramKnowledgeBase::getGnodesBefore(Gnode* node) {
+	vector<Gnode*> results = vector<Gnode*>();
 	if (node != NULL) {
 		vector<Gnode*> before = node->getPrev();
 		if (before.size() > 0) {
 			for (Gnode* prevNode : before) {
-				results.push_back(prevNode->getValue());
+				results.push_back(prevNode);
 			}
 		}
 	}
