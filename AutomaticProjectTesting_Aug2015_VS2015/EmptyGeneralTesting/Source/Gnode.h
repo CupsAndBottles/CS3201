@@ -32,6 +32,8 @@ public:
 	vector <Gnode *> getPrev();
 	Gnode* getRight();
 	Gnode* getLeft();
+	Gnode* getPrevRight();
+	Gnode* getPrevLeft();
 	int getValue();
 	Type getType();
 	bool isEndNode();

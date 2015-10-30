@@ -84,6 +84,17 @@ Gnode *Gnode::getLeft() {
 	return left;
 }
 
+Gnode *Gnode::getPrevRight() {
+	if (prev.empty()) {
+		return NULL;
+	}
+	return prev.at(0);
+}
+
+Gnode *Gnode::getPrevLeft() {
+	return otherPrev;
+}
+
 Gnode::Type Gnode::getType() {
 	return type;
 }
