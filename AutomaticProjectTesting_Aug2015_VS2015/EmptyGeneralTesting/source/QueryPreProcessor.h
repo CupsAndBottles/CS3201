@@ -46,5 +46,6 @@ private:
 	bool verifyWithQuery(vector<string> temp);
 	string getTypeOfRef(string s);
 	vector<string> removeAttrRef(vector<string> temp);
+	bool addEntities(vector<string> entities);
 };
 

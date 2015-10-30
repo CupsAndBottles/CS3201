@@ -354,6 +354,32 @@ vector<string> QueryPreProcessor::removeAttrRef(vector<string> temp) {
 	return newVect;
 }
 
+bool QueryPreProcessor::addEntities(vector<string> entities) {
+	string mergedString;
+	for (size_t i = 0; i < entities.size(); i++) {
+		mergedString = mergedString + entities[i];
+	}
+
+	vector<string> filteredEntities = split(mergedString, "<>, ");
+	if (filteredEntities.size() == 1) {
+		if (sCheck.isSynonym(filteredEntities.at(0), entityTable) || (toLowerCase(filteredEntities.at(0)).compare("boolean") == 0)) {
+			entityList.push_back(filteredEntities.at(0));
+		}
+		else {
+			return false;
+		}
+	}
+	else {
+		for (size_t i=0; i<filteredEntities.size(); i++) {
+			if (sCheck.isSynonym(filteredEntities.at(i), entityTable)) {
+				entityList.push_back(filteredEntities.at(i));
+			}
+			else {
+				return false;
+			}
+		}
+	}
+}
 
 bool QueryPreProcessor::query(string s) {
 	//initialize relationship table
@@ -382,7 +408,7 @@ bool QueryPreProcessor::query(string s) {
 	//vector<string> tempSelectCl2 = removeAndTokens(tempSelectCl);
 	//vector<string> selectCl = mergeQuotations(tempSelectCl2);
 	vector<string> selectCl = mergeQuotations(tempSelectCl);
-
+	vector<string> entities;
 	//first must be a Select, else return false
 	if (toLowerCase(selectCl.at(0)).compare("select") == 0) {
 		//cout << "'Select' found" << endl;
@@ -392,13 +418,7 @@ bool QueryPreProcessor::query(string s) {
 		//cout << "result-clause: ";
 		while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0 || toLowerCase(selectCl.at(i)).compare("with")==0)) {
 			//cout << selectCl.at(i) + " ";
-			if (sCheck.isSynonym(selectCl.at(i), entityTable) || (toLowerCase(selectCl.at(i)).compare("boolean") == 0) ) {
-				entityList.push_back(selectCl.at(i));
-			}
-			else {
-				cout << "result-clause not declared" << endl;
-				return false;
-			}
+			entities.push_back(selectCl.at(i));
 			i++;
 			if (selectCl.size() == i) {
 				break;
@@ -408,6 +428,13 @@ bool QueryPreProcessor::query(string s) {
 		if (i == 1) {
 			cout << "no result-clause found" << endl;
 			return false;
+		}
+		else {
+			bool entitiesDeclared = addEntities(entities);
+			if (!entitiesDeclared) {
+				cout << "result-clause not declared or invalid" << endl;
+				return false;
+			}
 		}
 
 		//third phase: followed by suchthat | pattern | with, else error

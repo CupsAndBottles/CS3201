@@ -299,6 +299,9 @@ bool SemanticsCheck::initSemanticsCheck(string s, string argType, EntTable et) {
 	else if (argType == "entRef") {
 		boolean = isEntRef(s, et);
 	}
+	else if (argType == "varRef") {
+		boolean = isVarRef(s, et);
+	}
 	else if (argType == "lineRef") {
 		boolean = isLineRef(s, et);
 	}
