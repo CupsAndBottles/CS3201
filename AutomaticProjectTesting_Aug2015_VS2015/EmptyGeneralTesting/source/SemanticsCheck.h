@@ -31,6 +31,9 @@ public:
 	bool isProgLine(string s, EntTable et);
 	bool wrappedInQuotation(string s);
 	bool isInteger(string s);
+	bool isSynVariable(string s, EntTable et);
+	bool isSynProcedure(string s, EntTable et);
+	bool isSynProgLine(string s, EntTable et);
 
 private:
 	bool wrappedInUnderscore(string s);

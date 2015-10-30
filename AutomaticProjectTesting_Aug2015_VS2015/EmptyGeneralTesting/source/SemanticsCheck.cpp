@@ -210,6 +210,51 @@ bool SemanticsCheck::isSynIf(string s, EntTable et) {
 	}
 }
 
+bool SemanticsCheck::isSynProcedure(string s, EntTable et) {
+	if (isSynonym(s, et)) {
+		if (et.getType(s) == "procedure") {
+			return true;
+		}
+		else {
+			return false;
+			cout << "is synonym but not assign" << endl;
+		}
+	}
+	else {
+		return false;
+	}
+}
+
+bool SemanticsCheck::isSynVariable(string s, EntTable et) {
+	if (isSynonym(s, et)) {
+		if (et.getType(s) == "variable") {
+			return true;
+		}
+		else {
+			return false;
+			cout << "is synonym but not assign" << endl;
+		}
+	}
+	else {
+		return false;
+	}
+}
+
+bool SemanticsCheck::isSynProgLine(string s, EntTable et) {
+	if (isSynonym(s, et)) {
+		if (et.getType(s) == "prog_line") {
+			return true;
+		}
+		else {
+			return false;
+			cout << "is synonym but not assign" << endl;
+		}
+	}
+	else {
+		return false;
+	}
+}
+
 bool SemanticsCheck::isExpressionSpec(string s) {
 	if (s.length() == 1 && (s[0] == '_')) {
 		return true;

@@ -76,6 +76,41 @@ bool QueryPreProcessor::verifySuchThatQuery(vector<string> temp) {
 	vector<string> definedArg = relTable.getArguments(toLowerCase(temp[0]));
 	//check arg1 and arg2
 	if (sCheck.initSemanticsCheck((temp[1]), definedArg[0], entityTable) && sCheck.initSemanticsCheck(temp[2], definedArg[1], entityTable)) {
+		string relType = toLowerCase(temp[0]);
+		string arg1 = temp[1];
+		string arg2 = temp[2];
+		if (relType.compare("modifies")==0 || relType.compare("uses")==0 ) {
+			if (arg1.compare("_") == 0) {
+				return false;
+			}
+			if (sCheck.isSynonym(arg2,entityTable) && !sCheck.isSynVariable(arg2, entityTable)) {
+				return false;
+			}
+		} 
+		else if (relType.compare("calls") == 0 || relType.compare("calls*") == 0) {
+			if (sCheck.isSynonym(arg1, entityTable) && !sCheck.isSynProcedure(arg1, entityTable)) {
+				return false;
+			}
+			if (sCheck.isSynonym(arg2, entityTable) && !sCheck.isSynProcedure(arg2, entityTable)) {
+				return false;
+			}
+		}
+		else if (relType.compare("next") == 0 || relType.compare("next*") == 0) {
+			if (sCheck.isSynonym(arg1, entityTable) && !sCheck.isSynProgLine(arg1, entityTable)) {
+				return false;
+			}
+			if (sCheck.isSynonym(arg2, entityTable) && !sCheck.isSynProgLine(arg2, entityTable)) {
+				return false;
+			}
+		}
+		else if (relType.compare("assign") == 0 || relType.compare("assign*") == 0) {
+			if (sCheck.isSynonym(arg1, entityTable) && !sCheck.isSynAssign(arg1, entityTable)) {
+				return false;
+			}
+			if (sCheck.isSynonym(arg2, entityTable) && !sCheck.isSynAssign(arg2, entityTable)) {
+				return false;
+			}
+		}
 		return true;
 	}
 	else {
@@ -270,6 +305,10 @@ string QueryPreProcessor::getTypeOfRef(string s) {
 		result = "integer";
 		return result;
 	}
+	else {
+		result = "errorType";
+		return result;
+	}
 }
 
 bool QueryPreProcessor::verifyWithQuery(vector<string> temp) {
@@ -292,6 +331,29 @@ bool QueryPreProcessor::verifyWithQuery(vector<string> temp) {
 		return false;
 	}
 }
+
+vector<string> QueryPreProcessor::removeAttrRef(vector<string> temp) {
+	vector<string> newVect;
+	newVect.push_back("with");
+	if (sCheck.isAttrRef(temp[1], entityTable)) {
+		vector<string> temp1 = split(temp[1], ".");
+		newVect.push_back(temp1[0]);
+	}
+	else {
+		newVect.push_back(temp[1]);
+	}
+
+	if (sCheck.isAttrRef(temp[2], entityTable)) {
+		vector<string> temp2 = split(temp[2], ".");
+		newVect.push_back(temp2[0]);
+	}
+	else {
+		newVect.push_back(temp[2]);
+	}
+
+	return newVect;
+}
+
 
 bool QueryPreProcessor::query(string s) {
 	//initialize relationship table
@@ -351,6 +413,7 @@ bool QueryPreProcessor::query(string s) {
 		//third phase: followed by suchthat | pattern | with, else error
 		vector<string> argVector;
 		vector<string> queryVector;
+		vector<string> queryVectorForWith;
 		while (i < selectCl.size()) {
 			//cout << selectCl.at(i) << endl;
 
@@ -377,11 +440,34 @@ bool QueryPreProcessor::query(string s) {
 						argVector.clear();
 					}
 					else {
-						cout << "invalid such that query" << endl;
-						queryVector.clear();
-						argVector.clear();
-						return false;
+						//i.e. "... such that a.stmt#=7..."
+						//if '=' is find in a such that clause, check if it is a witch clause
+						bool equalSignFound = false;
+						for (size_t i = 0; i < argVector.size(); i++) {
+							size_t found = argVector[i].find('=');
+							if (found != std::string::npos) {
+								queryVectorForWith = formatWithQuery(argVector);
+								equalSignFound = true;
+								break;
+							}
+						}
+						if (equalSignFound) {
+							if (verifyWithQuery(queryVectorForWith)) {
+								removeAttrRef(queryVectorForWith); //turns vector (with, p.procName, _) -> (with, p, _)
+								addQueryObject(queryVectorForWith);
+								queryVectorForWith.clear();
+								argVector.clear();
+							}
+						}
+						else {
+							cout << "invalid such that query" << endl;
+							queryVector.clear();
+							queryVectorForWith.clear();
+							argVector.clear();
+							return false;
+						}
 					}
+
 				}
 				else {
 					cout << "found 'such' but no 'that'";
@@ -430,6 +516,7 @@ bool QueryPreProcessor::query(string s) {
 				}
 				queryVector = formatWithQuery(argVector);
 				if (verifyWithQuery(queryVector)) {
+					removeAttrRef(queryVector); //turns vector (with, p.procName, _) -> (with, p, _)
 					addQueryObject(queryVector);
 					queryVector.clear();
 					argVector.clear();

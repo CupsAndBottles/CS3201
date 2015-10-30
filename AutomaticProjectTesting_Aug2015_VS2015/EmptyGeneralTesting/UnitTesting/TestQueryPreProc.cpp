@@ -112,6 +112,7 @@ namespace UnitTesting
 			Assert::IsTrue(qpp.query("stmt s; prog_line n; procedure p; variable v; constant c; assign a; Select s with s.stmt# = 5")); qpp.clearAll();
 			Assert::IsTrue(qpp.query("stmt s; prog_line n; procedure p; variable v; constant c; assign a; Select s with a.stmt# = 12")); qpp.clearAll();
 			Assert::IsTrue(qpp.query("stmt s; prog_line n; procedure p; variable v; constant c; assign a; Select s with n=20")); qpp.clearAll();
+			Assert::IsTrue(qpp.query("stmt s; prog_line n; procedure p; variable v; constant c; assign a; Select s such that n=20")); qpp.clearAll();
 
 			Assert::IsTrue(qpp.query("stmt s; prog_line n; procedure p; variable v; constant c; assign a; Select s with v.varName = p.procName")); qpp.clearAll();
 			Assert::IsTrue(qpp.query("stmt s; prog_line n; procedure p; variable v; constant c; assign a; Select s with s.stmt# = c.value")); qpp.clearAll();
@@ -119,7 +120,6 @@ namespace UnitTesting
 			Assert::IsFalse(qpp.query("stmt s; prog_line n; procedure p; variable v; constant c; assign a; Select s with p.procName = 10")); qpp.clearAll();
 			Assert::IsFalse(qpp.query("stmt s; prog_line n; procedure p; variable v; constant c; assign a; Select s with p.procName = c.value")); qpp.clearAll();
 			Assert::IsFalse(qpp.query("stmt s; prog_line n; procedure p; variable v; constant c; assign a; Select s with s.stmt# = v.varName")); qpp.clearAll();
-
 		}
 	};
 }

@@ -45,5 +45,6 @@ private:
 	vector<string> formatWithQuery(vector<string> temp);
 	bool verifyWithQuery(vector<string> temp);
 	string getTypeOfRef(string s);
+	vector<string> removeAttrRef(vector<string> temp);
 };
 
