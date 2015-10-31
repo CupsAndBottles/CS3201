@@ -19,6 +19,7 @@ using namespace std;
 class QueryEvaluator
 {
 public:
+	QueryEvaluator();
 	QueryEvaluator(ProgramKnowledgeBase storePkb);
 	
 	list<string> getResults(string input);

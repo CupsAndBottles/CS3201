@@ -3,6 +3,9 @@
 
 using namespace std;
 
+QueryEvaluator::QueryEvaluator() {
+	//default constructor
+}
 QueryEvaluator::QueryEvaluator(ProgramKnowledgeBase storePkb) {
 	database = storePkb;
 }

@@ -28,9 +28,11 @@ void TestWrapper::parse(std::string filename) {
 		
 		viewAST(db->printAbstractSyntaxTree(db->getAbstractSyntaxTreeRoot()), filename);
 
-		pkbPointer = ProgramKnowledgeBase(db);
+		pkb = ProgramKnowledgeBase(db);
 
 		cout << "Successfully constructed PKB.\n";
+		evaluator = QueryEvaluator(pkb);
+		cout << "Successfully constructed QueryEvaluator.\n";
 	}
 	else {
 		cout << "Could not parse SIMPLE program. Aborting.\n";
@@ -40,11 +42,6 @@ void TestWrapper::parse(std::string filename) {
 
 // method to evaluating a query
 void TestWrapper::evaluate(std::string query, std::list<std::string>& results){
-// call your evaluator to evaluate the query here
-  // ...code to evaluate query...
-
-	QueryEvaluator qe = QueryEvaluator(pkbPointer);	
-	results = qe.getResults(query);
-  // store the answers to the query in the results list (it is initially empty)
-  // each result must be a string.
+	//QueryEvaluator qe = QueryEvaluator(pkbPointer);	
+	results = evaluator.getResults(query);
 }
