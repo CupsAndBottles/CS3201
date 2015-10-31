@@ -121,5 +121,11 @@ namespace UnitTesting
 			Assert::IsFalse(qpp.query("stmt s; prog_line n; procedure p; variable v; constant c; assign a; Select s with p.procName = c.value")); qpp.clearAll();
 			Assert::IsFalse(qpp.query("stmt s; prog_line n; procedure p; variable v; constant c; assign a; Select s with s.stmt# = v.varName")); qpp.clearAll();
 		}
+
+		TEST_METHOD(testTupleEntities) {
+			qpp.clearAll();
+			Assert::IsTrue(qpp.query("assign a, a1; stmt s; prog_line n, n1; procedure p, q; if ifstat; while w; Select <p, a> pattern a(_,_) and ifstat(\"x\",_,_) and w(\"y\",_) such that Next(20, n) and Parent*(s,6) and Calls(p,q) with q.procName = \"Second\"")); qpp.clearAll();
+			Assert::IsFalse(qpp.query("assign a; stmt s; prog_line n; Select <p, a> such that n=20"));
+		}
 	};
 }

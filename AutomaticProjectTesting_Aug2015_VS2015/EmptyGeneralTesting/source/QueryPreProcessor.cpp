@@ -381,6 +381,30 @@ bool QueryPreProcessor::addEntities(vector<string> entities) {
 	}
 }
 
+void QueryPreProcessor::optimizeWithClause(vector<string> temp) {
+
+	if (sCheck.isSynonym(temp[2], entityTable) || queryList.size()==0) {
+		addQueryObject(temp);
+	}
+	else if (queryList.size() != 0) {
+		QueryObject lastQueryObj = queryList[queryList.size() - 1];
+		if ((lastQueryObj.getSecond()).compare(temp[1]) == 0) {
+			QueryObject newObj = QueryObject(lastQueryObj.getFirst(), temp[2], lastQueryObj.getThird());
+			queryList.pop_back();
+			queryList.push_back(newObj);
+		}
+		else if ((lastQueryObj.getThird()).compare(temp[1]) == 0) {
+			QueryObject newObj = QueryObject(lastQueryObj.getFirst(), lastQueryObj.getSecond(), temp[2]);
+			queryList.pop_back();
+			queryList.push_back(newObj);
+		}
+		else {
+			addQueryObject(temp);
+		}
+	}
+
+}
+
 bool QueryPreProcessor::query(string s) {
 	//initialize relationship table
 	relTable.initRelTable();
@@ -481,7 +505,7 @@ bool QueryPreProcessor::query(string s) {
 						if (equalSignFound) {
 							if (verifyWithQuery(queryVectorForWith)) {
 								removeAttrRef(queryVectorForWith); //turns vector (with, p.procName, _) -> (with, p, _)
-								addQueryObject(queryVectorForWith);
+								optimizeWithClause(queryVectorForWith);
 								queryVectorForWith.clear();
 								argVector.clear();
 							}
@@ -544,7 +568,7 @@ bool QueryPreProcessor::query(string s) {
 				queryVector = formatWithQuery(argVector);
 				if (verifyWithQuery(queryVector)) {
 					removeAttrRef(queryVector); //turns vector (with, p.procName, _) -> (with, p, _)
-					addQueryObject(queryVector);
+					optimizeWithClause(queryVector);
 					queryVector.clear();
 					argVector.clear();
 				}
