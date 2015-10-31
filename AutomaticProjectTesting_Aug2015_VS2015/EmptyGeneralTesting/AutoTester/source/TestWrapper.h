@@ -30,8 +30,8 @@ class TestWrapper : public AbstractWrapper {
   // destructor
   ~TestWrapper();
   
-  ProgramKnowledgeBase pkbPointer;
-
+  ProgramKnowledgeBase pkb;
+  QueryEvaluator evaluator;
   // method for parsing the SIMPLE source
   virtual void parse(std::string filename);
   
