@@ -890,27 +890,27 @@ namespace UnitTesting
 		TEST_METHOD(testPKBNext) {
 			string fileName = "programNext.txt";
 			ofstream outputFile(fileName, ofstream::trunc);
-			outputFile << "procedure Proc {";
-			outputFile << "x = 1;"; // 1
-			outputFile << "z = y;"; // 2
-			outputFile << "while a {"; // 3
-			outputFile << "a = a - 1;}"; // 4 
-			outputFile << "if x then {"; // 5
-			outputFile << "a = b;"; // 6
-			outputFile << "z = 1; }"; // 7
-			outputFile << "else {";
-			outputFile << "c = a;"; // 8 
-			outputFile << "x = 1;}"; // 9
-			outputFile << "while d {"; // 10
-			outputFile << "e = f;"; // 11
-			outputFile << "f = g;}"; // 12
-			outputFile << "if y then {"; // 13
-			outputFile << "h = 1; }"; // 14
-			outputFile << "else {";
-			outputFile << "h = 2; }"; // 15
-			outputFile << "}";
-			outputFile << "procedure Other {";
-			outputFile << "y = 1;"; //line 16
+			outputFile << "procedure Proc {" << endl;
+			outputFile << "x = 1;" << endl; // 1
+			outputFile << "z = y;" << endl; // 2
+			outputFile << "while a {" << endl; // 3
+			outputFile << "a = a - 1;}" << endl; // 4 
+			outputFile << "if x then {" << endl; // 5
+			outputFile << "a = b;" << endl; // 6
+			outputFile << "z = 1; }" << endl; // 7
+			outputFile << "else {" << endl;
+			outputFile << "c = a;" << endl; // 8 
+			outputFile << "x = 1;}" << endl; // 9
+			outputFile << "while d {" << endl; // 10
+			outputFile << "e = f;" << endl; // 11
+			outputFile << "f = g;}" << endl; // 12
+			outputFile << "if y then {" << endl; // 13
+			outputFile << "h = 1; }" << endl; // 14
+			outputFile << "else {" << endl;
+			outputFile << "h = 2; }" << endl; // 15
+			outputFile << "}" << endl;
+			outputFile << "procedure Other {" << endl;
+			outputFile << "y = 1;" << endl; //line 16
 			outputFile << "}";
 			outputFile.close();
 
@@ -1001,27 +1001,27 @@ namespace UnitTesting
 		TEST_METHOD(testPKBNextStar) {
 			string fileName = "programNextStar.txt";
 			ofstream outputFile(fileName, ofstream::trunc);
-			outputFile << "procedure Proc {";
-			outputFile << "x = 1;"; // 1
-			outputFile << "z = y;"; // 2
-			outputFile << "while a {"; // 3
-			outputFile << "a = a - 1;}"; // 4 
-			outputFile << "if x then {"; // 5
-			outputFile << "a = b;"; // 6
-			outputFile << "z = 1; }"; // 7
-			outputFile << "else {";
-			outputFile << "c = a;"; // 8 
-			outputFile << "x = 1;}"; // 9
-			outputFile << "while d {"; // 10
-			outputFile << "e = f;"; // 11
-			outputFile << "f = g;}"; // 12
-			outputFile << "if y then {"; // 13
-			outputFile << "h = 1; }"; // 14
-			outputFile << "else {";
-			outputFile << "h = 2; }"; // 15
-			outputFile << "}";
-			outputFile << "procedure Other {";
-			outputFile << "z = 2;"; // 16
+			outputFile << "procedure Proc {" << endl;
+			outputFile << "x = 1;" << endl; // 1
+			outputFile << "z = y;" << endl; // 2
+			outputFile << "while a {" << endl; // 3
+			outputFile << "a = a - 1;}" << endl; // 4 
+			outputFile << "if x then {" << endl; // 5
+			outputFile << "a = b;" << endl; // 6
+			outputFile << "z = 1; }" << endl; // 7
+			outputFile << "else {" << endl;
+			outputFile << "c = a;" << endl; // 8 
+			outputFile << "x = 1;}" << endl; // 9
+			outputFile << "while d {" << endl; // 10
+			outputFile << "e = f;" << endl; // 11
+			outputFile << "f = g;}" << endl; // 12
+			outputFile << "if y then {" << endl; // 13
+			outputFile << "h = 1; }" << endl; // 14
+			outputFile << "else {" << endl;
+			outputFile << "h = 2; }" << endl; // 15
+			outputFile << "}" << endl;
+			outputFile << "procedure Other {" << endl;
+			outputFile << "z = 2;" << endl; // 16
 			outputFile << "}";
 			outputFile.close();
 

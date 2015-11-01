@@ -4,6 +4,7 @@
 #include "SIMPLEParser.h"
 #include "SIMPLERules.h"
 
+#include <fstream>
 #include <string>
 #include <vector>
 
@@ -226,6 +227,49 @@ namespace UnitTesting
 
 			simpleParser *q = new simpleParser(ifStmt);
 			Assert::AreEqual(true, (*q).parseProcedure());
+
+			vector<string> block;
+			block.push_back("Proc");
+			block.push_back("{");
+			block.push_back("if");
+			block.push_back("x");
+			block.push_back("then");
+			block.push_back("{");
+			block.push_back("while");
+			block.push_back("b");
+			block.push_back("{");
+			block.push_back("b");
+			block.push_back("=");
+			block.push_back("b");
+			block.push_back("-");
+			block.push_back("1");
+			block.push_back(";");
+			block.push_back("}");
+			block.push_back("}");
+			block.push_back("else");
+			block.push_back("{");
+			block.push_back("c");
+			block.push_back("=");
+			block.push_back("a");
+			block.push_back(";");
+			block.push_back("x");
+			block.push_back("=");
+			block.push_back("1");
+			block.push_back(";");
+			block.push_back("while");
+			block.push_back("a");
+			block.push_back("{");
+			block.push_back("a");
+			block.push_back("=");
+			block.push_back("a");
+			block.push_back("-");
+			block.push_back("1");
+			block.push_back(";");
+			block.push_back("}");
+			block.push_back("}");
+			block.push_back("}");
+			simpleParser *r = new simpleParser(block);
+			Assert::AreEqual(true, (*r).parseProcedure());
 		}
 
 		TEST_METHOD(testEmptyIf) {
@@ -258,6 +302,20 @@ namespace UnitTesting
 
 			simpleParser *p = new simpleParser(block);
 			Assert::AreEqual(true, (*p).parseStmt());
+
+			block.clear();
+			block.push_back("while");
+			block.push_back("b");
+			block.push_back("{");
+			block.push_back("b");
+			block.push_back("=");
+			block.push_back("b");
+			block.push_back("-");
+			block.push_back("1");
+			block.push_back(";");
+			block.push_back("}");
+			simpleParser *q = new simpleParser(block);
+			Assert::AreEqual(true, (*q).parseStmt());
 		}
 
 		TEST_METHOD(testGoodProcedure) {

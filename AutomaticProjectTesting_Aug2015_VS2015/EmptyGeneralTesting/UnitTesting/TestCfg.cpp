@@ -143,24 +143,25 @@ namespace UnitTesting
 		TEST_METHOD(testLinkWhileNestedInIf) {
 			string fileName = "source.txt";
 			ofstream outputFile(fileName, ofstream::trunc);
-			outputFile << "procedure Proc {";
-			outputFile << "x = 1;"; // 1
-			outputFile << "z = y;"; // 2
-			outputFile << "if x then {"; // 3
-			outputFile << "a = b;"; // 4
-			outputFile << "z = 1;"; // 5
-			outputFile << "while a {"; // 6
-			outputFile << "a = a - 1; }}"; // 7
-			outputFile << "else {"; 
-			outputFile << "c = a;"; // 8
-			outputFile << "x = 1; }"; // 9
-			outputFile << "a = a - 2;"; // 10
+			outputFile << "procedure Proc {" << endl;
+			outputFile << "x = 1;" << endl; // 1
+			outputFile << "z = y;" << endl; // 2
+			outputFile << "if x then {" << endl; // 3
+			outputFile << "a = b;" << endl; // 4
+			outputFile << "z = 1;" << endl; // 5
+			outputFile << "while a {" << endl; // 6
+			outputFile << "a = a - 1; }}" << endl; // 7
+			outputFile << "else {" << endl;
+			outputFile << "c = a;" << endl; // 8
+			outputFile << "x = 1; }" << endl; // 9
+			outputFile << "a = a - 2;" << endl; // 10
 			outputFile << "}";
 			outputFile.close();
 
 			Parser *parse = new Parser();
 			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
 			remove(fileName.c_str());
+			Assert::AreNotEqual(0, (int)parsedProgram.size());
 			Database* db = new Database();
 			db->buildDatabase(parsedProgram);
 			Gnode *cfgRoot = db->buildControlFlowGraph();
@@ -171,24 +172,25 @@ namespace UnitTesting
 		TEST_METHOD(testLinkWhileNestedInElse) {
 			string fileName = "source.txt";
 			ofstream outputFile(fileName, ofstream::trunc);
-			outputFile << "procedure Proc {";
-			outputFile << "x = 1;"; // 1
-			outputFile << "z = y;"; // 2
-			outputFile << "if x then {"; // 3
-			outputFile << "a = b;"; // 4
-			outputFile << "z = 1;}"; // 5
-			outputFile << "else {"; 
-			outputFile << "c = a;"; // 6
-			outputFile << "x = 1;"; // 7
-			outputFile << "while a {"; // 8
-			outputFile << "a = a - 1; }}"; // 9
-			outputFile << "a = a - 2;"; // 10
+			outputFile << "procedure Proc {" << endl;
+			outputFile << "x = 1;" << endl; // 1
+			outputFile << "z = y;" << endl; // 2
+			outputFile << "if x then {" << endl; // 3
+			outputFile << "a = b;" << endl; // 4
+			outputFile << "z = 1;}" << endl; // 5
+			outputFile << "else {" << endl;
+			outputFile << "c = a;" << endl; // 6
+			outputFile << "x = 1;" << endl; // 7
+			outputFile << "while a {" << endl; // 8
+			outputFile << "a = a - 1; }}" << endl; // 9
+			outputFile << "a = a - 2;" << endl; // 10
 			outputFile << "}";
 			outputFile.close();
 
 			Parser *parse = new Parser();
 			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
 			remove(fileName.c_str());
+			Assert::AreNotEqual(0, (int)parsedProgram.size());
 			Database* db = new Database();
 			db->buildDatabase(parsedProgram);
 			Gnode *cfgRoot = db->buildControlFlowGraph();
@@ -199,26 +201,27 @@ namespace UnitTesting
 		TEST_METHOD(testLinkWhileNestedInIfAndElse) {
 			string fileName = "source.txt";
 			ofstream outputFile(fileName, ofstream::trunc);
-			outputFile << "procedure Proc {";
-			outputFile << "x = 1;"; // 1
-			outputFile << "z = y;"; // 2
-			outputFile << "if x then {"; // 3
-			outputFile << "a = b;"; // 4
-			outputFile << "z = 1;"; // 5
-			outputFile << "while b {"; // 6
-			outputFile << "b = b - 1; }}"; // 7
-			outputFile << "else {"; 
-			outputFile << "c = a;"; // 9
-			outputFile << "x = 1;"; // 10
-			outputFile << "while a {"; // 11
-			outputFile << "a = a - 1; }}"; // 12
-			outputFile << "a = a - 2;"; // 13
+			outputFile << "procedure Proc {" << endl;
+			outputFile << "x = 1;" << endl; // 1
+			outputFile << "z = y;" << endl; // 2
+			outputFile << "if x then {" << endl; // 3
+			outputFile << "a = b;" << endl; // 4
+			outputFile << "z = 1;" << endl; // 5
+			outputFile << "while b {" << endl; // 6
+			outputFile << "b = b - 1; }}" << endl; // 7
+			outputFile << "else {" << endl;
+			outputFile << "c = a;" << endl; // 9
+			outputFile << "x = 1;" << endl; // 10
+			outputFile << "while a {" << endl; // 11
+			outputFile << "a = a - 1; }}" << endl; // 12
+			outputFile << "a = a - 2;" << endl; // 13
 			outputFile << "}";
 			outputFile.close();
 
 			Parser *parse = new Parser();
 			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
 			remove(fileName.c_str());
+			Assert::AreNotEqual(0, (int)parsedProgram.size());
 			Database* db = new Database();
 			db->buildDatabase(parsedProgram);
 			Gnode *cfgRoot = db->buildControlFlowGraph();
