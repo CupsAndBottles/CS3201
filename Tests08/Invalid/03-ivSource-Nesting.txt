@@ -1,0 +1,11 @@
+procedure MamaBird {
+	babybirds = 5;
+	procedure Nest {
+		twigs = 1000;
+	}
+	if Nest then {
+		babybirds = babybirds + 1;
+		twigs = twigs - 5;}
+	else {
+		twigs = twigs + 10;}
+}

@@ -1,0 +1,4 @@
+procedure invalid {
+	x = x + 1;
+	call invalid;
+}
