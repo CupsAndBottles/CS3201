@@ -1,0 +1,5 @@
+x = y + z;
+
+procedure x {
+	pearson = harvey + jessica;
+}

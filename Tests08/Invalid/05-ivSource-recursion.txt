@@ -1,0 +1,3 @@
+procedure invalid {
+	answer = invalid * (n - 1) + invalid * (n - 2);
+}

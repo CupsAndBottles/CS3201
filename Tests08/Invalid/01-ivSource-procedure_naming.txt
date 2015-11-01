@@ -1,0 +1,7 @@
+procedure 1 {
+  x = 2;
+  y = 3;
+  d = x + y * 13;
+  z = x * y + d + 4;
+  x = z;
+  y = d + 2;}
