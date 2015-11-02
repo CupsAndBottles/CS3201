@@ -919,6 +919,17 @@ vector<string> ProgramKnowledgeBase::getProceduresCallStarredBy(string proc) {
 	return vector<string>(results.begin(), results.end());
 }
 
+void ProgramKnowledgeBase::buildDataDependencyGraph()
+{
+	DDGnode *dgNode;
+	vector<vector<bool>> mem(statementTable->getSize() - 1, vector<bool>(statementTable->getSize() - 1));
+	//initialize all ddg nodes and add them to statement tables, ddg nodes at this point do not have any edges
+	for (int i = 1; i < statementTable->getSize(); i++) {
+		dgNode = new DDGnode(i);
+		statementTable->addStmtDDGNode(i, dgNode);
+	}
+}
+
 vector<Tnode*> ProgramKnowledgeBase::getNodesOfType(Tnode::Type type){
 	vector<Tnode*> results = vector<Tnode*>();
 	for (int i = 1; i < this->statementTable->getSize(); i++) {
@@ -1158,4 +1169,88 @@ void ProgramKnowledgeBase::updaterCalls(Tnode* caller, Tnode* callee) {
 		callers.insert(callerName);
 		this->callsRelationIndexedByCallees.insert({calleeName, callers});
 	}
+}
+
+vector<vector<int>> ProgramKnowledgeBase::findPaths(int s1, int s2)
+{
+	struct pathfinder
+	{
+		Gnode* curNode = NULL;
+		vector<int> next = vector<int>(), path = vector<int>();
+	};
+	vector<pathfinder> paths = vector<pathfinder>();
+	paths.push_back(pathfinder());
+	paths[0].curNode = statementTable->getCFGNode(s1);
+	paths[0].path = { s1 };
+	Gnode *destNode = statementTable->getCFGNode(s2);
+	bool reached = false;
+	if (s1 == s2) {
+		reached = true;
+	}
+	paths[0].next = getNextStatements(paths[0].curNode->getValue());
+	std::sort(paths[0].next.begin(), paths[0].next.end());
+	while (!reached) {
+		for (int i = 0; i < paths.size(); i++) {
+			paths[i].curNode = statementTable->getCFGNode(paths[i].next[0]);
+			if (find(paths[i].path.begin(), paths[i].path.end(), paths[i].curNode->getValue()) != paths[i].path.end()) {
+				if (paths[i].next.size() > 1) {
+					i++;
+					paths.insert(paths.begin() + i, pathfinder());
+					paths[i].curNode = statementTable->getCFGNode(paths[i - 1].next[1]);
+					paths[i].path = vector<int>(paths[i - 1].path.begin(), paths[i - 1].path.end());
+					paths[i].path.push_back(paths[i].curNode->getValue());
+					paths[i].next = getNextStatements(paths[i].curNode->getValue());
+					std::sort(paths[i].next.begin(), paths[i].next.end());
+				}
+				paths.erase(paths.begin() + i);
+				i--;
+				continue;
+			}
+			else {
+				paths[i].path.push_back(paths[i].curNode->getValue());
+			}
+			if (paths[i].next.size() > 1) {
+				i++;
+				paths.insert(paths.begin() + i, pathfinder());
+				paths[i].curNode = statementTable->getCFGNode(paths[i-1].next[1]);
+				paths[i].path = vector<int>(paths[i - 1].path.begin(), paths[i - 1].path.end()-1);
+				paths[i].path.push_back(paths[i].curNode->getValue());
+
+				paths[i-1].next = getNextStatements(paths[i-1].curNode->getValue());
+				std::sort(paths[i-1].next.begin(), paths[i-1].next.end());
+			}
+			paths[i].next = getNextStatements(paths[i].curNode->getValue());
+			std::sort(paths[i].next.begin(), paths[i].next.end());
+		}
+
+		for (int i = 0; i < paths.size(); i++) {
+			if (paths[i].curNode->getValue() == destNode->getValue()) {
+				reached = true;;
+			}
+		}
+	}
+	for (int i = 0; i < paths.size(); i++) {
+		if (*(paths[i].path.end()-1) != s2) {
+			paths.erase(paths.begin() + i);
+			i--;
+		}
+	}
+	
+	vector<vector<int>> results = vector<vector<int>>();
+	for (int i = 0; i < paths.size(); i++) {
+		results.push_back(paths[i].path);
+	}
+
+	/*
+	for (int i = 0; i < results.size(); i++) {
+		std::cout << "PATHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHSSS " << i << ":";
+		for (int j = 0; j < results[i].size(); j++) {
+			std::cout << results[i][j];
+			std::cout << " ";
+		}
+		std::cout << endl;
+	}
+	*/
+
+	return results;
 }

@@ -1,11 +1,19 @@
 #pragma once
 #include "Tnode.h"
 #include "Gnode.h"
+#include "DDGnode.h"
 
 #include <string>
 #include <algorithm>
 
 using namespace std;
+
+struct NodeTriplet
+{
+	Tnode* astNode;
+	Gnode* cfgNode;
+	DDGnode* ddgNode;
+};
 
 class StmtTable
 {
@@ -16,10 +24,11 @@ public:
 	int getSize();
 	int addStatement(Tnode* stmtNode);
 	int addStmtCFGNode(int stmtNum, Gnode * CFGnode);
+	int addStmtDDGNode(int stmtNum, DDGnode * DGnode);
 	Tnode* getASTNode(int i);
 	Gnode* getCFGNode(int i);
 	void printStmtTable();
 
 private:
-	vector<pair<Tnode*, Gnode*>> *stmtTable;
+	vector<NodeTriplet> *stmtTable;
 };

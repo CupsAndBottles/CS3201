@@ -3,6 +3,7 @@
 #include "Database.h"
 #include "Parser.h"
 #include "Helpers.h"
+#include "DDGnode.h"
 #include <iostream>
 #include <stack>
 #include <queue>
@@ -89,6 +90,8 @@ public:
 	vector<string> getProceduresThatCallStar(string proc);
 	vector<string> getProceduresCallStarredBy(string proc);
 
+	void buildDataDependencyGraph();
+
 private:
 	Tnode* abstractSyntaxTree;
 	StmtTable* statementTable;
@@ -135,4 +138,6 @@ private:
 	void updateCalls(vector<Tnode*> callers, Tnode * callee);
 	void updateCalls(Tnode * caller, Tnode * callee);
 	void updaterCalls(Tnode * caller, Tnode * callee);
+
+	vector<vector<int>> findPaths(int s1, int s2);
 };

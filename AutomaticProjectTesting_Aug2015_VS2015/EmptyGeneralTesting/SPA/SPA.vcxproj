@@ -14,6 +14,7 @@
     <ClInclude Include="..\source\ASTView.h" />
     <ClInclude Include="..\source\ConstTable.h" />
     <ClInclude Include="..\Source\Database.h" />
+    <ClInclude Include="..\source\DDGnode.h" />
     <ClInclude Include="..\Source\EntityTable.h" />
     <ClInclude Include="..\source\Gnode.h" />
     <ClInclude Include="..\source\Helpers.h" />
@@ -36,6 +37,7 @@
     <ClCompile Include="..\source\ASTView.cpp" />
     <ClCompile Include="..\source\ConstTable.cpp" />
     <ClCompile Include="..\Source\Database.cpp" />
+    <ClCompile Include="..\source\DDGnode.cpp" />
     <ClCompile Include="..\Source\EntityTable.cpp" />
     <ClCompile Include="..\source\Gnode.cpp" />
     <ClCompile Include="..\source\Helpers.cpp" />
