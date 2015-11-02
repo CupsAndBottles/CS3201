@@ -1,0 +1,20 @@
+procedure inappropriate {
+	while = 10;
+	if while then {
+		credit = 0; }
+	else {
+		notice = 100;
+	}
+
+	call if;
+}
+
+procedure if {
+	call while;
+}
+
+procedure while {
+	while x {
+		x = x + 1;
+	}
+}

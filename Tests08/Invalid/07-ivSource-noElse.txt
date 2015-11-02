@@ -1,0 +1,5 @@
+procedure no_else {
+	x = y + z + m + d;
+	if d then {
+		y = 50 - z;}
+}
