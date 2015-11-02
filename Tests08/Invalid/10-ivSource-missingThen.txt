@@ -1,0 +1,6 @@
+procedure missing {
+	if true {
+		chicken = eggs;}
+	else {
+		eggs = chickens;}
+}

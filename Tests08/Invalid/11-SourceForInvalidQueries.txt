@@ -1,0 +1,51 @@
+procedure feedback {
+	students = 5000;
+	while students {
+		rating = mentor + room + content;
+		if mentor then {
+			rating = rating + 100; }
+			if content then {
+				rating = rating + 80; }
+				if room then {
+					rating = rating + 50; }
+				else {
+					rating = rating - 50; }
+			else {
+				rating = rating - 80; }
+		else {
+			rating = rating - 100;}
+		students = students - 1; }
+
+	overall = (5 + 6) * 7 + 100;
+	call mentor;
+}
+
+procedure mentor {
+	call admin;
+	call tutor;
+	call student;
+}
+
+procedure admin {
+	paperwork = 980;
+	while paperwork {
+		paperwork = paperwork - 1;}
+	call mentor;
+}
+
+procedure tutor {
+	tutorials = 10;
+	if tutorials then {
+		rating = rating + 1;}
+	else {
+		rating = rating;}
+	call mentor;
+}
+
+procedure student {
+	verify = 1;
+	if verify then {
+		call tutor;}
+	else {
+		call mentor;}
+}

@@ -1,0 +1,8 @@
+procedure missing {
+	security = 6874 + 1616;
+	questions = 100;
+	call campus;
+	while questions {
+		questions = questions - 1;
+	}
+}
