@@ -27,6 +27,7 @@ public:
 	int addStmtDDGNode(int stmtNum, DDGnode * DGnode);
 	Tnode* getASTNode(int i);
 	Gnode* getCFGNode(int i);
+	DDGnode* getDDGNode(int i);
 	void printStmtTable();
 
 private:

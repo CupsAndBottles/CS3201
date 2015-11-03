@@ -61,6 +61,14 @@ Gnode * StmtTable::getCFGNode(int i)
 	return stmtTable->at(i).cfgNode;
 }
 
+DDGnode * StmtTable::getDDGNode(int i)
+{
+	if (i >= stmtTable->size()) {
+		return NULL;
+	}
+	return stmtTable->at(i).ddgNode;
+}
+
 void StmtTable::printStmtTable()
 {
 	cout << endl << "<---------------------------------------- Statement Table: ----------------------------------------> Size: " << stmtTable->size() << endl << endl;
