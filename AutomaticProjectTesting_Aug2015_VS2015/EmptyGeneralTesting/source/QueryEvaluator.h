@@ -11,7 +11,6 @@
 
 #include <string>
 #include <vector>
-//#include <sstream>
 #include <algorithm>
 
 using namespace std;
@@ -32,9 +31,9 @@ public:
 
 	vector<string> evaluation();
 
-	vector<string> recordConditionClause(QueryObject temp);
+	vector<vector<string>> recordConditionClause(QueryObject temp);
 
-	vector<string> evaluateConditionClause(string first,string second,string third);
+	//vector<string> evaluateConditionClause(string first,string second,string third);
 
 	vector<string> recordSelectClause(string s);
 
@@ -53,9 +52,9 @@ public:
 	vector<string> patternA(string condition, string leftArgument, string rightArgument);
 
 private:
-	vector<string> getSelect;
+	vector<string> selectClause;
 	vector<QueryObject> conditionClause;
-	
+	vector<vector<string>> finalResult;
 	ProgramKnowledgeBase database;
 	QueryPreProcessor preprocessor;
 	EntTable declaration;
