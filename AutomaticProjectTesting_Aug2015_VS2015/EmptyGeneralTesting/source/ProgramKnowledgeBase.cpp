@@ -1189,6 +1189,7 @@ vector<vector<int>> ProgramKnowledgeBase::findPaths(int s1, int s2)
 		vector<int> next = vector<int>(), path = vector<int>();
 	};
 	vector<pathfinder> paths = vector<pathfinder>();
+	vector<vector<int>> results = vector<vector<int>>();
 	paths.push_back(pathfinder());
 	paths[0].curNode = statementTable->getCFGNode(s1);
 	paths[0].path = { s1 };
@@ -1200,7 +1201,16 @@ vector<vector<int>> ProgramKnowledgeBase::findPaths(int s1, int s2)
 	paths[0].next = getNextStatements(paths[0].curNode->getValue());
 	std::sort(paths[0].next.begin(), paths[0].next.end());
 	while (!reached) {
+		if (paths.size() == 0) {
+			reached = true;
+			continue;
+		}
 		for (int i = 0; i < paths.size(); i++) {
+			if (paths[i].next.size() == 0) {
+				paths.erase(paths.begin() + i);
+				i--;
+				continue;
+			}
 			paths[i].curNode = statementTable->getCFGNode(paths[i].next[0]);
 			if (find(paths[i].path.begin(), paths[i].path.end(), paths[i].curNode->getValue()) != paths[i].path.end()) {
 				if (paths[i].next.size() > 1) {
@@ -1210,7 +1220,7 @@ vector<vector<int>> ProgramKnowledgeBase::findPaths(int s1, int s2)
 					paths[i].path = vector<int>(paths[i - 1].path.begin(), paths[i - 1].path.end());
 					paths[i].path.push_back(paths[i].curNode->getValue());
 					paths[i].next = getNextStatements(paths[i].curNode->getValue());
-					std::sort(paths[i].next.begin(), paths[i].next.end());
+					std::sort(paths[i].next.begin(), paths[i].next.end());		
 				}
 				paths.erase(paths.begin() + i);
 				i--;
@@ -1231,11 +1241,11 @@ vector<vector<int>> ProgramKnowledgeBase::findPaths(int s1, int s2)
 			}
 			paths[i].next = getNextStatements(paths[i].curNode->getValue());
 			std::sort(paths[i].next.begin(), paths[i].next.end());
-		}
 
-		for (int i = 0; i < paths.size(); i++) {
-			if (paths[i].curNode->getValue() == destNode->getValue()) {
-				reached = true;;
+			if (paths[i].curNode->getValue() == s2) {
+				results.push_back(paths[i].path);
+				paths.erase(paths.begin() + i);
+				i--;
 			}
 		}
 	}
@@ -1246,12 +1256,14 @@ vector<vector<int>> ProgramKnowledgeBase::findPaths(int s1, int s2)
 		}
 	}
 	
-	vector<vector<int>> results = vector<vector<int>>();
 	for (int i = 0; i < paths.size(); i++) {
 		results.push_back(paths[i].path);
 	}
 
 	/*
+	if (results.size() == 0) {
+		cout << "nopaths!" << endl;
+	}
 	for (int i = 0; i < results.size(); i++) {
 		std::cout << "PATHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHSSS " << i << ":";
 		for (int j = 0; j < results[i].size(); j++) {
@@ -1260,8 +1272,8 @@ vector<vector<int>> ProgramKnowledgeBase::findPaths(int s1, int s2)
 		}
 		std::cout << endl;
 	}
-	
 	*/
+	
 
 	return results;
 }
