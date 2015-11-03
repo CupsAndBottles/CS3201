@@ -27,6 +27,7 @@
     <ClInclude Include="..\Source\QueryPreProcessor.h" />
     <ClInclude Include="..\Source\RelationshipTable.h" />
     <ClInclude Include="..\Source\SemanticsCheck.h" />
+    <ClInclude Include="..\source\SIMPLEGenerator.h" />
     <ClInclude Include="..\Source\SIMPLEParser.h" />
     <ClInclude Include="..\Source\SIMPLERules.h" />
     <ClInclude Include="..\source\StmtTable.h" />
@@ -50,6 +51,7 @@
     <ClCompile Include="..\Source\QueryPreProcessor.cpp" />
     <ClCompile Include="..\Source\RelationshipTable.cpp" />
     <ClCompile Include="..\Source\SemanticsCheck.cpp" />
+    <ClCompile Include="..\source\SIMPLEGenerator.cpp" />
     <ClCompile Include="..\Source\SIMPLEParser.cpp" />
     <ClCompile Include="..\Source\SIMPLERules.cpp" />
     <ClCompile Include="..\source\StmtTable.cpp" />

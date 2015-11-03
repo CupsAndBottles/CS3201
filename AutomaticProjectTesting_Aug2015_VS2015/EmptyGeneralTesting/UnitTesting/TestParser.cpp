@@ -3,6 +3,7 @@
 #include "parser.h"
 #include "SIMPLEParser.h"
 #include "SIMPLERules.h"
+#include "SIMPLEGenerator.h"
 
 #include <fstream>
 #include <string>
@@ -486,6 +487,10 @@ namespace UnitTesting
 
 			simpleParser *p = new simpleParser(prog);
 			Assert::AreEqual(false, (*p).parseProcedure());
+		}
+
+		TEST_METHOD(testGenerator) {
+			generateProgram(2, 3, 4);
 		}
 	};
 }
