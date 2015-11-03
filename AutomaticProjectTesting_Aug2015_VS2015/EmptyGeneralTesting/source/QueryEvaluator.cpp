@@ -12,144 +12,76 @@ QueryEvaluator::QueryEvaluator(ProgramKnowledgeBase storePkb) {
 
 //Autotester test driver function
 list<string> QueryEvaluator::getResults (string query) {
-	vector<string>output;
-	list<string> finaloutput;
-	preprocessor.clearAll();
-	if (preprocessor.query(query)) {
-		getQueryData();
-		output=evaluation();
-		for (size_t i = 0; i < output.size(); i++) {
-			finaloutput.push_back(output[i]);
-		}
-		return finaloutput;
-	}
-	else {
-		return finaloutput;
-	}
 }
 
 //get data from preprocessor
 void QueryEvaluator:: getQueryData() {
-	getSelect = preprocessor.getEntities();
-	conditionClause = preprocessor.getQueries();
+	selectClause = preprocessor.getEntities();
 	declaration = preprocessor.getEntityTable();
 }
 
 string QueryEvaluator::getSelectClause() {
-	return getSelect.front(); //todo: is it better to be a single string
+	return selectClause.front();
 }
 string QueryEvaluator::getEntityType(string s) {
 	return declaration.getType(s);
 }
 
+//for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.
 vector<string> QueryEvaluator::evaluation() {
-	vector<string>output;
-	if (conditionClause.size() == 0) {
-		string select = getSelectClause();
-		return output = recordSelectClause(getEntityType(select));
+	for (size_t i = 0; i < conditionClause.size(); i++) {
+		recordConditionClause(conditionClause[i]);
 	}
-	else if (conditionClause.size() == 1) {
-		if (formatter.stringEqual(getEntityType(getSelectClause()), "stmt")
-			|| formatter.stringEqual(getEntityType(getSelectClause()), "prog_line")) {
-			return output = recordConditionClause(conditionClause.at(0));
-		}
-		else {
-			vector<string>temp1;
-			vector<string>temp2;
-			string select = getSelectClause();
-			temp1= recordSelectClause(getEntityType(select));
-			temp2 = recordConditionClause(conditionClause.at(0));//do intersection and output in formatter
-			output = formatter.intersection(temp1, temp2);
-			return output;
-		}
-	}
-	else if (conditionClause.size() == 2) {
-		string select = getSelectClause();
-		vector<string> temp1 = recordSelectClause(getEntityType(select));
-		vector<string> temp2 = recordConditionClause(conditionClause.at(0));
-		vector<string> temp3 = recordConditionClause(conditionClause.at(1));
-		vector<string> temp4 = formatter.intersection(temp1, temp2);
-		output = formatter.intersection(temp4, temp3);
-		return output;  //pattern not working as yet
-	}
-	else {
-		cout << "here2"<< endl;
-		return output; //multiple condition clauses, not done yet
-	}
+	vector<string> output;
+	return output;
 }
 
 vector<string> QueryEvaluator::recordSelectClause(string s) {
-	vector<string> selectResult;
-	if (formatter.stringEqual(s, "stmt")) {
-		//non-existant 
-		//"stmt","assign","while","if","procedure","variable","constant","prog_line"
-		vector<string>tempAssign;
-		vector<string>tempWhile;
-		vector<string>tempIf;
-		vector<string>temp;
-		tempAssign = formatter.integerVectorToString(database.getStatementsOfType(Tnode::STMT_ASSIGN));
-		tempWhile = formatter.integerVectorToString(database.getStatementsOfType(Tnode::STMT_WHILE));
-		tempIf = formatter.integerVectorToString(database.getStatementsOfType(Tnode::STMT_IF));
-		
-		temp= formatter.join(tempAssign, tempWhile);
-		selectResult = formatter.join(temp, tempIf);
-		return selectResult;
-	}
-
-	if (formatter.stringEqual(s, "assign")) {
-		return selectResult = formatter.integerVectorToString(database.getStatementsOfType(Tnode::STMT_ASSIGN));
-	}
-	else if (formatter.stringEqual(s, "while")) {
-		return selectResult = formatter.integerVectorToString(database.getStatementsOfType(Tnode::STMT_WHILE));
-	}
-	else if (formatter.stringEqual(s, "if")) {
-		return selectResult = formatter.integerVectorToString(database.getStatementsOfType(Tnode::STMT_IF));
-	}
-	else if (formatter.stringEqual(s, "constant")) {
-		return selectResult = formatter.integerVectorToString(database.getStatementsOfType(Tnode::CONSTANT));
-	}
-	else if (formatter.stringEqual(s, "variable")) {
-		return selectResult = database.getVariableNames();
-	}
-	else if (formatter.stringEqual(s, "procedure")) {
-		return selectResult = database.getProcedureNames();
-	}
-	else {
-		return selectResult; //non-existent select clause should not happen
-	}
-}
-
-vector<string> QueryEvaluator::recordConditionClause(QueryObject temp) {
+	//may not be required anymore for algo.
 	vector<string> output;
-	string first = temp.getFirst();
-	string second = temp.getSecond();
-	string third = temp.getThird();
-	output=evaluateConditionClause(first, second, third);
 	return output;
 }
-vector<string> QueryEvaluator::evaluateConditionClause(string first,string second,string third) {
-	vector<string> output;
+
+vector<vector<string>> QueryEvaluator::recordConditionClause(QueryObject temp) {
+	string first=temp.getFirst();
+	string second=temp.getSecond();
+	string third=temp.getThird();
+	vector<vector<string>>output;
 	if (formatter.stringEqual(first, "Modifies")) {
-		return output = modify(second, third);
+		return output;
 	}
 	else if (formatter.stringEqual(first, "Uses")) {
-		return output = uses(second, third);
+		return output;
+	}
+	else if (formatter.stringEqual(first, "Calls")) {
+		return output;
 	}
 	else if (formatter.stringEqual(first, "Parent")) {
-		return output = parent(second, third);
+		return output;
 	}
 	else if (formatter.stringEqual(first, "Parent*")) {
-		return output = parentT(second, third);
+		return output;
 	}
 	else if (formatter.stringEqual(first, "Follows")) {
-		return output = follow(second, third);
+		return output;
 	}
 	else if (formatter.stringEqual(first, "Follows*")) {
-		return output = followT(second, third);
+		return output;
 	}
-	else if (formatter.stringEqual(getEntityType(first), "assign")) {
-		
-		return output = patternA(first,second,third);
+	else if (formatter.stringEqual(first, "Next")) {
+		return output;
+	}
+	else if (formatter.stringEqual(first, "Next*")) {
+		return output;
+	}
+	else if (formatter.stringEqual(declaration.getType(first), "assign")) {
+		return output;
+	}
+	else if (formatter.stringEqual(declaration.getType(first), "while")) {
+		return output;
+	}
+	else if (formatter.stringEqual(declaration.getType(first), "if")) {
+		return output;
 	}
 	else {
 		return output;
