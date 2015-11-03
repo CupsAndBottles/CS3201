@@ -45,6 +45,7 @@ public:
 	static Tnode *createNode(int v);
 	static bool createLink(Link_Type link, Tnode &fromNode, Tnode &toNode);
 	Tnode *getParent();
+	Tnode *getASTParent();
 	Tnode *getSPAParent();
 	Tnode *getFirstChild();
 	Tnode *getLeftSibling();
@@ -78,6 +79,7 @@ public:
 	bool isVariable();
 	bool isConstant();
 	bool isStatement();
+	bool isInProcedure(Tnode* p);
 
 private:
 	Tnode *parentNode;

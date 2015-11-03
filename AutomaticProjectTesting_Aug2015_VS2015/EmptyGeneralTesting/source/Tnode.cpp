@@ -62,6 +62,15 @@ Tnode *Tnode::getParent()
 	return parentNode;
 }
 
+Tnode * Tnode::getASTParent()
+{
+	Tnode* curr = this;
+	while (!curr->isFirstChild()) {
+		curr = curr->getLeftSibling();
+	}
+	return curr->getParent();
+}
+
 Tnode *Tnode::getSPAParent()
 {
 	Tnode* curr = this;
@@ -382,4 +391,16 @@ bool Tnode::isConstant()
 
 bool Tnode::isStatement() {
 	return (this->isCall() || this->isWhile() || this->isAssigns() || this->isIf());
+}
+
+bool Tnode::isInProcedure(Tnode * p)
+{
+	Tnode* curNode = this;
+	while (!curNode->isProcedure()) {
+		curNode = curNode->getASTParent();
+	}
+	if (curNode == p) {
+		return true;
+	}
+	return false;
 }

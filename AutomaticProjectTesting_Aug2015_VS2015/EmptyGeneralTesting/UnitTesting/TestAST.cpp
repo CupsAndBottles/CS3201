@@ -276,5 +276,55 @@ namespace UnitTesting
 			Assert::AreEqual((int)T1->getChild(0), NULL);
 
 		}
+
+		TEST_METHOD(TestGetASTParent)
+		{
+			Tnode* T1 = Tnode::createNode(Tnode::STMTLST, "");
+			Tnode* T2 = Tnode::createNode(Tnode::STMT_ASSIGN, "");
+			Tnode* T3 = Tnode::createNode(Tnode::STMT_ASSIGN, "");
+			Tnode* T4 = Tnode::createNode(Tnode::STMT_ASSIGN, "");
+			Tnode* T5 = Tnode::createNode(Tnode::STMT_ASSIGN, "");
+			Tnode* T6 = Tnode::createNode(Tnode::STMT_ASSIGN, "");
+			Tnode* T7 = Tnode::createNode(Tnode::STMT_ASSIGN, "");
+			Tnode::createLink(Tnode::PARENT, *T1, *T2);
+			Tnode::createLink(Tnode::RIGHTSIB, *T2, *T3);
+			Tnode::createLink(Tnode::RIGHTSIB, *T3, *T4);
+			Tnode::createLink(Tnode::RIGHTSIB, *T4, *T5);
+			Tnode::createLink(Tnode::RIGHTSIB, *T5, *T6);
+			Tnode::createLink(Tnode::RIGHTSIB, *T6, *T7);
+
+			Assert::AreEqual((int)T7->getASTParent(), (int)T1);
+			Assert::AreEqual((int)T2->getASTParent(), (int)T1);
+
+		}
+
+		TEST_METHOD(TestIsInProcedure)
+		{
+			Tnode* p1 = Tnode::createNode(Tnode::PROCEDURE, "proc");
+			Tnode* T1 = Tnode::createNode(Tnode::STMTLST, "");
+			Tnode* T2 = Tnode::createNode(Tnode::STMT_ASSIGN, "");
+			Tnode* T3 = Tnode::createNode(Tnode::STMT_ASSIGN, "");
+			Tnode* T4 = Tnode::createNode(Tnode::STMT_ASSIGN, "");
+			Tnode* T5 = Tnode::createNode(Tnode::STMT_ASSIGN, "");
+			Tnode* T6 = Tnode::createNode(Tnode::STMT_ASSIGN, "");
+			Tnode* T7 = Tnode::createNode(Tnode::STMT_ASSIGN, "");
+			Tnode::createLink(Tnode::PARENT, *p1, *T1);
+			Tnode::createLink(Tnode::PARENT, *T1, *T2);
+			Tnode::createLink(Tnode::RIGHTSIB, *T2, *T3);
+			Tnode::createLink(Tnode::RIGHTSIB, *T3, *T4);
+			Tnode::createLink(Tnode::RIGHTSIB, *T4, *T5);
+			Tnode::createLink(Tnode::RIGHTSIB, *T5, *T6);
+			Tnode::createLink(Tnode::RIGHTSIB, *T6, *T7);
+			Tnode* p2 = Tnode::createNode(Tnode::PROCEDURE, "proc2");
+			Tnode* T11 = Tnode::createNode(Tnode::STMTLST, "");
+			Tnode* T12 = Tnode::createNode(Tnode::STMT_ASSIGN, "");
+			Tnode::createLink(Tnode::PARENT, *p2, *T11);
+			Tnode::createLink(Tnode::PARENT, *T1, *T12);
+
+			Assert::IsTrue(T7->isInProcedure(p1));
+			Assert::IsTrue(T2->isInProcedure(p1));
+			Assert::IsFalse(T7->isInProcedure(p2));
+
+		}
 	};
 }

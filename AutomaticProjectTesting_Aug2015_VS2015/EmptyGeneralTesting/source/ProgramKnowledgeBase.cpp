@@ -928,6 +928,16 @@ void ProgramKnowledgeBase::buildDataDependencyGraph()
 		dgNode = new DDGnode(i);
 		statementTable->addStmtDDGNode(i, dgNode);
 	}
+
+	/*
+	for (int i = 0; i < mem.size(); i++) {
+		for (int j = 0; j < mem[i].size(); j++) {
+			std::cout << mem[i][j];
+			std::cout << " ";
+		}
+		std::cout << endl;
+	}
+	*/
 }
 
 vector<Tnode*> ProgramKnowledgeBase::getNodesOfType(Tnode::Type type){
@@ -1250,6 +1260,7 @@ vector<vector<int>> ProgramKnowledgeBase::findPaths(int s1, int s2)
 		}
 		std::cout << endl;
 	}
+	
 	*/
 
 	return results;
