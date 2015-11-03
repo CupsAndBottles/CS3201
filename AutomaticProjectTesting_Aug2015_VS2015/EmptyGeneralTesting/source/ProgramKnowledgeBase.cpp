@@ -18,6 +18,7 @@ ProgramKnowledgeBase::ProgramKnowledgeBase(Database* db) {
 	varTable = db->getVariableTable();
 	initializeTables();
 	calculateRelations(abstractSyntaxTree);
+	buildDataDependencyGraph();
 }
 
 void ProgramKnowledgeBase::initializeTables() {
@@ -939,6 +940,9 @@ void ProgramKnowledgeBase::buildDataDependencyGraph()
 		curProc = procTable->getProcedureAddress(i);
 		procStmtLst = getAllStmt(curProc);
 		for (int j = 0; j < procStmtLst.size(); j++) {
+			if (!(procStmtLst[j]->isAssigns())) {
+				continue;
+			}
 			curStmt = procStmtLst[j];
 			variables = getVariablesModifiedBy(curStmt->getStatementNumber());
 			for (int k = 0; k < variables.size() ; k++) {
