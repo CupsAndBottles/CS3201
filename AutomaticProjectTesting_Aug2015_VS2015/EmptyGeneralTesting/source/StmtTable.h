@@ -10,9 +10,9 @@ using namespace std;
 
 struct NodeTriplet
 {
-	Tnode* astNode;
-	Gnode* cfgNode;
-	DDGnode* ddgNode;
+	Tnode* astNode = NULL;
+	Gnode* cfgNode = NULL;
+	DDGnode* ddgNode = NULL;
 };
 
 class StmtTable

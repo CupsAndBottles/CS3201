@@ -141,4 +141,5 @@ private:
 
 	vector<vector<int>> findPaths(int s1, int s2);
 	vector<Tnode*> getAllStmt(Tnode* p);
+	bool inPath(vector<int> stmts, vector< int> path);
 };
