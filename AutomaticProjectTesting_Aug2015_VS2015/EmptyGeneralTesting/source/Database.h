@@ -25,7 +25,7 @@ public:
 	string toUpperCase(string s);
 	bool isNumber(string &s);
 	Tnode* getAbstractSyntaxTreeRoot();
-	Gnode* getControlFlowGraphRoot();
+	vector<Gnode*> getControlFlowGraphRoots();
 	static Tnode* getExpressionTree(vector<string> exprList);
 	StmtTable* getStatementTable();
 	ConstTable* getConstantTable();
