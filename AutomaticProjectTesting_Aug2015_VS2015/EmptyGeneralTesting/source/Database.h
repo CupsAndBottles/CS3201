@@ -21,7 +21,7 @@ public:
 	void buildDatabase(vector<string> tokens);
 	vector<Gnode*> buildControlFlowGraph();
 	vector<Gnode*> createControlFlowGraphNodes();
-	Gnode* createControlFlowGraphLinks();
+	Gnode* createControlFlowGraphLinks(vector<Gnode*> listOfCfgNodes, int procIndicator);
 	string toUpperCase(string s);
 	bool isNumber(string &s);
 	Tnode* getAbstractSyntaxTreeRoot();
