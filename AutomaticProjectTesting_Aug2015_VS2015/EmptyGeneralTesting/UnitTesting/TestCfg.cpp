@@ -29,13 +29,15 @@ namespace UnitTesting
 
 		TEST_METHOD(TestGnodeTypeCreation) {
 			Gnode *testNode;
-			testNode = Gnode::createGnode(Gnode::STMT_WHILE, 5);
+			string procName = "foo";
+			testNode = Gnode::createGnode(procName, Gnode::STMT_WHILE, 5);
 
 			Assert::IsNull(testNode->getRight());
 			Assert::IsNull(testNode->getLeft());
 			Assert::IsNull(testNode->getPrevLeft());
 			Assert::IsNull(testNode->getPrevRight());
 			Assert::AreEqual(0, (int)testNode->getType()); // 0 = STMT_WHILE;
+			Assert::AreEqual(procName, testNode->getItsProcedure());
 			Assert::AreEqual(5, testNode->getValue());
 		}
 
@@ -105,9 +107,9 @@ namespace UnitTesting
 			remove(fileName.c_str());
 			Database* db = new Database();
 			db->buildDatabase(parsedProgram);
-			Gnode *cfgRoot = db->buildControlFlowGraph();
+			vector<Gnode*> cfgRoots = db->buildControlFlowGraph();
 
-			Assert::AreEqual(2, cfgRoot->getNext().at(0)->getValue());
+			Assert::AreEqual(2, cfgRoots.at(0)->getNext().at(0)->getValue());
 		}
 
 		TEST_METHOD(testLinkIfElseNestedInWhile) {
@@ -134,9 +136,9 @@ namespace UnitTesting
 			remove(fileName.c_str());
 			Database* db = new Database();
 			db->buildDatabase(parsedProgram);
-			Gnode *cfgRoot = db->buildControlFlowGraph();
+			vector<Gnode*> cfgRoots = db->buildControlFlowGraph();
 
-			Assert::AreEqual(2, cfgRoot->getNext().at(0)->getValue());
+			Assert::AreEqual(2, cfgRoots.at(0)->getNext().at(0)->getValue());
 		}
 
 
@@ -164,9 +166,9 @@ namespace UnitTesting
 			Assert::AreNotEqual(0, (int)parsedProgram.size());
 			Database* db = new Database();
 			db->buildDatabase(parsedProgram);
-			Gnode *cfgRoot = db->buildControlFlowGraph();
+			vector<Gnode*> cfgRoots = db->buildControlFlowGraph();
 
-			Assert::AreEqual(2, cfgRoot->getNext().at(0)->getValue());
+			Assert::AreEqual(2, cfgRoots.at(0)->getNext().at(0)->getValue());
 		}
 
 		TEST_METHOD(testLinkWhileNestedInElse) {
@@ -193,9 +195,9 @@ namespace UnitTesting
 			Assert::AreNotEqual(0, (int)parsedProgram.size());
 			Database* db = new Database();
 			db->buildDatabase(parsedProgram);
-			Gnode *cfgRoot = db->buildControlFlowGraph();
+			vector<Gnode*> cfgRoots = db->buildControlFlowGraph();
 
-			Assert::AreEqual(2, cfgRoot->getNext().at(0)->getValue());
+			Assert::AreEqual(2, cfgRoots.at(0)->getNext().at(0)->getValue());
 		}
 
 		TEST_METHOD(testLinkWhileNestedInIfAndElse) {
@@ -224,9 +226,9 @@ namespace UnitTesting
 			Assert::AreNotEqual(0, (int)parsedProgram.size());
 			Database* db = new Database();
 			db->buildDatabase(parsedProgram);
-			Gnode *cfgRoot = db->buildControlFlowGraph();
+			vector<Gnode*> cfgRoots = db->buildControlFlowGraph();
 
-			Assert::AreEqual(2, cfgRoot->getNext().at(0)->getValue());
+			Assert::AreEqual(2, cfgRoots.at(0)->getNext().at(0)->getValue());
 		}
 	};
 }
