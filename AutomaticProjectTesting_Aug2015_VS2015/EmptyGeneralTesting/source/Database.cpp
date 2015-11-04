@@ -452,17 +452,17 @@ vector<Gnode*> Database::createControlFlowGraphNodes()
 		Tnode *currProc = procTable->getProcedureAddress(i);
 		string currProcName = procTable->getProcedureName(i);
 		for (int j=1; j<stmtTable->getSize(); i++) {
-			if (stmtTable->getASTNode(i)->isInProcedure(currProc)) {
-				if (stmtTable->getASTNode(i)->isIf()) {
-					Gnode *nodeIf = Gnode::createGnode(currProcName, Gnode::STMT_IF, i);
-				} else if (stmtTable->getASTNode(i)->isWhile()) {
-					Gnode *nodeWhile = Gnode::createGnode(currProcName, Gnode::STMT_WHILE, i);
+			if (stmtTable->getASTNode(j)->isInProcedure(currProc)) {
+				if (stmtTable->getASTNode(j)->isIf()) {
+					Gnode *nodeIf = Gnode::createGnode(currProcName, Gnode::STMT_IF, j);
+				} else if (stmtTable->getASTNode(j)->isWhile()) {
+					Gnode *nodeWhile = Gnode::createGnode(currProcName, Gnode::STMT_WHILE, j);
 					listOfCfgNodes.push_back(nodeWhile);
-					stmtTable->addStmtCFGNode(i, nodeWhile);
+					stmtTable->addStmtCFGNode(j, nodeWhile);
 				} else {
-					Gnode *node = Gnode::createGnode(i);
+					Gnode *node = Gnode::createGnode(j);
 					listOfCfgNodes.push_back(node);
-					stmtTable->addStmtCFGNode(i, node);
+					stmtTable->addStmtCFGNode(j, node);
 				}
 			}
 		}
