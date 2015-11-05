@@ -39,7 +39,7 @@ int main()
 
 Database::Database()
 {
-	this -> listOfCfgRoots = vector<Gnode*>();
+	this -> cfgRoot = NULL;
 	this -> astRoot = NULL;
 	this -> stmtTable = new StmtTable;
 	this-> constTable = new ConstTable;
@@ -57,7 +57,11 @@ void Database::buildDatabase(vector<string> tokens)
 {
 	program(tokens);
 	Tnode::curStmtNum = 1;
-	buildControlFlowGraph();
+	if (stmtTable->getSize() == 2) {
+		cfgRoot = Gnode::createGnode(1);
+	} else {
+		buildControlFlowGraph();
+	}
 }
 
 void Database::program(vector<string> &tokens)
@@ -414,28 +418,7 @@ vector<vector<Tnode*>> Database::printAbstractSyntaxTree(Tnode* root)
 	return notSoSimple;
 }
 
-vector<Gnode*> Database::buildControlFlowGraph()
-{
-	if (stmtTable->getSize() == 2) {
-		Gnode* cfgRootNode = createControlFlowGraphLinks();
-		listOfCfgRoots.push_back(cfgRootNode);
-	} else {
-		for (int i=1; i<procTable->getSize(); i++) {
-			Tnode *currProc = procTable->getProcedureAddress(i);
-			for (int j=1; j<stmtTable->getSize(); i++) {
-				if (!(stmtTable->getASTNode(i)->isInProcedure(currProc))) {
-					Gnode* cfgRootNode = createControlFlowGraphLinks();
-					listOfCfgRoots.push_back(cfgRootNode);
-				}
-			}
-		}
-	}
-
-	return listOfCfgRoots;
-}
-
-vector<Gnode*> Database::createControlFlowGraphNodes()
-{
+vector<Gnode*> Database::createControlFlowGraphNodes() {
 	vector<Gnode*> listOfCfgNodes;
 	Gnode *stubNode = Gnode::createGnode(0);
 	listOfCfgNodes.push_back(stubNode);
@@ -460,13 +443,12 @@ vector<Gnode*> Database::createControlFlowGraphNodes()
 	return listOfCfgNodes;
 }
 
-Gnode* Database::createControlFlowGraphLinks()
-{
+Gnode* Database::buildControlFlowGraph() {
 	vector<Gnode*> listOfCfgNodes = createControlFlowGraphNodes();
 
 	Gnode *endNode = Gnode::createGnode(-1);
 
-	Gnode *cfgRoot = listOfCfgNodes.at(1);
+	cfgRoot = listOfCfgNodes.at(1);
 	Gnode *next = listOfCfgNodes.at(2);
 	Gnode::setNext(cfgRoot, next);
 

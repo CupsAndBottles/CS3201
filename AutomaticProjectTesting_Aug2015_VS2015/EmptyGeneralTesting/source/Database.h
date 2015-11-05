@@ -19,9 +19,8 @@ public:
 	~Database();
 
 	void buildDatabase(vector<string> tokens);
-	vector<Gnode*> buildControlFlowGraph();
+	Gnode* buildControlFlowGraph();
 	vector<Gnode*> createControlFlowGraphNodes();
-	Gnode* createControlFlowGraphLinks();
 	string toUpperCase(string s);
 	bool isNumber(string &s);
 	Tnode* getAbstractSyntaxTreeRoot();
@@ -35,7 +34,7 @@ public:
 	// static void printControlFlowGraph(Gnode *cfgRoot);
 
 private:
-	vector<Gnode*> listOfCfgRoots;
+	Gnode* cfgRoot;
 	Tnode* astRoot;
 	StmtTable *stmtTable;
 	ConstTable *constTable;
