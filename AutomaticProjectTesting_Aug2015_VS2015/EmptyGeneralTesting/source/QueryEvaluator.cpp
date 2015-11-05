@@ -12,6 +12,7 @@ QueryEvaluator::QueryEvaluator(ProgramKnowledgeBase storePkb) {
 
 //Autotester test driver function
 list<string> QueryEvaluator::getResults (string query) {
+	return list<string>();
 }
 
 //get data from preprocessor
