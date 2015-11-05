@@ -81,6 +81,12 @@
     <ClInclude Include="..\source\SIMPLEGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="QueryNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="QueryTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\EntityTable.cpp">
@@ -147,6 +153,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\source\SIMPLEGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="QueryNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="QueryTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
