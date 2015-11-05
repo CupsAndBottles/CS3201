@@ -420,7 +420,7 @@ vector<Gnode*> Database::buildControlFlowGraph()
 		Gnode* cfgRootNode = createControlFlowGraphLinks();
 		listOfCfgRoots.push_back(cfgRootNode);
 	} else {
-		for (int i=0; i<procTable->getSize(); i++) {
+		for (int i=1; i<procTable->getSize(); i++) {
 			Tnode *currProc = procTable->getProcedureAddress(i);
 			for (int j=1; j<stmtTable->getSize(); i++) {
 				if (!(stmtTable->getASTNode(i)->isInProcedure(currProc))) {
