@@ -939,29 +939,29 @@ void ProgramKnowledgeBase::buildDataDependencyGraph()
 	for (int i = 0; i < procTable->getSize(); i++) {
 		curProc = procTable->getProcedureAddress(i);
 		procStmtLst = getAllStmt(curProc);
-		for (int j = 0; j < procStmtLst.size(); j++) {
+		for (int j = 0; j < (int) procStmtLst.size(); j++) {
 			if (!(procStmtLst[j]->isAssigns())) {
 				continue;
 			}
 			curStmt = procStmtLst[j];
 			variables = getVariablesModifiedBy(curStmt->getStatementNumber());
-			for (int k = 0; k < variables.size() ; k++) {
+			for (int k = 0; k < (int) variables.size() ; k++) {
 				tempVec = getStatementsThatModify(variables[k]);
-				for (int l = 0; l < tempVec.size(); l++) {
+				for (int l = 0; l < (int) tempVec.size(); l++) {
 					//only choose those assignment and call statements that are in current procedure, excluding current statement
 					if (statementTable->getASTNode(tempVec[l])->isInProcedure(curProc) && statementTable->getASTNode(tempVec[l]) != curStmt && (statementTable->getASTNode(tempVec[l])->isAssigns() || statementTable->getASTNode(tempVec[l])->isCall())) {
 						statementsThatMod.push_back(tempVec[l]);
 					}
 				}
 				tempVec = getStatementsThatUse(variables[k]);
-				for (int l = 0; l < tempVec.size(); l++) {
+				for (int l = 0; l < (int) tempVec.size(); l++) {
 					if (statementTable->getASTNode(tempVec[l])->isInProcedure(curProc) && statementTable->getASTNode(tempVec[l])->isAssigns()) {
 						statementsThatUse.push_back(tempVec[l]);
 					}
 				}
-				for (int m = 0; m < statementsThatUse.size(); m++) {
+				for (int m = 0; m < (int) statementsThatUse.size(); m++) {
 					paths = findPaths(curStmt->getStatementNumber(), statementsThatUse[m]);
-					for (int n = 0; n < paths.size(); n++) {
+					for (int n = 0; n < (int) paths.size(); n++) {
 						if (!inPath(statementsThatMod, paths[n])) { //if there is a path that the variable is not modified
 							statementTable->getDDGNode(curStmt->getStatementNumber())->addEdge(statementTable->getDDGNode(statementsThatUse[m]), variables[k]);
 							break;
@@ -1235,7 +1235,7 @@ vector<vector<int>> ProgramKnowledgeBase::findPaths(int s1, int s2)
 			reached = true;
 			continue;
 		}
-		for (int i = 0; i < paths.size(); i++) {
+		for (int i = 0; i < (int) paths.size(); i++) {
 			if (paths[i].next.size() == 0) {
 				paths.erase(paths.begin() + i);
 				i--;
@@ -1288,14 +1288,14 @@ vector<vector<int>> ProgramKnowledgeBase::findPaths(int s1, int s2)
 			}
 		}
 	}
-	for (int i = 0; i < paths.size(); i++) {
+	for (int i = 0; i < (int) paths.size(); i++) {
 		if (*(paths[i].path.end()-1) != s2) {
 			paths.erase(paths.begin() + i);
 			i--;
 		}
 	}
 	
-	for (int i = 0; i < paths.size(); i++) {
+	for (int i = 0; i < (int) paths.size(); i++) {
 		results.push_back(paths[i].path);
 	}
 
@@ -1333,8 +1333,8 @@ vector<Tnode*> ProgramKnowledgeBase::getAllStmt(Tnode * p)
 
 bool ProgramKnowledgeBase::inPath(vector<int> stmts, vector<int> path)
 {
-	for (int i = 1; i < path.size()-1; i++) {
-		for (int j = 0; j < stmts.size(); j++) {
+	for (int i = 1; i < (int) path.size()-1; i++) {
+		for (int j = 0; j < (int) stmts.size(); j++) {
 			if (stmts[j] == path[i]) {
 				return true;
 			}

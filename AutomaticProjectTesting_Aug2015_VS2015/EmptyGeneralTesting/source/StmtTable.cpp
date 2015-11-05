@@ -28,7 +28,7 @@ int StmtTable::addStatement(Tnode *stmtNode)
 
 int StmtTable::addStmtCFGNode(int stmtNum, Gnode * CFGnode)
 {
-	if (stmtNum >= stmtTable->size()) {
+	if (stmtNum >= (int) stmtTable->size()) {
 		return 0;
 	}
 	stmtTable->at(stmtNum).cfgNode = CFGnode;
@@ -37,7 +37,7 @@ int StmtTable::addStmtCFGNode(int stmtNum, Gnode * CFGnode)
 
 int StmtTable::addStmtDDGNode(int stmtNum, DDGnode * DGnode)
 {
-	if (stmtNum >= stmtTable->size()) {
+	if (stmtNum >= (int) stmtTable->size()) {
 		return 0;
 	}
 	stmtTable->at(stmtNum).ddgNode = DGnode;
@@ -46,7 +46,7 @@ int StmtTable::addStmtDDGNode(int stmtNum, DDGnode * DGnode)
 
 Tnode* StmtTable::getASTNode(int i)
 {
-	if (i >= stmtTable->size()) {
+	if (i >= (int)stmtTable->size()) {
 		return NULL;
 	}
 	return stmtTable -> at(i).astNode;
@@ -55,7 +55,7 @@ Tnode* StmtTable::getASTNode(int i)
 
 Gnode * StmtTable::getCFGNode(int i)
 {
-	if (i >= stmtTable->size()) {
+	if (i >= (int) stmtTable->size()) {
 		return NULL;
 	}
 	return stmtTable->at(i).cfgNode;
@@ -63,7 +63,7 @@ Gnode * StmtTable::getCFGNode(int i)
 
 DDGnode * StmtTable::getDDGNode(int i)
 {
-	if (i >= stmtTable->size()) {
+	if (i >= (int)stmtTable->size()) {
 		return NULL;
 	}
 	return stmtTable->at(i).ddgNode;

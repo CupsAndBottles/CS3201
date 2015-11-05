@@ -16,7 +16,7 @@ simpleParser::simpleParser(vector<string> program) {
 }
 
 bool simpleParser::endOfProgram() {
-	return index >= tokenizedProgram.size();
+	return index >= (int) tokenizedProgram.size();
 }
 
 bool simpleParser::parseFactor() {
@@ -400,13 +400,13 @@ bool simpleParser::checkProcedureExistence() {
 	for (map<string, vector<string>>::iterator it = callList.begin(); it != callList.end(); ++it) {
 		// Check all procedures called by the current procedure
 		vector<string> called = it->second;
-		for (int i = 0; i < called.size(); i++) {
-			for (int j = 0; j < procList.size(); j++) {
+		for (int i = 0; i < (int) called.size(); i++) {
+			for (int j = 0; j < (int) procList.size(); j++) {
 				if (procList[j] == called[i]) {
 					break;
 				}
 				else {
-					if (j == procList.size() - 1) {
+					if (j == (int) procList.size() - 1) {
 						return false;
 					}
 				}
@@ -423,7 +423,7 @@ bool simpleParser::checkSimpleRecursion() {
 		string caller = it->first;
 		vector<string> called = it->second;
 
-		for (int i = 0; i < called.size(); i++) {
+		for (int i = 0; i < (int) called.size(); i++) {
 			if (caller == called[i]) {
 				cout << "Error: procedure " << called[i] << " calls itself.\n";
 				return false;
@@ -441,12 +441,12 @@ bool simpleParser::checkMutualRecursion() {
 		vector<string> calledProc = it->second;
 
 		// Check the procedures called by the current procedure
-		for (int i = 0; i < calledProc.size(); i++) {
+		for (int i = 0; i < (int) calledProc.size(); i++) {
 			if(callList.find(calledProc[i]) != callList.end()) {
 				// Check the procedures called by the current called procedure
 				// Check if they match the original calling procedure
 				vector<string> calledByCalledProc = callList[calledProc[i]];
-				for (int j = 0; j < calledByCalledProc.size(); j++) {
+				for (int j = 0; j < (int) calledByCalledProc.size(); j++) {
 					if (calledByCalledProc[j] == callingProc) {
 						cout << "Error: procedure " << callingProc << " and " << calledProc[i] << " are mutually recursive.\n";
 						return false;

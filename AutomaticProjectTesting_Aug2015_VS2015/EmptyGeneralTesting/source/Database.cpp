@@ -426,7 +426,7 @@ vector<Gnode*> Database::buildControlFlowGraph()
 		cfgRootNode = createControlFlowGraphLinks(listOfCfgNodes, 1);
 		listOfCfgRoots.push_back(cfgRootNode);
 	} else {
-		for (int i=1; i<listOfCfgNodes.size(); i++) {
+		for (int i=1; i < (int) listOfCfgNodes.size(); i++) {
 			Gnode *currNode = listOfCfgNodes.at(i);
 			string procName = currNode->getItsProcedure();
 			if (procName.compare(prevProcName) != 0) {
@@ -476,7 +476,7 @@ Gnode* Database::createControlFlowGraphLinks(vector<Gnode*> listOfCfgNodes, int 
 	Gnode *endNode = Gnode::createGnode(-1);
 
 	Gnode *cfgRoot = listOfCfgNodes.at(cfgRootIndex);
-	Gnode *next = (cfgRootIndex+1 >= listOfCfgNodes.size()) ? endNode : listOfCfgNodes.at(cfgRootIndex+1);
+	Gnode *next = (cfgRootIndex+1 >= (int) listOfCfgNodes.size()) ? endNode : listOfCfgNodes.at(cfgRootIndex+1);
 	Gnode::setNext(cfgRoot, next);
 
 	for (int i=cfgRootIndex; i<stmtTable->getSize(); i++) {
@@ -495,19 +495,19 @@ Gnode* Database::createControlFlowGraphLinks(vector<Gnode*> listOfCfgNodes, int 
 				int lastElseChildNum = stmtTable->getASTNode(i)->getFirstChild()->getRightSibling()->getRightSibling()->getLastContainedStatement()->getStatementNumber();
 				Gnode *lastIfChild   = listOfCfgNodes.at(lastIfChildNum);
 				Gnode *lastElseChild = listOfCfgNodes.at(lastElseChildNum);
-				Gnode *other         = (lastElseChildNum+1 >= listOfCfgNodes.size()) ? endNode : listOfCfgNodes.at(lastElseChildNum+1);
+				Gnode *other         = (lastElseChildNum+1 >= (int) listOfCfgNodes.size()) ? endNode : listOfCfgNodes.at(lastElseChildNum+1);
 				Gnode::setNextEndIf(lastIfChild, lastElseChild, other);
 			} else if (stmtTable->getASTNode(i)->isWhile()) {
 				Gnode *parent = listOfCfgNodes.at(i);
-				Gnode *next = (i+1 >= listOfCfgNodes.size()) ? endNode : listOfCfgNodes.at(i+1);
+				Gnode *next = (i+1 >= (int) listOfCfgNodes.size()) ? endNode : listOfCfgNodes.at(i+1);
 				int lastChildNum = stmtTable->getASTNode(i)->getLastContainedStatement()->getStatementNumber();
 				Gnode *lastChild = listOfCfgNodes.at(lastChildNum);
-				Gnode *other = (lastChildNum+1 >= listOfCfgNodes.size()) ? endNode: listOfCfgNodes.at(lastChildNum+1);
+				Gnode *other = (lastChildNum+1 >= (int) listOfCfgNodes.size()) ? endNode: listOfCfgNodes.at(lastChildNum+1);
 				Gnode::setNext(parent, next);
 				Gnode::setNextWhile(parent, lastChild, other);
 			} else {
 				Gnode *curr = listOfCfgNodes.at(i);
-				Gnode *next = (i+1 >= listOfCfgNodes.size()) ? endNode : listOfCfgNodes.at(i+1);
+				Gnode *next = (i+1 >= (int) listOfCfgNodes.size()) ? endNode : listOfCfgNodes.at(i+1);
 				Gnode::setNext(curr, next);
 			}
 		}
