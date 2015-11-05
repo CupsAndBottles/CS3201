@@ -490,7 +490,12 @@ namespace UnitTesting
 		}
 
 		TEST_METHOD(testGenerator) {
-			generateProgram(2, 3, 4);
+			int procedures = 2;
+			int nesting = 3;
+			int assign = 2;
+			int brackets = 5;
+
+			generateProgram(procedures, nesting, assign, brackets);
 		}
 	};
 }
