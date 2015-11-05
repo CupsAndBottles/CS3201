@@ -343,9 +343,9 @@ bool Database::isNumber(string &s)
 	return true;
 }
 
-vector<Gnode*> Database::getControlFlowGraphRoots()
+Gnode *Database::getControlFlowGraphRoot()
 {
-	return listOfCfgRoots;
+	return cfgRoot;
 }
 
 Tnode *Database::getAbstractSyntaxTreeRoot()
