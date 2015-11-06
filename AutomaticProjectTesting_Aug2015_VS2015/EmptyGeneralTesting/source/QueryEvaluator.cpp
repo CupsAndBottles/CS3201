@@ -88,8 +88,8 @@ vector<vector<string>> QueryEvaluator::recordConditionClause(QueryObject temp) {
 
 vector<string> QueryEvaluator::parent(string leftArgument, string rightArgument) {
 	vector<string> output;
-	if (formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT)==false
-		 && formatter.stringEqual(getEntityType(rightArgument), EntTable::NON_EXISTANT)==false ) {
+	if (!formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT)
+		 && !formatter.stringEqual(getEntityType(rightArgument), EntTable::NON_EXISTANT)) {
 		//both synonyms
 		if (formatter.stringEqual(leftArgument, getSelectClause())) {
 			vector<string> temp = recordSelectClause(getEntityType(rightArgument));
@@ -113,13 +113,13 @@ vector<string> QueryEvaluator::parent(string leftArgument, string rightArgument)
 			return output;
 		}
 	}
-	else if(formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT)
-		&& formatter.stringEqual(getEntityType(rightArgument),EntTable::NON_EXISTANT)==false){
+	else if (formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT)
+		&& !formatter.stringEqual(getEntityType(rightArgument),EntTable::NON_EXISTANT)){
 		//left is known, only right is synonyms, todo:: add assert that left is integer
 		return output = formatter.integerVectorToString(database.getChildrenOf(stoi(leftArgument)));
 	}
 	else if (formatter.stringEqual(getEntityType(rightArgument), EntTable::NON_EXISTANT)
-		&& formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT) == false) {
+		&& !formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT)) {
 		//right is known, only left is synonyms, todo:: add assert that right is integer
 		return output = formatter.integerVectorToString(database.getParentOf(stoi(rightArgument)));
 	}
