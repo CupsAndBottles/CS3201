@@ -490,12 +490,13 @@ namespace UnitTesting
 		}
 
 		TEST_METHOD(testGenerator) {
-			int procedures = 2;
-			int nesting = 3;
+			int procedures = 3;
+			int nesting = 2;
 			int assign = 2;
 			int brackets = 5;
+			bool isCall = true;
 
-			generateProgram(procedures, nesting, assign, brackets);
+			generateProgram(procedures, nesting, assign, brackets, isCall);
 		}
 	};
 }
