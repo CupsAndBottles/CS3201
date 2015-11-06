@@ -16,6 +16,8 @@ const string RelationType_PATTERN_ASSIGN = "assign";
 const string RelationType_PATTERN_IF = "while";
 const string RelationType_PATTERN_WHILE = "if";
 
+const string WILDCARD = "_";
+
 QueryObject::QueryObject(string s1, string s2, string s3) {
 	arg1 = s1;
 	arg2 = s2;

@@ -421,15 +421,15 @@ vector<string> QueryEvaluator::patternA(string condition, string leftArgument, s
 		string right = formatter.removeUnderscore(rightArgument);
 		return output = formatter.integerVectorToString(database.getStatementsThatContainPattern(Tnode::STMT_ASSIGN, left, right));
 	}
-	else if (formatter.isDoubleQuote(leftArgument) && formatter.stringEqual(rightArgument, "_")) {
+	else if (formatter.isDoubleQuote(leftArgument) && formatter.stringEqual(rightArgument, QueryObject::WILDCARD)) {
 		string varName = formatter.removeQuotes(leftArgument);
 		cout << varName << endl;
 		return output = formatter.integerVectorToString(database.getStatementsThatModify(varName));
 	}
-	else if (formatter.stringEqual(leftArgument, "_") && formatter.stringEqual(rightArgument, "_") ){
+	else if (formatter.stringEqual(leftArgument, QueryObject::WILDCARD) && formatter.stringEqual(rightArgument, QueryObject::WILDCARD) ){
 		return output = formatter.integerVectorToString(database.getStatementsOfType(Tnode::STMT_ASSIGN));
 	}
-	else if (formatter.stringEqual(leftArgument, "_") && formatter.isUnderscore(rightArgument)) {
+	else if (formatter.stringEqual(leftArgument, QueryObject::WILDCARD) && formatter.isUnderscore(rightArgument)) {
 		vector<string>temp = database.getVariableNames();
 		for (size_t i = 0; i < temp.size(); i++) {
 			vector<string>temp1 = formatter.integerVectorToString(database.getStatementsThatContainPattern(Tnode::STMT_ASSIGN,temp[i],formatter.removeUnderscore(rightArgument)));
@@ -438,7 +438,7 @@ vector<string> QueryEvaluator::patternA(string condition, string leftArgument, s
 		}
 		return output;
 	}
-	else if (formatter.stringEqual(leftArgument, "_") && formatter.isDoubleQuote(rightArgument)) {
+	else if (formatter.stringEqual(leftArgument, QueryObject::WILDCARD) && formatter.isDoubleQuote(rightArgument)) {
 		vector<string>temp = database.getVariableNames();
 		for (size_t i = 0; i < temp.size(); i++) {
 			vector<string>temp1 = formatter.integerVectorToString(database.getStatementsThatMatchPattern(Tnode::STMT_ASSIGN, temp[i], formatter.removeQuotes(rightArgument)));
