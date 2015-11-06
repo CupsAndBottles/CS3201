@@ -40,9 +40,9 @@ public:
 
 	vector<string> parent(string leftArgument, string rightArgument);
 	vector<string> parentT(string leftArgument, string rightArgument);
-	vector<string> follow(string leftArgument, string rightArgument);
-	vector<string> followT(string leftArgument, string rightArgument);
-	vector<string> modify(string leftArgument, string rightArgument);
+	vector<string> follows(string leftArgument, string rightArgument);
+	vector<string> followsT(string leftArgument, string rightArgument);
+	vector<string> modifies(string leftArgument, string rightArgument);
 	vector<string> uses(string leftArgument, string rightArgument);
 	vector<string> calls(string leftArgument, string rightArgument);
 	vector<string> callsT(string leftArgument, string rightArgument);

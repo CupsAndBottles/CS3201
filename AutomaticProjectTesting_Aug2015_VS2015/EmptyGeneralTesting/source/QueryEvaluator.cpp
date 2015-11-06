@@ -52,7 +52,7 @@ vector<vector<string>> QueryEvaluator::recordConditionClause(QueryObject clause)
 	vector<vector<string>>output;
 	
 	if (formatter.stringEqual(relationType, QueryObject::RelationType_MODIFIES)) {
-		modify(lhs, rhs);
+		modifies(lhs, rhs);
 	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_USES)) {
 		uses(lhs, rhs);
 	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_CALLS)) {
@@ -64,9 +64,9 @@ vector<vector<string>> QueryEvaluator::recordConditionClause(QueryObject clause)
 	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_PARENTSTAR)) {
 		parentT(lhs, rhs);
 	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_FOLLOWS)) {
-		follow(lhs, rhs);
+		follows(lhs, rhs);
 	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_FOLLOWSSTAR)) {
-		followT(lhs, rhs);
+		followsT(lhs, rhs);
 	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_NEXT)) {
 		next(lhs, rhs);
 	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_NEXTSTAR)) {
@@ -174,7 +174,7 @@ vector<string> QueryEvaluator::parentT(string leftArgument, string rightArgument
 	}
 }
 
-vector<string> QueryEvaluator::follow(string leftArgument, string rightArgument) {
+vector<string> QueryEvaluator::follows(string leftArgument, string rightArgument) {
 	vector<string> output;
 	if (formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT) == false
 		&& formatter.stringEqual(getEntityType(rightArgument), EntTable::NON_EXISTANT) == false) {
@@ -216,7 +216,7 @@ vector<string> QueryEvaluator::follow(string leftArgument, string rightArgument)
 	}
 }
 
-vector<string> QueryEvaluator::followT(string leftArgument, string rightArgument) {
+vector<string> QueryEvaluator::followsT(string leftArgument, string rightArgument) {
 	vector<string> output;
 	if (formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT) == false
 		&& formatter.stringEqual(getEntityType(rightArgument), EntTable::NON_EXISTANT) == false) {
@@ -258,7 +258,7 @@ vector<string> QueryEvaluator::followT(string leftArgument, string rightArgument
 	}
 }
 
-vector<string> QueryEvaluator::modify(string leftArgument, string rightArgument) {
+vector<string> QueryEvaluator::modifies(string leftArgument, string rightArgument) {
 	vector<string> output;
 	if (formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT) == false
 		&& formatter.stringEqual(getEntityType(rightArgument), EntTable::VARIABLE)) {
