@@ -500,7 +500,26 @@ vector<string> QueryEvaluator::uses(string leftArgument, string rightArgument) {
 }
 
 vector<string> QueryEvaluator::calls(string leftArgument, string rightArgument) {
+	bool leftSynonym = isSynonym(leftArgument);
+	bool rightSynonym = isSynonym(rightArgument);
+	if (leftSynonym && rightSynonym) {
+		calls_BothSynonyms(leftArgument, rightArgument);
+	} else if (leftSynonym) {
+		calls_LeftSynonym(leftArgument, rightArgument);
+	} else if (rightSynonym) {
+		calls_RightSynonym(leftArgument, rightArgument);
+	}
+
 	return vector<string>();
+}
+
+void QueryEvaluator::calls_BothSynonyms(string leftArgument, string rightArgument) {
+}
+
+void QueryEvaluator::calls_LeftSynonym(string leftArgument, string rightArgument) {
+}
+
+void QueryEvaluator::calls_RightSynonym(string leftArgument, string rightArgument) {
 }
 
 vector<string> QueryEvaluator::callsT(string leftArgument, string rightArgument) {

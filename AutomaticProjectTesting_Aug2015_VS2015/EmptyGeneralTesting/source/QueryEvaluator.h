@@ -45,6 +45,10 @@ private:
 	vector<string> modifies(string leftArgument, string rightArgument);
 	vector<string> uses(string leftArgument, string rightArgument);
 	vector<string> calls(string leftArgument, string rightArgument);
+	void calls_BothSynonyms(string leftArgument, string rightArgument);
+	void calls_LeftSynonym(string leftArgument, string rightArgument);
+	void calls_RightSynonym(string leftArgument, string rightArgument);
+
 	vector<string> callsT(string leftArgument, string rightArgument);
 	vector<string> next(string leftArgument, string rightArgument);
 	vector<string> nextT(string leftArgument, string rightArgument);
