@@ -23,10 +23,5 @@ string EntTable::getType(string name) {
 }
 
 bool EntTable::exist(string name) {
-	if (entityTable.find(name) != entityTable.end()) {
-		return true;
-	}
-	else {
-		return false;
-	}
+	return entityTable.find(name) != entityTable.end();
 }
