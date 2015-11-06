@@ -26,7 +26,30 @@ string QueryEvaluator::getSelectClause() {
 	return selectClause.front();
 }
 
-//might not be needed
+list<string> QueryEvaluator::selectAll(string entityType) {
+	list<string> results;
+	if (entityType == EntTable::PROCEDURE) {
+		results = Helpers::stringVectorToStringList(database.getProcedureNames());
+	} else if (entityType == EntTable::VARIABLE) {
+		results = Helpers::stringVectorToStringList(database.getVariableNames());
+	} else if (entityType == EntTable::STATEMENT_ASSIGN) {
+		results = Helpers::intVectorToStringList(database.getStatementsOfType(Tnode::STMT_ASSIGN));
+	} else if (entityType == EntTable::STATEMENT_WHILE) {
+		results = Helpers::intVectorToStringList(database.getStatementsOfType(Tnode::STMT_WHILE));
+	} else if (entityType == EntTable::STATEMENT_IF) {
+		results = Helpers::intVectorToStringList(database.getStatementsOfType(Tnode::STMT_IF));
+	} else if (entityType == EntTable::STATEMENT || entityType == EntTable::PROGRAM_LINE) {
+		int numberOfStatements = database.getNumberOfStatements();
+		for (int i = 1; i <= numberOfStatements; i++) {
+			results.push_back(formatter.intToString(i));
+		}
+	} else if (entityType == EntTable::CONSTANT) {
+		vector<int> constants = database.getConstants();
+		results = Helpers::intVectorToStringList(constants);
+	}
+	return results;
+}
+
 string QueryEvaluator::getEntityType(string s) {
 	return declaration.getType(s);
 }
