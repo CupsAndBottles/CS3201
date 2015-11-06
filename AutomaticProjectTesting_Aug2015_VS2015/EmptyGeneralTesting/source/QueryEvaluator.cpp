@@ -17,7 +17,8 @@ list<string> QueryEvaluator::getResults (string query) {
 
 //get data from preprocessor
 void QueryEvaluator::getQueryData() {
-	selectClause = preprocessor.getEntities();
+	selectClause = preprocessor.getSelectEntities();
+	conditionClause = preprocessor.getQueries();
 	declaration = preprocessor.getEntityTable();
 }
 

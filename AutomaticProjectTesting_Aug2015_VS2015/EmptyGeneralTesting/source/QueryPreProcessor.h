@@ -23,10 +23,9 @@ class QueryPreProcessor
 	EntTable entityTable;
 
 public:
-
 	bool query(string s);
 	EntTable getEntityTable();
-	vector<string> getEntities();
+	vector<string> getSelectEntities();
 	vector<QueryObject> getQueries();
 	void clearAll();
 	//void printSCL(vector<string> s);
