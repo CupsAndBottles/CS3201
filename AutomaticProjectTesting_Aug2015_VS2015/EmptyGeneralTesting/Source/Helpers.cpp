@@ -69,3 +69,11 @@ vector<int> Helpers::flattenCFGNodeSetToIntVector(const unordered_set<Gnode*> in
  list<string> Helpers::stringVectorToStringList(vector<string> inp) {
 	 return list<string>(inp.begin(), inp.end());
 }
+
+ list<string> Helpers::intVectorToStringList(vector<int> inp) {
+	 list<string> result = list<string>();
+	 for (int i : inp) {
+		 result.push_back(to_string(i));
+	 }
+	 return result;
+ }
