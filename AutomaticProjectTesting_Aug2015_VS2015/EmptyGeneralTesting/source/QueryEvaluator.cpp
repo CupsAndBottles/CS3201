@@ -24,12 +24,14 @@ void QueryEvaluator:: getQueryData() {
 string QueryEvaluator::getSelectClause() {
 	return selectClause.front();
 }
+
 string QueryEvaluator::getEntityType(string s) {
 	return declaration.getType(s);
 }
 
 //for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.
 vector<string> QueryEvaluator::evaluation() {
+	this->queryTreeRoot = &QueryNode();
 	for (size_t i = 0; i < conditionClause.size(); i++) {
 		recordConditionClause(conditionClause[i]);
 	}

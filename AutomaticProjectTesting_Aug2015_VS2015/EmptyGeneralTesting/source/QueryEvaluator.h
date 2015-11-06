@@ -8,6 +8,7 @@
 #include "ProgramKnowledgeBase.h"
 #include "InputFormatter.h"
 #include "Tnode.h"
+#include "QueryNode.h"
 
 #include <string>
 #include <vector>
@@ -54,6 +55,8 @@ public:
 	vector<string> patternWhile(string leftArgument, string rightArgument);
 
 private:
+	QueryNode* queryTreeRoot;
+
 	vector<string> selectClause;
 	vector<QueryObject> conditionClause;
 	vector<vector<string>> finalResult;
