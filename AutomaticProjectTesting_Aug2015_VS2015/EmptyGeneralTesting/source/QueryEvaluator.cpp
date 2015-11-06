@@ -433,15 +433,15 @@ vector<string> QueryEvaluator::affectsT(string leftArgument, string rightArgumen
 	return vector<string>();
 }
 
-vector<string> QueryEvaluator::patternIf(string condition, string leftArgument, string rightArgument) {
+vector<string> QueryEvaluator::patternIf(string leftArgument, string rightArgument) {
 	return vector<string>();
 }
 
-vector<string> QueryEvaluator::patternWhile(string condition, string leftArgument, string rightArgument) {
+vector<string> QueryEvaluator::patternWhile(string leftArgument, string rightArgument) {
 	return vector<string>();
 }
 
-vector<string> QueryEvaluator::patternA(string condition, string leftArgument, string rightArgument) {
+vector<string> QueryEvaluator::patternAssign(string leftArgument, string rightArgument) {
 	vector<string> output;
 	if (formatter.isDoubleQuote(leftArgument) && formatter.isDoubleQuote(rightArgument)) {
 		string left = formatter.removeQuotes(leftArgument);

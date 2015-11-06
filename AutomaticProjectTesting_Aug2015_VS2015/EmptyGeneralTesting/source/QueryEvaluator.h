@@ -49,9 +49,9 @@ public:
 	vector<string> nextT(string leftArgument, string rightArgument);
 	vector<string> affects(string leftArgument, string rightArgument);
 	vector<string> affectsT(string leftArgument, string rightArgument);
-	vector<string> patternA(string condition, string leftArgument, string rightArgument);
-	vector<string> patternIf(string condition, string leftArgument, string rightArgument);
-	vector<string> patternWhile(string condition, string leftArgument, string rightArgument);
+	vector<string> patternAssign(string leftArgument, string rightArgument);
+	vector<string> patternIf(string leftArgument, string rightArgument);
+	vector<string> patternWhile(string leftArgument, string rightArgument);
 
 private:
 	vector<string> selectClause;
