@@ -23,7 +23,7 @@ public:
 	string getValue();
 	string getSynonym();
 
-	bool isOnlyChild();
+	bool hasOneChild();
 	bool isRoot();
 
 private:

@@ -28,7 +28,7 @@ void QueryNode::insertParent(QueryNode node){
 
 void QueryNode::destroy() {
 	if (!this->isRoot()) {
-		if (this->isOnlyChild()) {
+		if (parent->hasOneChild()) {
 			parent->destroy();
 		} else {
 			parent->removeChild(this);
@@ -67,14 +67,10 @@ string QueryNode::getSynonym() {
 	return synonym;
 }
 
-bool QueryNode::isOnlyChild()
-{
-	if (!this->isRoot()) {
-		return (int)parent->getChildren().size() == 1;
-	}
-	return false;
-}
-
 bool QueryNode::isRoot() {
 	return parent == NULL;
+}
+
+bool QueryNode::hasOneChild() {
+	return (int)children.size() == 1;
 }
