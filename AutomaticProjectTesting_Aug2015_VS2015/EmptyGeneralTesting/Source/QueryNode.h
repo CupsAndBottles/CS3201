@@ -18,7 +18,6 @@ public:
 	void destroy();
 	void removeChild(QueryNode * node);
 	void addChild(QueryNode* node);
-	void addChild(string syn, string ans);
 	unordered_set<QueryNode*> getChildren();
 	string getValue();
 	string getSynonym();

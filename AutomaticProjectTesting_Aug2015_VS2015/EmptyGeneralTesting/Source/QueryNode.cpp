@@ -49,12 +49,6 @@ void QueryNode::addChild(QueryNode* node) {
 	node->setParent(this);
 }
 
-void QueryNode::addChild(string syn, string val) {
-	QueryNode newNode = QueryNode(syn, val);
-	newNode.setParent(this);
-	children.insert(&newNode);
-}
-
 unordered_set<QueryNode*> QueryNode::getChildren() {
 	return children;
 }
