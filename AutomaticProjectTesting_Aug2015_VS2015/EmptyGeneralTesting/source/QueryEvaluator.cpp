@@ -44,9 +44,9 @@ vector<string> QueryEvaluator::recordSelectClause(string s) {
 }
 
 vector<vector<string>> QueryEvaluator::recordConditionClause(QueryObject temp) {
-	string first=temp.getFirst();
-	string second=temp.getSecond();
-	string third=temp.getThird();
+	string first=temp.getRelation();
+	string second=temp.getFirstArgument();
+	string third=temp.getSecondArgument();
 	vector<vector<string>>output;
 	if (formatter.stringEqual(first, "Modifies")) {
 		return output;

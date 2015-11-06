@@ -7,15 +7,15 @@ QueryObject::QueryObject(string s1, string s2, string s3) {
 
 }
 
-string QueryObject::getFirst() {
+string QueryObject::getRelation() {
 	return arg1;
 }
 
-string QueryObject::getSecond() {
+string QueryObject::getFirstArgument() {
 	return arg2;
 }
 
-string QueryObject::getThird() {
+string QueryObject::getSecondArgument() {
 	return arg3;
 }
 

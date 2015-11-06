@@ -12,9 +12,9 @@ class QueryObject
 public:
 
 	QueryObject(string s1, string s2, string s3);
-	string getFirst();
-	string getSecond();
-	string getThird();
+	string getRelation();
+	string getFirstArgument();
+	string getSecondArgument();
 	void toString();
 };
 

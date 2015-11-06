@@ -388,13 +388,13 @@ void QueryPreProcessor::optimizeWithClause(vector<string> temp) {
 	}
 	else if (queryList.size() != 0) {
 		QueryObject lastQueryObj = queryList[queryList.size() - 1];
-		if ((lastQueryObj.getSecond()).compare(temp[1]) == 0) {
-			QueryObject newObj = QueryObject(lastQueryObj.getFirst(), temp[2], lastQueryObj.getThird());
+		if ((lastQueryObj.getFirstArgument()).compare(temp[1]) == 0) {
+			QueryObject newObj = QueryObject(lastQueryObj.getRelation(), temp[2], lastQueryObj.getSecondArgument());
 			queryList.pop_back();
 			queryList.push_back(newObj);
 		}
-		else if ((lastQueryObj.getThird()).compare(temp[1]) == 0) {
-			QueryObject newObj = QueryObject(lastQueryObj.getFirst(), lastQueryObj.getSecond(), temp[2]);
+		else if ((lastQueryObj.getSecondArgument()).compare(temp[1]) == 0) {
+			QueryObject newObj = QueryObject(lastQueryObj.getRelation(), lastQueryObj.getFirstArgument(), temp[2]);
 			queryList.pop_back();
 			queryList.push_back(newObj);
 		}
