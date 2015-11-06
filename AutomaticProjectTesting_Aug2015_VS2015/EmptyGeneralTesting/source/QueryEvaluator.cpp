@@ -48,40 +48,40 @@ vector<vector<string>> QueryEvaluator::recordConditionClause(QueryObject temp) {
 	string second=temp.getFirstArgument();
 	string third=temp.getSecondArgument();
 	vector<vector<string>>output;
-	if (formatter.stringEqual(first, "Modifies")) {
+	if (formatter.stringEqual(first, QueryObject::RelationType_MODIFIES)) {
 		return output;
 	}
-	else if (formatter.stringEqual(first, "Uses")) {
+	else if (formatter.stringEqual(first, QueryObject::RelationType_USES)) {
 		return output;
 	}
-	else if (formatter.stringEqual(first, "Calls")) {
+	else if (formatter.stringEqual(first, QueryObject::RelationType_CALLS)) {
 		return output;
 	}
-	else if (formatter.stringEqual(first, "Parent")) {
+	else if (formatter.stringEqual(first, QueryObject::RelationType_PARENT)) {
 		return output;
 	}
-	else if (formatter.stringEqual(first, "Parent*")) {
+	else if (formatter.stringEqual(first, QueryObject::RelationType_PARENTSTAR)) {
 		return output;
 	}
-	else if (formatter.stringEqual(first, "Follows")) {
+	else if (formatter.stringEqual(first, QueryObject::RelationType_FOLLOWS)) {
 		return output;
 	}
-	else if (formatter.stringEqual(first, "Follows*")) {
+	else if (formatter.stringEqual(first, QueryObject::RelationType_FOLLOWSSTAR)) {
 		return output;
 	}
-	else if (formatter.stringEqual(first, "Next")) {
+	else if (formatter.stringEqual(first, QueryObject::RelationType_NEXT)) {
 		return output;
 	}
-	else if (formatter.stringEqual(first, "Next*")) {
+	else if (formatter.stringEqual(first, QueryObject::RelationType_NEXTSTAR)) {
 		return output;
 	}
-	else if (formatter.stringEqual(declaration.getType(first), "assign")) {
+	else if (formatter.stringEqual(declaration.getType(first), QueryObject::RelationType_PATTERN_ASSIGN)) {
 		return output;
 	}
-	else if (formatter.stringEqual(declaration.getType(first), "while")) {
+	else if (formatter.stringEqual(declaration.getType(first), QueryObject::RelationType_PATTERN_WHILE)) {
 		return output;
 	}
-	else if (formatter.stringEqual(declaration.getType(first), "if")) {
+	else if (formatter.stringEqual(declaration.getType(first), QueryObject::RelationType_PATTERN_IF)) {
 		return output;
 	}
 	else {
