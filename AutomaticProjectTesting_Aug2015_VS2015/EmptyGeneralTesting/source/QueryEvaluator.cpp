@@ -34,6 +34,10 @@ bool QueryEvaluator::isSynonym(string s) {
 	return declaration.getType(s) != EntTable::NON_EXISTANT;
 }
 
+bool QueryEvaluator::isVariable(string s){
+	return declaration.getType(s) != EntTable::VARIABLE;
+}
+
 //for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.
 vector<string> QueryEvaluator::evaluation() {
 	this->queryTreeRoot = &QueryNode();
@@ -253,8 +257,7 @@ vector<string> QueryEvaluator::followsT(string leftArgument, string rightArgumen
 
 vector<string> QueryEvaluator::modifies(string leftArgument, string rightArgument) {
 	vector<string> output;
-	if (isSynonym(leftArgument)
-		&& formatter.stringEqual(getEntityType(rightArgument), EntTable::VARIABLE)) {
+	if (isSynonym(leftArgument) && isVariable(rightArgument)) {
 		if (formatter.stringEqual(rightArgument, getSelectClause())) {
 			if (formatter.stringEqual(getEntityType(leftArgument), EntTable::PROCEDURE)) {
 				vector<string> temp = database.getProcedureNames();
@@ -300,8 +303,7 @@ vector<string> QueryEvaluator::modifies(string leftArgument, string rightArgumen
 		}
 	}
 
-	else if (!isSynonym(leftArgument)
-		&& formatter.stringEqual(getEntityType(rightArgument), EntTable::VARIABLE)) {
+	else if (!isSynonym(leftArgument) && isVariable(rightArgument)) {
 		//check double quote, if yes for left, do proc, else do stmt
 		if (formatter.isDoubleQuote(leftArgument)) {
 			string procedure = formatter.removeQuotes(leftArgument);
@@ -329,8 +331,7 @@ vector<string> QueryEvaluator::modifies(string leftArgument, string rightArgumen
 
 vector<string> QueryEvaluator::uses(string leftArgument, string rightArgument) {
 	vector<string> output;
-	if (isSynonym(leftArgument)
-		&& formatter.stringEqual(getEntityType(rightArgument), EntTable::VARIABLE)) {
+	if (isSynonym(leftArgument) && isVariable(rightArgument)) {
 		if (formatter.stringEqual(rightArgument, getSelectClause())) {
 			if (formatter.stringEqual(getEntityType(leftArgument), EntTable::PROCEDURE)) {
 				vector<string> temp = database.getProcedureNames();
@@ -376,8 +377,7 @@ vector<string> QueryEvaluator::uses(string leftArgument, string rightArgument) {
 		}
 	}
 
-	else if (!isSynonym(leftArgument)
-		&& formatter.stringEqual(getEntityType(rightArgument), EntTable::VARIABLE)) {
+	else if (!isSynonym(leftArgument) && isVariable(rightArgument)) {
 		//check double quote, if yes for left, do proc, else do stmt
 		if (formatter.isDoubleQuote(leftArgument)) {
 			string procedure = formatter.removeQuotes(leftArgument);
