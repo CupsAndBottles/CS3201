@@ -16,6 +16,7 @@ public:
 
 	static const string NON_EXISTANT;
 	static const string VARIABLE;
+	static const string CONSTANT;
 	static const string PROCEDURE;
 	static const string STATEMENT;
 	static const string PROGRAM_LINE;

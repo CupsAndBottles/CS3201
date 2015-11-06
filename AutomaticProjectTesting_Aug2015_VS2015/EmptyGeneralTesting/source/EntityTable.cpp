@@ -2,6 +2,7 @@
 
 const string EntTable::NON_EXISTANT = "non-existant";
 const string EntTable::VARIABLE = "variable";
+const string EntTable::CONSTANT = "constant";
 const string EntTable::PROCEDURE = "procedure";
 const string EntTable::STATEMENT = "stmt";
 const string EntTable::PROGRAM_LINE = "prog_line";
