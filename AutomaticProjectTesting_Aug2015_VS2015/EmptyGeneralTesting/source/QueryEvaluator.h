@@ -38,18 +38,20 @@ public:
 	vector<string> recordSelectClause(string s);
 
 	vector<string> parent(string leftArgument, string rightArgument);
-
 	vector<string> parentT(string leftArgument, string rightArgument);
-
 	vector<string> follow(string leftArgument, string rightArgument);
-
 	vector<string> followT(string leftArgument, string rightArgument);
-
 	vector<string> modify(string leftArgument, string rightArgument);
-
 	vector<string> uses(string leftArgument, string rightArgument);
-
+	vector<string> calls(string leftArgument, string rightArgument);
+	vector<string> callsT(string leftArgument, string rightArgument);
+	vector<string> next(string leftArgument, string rightArgument);
+	vector<string> nextT(string leftArgument, string rightArgument);
+	vector<string> affects(string leftArgument, string rightArgument);
+	vector<string> affectsT(string leftArgument, string rightArgument);
 	vector<string> patternA(string condition, string leftArgument, string rightArgument);
+	vector<string> patternIf(string condition, string leftArgument, string rightArgument);
+	vector<string> patternWhile(string condition, string leftArgument, string rightArgument);
 
 private:
 	vector<string> selectClause;

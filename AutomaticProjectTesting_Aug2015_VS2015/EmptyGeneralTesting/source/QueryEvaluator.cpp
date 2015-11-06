@@ -409,6 +409,38 @@ vector<string> QueryEvaluator::uses(string leftArgument, string rightArgument) {
 	}
 }
 
+vector<string> QueryEvaluator::calls(string leftArgument, string rightArgument) {
+	return vector<string>();
+}
+
+vector<string> QueryEvaluator::callsT(string leftArgument, string rightArgument) {
+	return vector<string>();
+}
+
+vector<string> QueryEvaluator::next(string leftArgument, string rightArgument) {
+	return vector<string>();
+}
+
+vector<string> QueryEvaluator::nextT(string leftArgument, string rightArgument) {
+	return vector<string>();
+}
+
+vector<string> QueryEvaluator::affects(string leftArgument, string rightArgument) {
+	return vector<string>();
+}
+
+vector<string> QueryEvaluator::affectsT(string leftArgument, string rightArgument) {
+	return vector<string>();
+}
+
+vector<string> QueryEvaluator::patternIf(string condition, string leftArgument, string rightArgument) {
+	return vector<string>();
+}
+
+vector<string> QueryEvaluator::patternWhile(string condition, string leftArgument, string rightArgument) {
+	return vector<string>();
+}
+
 vector<string> QueryEvaluator::patternA(string condition, string leftArgument, string rightArgument) {
 	vector<string> output;
 	if (formatter.isDoubleQuote(leftArgument) && formatter.isDoubleQuote(rightArgument)) {
