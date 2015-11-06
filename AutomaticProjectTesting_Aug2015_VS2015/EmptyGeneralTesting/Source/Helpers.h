@@ -21,4 +21,5 @@ public:
 	static vector<int> flattenIntSetToIntVector(const unordered_set<int>* inp);
 	static vector<string> flattenStringSetToStringVector(const unordered_set<string>* inp);
 	static vector<int> flattenCFGNodeSetToIntVector(const unordered_set<Gnode*> inp);
+	static list<string> stringVectorToStringList(vector<string> inp);
 };
