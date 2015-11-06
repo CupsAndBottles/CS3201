@@ -56,6 +56,7 @@ public:
 
 private:
 	QueryNode* queryTreeRoot;
+	bool isSynonym(string s);
 
 	vector<string> selectClause;
 	vector<QueryObject> conditionClause;

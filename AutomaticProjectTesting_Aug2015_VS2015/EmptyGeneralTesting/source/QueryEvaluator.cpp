@@ -29,6 +29,10 @@ string QueryEvaluator::getEntityType(string s) {
 	return declaration.getType(s);
 }
 
+bool QueryEvaluator::isSynonym(string s) {
+	return declaration.getType(s) != EntTable::NON_EXISTANT;
+}
+
 //for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.
 vector<string> QueryEvaluator::evaluation() {
 	this->queryTreeRoot = &QueryNode();
