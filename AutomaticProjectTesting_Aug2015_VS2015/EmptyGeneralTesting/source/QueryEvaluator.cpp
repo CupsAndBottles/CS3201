@@ -63,10 +63,10 @@ unordered_set<QueryNode*> QueryEvaluator::getQNodes(string s) {
 }
 
 //for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.
-vector<string> QueryEvaluator::evaluation() {
+vector<string> QueryEvaluator::evaluateQuery() {
 	this->queryTreeRoot = &QueryNode();
 	for (size_t i = 0; i < conditionClause.size(); i++) {
-		recordConditionClause(conditionClause[i]);
+		processClause(conditionClause[i]);
 	}
 	vector<string> output;
 	return output;
@@ -78,7 +78,7 @@ vector<string> QueryEvaluator::recordSelectClause(string s) {
 	return output;
 }
 
-vector<vector<string>> QueryEvaluator::recordConditionClause(QueryObject clause) {
+vector<vector<string>> QueryEvaluator::processClause(QueryObject clause) {
 	string relationType = clause.getRelation();
 	string lhs = clause.getFirstArgument();
 	string rhs = clause.getSecondArgument();
