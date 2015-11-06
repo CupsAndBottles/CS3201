@@ -54,6 +54,11 @@ private:
 	bool isSynonym(string s);
 	bool isVariable(string s);
 	bool isProcedure(string s);
+	
+	unordered_map<string, unordered_set<QueryNode*>> encounteredEntities;
+	void addToEncounteredEntities(QueryNode* input);
+	bool encountered(string s);
+	unordered_set<QueryNode*> getQNodes(string s);
 
 	vector<string> selectClause;
 	vector<QueryObject> conditionClause;

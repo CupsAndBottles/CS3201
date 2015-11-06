@@ -42,6 +42,26 @@ bool QueryEvaluator::isProcedure(string s) {
 	return declaration.getType(s) != EntTable::PROCEDURE;
 }
 
+void QueryEvaluator::addToEncounteredEntities(QueryNode* input) {
+	if (encountered(input->getValue())) {
+		encounteredEntities.at(input->getValue()).insert(input);
+	} else {
+		unordered_set<QueryNode*> newSet = unordered_set<QueryNode*>();
+		newSet.insert(input);
+		encounteredEntities.insert(make_pair(input->getValue(), newSet));
+	}
+}
+
+bool QueryEvaluator::encountered(string s) {
+	return encounteredEntities.count(s) == 1;
+}
+
+unordered_set<QueryNode*> QueryEvaluator::getQNodes(string s) {
+	// assumes string already exists in encounteredEntities
+	return encounteredEntities.at(s);
+}
+
+
 //for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.
 vector<string> QueryEvaluator::evaluation() {
 	this->queryTreeRoot = &QueryNode();
