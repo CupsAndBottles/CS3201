@@ -91,8 +91,8 @@ vector<vector<string>> QueryEvaluator::recordConditionClause(QueryObject temp) {
 
 vector<string> QueryEvaluator::parent(string leftArgument, string rightArgument) {
 	vector<string> output;
-	if ( formatter.stringEqual(getEntityType(leftArgument),"non-existant")==false
-		 && formatter.stringEqual(getEntityType(rightArgument), "non-existant")==false ) {
+	if (formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT)==false
+		 && formatter.stringEqual(getEntityType(rightArgument), EntTable::NON_EXISTANT)==false ) {
 		//both synonyms
 		if (formatter.stringEqual(leftArgument, getSelectClause())) {
 			vector<string> temp = recordSelectClause(getEntityType(rightArgument));
@@ -116,13 +116,13 @@ vector<string> QueryEvaluator::parent(string leftArgument, string rightArgument)
 			return output;
 		}
 	}
-	else if(formatter.stringEqual(getEntityType(leftArgument), "non-existant")
-		&& formatter.stringEqual(getEntityType(rightArgument),"non-existant")==false){
+	else if(formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT)
+		&& formatter.stringEqual(getEntityType(rightArgument),EntTable::NON_EXISTANT)==false){
 		//left is known, only right is synonyms, todo:: add assert that left is integer
 		return output = formatter.integerVectorToString(database.getChildrenOf(stoi(leftArgument)));
 	}
-	else if (formatter.stringEqual(getEntityType(rightArgument), "non-existant")
-		&& formatter.stringEqual(getEntityType(leftArgument), "non-existant") == false) {
+	else if (formatter.stringEqual(getEntityType(rightArgument), EntTable::NON_EXISTANT)
+		&& formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT) == false) {
 		//right is known, only left is synonyms, todo:: add assert that right is integer
 		return output = formatter.integerVectorToString(database.getParentOf(stoi(rightArgument)));
 	}
@@ -133,8 +133,8 @@ vector<string> QueryEvaluator::parent(string leftArgument, string rightArgument)
 
 vector<string> QueryEvaluator::parentT(string leftArgument, string rightArgument) {
 	vector<string> output;
-	if (formatter.stringEqual(getEntityType(leftArgument), "non-existant") == false
-		&& formatter.stringEqual(getEntityType(rightArgument), "non-existant") == false) {
+	if (formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT) == false
+		&& formatter.stringEqual(getEntityType(rightArgument), EntTable::NON_EXISTANT) == false) {
 		//both synonyms
 		if (formatter.stringEqual(leftArgument, getSelectClause())) {
 			vector<string> temp = recordSelectClause(getEntityType(rightArgument));
@@ -158,13 +158,13 @@ vector<string> QueryEvaluator::parentT(string leftArgument, string rightArgument
 			return output;
 		}
 	}
-	else if (formatter.stringEqual(getEntityType(leftArgument), "non-existant")
-		&& formatter.stringEqual(getEntityType(rightArgument), "non-existant") == false) {
+	else if (formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT)
+		&& formatter.stringEqual(getEntityType(rightArgument), EntTable::NON_EXISTANT) == false) {
 		//left is known, only right is synonyms, todo:: add assert that left is integer
 		return output = formatter.integerVectorToString(database.getChildrenStarOf(stoi(leftArgument)));
 	}
-	else if (formatter.stringEqual(getEntityType(rightArgument), "non-existant")
-		&& formatter.stringEqual(getEntityType(leftArgument), "non-existant") == false) {
+	else if (formatter.stringEqual(getEntityType(rightArgument), EntTable::NON_EXISTANT)
+		&& formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT) == false) {
 		//right is known, only left is synonyms, todo:: add assert that right is integer
 		return output = formatter.integerVectorToString(database.getParentsStarOf(stoi(rightArgument)));
 	}
@@ -175,8 +175,8 @@ vector<string> QueryEvaluator::parentT(string leftArgument, string rightArgument
 
 vector<string> QueryEvaluator::follow(string leftArgument, string rightArgument) {
 	vector<string> output;
-	if (formatter.stringEqual(getEntityType(leftArgument), "non-existant") == false
-		&& formatter.stringEqual(getEntityType(rightArgument), "non-existant") == false) {
+	if (formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT) == false
+		&& formatter.stringEqual(getEntityType(rightArgument), EntTable::NON_EXISTANT) == false) {
 		//both synonyms
 		if (formatter.stringEqual(leftArgument, getSelectClause())) {
 			vector<string> temp = recordSelectClause(getEntityType(rightArgument));
@@ -200,13 +200,13 @@ vector<string> QueryEvaluator::follow(string leftArgument, string rightArgument)
 			return output;
 		}
 	}
-	else if (formatter.stringEqual(getEntityType(leftArgument), "non-existant")
-		&& formatter.stringEqual(getEntityType(rightArgument), "non-existant") == false) {
+	else if (formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT)
+		&& formatter.stringEqual(getEntityType(rightArgument), EntTable::NON_EXISTANT) == false) {
 		//left is known, only right is synonyms, todo:: add assert that left is integer
 		return output = formatter.integerVectorToString(database.getStatementThatFollows(stoi(leftArgument)));
 	}
-	else if (formatter.stringEqual(getEntityType(rightArgument), "non-existant")
-		&& formatter.stringEqual(getEntityType(leftArgument), "non-existant") == false) {
+	else if (formatter.stringEqual(getEntityType(rightArgument), EntTable::NON_EXISTANT)
+		&& formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT) == false) {
 		//right is known, only left is synonyms, todo:: add assert that right is integer
 		return output = formatter.integerVectorToString(database.getStatementFollowedBy(stoi(rightArgument)));
 	}
@@ -217,8 +217,8 @@ vector<string> QueryEvaluator::follow(string leftArgument, string rightArgument)
 
 vector<string> QueryEvaluator::followT(string leftArgument, string rightArgument) {
 	vector<string> output;
-	if (formatter.stringEqual(getEntityType(leftArgument), "non-existant") == false
-		&& formatter.stringEqual(getEntityType(rightArgument), "non-existant") == false) {
+	if (formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT) == false
+		&& formatter.stringEqual(getEntityType(rightArgument), EntTable::NON_EXISTANT) == false) {
 		//both synonyms
 		if (formatter.stringEqual(leftArgument, getSelectClause())) {
 			vector<string> temp = recordSelectClause(getEntityType(rightArgument));
@@ -242,13 +242,13 @@ vector<string> QueryEvaluator::followT(string leftArgument, string rightArgument
 			return output;
 		}
 	}
-	else if (formatter.stringEqual(getEntityType(leftArgument), "non-existant")
-		&& formatter.stringEqual(getEntityType(rightArgument), "non-existant") == false) {
+	else if (formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT)
+		&& formatter.stringEqual(getEntityType(rightArgument), EntTable::NON_EXISTANT) == false) {
 		//left is known, only right is synonyms, todo:: add assert that left is integer
 		return output = formatter.integerVectorToString(database.getStatementsThatFollowStar(stoi(leftArgument)));
 	}
-	else if (formatter.stringEqual(getEntityType(rightArgument), "non-existant")
-		&& formatter.stringEqual(getEntityType(leftArgument), "non-existant") == false) {
+	else if (formatter.stringEqual(getEntityType(rightArgument), EntTable::NON_EXISTANT)
+		&& formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT) == false) {
 		//right is known, only left is synonyms, todo:: add assert that right is integer
 		return output = formatter.integerVectorToString(database.getStatementsFollowStarredBy(stoi(rightArgument)));
 	}
@@ -259,7 +259,7 @@ vector<string> QueryEvaluator::followT(string leftArgument, string rightArgument
 
 vector<string> QueryEvaluator::modify(string leftArgument, string rightArgument) {
 	vector<string> output;
-	if (formatter.stringEqual(getEntityType(leftArgument), "non-existant") == false
+	if (formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT) == false
 		&& formatter.stringEqual(getEntityType(rightArgument), "variable")) {
 		if (formatter.stringEqual(rightArgument, getSelectClause())) {
 			if (formatter.stringEqual(getEntityType(leftArgument), "procedure")) {
@@ -306,7 +306,7 @@ vector<string> QueryEvaluator::modify(string leftArgument, string rightArgument)
 		}
 	}
 
-	else if (formatter.stringEqual(getEntityType(leftArgument), "non-existant")
+	else if (formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT)
 		&& formatter.stringEqual(getEntityType(rightArgument), "variable")) {
 		//check double quote, if yes for left, do proc, else do stmt
 		if (formatter.isDoubleQuote(leftArgument)) {
@@ -319,7 +319,7 @@ vector<string> QueryEvaluator::modify(string leftArgument, string rightArgument)
 	}
 
 	else if (formatter.isDoubleQuote(rightArgument)
-		&& formatter.stringEqual(getEntityType(leftArgument), "non-existant") == false) {
+		&& formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT) == false) {
 		string varName = formatter.removeQuotes(rightArgument);
 		if (formatter.stringEqual(getEntityType(leftArgument), "procedure")) { 			
 			return output = database.getProceduresThatModify(varName);
@@ -335,7 +335,7 @@ vector<string> QueryEvaluator::modify(string leftArgument, string rightArgument)
 
 vector<string> QueryEvaluator::uses(string leftArgument, string rightArgument) {
 	vector<string> output;
-	if (formatter.stringEqual(getEntityType(leftArgument), "non-existant") == false
+	if (formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT) == false
 		&& formatter.stringEqual(getEntityType(rightArgument), "variable")) {
 		if (formatter.stringEqual(rightArgument, getSelectClause())) {
 			if (formatter.stringEqual(getEntityType(leftArgument), "procedure")) {
@@ -382,7 +382,7 @@ vector<string> QueryEvaluator::uses(string leftArgument, string rightArgument) {
 		}
 	}
 
-	else if (formatter.stringEqual(getEntityType(leftArgument), "non-existant")
+	else if (formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT)
 		&& formatter.stringEqual(getEntityType(rightArgument), "variable")) {
 		//check double quote, if yes for left, do proc, else do stmt
 		if (formatter.isDoubleQuote(leftArgument)) {
@@ -395,7 +395,7 @@ vector<string> QueryEvaluator::uses(string leftArgument, string rightArgument) {
 	}
 
 	else if (formatter.isDoubleQuote(rightArgument)
-		&& formatter.stringEqual(getEntityType(leftArgument), "non-existant") == false) {
+		&& formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT) == false) {
 		string varName = formatter.removeQuotes(rightArgument);
 		if (formatter.stringEqual(getEntityType(leftArgument), "procedure")) {
 			return output = database.getProceduresThatUse(varName);

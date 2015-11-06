@@ -1,5 +1,7 @@
 #include "EntityTable.h"
 
+const string EntTable::NON_EXISTANT = "non-existant";
+
 void EntTable::add(string name, string type) {
 	entityTable.insert(make_pair(name, type));
 }
@@ -14,8 +16,7 @@ string EntTable::getType(string name) {
 		return s;
 	}
 	else {
-		string s = "non-existant";
-		return s;
+		return EntTable::NON_EXISTANT;
 	}
 }
 

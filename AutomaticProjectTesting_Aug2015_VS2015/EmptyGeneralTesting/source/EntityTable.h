@@ -13,4 +13,5 @@ public:
 	string getType(string name);
 	void clear();
 	bool exist(string name);
+	static const string NON_EXISTANT;
 };

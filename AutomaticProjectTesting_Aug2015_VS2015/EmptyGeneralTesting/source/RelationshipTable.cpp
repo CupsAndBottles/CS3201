@@ -38,9 +38,8 @@ vector<string> RelationshipTable::getArguments(string name) {
 	}
 	else {
 		vector<string> temp;
-		string s = "non-existant";
-		temp.push_back(s);
-		temp.push_back(s);
+		temp.push_back(EntTable::NON_EXISTANT);
+		temp.push_back(EntTable::NON_EXISTANT);
 		cout << "rel-clause non-existant" << endl;
 		return temp;
 	}
