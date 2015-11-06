@@ -50,9 +50,9 @@ public:
 	vector<string> nextT(string leftArgument, string rightArgument);
 	vector<string> affects(string leftArgument, string rightArgument);
 	vector<string> affectsT(string leftArgument, string rightArgument);
-	vector<string> patternAssign(string leftArgument, string rightArgument);
-	vector<string> patternIf(string leftArgument, string rightArgument);
-	vector<string> patternWhile(string leftArgument, string rightArgument);
+	vector<string> patternAssign(string synonym, string leftArgument, string rightArgument);
+	vector<string> patternIf(string synonym, string conditionalVariable);
+	vector<string> patternWhile(string synonym, string conditionalVariable);
 
 private:
 	QueryNode* queryTreeRoot;

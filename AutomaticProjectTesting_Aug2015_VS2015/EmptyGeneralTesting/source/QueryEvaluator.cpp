@@ -79,11 +79,11 @@ vector<vector<string>> QueryEvaluator::recordConditionClause(QueryObject clause)
 		// check for patterns
 		string patternType = declaration.getType(relationType);
 		if (formatter.stringEqual(patternType, QueryObject::RelationType_PATTERN_ASSIGN)) {
-			patternAssign(lhs, rhs);
+			patternAssign(relationType, lhs, rhs);
 		} else if (formatter.stringEqual(patternType, QueryObject::RelationType_PATTERN_WHILE)) {
-			patternWhile(lhs, rhs);
+			patternWhile(relationType, lhs); //rhs will always be _ 
 		} else if (formatter.stringEqual(patternType, QueryObject::RelationType_PATTERN_IF)) {
-			patternIf(lhs, rhs);
+			patternIf(relationType, lhs); //rhs will always be _ 
 		} 
 	}
 
@@ -434,15 +434,15 @@ vector<string> QueryEvaluator::affectsT(string leftArgument, string rightArgumen
 	return vector<string>();
 }
 
-vector<string> QueryEvaluator::patternIf(string leftArgument, string rightArgument) {
+vector<string> QueryEvaluator::patternIf(string synonym, string conditionalVariable) {
 	return vector<string>();
 }
 
-vector<string> QueryEvaluator::patternWhile(string leftArgument, string rightArgument) {
+vector<string> QueryEvaluator::patternWhile(string synonym, string conditionalVariable) {
 	return vector<string>();
 }
 
-vector<string> QueryEvaluator::patternAssign(string leftArgument, string rightArgument) {
+vector<string> QueryEvaluator::patternAssign(string synonym, string leftArgument, string rightArgument) {
 	vector<string> output;
 	if (formatter.isDoubleQuote(leftArgument) && formatter.isDoubleQuote(rightArgument)) {
 		string left = formatter.removeQuotes(leftArgument);
