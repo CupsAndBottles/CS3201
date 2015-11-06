@@ -6,7 +6,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting
 {
-	TEST_CLASS(TestQueryEvaluator)
+	TEST_CLASS(TestInputFormatter)
 	{
 	public:
 		InputFormatter formatter;

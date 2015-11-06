@@ -15,22 +15,38 @@ QueryNode::QueryNode(string syn, string val) {
 	synonym = syn;
 }
 
-void QueryNode::setParent(QueryNode* node){
-	this->parent = node;
+void QueryNode::insertParent(QueryNode* node) {
+	for (QueryNode* parent : parents) {
+		parent->removeChild(this);
+		parent->addChild(node);
+	}
+	node->addChild(this);
 }
 
-void QueryNode::destroy() {
+void QueryNode::removeParent(QueryNode* node) {
+	parents.erase(node);
+}
+
+void QueryNode::destroy(unordered_map<string, unordered_set<QueryNode*>>* encounteredEntities) {
 	if (!this->isRoot()) {
-		if (this->isOnlyChild()) {
-			parent->destroy();
-		} else {
-			parent->removeChild(this);
+		for (QueryNode* parent : parents) {
+			if (parent->hasOneChild()) {
+				parent->destroy(encounteredEntities);
+			} else {
+				parent->removeChild(this);
+			}
 		}
 	}
 
 	for (QueryNode* child : children) {
-		child->destroy();
+		if (child->hasOneParent()) {
+			child->destroy(encounteredEntities);
+		} else {
+			child->removeParent(this);
+		}
 	}
+
+	encounteredEntities->at(this->getValue()).erase(this);
 }
 
 void QueryNode::removeChild(QueryNode* node) {
@@ -39,13 +55,7 @@ void QueryNode::removeChild(QueryNode* node) {
 
 void QueryNode::addChild(QueryNode* node) {
 	children.insert(node);
-	node->setParent(this);
-}
-
-void QueryNode::addChild(string syn, string val) {
-	QueryNode newNode = QueryNode(syn, val);
-	newNode.setParent(this);
-	children.insert(&newNode);
+	node->insertParent(this);
 }
 
 unordered_set<QueryNode*> QueryNode::getChildren() {
@@ -60,14 +70,14 @@ string QueryNode::getSynonym() {
 	return synonym;
 }
 
-bool QueryNode::isOnlyChild()
-{
-	if (!this->isRoot()) {
-		return (int)parent->getChildren().size() == 1;
-	}
-	return false;
+bool QueryNode::isRoot() {
+	return (int)parents.size() == 0;
 }
 
-bool QueryNode::isRoot() {
-	return parent == NULL;
+bool QueryNode::hasOneChild() {
+	return (int)children.size() == 1;
+}
+
+bool QueryNode::hasOneParent() {
+	return (int)parents.size() == 1;
 }

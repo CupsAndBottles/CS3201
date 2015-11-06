@@ -9,6 +9,7 @@
 #include "InputFormatter.h"
 #include "Tnode.h"
 #include "QueryNode.h"
+#include "Helpers.h"
 
 #include <string>
 #include <vector>
@@ -28,9 +29,9 @@ private:
 	void getQueryData();
 	string getSelectClause();
 	string getEntityType(string s);
-	vector<string> evaluation();
+	vector<string> evaluateQuery();
 
-	vector<vector<string>> recordConditionClause(QueryObject temp);
+	vector<vector<string>> processClause(QueryObject temp);
 	//vector<string> evaluateConditionClause(string first,string second,string third);
 	vector<string> recordSelectClause(string s);
 

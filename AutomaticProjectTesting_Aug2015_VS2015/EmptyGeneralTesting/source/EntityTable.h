@@ -13,7 +13,13 @@ public:
 	string getType(string name);
 	void clear();
 	bool exist(string name);
+
 	static const string NON_EXISTANT;
-	static const string EntTable::VARIABLE;
-	static const string EntTable::PROCEDURE;
+	static const string VARIABLE;
+	static const string PROCEDURE;
+	static const string STATEMENT;
+	static const string PROGRAM_LINE;
+	static const string STATEMENT_ASSIGN;
+	static const string STATEMENT_WHILE;
+	static const string STATEMENT_IF;
 };
