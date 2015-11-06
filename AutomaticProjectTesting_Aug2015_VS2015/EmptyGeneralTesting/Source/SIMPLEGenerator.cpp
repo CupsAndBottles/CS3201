@@ -51,19 +51,26 @@ vector<string> generateAssigns(int assign, int brackets) {
 			assign_stmt += ")";
 		}
 
+		assign_stmt += ";";
 		assigns.push_back(assign_stmt);
 	}
 
 	return assigns;
 }
 
-void generateProgram(int procedures, int nesting, int assign, int brackets) {
+void generateProgram(int procedures, int nesting, int assign, int brackets, bool isCall) {
 	string fileName = "generatedSIMPLE.txt";
 	ofstream outputFile(fileName, ofstream::trunc);
 	vector<string> assigns;
 
 	for (int i = 0; i < procedures; i++) {
 		outputFile << "procedure p" << to_string(i) << " " << "{" << endl;
+
+		if (isCall && i < procedures - 1) {
+			for (int c = i+1; c < procedures; c++) {
+				outputFile << "call p" << to_string(c) << ";" << endl;
+			}
+		}
 
 		for (int k = 0; k < assign; k++) {
 			assigns = generateAssigns(assign,brackets);
@@ -122,7 +129,8 @@ void generateProgram(int procedures, int nesting, int assign, int brackets) {
 }
 
 void generateSIMPLE() {
-	string nesting, procedures, assign, brackets;
+	string nesting, procedures, assign, brackets, calls;
+	bool isCall;
 
 	cout << "Enter desired number of procedures as an integer:" << endl;
 	cin >> procedures;
@@ -136,5 +144,15 @@ void generateSIMPLE() {
 	cout << "Enter desired level of bracketing for each assign statement: " << endl;
 	cin >> brackets;
 
-	generateProgram(stoi(procedures), stoi(nesting), stoi(assign), stoi(brackets));
+	cout << "Enter 'true' if you want procedures to call others: " << endl;
+	cin >> calls;
+
+	if (calls.compare("true") == 0) {
+		isCall = true;
+	}
+	else {
+		isCall = false;
+	}
+
+	generateProgram(stoi(procedures), stoi(nesting), stoi(assign), stoi(brackets), isCall);
 }
