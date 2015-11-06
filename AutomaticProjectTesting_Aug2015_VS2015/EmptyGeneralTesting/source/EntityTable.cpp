@@ -1,6 +1,8 @@
 #include "EntityTable.h"
 
 const string EntTable::NON_EXISTANT = "non-existant";
+const string EntTable::VARIABLE = "variable";
+const string EntTable::PROCEDURE = "procedure";
 
 void EntTable::add(string name, string type) {
 	entityTable.insert(make_pair(name, type));

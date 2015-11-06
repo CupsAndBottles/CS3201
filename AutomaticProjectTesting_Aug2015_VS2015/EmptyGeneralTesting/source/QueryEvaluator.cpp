@@ -260,9 +260,9 @@ vector<string> QueryEvaluator::followT(string leftArgument, string rightArgument
 vector<string> QueryEvaluator::modify(string leftArgument, string rightArgument) {
 	vector<string> output;
 	if (formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT) == false
-		&& formatter.stringEqual(getEntityType(rightArgument), "variable")) {
+		&& formatter.stringEqual(getEntityType(rightArgument), EntTable::VARIABLE)) {
 		if (formatter.stringEqual(rightArgument, getSelectClause())) {
-			if (formatter.stringEqual(getEntityType(leftArgument), "procedure")) {
+			if (formatter.stringEqual(getEntityType(leftArgument), EntTable::PROCEDURE)) {
 				vector<string> temp = database.getProcedureNames();
 				for (size_t i = 0; i < temp.size(); i++) {
 					vector<string>temp1 = database.getVariablesModifiedBy(temp[i]);
@@ -282,7 +282,7 @@ vector<string> QueryEvaluator::modify(string leftArgument, string rightArgument)
 			}
 		}
 		else if (formatter.stringEqual(leftArgument, getSelectClause())) {
-			if (formatter.stringEqual(getEntityType(leftArgument), "procedure")) {
+			if (formatter.stringEqual(getEntityType(leftArgument), EntTable::PROCEDURE)) {
 				vector<string> temp = database.getVariableNames();
 				for (size_t i = 0; i < temp.size(); i++) {
 					vector<string>temp1 = database.getProceduresThatModify(temp[i]);
@@ -307,7 +307,7 @@ vector<string> QueryEvaluator::modify(string leftArgument, string rightArgument)
 	}
 
 	else if (formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT)
-		&& formatter.stringEqual(getEntityType(rightArgument), "variable")) {
+		&& formatter.stringEqual(getEntityType(rightArgument), EntTable::VARIABLE)) {
 		//check double quote, if yes for left, do proc, else do stmt
 		if (formatter.isDoubleQuote(leftArgument)) {
 			string procedure = formatter.removeQuotes(leftArgument);
@@ -321,7 +321,7 @@ vector<string> QueryEvaluator::modify(string leftArgument, string rightArgument)
 	else if (formatter.isDoubleQuote(rightArgument)
 		&& formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT) == false) {
 		string varName = formatter.removeQuotes(rightArgument);
-		if (formatter.stringEqual(getEntityType(leftArgument), "procedure")) { 			
+		if (formatter.stringEqual(getEntityType(leftArgument), EntTable::PROCEDURE)) {
 			return output = database.getProceduresThatModify(varName);
 		}
 		else {
@@ -336,9 +336,9 @@ vector<string> QueryEvaluator::modify(string leftArgument, string rightArgument)
 vector<string> QueryEvaluator::uses(string leftArgument, string rightArgument) {
 	vector<string> output;
 	if (formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT) == false
-		&& formatter.stringEqual(getEntityType(rightArgument), "variable")) {
+		&& formatter.stringEqual(getEntityType(rightArgument), EntTable::VARIABLE)) {
 		if (formatter.stringEqual(rightArgument, getSelectClause())) {
-			if (formatter.stringEqual(getEntityType(leftArgument), "procedure")) {
+			if (formatter.stringEqual(getEntityType(leftArgument), EntTable::PROCEDURE)) {
 				vector<string> temp = database.getProcedureNames();
 				for (size_t i = 0; i < temp.size(); i++) {
 					vector<string>temp1 = database.getVariablesUsedBy(temp[i]);
@@ -358,7 +358,7 @@ vector<string> QueryEvaluator::uses(string leftArgument, string rightArgument) {
 			}
 		}
 		else if (formatter.stringEqual(leftArgument, getSelectClause())) {
-			if (formatter.stringEqual(getEntityType(leftArgument), "procedure")) {
+			if (formatter.stringEqual(getEntityType(leftArgument), EntTable::PROCEDURE)) {
 				vector<string> temp = database.getVariableNames();
 				for (size_t i = 0; i < temp.size(); i++) {
 					vector<string>temp1 = database.getProceduresThatUse(temp[i]);
@@ -383,7 +383,7 @@ vector<string> QueryEvaluator::uses(string leftArgument, string rightArgument) {
 	}
 
 	else if (formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT)
-		&& formatter.stringEqual(getEntityType(rightArgument), "variable")) {
+		&& formatter.stringEqual(getEntityType(rightArgument), EntTable::VARIABLE)) {
 		//check double quote, if yes for left, do proc, else do stmt
 		if (formatter.isDoubleQuote(leftArgument)) {
 			string procedure = formatter.removeQuotes(leftArgument);
@@ -397,7 +397,7 @@ vector<string> QueryEvaluator::uses(string leftArgument, string rightArgument) {
 	else if (formatter.isDoubleQuote(rightArgument)
 		&& formatter.stringEqual(getEntityType(leftArgument), EntTable::NON_EXISTANT) == false) {
 		string varName = formatter.removeQuotes(rightArgument);
-		if (formatter.stringEqual(getEntityType(leftArgument), "procedure")) {
+		if (formatter.stringEqual(getEntityType(leftArgument), EntTable::PROCEDURE)) {
 			return output = database.getProceduresThatUse(varName);
 		}
 		else {

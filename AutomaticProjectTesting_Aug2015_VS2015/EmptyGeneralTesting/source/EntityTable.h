@@ -14,4 +14,6 @@ public:
 	void clear();
 	bool exist(string name);
 	static const string NON_EXISTANT;
+	static const string EntTable::VARIABLE;
+	static const string EntTable::PROCEDURE;
 };
