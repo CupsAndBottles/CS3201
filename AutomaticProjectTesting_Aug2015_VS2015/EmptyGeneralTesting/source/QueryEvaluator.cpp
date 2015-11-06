@@ -118,6 +118,22 @@ unordered_set<QueryNode*> QueryEvaluator::getQNodes(string s) {
 	return encounteredEntities.at(s);
 }
 
+void QueryEvaluator::addToRoot(unordered_set<QueryNode*> newRoots) {
+	unordered_set<QueryNode*> currentRoots = queryTreeRoot->getChildren();
+	for (QueryNode* newRoot : newRoots) {
+		for (QueryNode* oldRoot : currentRoots) {
+			oldRoot->insertParent(newRoot);
+		}
+	}
+}
+
+void QueryEvaluator::addToRoot(QueryNode* newRoot) {
+	unordered_set<QueryNode*> currentRoots = queryTreeRoot->getChildren();
+	for (QueryNode* oldRoot : currentRoots) {
+		oldRoot->insertParent(newRoot);
+	}
+}
+
 //for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.
 vector<string> QueryEvaluator::evaluateQuery() {
 	this->queryTreeRoot = &QueryNode();

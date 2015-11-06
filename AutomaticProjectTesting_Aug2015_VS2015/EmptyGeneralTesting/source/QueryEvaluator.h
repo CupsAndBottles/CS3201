@@ -55,6 +55,8 @@ private:
 	vector<string> patternWhile(string synonym, string conditionalVariable);
 
 	QueryNode* queryTreeRoot;
+	void addToRoot(unordered_set<QueryNode*> roots);
+	void addToRoot(QueryNode* newRoot);
 	bool isSynonym(string s);
 	bool isVariable(string s);
 	bool isProcedure(string s);
