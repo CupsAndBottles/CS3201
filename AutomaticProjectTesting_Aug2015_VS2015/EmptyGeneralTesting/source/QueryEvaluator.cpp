@@ -26,6 +26,32 @@ string QueryEvaluator::getSelectClause() {
 	return selectClause.front();
 }
 
+bool QueryEvaluator::queryHasResult() {
+	return false;
+}
+
+list<string> QueryEvaluator::evaluateSelect() {
+	list<string> results;
+	if (!queryHasResult()) {
+		return results;
+	}
+
+	for (string entity : selectClause) {
+		if (encountered(entity)) {
+			unordered_set<QueryNode*> entityResults = encounteredEntities.at(entity);
+			for (QueryNode* entityResult : entityResults) {
+				results.push_back(entityResult->getValue());
+			}
+		}
+		else {
+			string entityType = getEntityType(entity);
+			list<string> entityValues = selectAll(entityType);
+			results.splice(results.begin(), entityValues);
+		}
+	}
+	return results;
+}
+
 list<string> QueryEvaluator::selectAll(string entityType) {
 	list<string> results;
 	if (entityType == EntTable::PROCEDURE) {

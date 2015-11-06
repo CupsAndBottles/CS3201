@@ -30,6 +30,8 @@ private:
 	string getSelectClause();
 	string getEntityType(string s);
 	vector<string> evaluateQuery();
+	bool queryHasResult();
+	list<string> evaluateSelect();
 	list<string> selectAll(string entityType);
 
 	vector<vector<string>> processClause(QueryObject temp);
