@@ -20,7 +20,7 @@ class QueryEvaluator
 {
 public:
 	QueryEvaluator();
-	QueryEvaluator(ProgramKnowledgeBase storePkb);
+	QueryEvaluator(ProgramKnowledgeBase* pkb);
 	
 	list<string> getResults(string input);
 	

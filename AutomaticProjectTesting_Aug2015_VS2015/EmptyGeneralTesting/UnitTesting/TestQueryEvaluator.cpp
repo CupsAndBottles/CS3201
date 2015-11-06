@@ -33,7 +33,7 @@ namespace UnitTesting
 			db->buildDatabase(parsedProgram);
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 
-			QueryEvaluator qe = QueryEvaluator(pkb);
+			QueryEvaluator qe = QueryEvaluator(&pkb);
 			list<string> output=qe.getResults("variable v; Select v");
 			Assert::AreEqual(3, int(output.size()));
 			string test;

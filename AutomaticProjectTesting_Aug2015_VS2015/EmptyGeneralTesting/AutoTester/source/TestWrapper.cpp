@@ -31,7 +31,7 @@ void TestWrapper::parse(std::string filename) {
 		pkb = ProgramKnowledgeBase(db);
 
 		cout << "Successfully constructed PKB.\n";
-		evaluator = QueryEvaluator(pkb);
+		evaluator = QueryEvaluator(&pkb);
 		cout << "Successfully constructed QueryEvaluator.\n";
 	}
 	else {

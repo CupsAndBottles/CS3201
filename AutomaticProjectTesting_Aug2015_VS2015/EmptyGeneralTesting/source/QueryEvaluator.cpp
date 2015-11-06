@@ -6,8 +6,8 @@ using namespace std;
 QueryEvaluator::QueryEvaluator() {
 	//default constructor
 }
-QueryEvaluator::QueryEvaluator(ProgramKnowledgeBase storePkb) {
-	database = storePkb;
+QueryEvaluator::QueryEvaluator(ProgramKnowledgeBase* pkb) {
+	database = *pkb;
 }
 
 //Autotester test driver function
@@ -16,7 +16,7 @@ list<string> QueryEvaluator::getResults (string query) {
 }
 
 //get data from preprocessor
-void QueryEvaluator:: getQueryData() {
+void QueryEvaluator::getQueryData() {
 	selectClause = preprocessor.getEntities();
 	declaration = preprocessor.getEntityTable();
 }
