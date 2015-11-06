@@ -1,4 +1,5 @@
-#pragma once
+#ifndef EntityTable_HEADER
+#define EntityTable_HEADER
 #include <unordered_map>
 #include <string>
 
@@ -23,4 +24,7 @@ public:
 	static const string STATEMENT_ASSIGN;
 	static const string STATEMENT_WHILE;
 	static const string STATEMENT_IF;
+	static const string CALL;
 };
+
+#endif

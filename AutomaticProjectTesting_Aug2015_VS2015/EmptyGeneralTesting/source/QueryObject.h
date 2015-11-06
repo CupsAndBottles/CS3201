@@ -1,7 +1,10 @@
 #ifndef QueryObject_HEADER
 #define QueryObject_HEADER
+#include "EntityTable.h"
+
 #include <string>
 #include <iostream>
+
 
 using namespace std;
 
@@ -32,6 +35,12 @@ public:
 	string getFirstArgument();
 	string getSecondArgument();
 	void toString();
+
+	int getDifficultyRank();
+	int getNumUnknownRank();
+
+private:
+	bool isUnknown(string s);
 };
 
 #endif

@@ -26,7 +26,6 @@
     <ClInclude Include="..\source\QueryNode.h" />
     <ClInclude Include="..\Source\QueryObject.h" />
     <ClInclude Include="..\Source\QueryPreProcessor.h" />
-    <ClInclude Include="..\source\QueryTree.h" />
     <ClInclude Include="..\Source\RelationshipTable.h" />
     <ClInclude Include="..\Source\SemanticsCheck.h" />
     <ClInclude Include="..\source\SIMPLEGenerator.h" />
@@ -52,7 +51,6 @@
     <ClCompile Include="..\source\QueryNode.cpp" />
     <ClCompile Include="..\Source\QueryObject.cpp" />
     <ClCompile Include="..\Source\QueryPreProcessor.cpp" />
-    <ClCompile Include="..\source\QueryTree.cpp" />
     <ClCompile Include="..\Source\RelationshipTable.cpp" />
     <ClCompile Include="..\Source\SemanticsCheck.cpp" />
     <ClCompile Include="..\source\SIMPLEGenerator.cpp" />

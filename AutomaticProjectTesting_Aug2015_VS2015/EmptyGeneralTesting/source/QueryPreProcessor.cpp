@@ -14,11 +14,29 @@ vector<string> split(const string &s, char delim) {
 }
 */
 
+
 SemanticsCheck sCheck;
 EntTable entityTable;
 vector<string> entityList;
 vector<QueryObject> queryList;
 RelationshipTable relTable;
+
+static bool sortQueries(QueryObject obj1, QueryObject obj2) {
+	if (obj1.getNumUnknownRank() < obj2.getNumUnknownRank()) {
+		return true;
+	}
+	else if (obj1.getNumUnknownRank() == obj2.getNumUnknownRank()) {
+		if (obj1.getDifficultyRank() < obj2.getDifficultyRank()) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	else {
+		return false;
+	}
+}
 
 vector<string> QueryPreProcessor::split(string s, string delim) {
 	stringstream stringStream(s);
@@ -690,9 +708,9 @@ bool QueryPreProcessor::query(string s) {
 
 	//Query Done
 	cout << "Query is valid" << endl;
+	sort(queryList.begin(), queryList.end(), sortQueries);
 	return true;
 }
-
 
 EntTable QueryPreProcessor::getEntityTable() {
 	return entityTable;
