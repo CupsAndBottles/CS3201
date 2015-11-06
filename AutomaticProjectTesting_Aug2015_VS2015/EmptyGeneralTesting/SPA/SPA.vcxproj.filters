@@ -81,10 +81,10 @@
     <ClInclude Include="..\source\SIMPLEGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="QueryNode.h">
+    <ClInclude Include="..\source\QueryTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="QueryTree.h">
+    <ClInclude Include="..\source\QueryNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -155,10 +155,10 @@
     <ClCompile Include="..\source\SIMPLEGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="QueryNode.cpp">
+    <ClCompile Include="..\source\QueryTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="QueryTree.cpp">
+    <ClCompile Include="..\source\QueryNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
