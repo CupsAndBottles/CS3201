@@ -698,7 +698,7 @@ EntTable QueryPreProcessor::getEntityTable() {
 	return entityTable;
 }
 
-vector<string> QueryPreProcessor::getEntities() {
+vector<string> QueryPreProcessor::getSelectEntities() {
 	return entityList;
 }
 
