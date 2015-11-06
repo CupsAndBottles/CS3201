@@ -45,45 +45,49 @@ vector<string> QueryEvaluator::recordSelectClause(string s) {
 	return output;
 }
 
-vector<vector<string>> QueryEvaluator::recordConditionClause(QueryObject temp) {
-	string first=temp.getRelation();
-	string second=temp.getFirstArgument();
-	string third=temp.getSecondArgument();
+vector<vector<string>> QueryEvaluator::recordConditionClause(QueryObject clause) {
+	string relationType = clause.getRelation();
+	string lhs = clause.getFirstArgument();
+	string rhs = clause.getSecondArgument();
 	vector<vector<string>>output;
-
-	if (formatter.stringEqual(first, QueryObject::RelationType_MODIFIES)) {
-		return output;
-	} else if (formatter.stringEqual(first, QueryObject::RelationType_USES)) {
-		return output;
-	} else if (formatter.stringEqual(first, QueryObject::RelationType_CALLS)) {
-		return output;
-	} else if (formatter.stringEqual(first, QueryObject::RelationType_CALLSSTAR)) {
-		return output;
-	} else if (formatter.stringEqual(first, QueryObject::RelationType_PARENT)) {
-		return output;
-	} else if (formatter.stringEqual(first, QueryObject::RelationType_PARENTSTAR)) {
-		return output;
-	} else if (formatter.stringEqual(first, QueryObject::RelationType_FOLLOWS)) {
-		return output;
-	} else if (formatter.stringEqual(first, QueryObject::RelationType_FOLLOWSSTAR)) {
-		return output;
-	} else if (formatter.stringEqual(first, QueryObject::RelationType_NEXT)) {
-		return output;
-	} else if (formatter.stringEqual(first, QueryObject::RelationType_NEXTSTAR)) {
-		return output;
-	} else if (formatter.stringEqual(first, QueryObject::RelationType_AFFECTS)) {
-		return output;
-	} else if (formatter.stringEqual(first, QueryObject::RelationType_AFFECTSSTAR)) {
-		return output;
-	} else if (formatter.stringEqual(declaration.getType(first), QueryObject::RelationType_PATTERN_ASSIGN)) {
-		return output;
-	} else if (formatter.stringEqual(declaration.getType(first), QueryObject::RelationType_PATTERN_WHILE)) {
-		return output;
-	} else if (formatter.stringEqual(declaration.getType(first), QueryObject::RelationType_PATTERN_IF)) {
-		return output;
+	
+	if (formatter.stringEqual(relationType, QueryObject::RelationType_MODIFIES)) {
+		modify(lhs, rhs);
+	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_USES)) {
+		uses(lhs, rhs);
+	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_CALLS)) {
+		calls(lhs, rhs);
+	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_CALLSSTAR)) {
+		callsT(lhs, rhs);
+	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_PARENT)) {
+		parent(lhs, rhs);
+	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_PARENTSTAR)) {
+		parentT(lhs, rhs);
+	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_FOLLOWS)) {
+		follow(lhs, rhs);
+	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_FOLLOWSSTAR)) {
+		followT(lhs, rhs);
+	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_NEXT)) {
+		next(lhs, rhs);
+	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_NEXTSTAR)) {
+		nextT(lhs, rhs);
+	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_AFFECTS)) {
+		affects(lhs, rhs);
+	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_AFFECTSSTAR)) {
+		affectsT(lhs, rhs);
 	} else {
-		return output;
+		// check for patterns
+		string patternType = declaration.getType(relationType);
+		if (formatter.stringEqual(patternType, QueryObject::RelationType_PATTERN_ASSIGN)) {
+			patternAssign(lhs, rhs);
+		} else if (formatter.stringEqual(patternType, QueryObject::RelationType_PATTERN_WHILE)) {
+			patternWhile(lhs, rhs);
+		} else if (formatter.stringEqual(patternType, QueryObject::RelationType_PATTERN_IF)) {
+			patternIf(lhs, rhs);
+		} 
 	}
+
+	return output;
 }
 
 vector<string> QueryEvaluator::parent(string leftArgument, string rightArgument) {
