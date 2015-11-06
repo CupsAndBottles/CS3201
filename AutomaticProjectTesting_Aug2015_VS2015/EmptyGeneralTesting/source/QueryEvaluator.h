@@ -23,7 +23,7 @@ public:
 	QueryEvaluator();
 	QueryEvaluator(ProgramKnowledgeBase* pkb);
 	
-	list<string> getResults(string input);
+	list<string> getResults(string inputQuery);
 
 private:
 	void getQueryData();

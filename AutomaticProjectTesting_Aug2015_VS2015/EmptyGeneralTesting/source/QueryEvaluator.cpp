@@ -11,8 +11,15 @@ QueryEvaluator::QueryEvaluator(ProgramKnowledgeBase* pkb) {
 }
 
 //Autotester test driver function
-list<string> QueryEvaluator::getResults (string query) {
-	return list<string>();
+list<string> QueryEvaluator::getResults (string inputQuery) {
+	list<string> results = list<string>();
+	bool isValidQuery = preprocessor.query(inputQuery);
+	if (isValidQuery) {
+		getQueryData();
+		evaluateQuery();
+		results = evaluateSelect();
+	} 
+	return results;
 }
 
 //get data from preprocessor
