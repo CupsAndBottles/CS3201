@@ -38,6 +38,10 @@ bool QueryEvaluator::isVariable(string s){
 	return declaration.getType(s) != EntTable::VARIABLE;
 }
 
+bool QueryEvaluator::isProcedure(string s) {
+	return declaration.getType(s) != EntTable::PROCEDURE;
+}
+
 //for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.
 vector<string> QueryEvaluator::evaluation() {
 	this->queryTreeRoot = &QueryNode();
@@ -259,7 +263,7 @@ vector<string> QueryEvaluator::modifies(string leftArgument, string rightArgumen
 	vector<string> output;
 	if (isSynonym(leftArgument) && isVariable(rightArgument)) {
 		if (formatter.stringEqual(rightArgument, getSelectClause())) {
-			if (formatter.stringEqual(getEntityType(leftArgument), EntTable::PROCEDURE)) {
+			if (isProcedure(leftArgument)) {
 				vector<string> temp = database.getProcedureNames();
 				for (size_t i = 0; i < temp.size(); i++) {
 					vector<string>temp1 = database.getVariablesModifiedBy(temp[i]);
@@ -279,7 +283,7 @@ vector<string> QueryEvaluator::modifies(string leftArgument, string rightArgumen
 			}
 		}
 		else if (formatter.stringEqual(leftArgument, getSelectClause())) {
-			if (formatter.stringEqual(getEntityType(leftArgument), EntTable::PROCEDURE)) {
+			if (isProcedure(leftArgument)) {
 				vector<string> temp = database.getVariableNames();
 				for (size_t i = 0; i < temp.size(); i++) {
 					vector<string>temp1 = database.getProceduresThatModify(temp[i]);
@@ -317,7 +321,7 @@ vector<string> QueryEvaluator::modifies(string leftArgument, string rightArgumen
 	else if (formatter.isDoubleQuote(rightArgument)
 		&& isSynonym(leftArgument)) {
 		string varName = formatter.removeQuotes(rightArgument);
-		if (formatter.stringEqual(getEntityType(leftArgument), EntTable::PROCEDURE)) {
+		if (isProcedure(leftArgument)) {
 			return output = database.getProceduresThatModify(varName);
 		}
 		else {
@@ -333,7 +337,7 @@ vector<string> QueryEvaluator::uses(string leftArgument, string rightArgument) {
 	vector<string> output;
 	if (isSynonym(leftArgument) && isVariable(rightArgument)) {
 		if (formatter.stringEqual(rightArgument, getSelectClause())) {
-			if (formatter.stringEqual(getEntityType(leftArgument), EntTable::PROCEDURE)) {
+			if (isProcedure(leftArgument)) {
 				vector<string> temp = database.getProcedureNames();
 				for (size_t i = 0; i < temp.size(); i++) {
 					vector<string>temp1 = database.getVariablesUsedBy(temp[i]);
@@ -353,7 +357,7 @@ vector<string> QueryEvaluator::uses(string leftArgument, string rightArgument) {
 			}
 		}
 		else if (formatter.stringEqual(leftArgument, getSelectClause())) {
-			if (formatter.stringEqual(getEntityType(leftArgument), EntTable::PROCEDURE)) {
+			if (isProcedure(leftArgument)) {
 				vector<string> temp = database.getVariableNames();
 				for (size_t i = 0; i < temp.size(); i++) {
 					vector<string>temp1 = database.getProceduresThatUse(temp[i]);
@@ -391,7 +395,7 @@ vector<string> QueryEvaluator::uses(string leftArgument, string rightArgument) {
 	else if (formatter.isDoubleQuote(rightArgument)
 		&& isSynonym(leftArgument)) {
 		string varName = formatter.removeQuotes(rightArgument);
-		if (formatter.stringEqual(getEntityType(leftArgument), EntTable::PROCEDURE)) {
+		if (isProcedure(leftArgument)) {
 			return output = database.getProceduresThatUse(varName);
 		}
 		else {
