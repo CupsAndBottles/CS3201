@@ -9,6 +9,7 @@
 #include "InputFormatter.h"
 #include "Tnode.h"
 #include "QueryNode.h"
+#include "Helpers.h"
 
 #include <string>
 #include <vector>
