@@ -23,19 +23,15 @@ public:
 	QueryEvaluator(ProgramKnowledgeBase* pkb);
 	
 	list<string> getResults(string input);
-	
+
+private:
 	void getQueryData();
-
 	string getSelectClause();
-
 	string getEntityType(string s);
-
 	vector<string> evaluation();
 
 	vector<vector<string>> recordConditionClause(QueryObject temp);
-
 	//vector<string> evaluateConditionClause(string first,string second,string third);
-
 	vector<string> recordSelectClause(string s);
 
 	vector<string> parent(string leftArgument, string rightArgument);
@@ -54,7 +50,6 @@ public:
 	vector<string> patternIf(string synonym, string conditionalVariable);
 	vector<string> patternWhile(string synonym, string conditionalVariable);
 
-private:
 	QueryNode* queryTreeRoot;
 	bool isSynonym(string s);
 
