@@ -50,43 +50,38 @@ vector<vector<string>> QueryEvaluator::recordConditionClause(QueryObject temp) {
 	string second=temp.getFirstArgument();
 	string third=temp.getSecondArgument();
 	vector<vector<string>>output;
+
 	if (formatter.stringEqual(first, QueryObject::RelationType_MODIFIES)) {
 		return output;
-	}
-	else if (formatter.stringEqual(first, QueryObject::RelationType_USES)) {
+	} else if (formatter.stringEqual(first, QueryObject::RelationType_USES)) {
 		return output;
-	}
-	else if (formatter.stringEqual(first, QueryObject::RelationType_CALLS)) {
+	} else if (formatter.stringEqual(first, QueryObject::RelationType_CALLS)) {
 		return output;
-	}
-	else if (formatter.stringEqual(first, QueryObject::RelationType_PARENT)) {
+	} else if (formatter.stringEqual(first, QueryObject::RelationType_CALLSSTAR)) {
 		return output;
-	}
-	else if (formatter.stringEqual(first, QueryObject::RelationType_PARENTSTAR)) {
+	} else if (formatter.stringEqual(first, QueryObject::RelationType_PARENT)) {
 		return output;
-	}
-	else if (formatter.stringEqual(first, QueryObject::RelationType_FOLLOWS)) {
+	} else if (formatter.stringEqual(first, QueryObject::RelationType_PARENTSTAR)) {
 		return output;
-	}
-	else if (formatter.stringEqual(first, QueryObject::RelationType_FOLLOWSSTAR)) {
+	} else if (formatter.stringEqual(first, QueryObject::RelationType_FOLLOWS)) {
 		return output;
-	}
-	else if (formatter.stringEqual(first, QueryObject::RelationType_NEXT)) {
+	} else if (formatter.stringEqual(first, QueryObject::RelationType_FOLLOWSSTAR)) {
 		return output;
-	}
-	else if (formatter.stringEqual(first, QueryObject::RelationType_NEXTSTAR)) {
+	} else if (formatter.stringEqual(first, QueryObject::RelationType_NEXT)) {
 		return output;
-	}
-	else if (formatter.stringEqual(declaration.getType(first), QueryObject::RelationType_PATTERN_ASSIGN)) {
+	} else if (formatter.stringEqual(first, QueryObject::RelationType_NEXTSTAR)) {
 		return output;
-	}
-	else if (formatter.stringEqual(declaration.getType(first), QueryObject::RelationType_PATTERN_WHILE)) {
+	} else if (formatter.stringEqual(first, QueryObject::RelationType_AFFECTS)) {
 		return output;
-	}
-	else if (formatter.stringEqual(declaration.getType(first), QueryObject::RelationType_PATTERN_IF)) {
+	} else if (formatter.stringEqual(first, QueryObject::RelationType_AFFECTSSTAR)) {
 		return output;
-	}
-	else {
+	} else if (formatter.stringEqual(declaration.getType(first), QueryObject::RelationType_PATTERN_ASSIGN)) {
+		return output;
+	} else if (formatter.stringEqual(declaration.getType(first), QueryObject::RelationType_PATTERN_WHILE)) {
+		return output;
+	} else if (formatter.stringEqual(declaration.getType(first), QueryObject::RelationType_PATTERN_IF)) {
+		return output;
+	} else {
 		return output;
 	}
 }
