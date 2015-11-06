@@ -78,6 +78,7 @@ public:
 	vector<int> getStatementsOfType(Tnode::Type type);
 	vector<string> getVariableNames();
 	vector<string> getProcedureNames();
+	vector<int> getConstants();
 	int getNumberOfStatements();
 
 	vector<int> getStatementsThatMatchPattern(Tnode::Type type, string var, string expr);
@@ -98,6 +99,7 @@ private:
 	StmtTable* statementTable;
 	VarTable* varTable;
 	ProcTable* procTable;
+	ConstTable* constantTable;
 	void initializeTables();
 
 	// use adjacency lists to store relations as a sparse graph is expected.
