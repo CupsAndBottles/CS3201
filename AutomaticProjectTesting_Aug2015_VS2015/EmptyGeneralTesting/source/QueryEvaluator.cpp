@@ -48,7 +48,7 @@ void QueryEvaluator::addToEncounteredEntities(QueryNode* input) {
 	} else {
 		unordered_set<QueryNode*> newSet = unordered_set<QueryNode*>();
 		newSet.insert(input);
-		encounteredEntities.insert(make_pair(input->getValue(), newSet));
+		encounteredEntities.insert({input->getValue(), newSet});
 	}
 }
 
@@ -60,7 +60,6 @@ unordered_set<QueryNode*> QueryEvaluator::getQNodes(string s) {
 	// assumes string already exists in encounteredEntities
 	return encounteredEntities.at(s);
 }
-
 
 //for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.
 vector<string> QueryEvaluator::evaluation() {

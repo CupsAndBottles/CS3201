@@ -13,7 +13,8 @@ public:
 	~QueryNode();
 	QueryNode(string synonym, string ans);
 
-	void QueryNode::setParent(QueryNode* node);
+	void setParent(QueryNode* node);
+	void insertParent(QueryNode node);
 	void destroy();
 	void removeChild(QueryNode * node);
 	void addChild(QueryNode* node);

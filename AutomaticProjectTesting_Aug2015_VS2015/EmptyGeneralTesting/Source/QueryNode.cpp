@@ -15,8 +15,15 @@ QueryNode::QueryNode(string syn, string val) {
 	synonym = syn;
 }
 
+// might not be needed
 void QueryNode::setParent(QueryNode* node){
-	this->parent = node;
+	node->addChild(this);
+}
+
+void QueryNode::insertParent(QueryNode node){
+	this->parent->removeChild(this);
+	this->parent->addChild(&node);
+	node.addChild(this);
 }
 
 void QueryNode::destroy() {
