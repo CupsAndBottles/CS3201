@@ -23,13 +23,16 @@ public:
 	QueryEvaluator();
 	QueryEvaluator(ProgramKnowledgeBase* pkb);
 	
-	list<string> getResults(string input);
+	list<string> getResults(string inputQuery);
 
 private:
 	void getQueryData();
 	string getSelectClause();
 	string getEntityType(string s);
 	vector<string> evaluateQuery();
+	bool queryHasResult();
+	list<string> evaluateSelect();
+	list<string> selectAll(string entityType);
 
 	vector<vector<string>> processClause(QueryObject temp);
 	//vector<string> evaluateConditionClause(string first,string second,string third);
@@ -42,6 +45,10 @@ private:
 	vector<string> modifies(string leftArgument, string rightArgument);
 	vector<string> uses(string leftArgument, string rightArgument);
 	vector<string> calls(string leftArgument, string rightArgument);
+	void calls_BothSynonyms(string leftArgument, string rightArgument);
+	void calls_LeftSynonym(string leftArgument, string rightArgument);
+	void calls_RightSynonym(string leftArgument, string rightArgument);
+
 	vector<string> callsT(string leftArgument, string rightArgument);
 	vector<string> next(string leftArgument, string rightArgument);
 	vector<string> nextT(string leftArgument, string rightArgument);
@@ -52,6 +59,8 @@ private:
 	vector<string> patternWhile(string synonym, string conditionalVariable);
 
 	QueryNode* queryTreeRoot;
+	void addToRoot(unordered_set<QueryNode*> roots);
+	void addToRoot(QueryNode* newRoot);
 	bool isSynonym(string s);
 	bool isVariable(string s);
 	bool isProcedure(string s);

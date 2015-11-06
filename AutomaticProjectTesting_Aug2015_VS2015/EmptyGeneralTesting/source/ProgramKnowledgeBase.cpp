@@ -8,6 +8,7 @@ ProgramKnowledgeBase::ProgramKnowledgeBase() {
 	statementTable = NULL;
 	procTable = NULL;
 	varTable = NULL;
+	constantTable = NULL;
 	initializeTables();
 }
 
@@ -16,6 +17,7 @@ ProgramKnowledgeBase::ProgramKnowledgeBase(Database* db) {
 	statementTable = db->getStatementTable();
 	procTable = db->getProcedureTable();
 	varTable = db->getVariableTable();
+	constantTable = db->getConstantTable();
 	initializeTables();
 	calculateRelations(abstractSyntaxTree);
 	buildDataDependencyGraph();
@@ -734,6 +736,10 @@ vector<string> ProgramKnowledgeBase::getProcedureNames() {
 		results[i] = procTable->getProcedureName(i);
 	}
 	return results;
+}
+
+vector<int> ProgramKnowledgeBase::getConstants() {
+	return constantTable->getConstants();
 }
 
 int ProgramKnowledgeBase::getNumberOfStatements() {

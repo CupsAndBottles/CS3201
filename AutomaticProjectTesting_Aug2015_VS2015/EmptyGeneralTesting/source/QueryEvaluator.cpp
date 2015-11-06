@@ -11,8 +11,15 @@ QueryEvaluator::QueryEvaluator(ProgramKnowledgeBase* pkb) {
 }
 
 //Autotester test driver function
-list<string> QueryEvaluator::getResults (string query) {
-	return list<string>();
+list<string> QueryEvaluator::getResults (string inputQuery) {
+	list<string> results = list<string>();
+	bool isValidQuery = preprocessor.query(inputQuery);
+	if (isValidQuery) {
+		getQueryData();
+		evaluateQuery();
+		results = evaluateSelect();
+	} 
+	return results;
 }
 
 //get data from preprocessor
@@ -26,7 +33,56 @@ string QueryEvaluator::getSelectClause() {
 	return selectClause.front();
 }
 
-//might not be needed
+bool QueryEvaluator::queryHasResult() {
+	return false;
+}
+
+list<string> QueryEvaluator::evaluateSelect() {
+	list<string> results;
+	if (!queryHasResult()) {
+		return results;
+	}
+
+	for (string entity : selectClause) {
+		if (encountered(entity)) {
+			unordered_set<QueryNode*> entityResults = encounteredEntities.at(entity);
+			for (QueryNode* entityResult : entityResults) {
+				results.push_back(entityResult->getValue());
+			}
+		}
+		else {
+			string entityType = getEntityType(entity);
+			list<string> entityValues = selectAll(entityType);
+			results.splice(results.begin(), entityValues);
+		}
+	}
+	return results;
+}
+
+list<string> QueryEvaluator::selectAll(string entityType) {
+	list<string> results;
+	if (entityType == EntTable::PROCEDURE) {
+		results = Helpers::stringVectorToStringList(database.getProcedureNames());
+	} else if (entityType == EntTable::VARIABLE) {
+		results = Helpers::stringVectorToStringList(database.getVariableNames());
+	} else if (entityType == EntTable::STATEMENT_ASSIGN) {
+		results = Helpers::intVectorToStringList(database.getStatementsOfType(Tnode::STMT_ASSIGN));
+	} else if (entityType == EntTable::STATEMENT_WHILE) {
+		results = Helpers::intVectorToStringList(database.getStatementsOfType(Tnode::STMT_WHILE));
+	} else if (entityType == EntTable::STATEMENT_IF) {
+		results = Helpers::intVectorToStringList(database.getStatementsOfType(Tnode::STMT_IF));
+	} else if (entityType == EntTable::STATEMENT || entityType == EntTable::PROGRAM_LINE) {
+		int numberOfStatements = database.getNumberOfStatements();
+		for (int i = 1; i <= numberOfStatements; i++) {
+			results.push_back(formatter.intToString(i));
+		}
+	} else if (entityType == EntTable::CONSTANT) {
+		vector<int> constants = database.getConstants();
+		results = Helpers::intVectorToStringList(constants);
+	}
+	return results;
+}
+
 string QueryEvaluator::getEntityType(string s) {
 	return declaration.getType(s);
 }
@@ -60,6 +116,22 @@ bool QueryEvaluator::encountered(string s) {
 unordered_set<QueryNode*> QueryEvaluator::getQNodes(string s) {
 	// assumes string already exists in encounteredEntities
 	return encounteredEntities.at(s);
+}
+
+void QueryEvaluator::addToRoot(unordered_set<QueryNode*> newRoots) {
+	unordered_set<QueryNode*> currentRoots = queryTreeRoot->getChildren();
+	for (QueryNode* newRoot : newRoots) {
+		for (QueryNode* oldRoot : currentRoots) {
+			oldRoot->insertParent(newRoot);
+		}
+	}
+}
+
+void QueryEvaluator::addToRoot(QueryNode* newRoot) {
+	unordered_set<QueryNode*> currentRoots = queryTreeRoot->getChildren();
+	for (QueryNode* oldRoot : currentRoots) {
+		oldRoot->insertParent(newRoot);
+	}
 }
 
 //for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.
@@ -428,7 +500,98 @@ vector<string> QueryEvaluator::uses(string leftArgument, string rightArgument) {
 }
 
 vector<string> QueryEvaluator::calls(string leftArgument, string rightArgument) {
+	bool leftSynonym = isSynonym(leftArgument);
+	bool rightSynonym = isSynonym(rightArgument);
+	if (leftSynonym && rightSynonym) {
+		calls_BothSynonyms(leftArgument, rightArgument);
+	} else if (leftSynonym) {
+		calls_LeftSynonym(leftArgument, rightArgument);
+	} else if (rightSynonym) {
+		calls_RightSynonym(leftArgument, rightArgument);
+	}
+
 	return vector<string>();
+}
+
+void QueryEvaluator::calls_BothSynonyms(string leftArgument, string rightArgument) {
+	bool leftEncountered = encountered(leftArgument);
+	bool rightEncountered = encountered(rightArgument);
+
+	if (leftEncountered && rightEncountered) {
+		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
+		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
+		for (QueryNode* leftNode : leftNodes) {
+			for (QueryNode* rightNode : rightNodes) {
+				bool result = database.calls(leftNode->getValue(), rightNode->getValue());
+				if (result) {
+					leftNode->insertParent(rightNode);
+					rightNode->insertParent(leftNode);
+				}
+				else {
+					leftNode->destroy(&encounteredEntities);
+					rightNode->destroy(&encounteredEntities);
+				}
+			}
+		}
+	}
+	else if (leftEncountered) {
+		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
+		for (QueryNode* leftNode : leftNodes) {
+			vector<string> results = database.getProceduresCalledBy(leftNode->getValue());
+			if (results.empty()) {
+				leftNode->destroy(&encounteredEntities);
+			}
+			else {
+				unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
+				for (string result : results) {
+					QueryNode newNode = QueryNode(rightArgument, result);
+					leftNode->insertParent(&newNode);
+					rightNodes.insert(&newNode);
+				}
+				encounteredEntities.insert({ rightArgument, rightNodes });
+			}
+		}
+	}
+	else if (rightEncountered) {
+		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
+		for (QueryNode* rightNode : rightNodes) {
+			vector<string> results = database.getProceduresThatCall(rightNode->getValue());
+			if (results.empty()) {
+				rightNode->destroy(&encounteredEntities);
+			}
+			else {
+				unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
+				for (string result : results) {
+					QueryNode newNode = QueryNode(leftArgument, result);
+					rightNode->insertParent(&newNode);
+					leftNodes.insert(&newNode);
+				}
+				encounteredEntities.insert({ leftArgument, leftNodes });
+			}
+		}
+	}
+	else {
+		vector<string> leftProcs = database.getProceduresThatCall(ProgramKnowledgeBase::WILDCARD_STRING);
+		vector<string> rightProcs = database.getProceduresCalledBy(ProgramKnowledgeBase::WILDCARD_STRING);
+		unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
+		unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
+		for (string rightProc : rightProcs) {
+			rightNodes.insert(&QueryNode(rightArgument, rightProc));
+		}
+		for (string leftProc : leftProcs) {
+			leftNodes.insert(&QueryNode(leftArgument, leftProc));
+		}
+		addToRoot(rightNodes);
+		addToRoot(leftNodes);
+		encounteredEntities.insert({ leftArgument, leftNodes });
+		encounteredEntities.insert({ rightArgument, rightNodes });
+	}
+}
+
+void QueryEvaluator::calls_LeftSynonym(string leftArgument, string rightArgument) {
+}
+
+void QueryEvaluator::calls_RightSynonym(string leftArgument, string rightArgument) {
 }
 
 vector<string> QueryEvaluator::callsT(string leftArgument, string rightArgument) {

@@ -16,6 +16,7 @@ public:
 	int getSize();
 	int addConstant(int i, Tnode* constNode);
 	vector<Tnode*>* getConstAddress(int i);
+	vector<int> getConstants();
 	void printConstTable();
 	void printNodeVector(vector<Tnode*> list);
 
