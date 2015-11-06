@@ -10,8 +10,8 @@ QueryNode::~QueryNode()
 {
 }
 
-QueryNode::QueryNode(string syn, string ans) {
-	answer = ans;
+QueryNode::QueryNode(string syn, string val) {
+	value = val;
 	synonym = syn;
 }
 
@@ -42,8 +42,8 @@ void QueryNode::addChild(QueryNode* node) {
 	node->setParent(this);
 }
 
-void QueryNode::addChild(string syn, string ans) {
-	QueryNode newNode = QueryNode(syn, ans);
+void QueryNode::addChild(string syn, string val) {
+	QueryNode newNode = QueryNode(syn, val);
 	newNode.setParent(this);
 	children.insert(&newNode);
 }
@@ -52,11 +52,11 @@ unordered_set<QueryNode*> QueryNode::getChildren() {
 	return children;
 }
 
-string QueryNode::getAns() {
-	return answer;
+string QueryNode::getValue() {
+	return value;
 }
 
-string QueryNode::getSyn() {
+string QueryNode::getSynonym() {
 	return synonym;
 }
 

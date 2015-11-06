@@ -19,8 +19,8 @@ public:
 	void addChild(QueryNode* node);
 	void addChild(string syn, string ans);
 	unordered_set<QueryNode*> getChildren();
-	string getAns();
-	string getSyn();
+	string getValue();
+	string getSynonym();
 
 	bool isOnlyChild();
 	bool isRoot();
@@ -28,7 +28,7 @@ public:
 private:
 	unordered_set<QueryNode*> children;
 	QueryNode* parent;
-	string answer;
+	string value;
 	string synonym;
 };
 
