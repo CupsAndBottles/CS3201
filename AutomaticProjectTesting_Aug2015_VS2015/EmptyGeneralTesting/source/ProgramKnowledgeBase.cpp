@@ -736,6 +736,10 @@ vector<string> ProgramKnowledgeBase::getProcedureNames() {
 	return results;
 }
 
+int ProgramKnowledgeBase::getNumberOfStatements() {
+	return (int) statementTable->getSize();
+}
+
 vector<int> ProgramKnowledgeBase::getStatementsThatMatchPattern(Tnode::Type type, string var, string expr) {
 	switch (type) {
 		case Tnode::STMT_WHILE:

@@ -78,6 +78,7 @@ public:
 	vector<int> getStatementsOfType(Tnode::Type type);
 	vector<string> getVariableNames();
 	vector<string> getProcedureNames();
+	int getNumberOfStatements();
 
 	vector<int> getStatementsThatMatchPattern(Tnode::Type type, string var, string expr);
 	vector<int> getStatementsThatContainPattern(Tnode::Type type, string var, string expr);
