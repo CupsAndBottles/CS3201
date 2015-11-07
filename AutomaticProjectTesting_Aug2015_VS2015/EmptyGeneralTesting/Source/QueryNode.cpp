@@ -44,7 +44,8 @@ void QueryNode::destroy(unordered_map<string, unordered_set<QueryNode*>>* encoun
 		for (QueryNode* parent : parents) {
 			if (parent->hasOneChild()) {
 				parent->destroy(encounteredEntities);
-			} else {
+			}
+			else {
 				parent->removeChild(this);
 			}
 		}
@@ -53,7 +54,8 @@ void QueryNode::destroy(unordered_map<string, unordered_set<QueryNode*>>* encoun
 	for (QueryNode* child : children) {
 		if (child->hasOneParent()) {
 			child->destroy(encounteredEntities);
-		} else {
+		}
+		else {
 			child->removeParent(this);
 		}
 	}
@@ -74,7 +76,8 @@ void QueryNode::addChild(QueryNode* node) {
 vector<QueryNode*> QueryNode::getChildren() {
 	if (children.empty()) {
 		return vector<QueryNode*>();
-	} else {
+	}
+	else {
 		return children;
 	}
 }
