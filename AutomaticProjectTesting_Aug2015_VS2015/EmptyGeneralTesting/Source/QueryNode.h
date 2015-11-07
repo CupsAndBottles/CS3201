@@ -13,13 +13,13 @@ public:
 	QueryNode();
 	~QueryNode();
 	QueryNode(string synonym, string ans);
-	static QueryNode* createQueryNode (string synonym, string ans);
+	static QueryNode* createQueryNode(string synonym, string ans);
 	void destroy(unordered_map<string, unordered_set<QueryNode*>>* encounteredEntities);
 
 	void insertParent(QueryNode* node);
 	void addParent(QueryNode* node);
 	void removeParent(QueryNode* node);
-	
+
 	void removeChild(QueryNode * node);
 	void addChild(QueryNode* node);
 	vector<QueryNode*> getChildren();
