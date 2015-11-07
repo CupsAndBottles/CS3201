@@ -22,7 +22,6 @@ public:
 	void buildControlFlowGraph();
 	Gnode* createControlFlowGraphLinks(vector<Gnode*> listOfCfgNodes, int cfgRootIndex);
 	void createControlFlowGraphNodes();
-	vector<Gnode*> createControlFlowGraphNodes();
 	string toUpperCase(string s);
 	bool isNumber(string &s);
 	Tnode* getAbstractSyntaxTreeRoot();
