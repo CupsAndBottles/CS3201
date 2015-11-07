@@ -6,6 +6,7 @@ using namespace std;
 QueryEvaluator::QueryEvaluator() {
 	//default constructor
 }
+
 QueryEvaluator::QueryEvaluator(ProgramKnowledgeBase* pkb) {
 	database = *pkb;
 }
@@ -119,7 +120,7 @@ unordered_set<QueryNode*> QueryEvaluator::getQNodes(string s) {
 }
 
 void QueryEvaluator::addToRoot(unordered_set<QueryNode*> newRoots) {
-	unordered_set<QueryNode*> currentRoots = queryTreeRoot->getChildren();
+	unordered_set<QueryNode*> currentRoots = queryTreeRoot.getChildren();
 	for (QueryNode* newRoot : newRoots) {
 		for (QueryNode* oldRoot : currentRoots) {
 			oldRoot->insertParent(newRoot);
@@ -128,7 +129,7 @@ void QueryEvaluator::addToRoot(unordered_set<QueryNode*> newRoots) {
 }
 
 void QueryEvaluator::addToRoot(QueryNode* newRoot) {
-	unordered_set<QueryNode*> currentRoots = queryTreeRoot->getChildren();
+	unordered_set<QueryNode*> currentRoots = queryTreeRoot.getChildren();
 	for (QueryNode* oldRoot : currentRoots) {
 		oldRoot->insertParent(newRoot);
 	}
@@ -136,7 +137,6 @@ void QueryEvaluator::addToRoot(QueryNode* newRoot) {
 
 //for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.
 vector<string> QueryEvaluator::evaluateQuery() {
-	this->queryTreeRoot = &QueryNode();
 	for (size_t i = 0; i < conditionClause.size(); i++) {
 		processClause(conditionClause[i]);
 	}

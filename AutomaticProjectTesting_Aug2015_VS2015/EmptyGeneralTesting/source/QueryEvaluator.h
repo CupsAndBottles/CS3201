@@ -58,7 +58,7 @@ private:
 	vector<string> patternIf(string synonym, string conditionalVariable);
 	vector<string> patternWhile(string synonym, string conditionalVariable);
 
-	QueryNode* queryTreeRoot;
+	QueryNode queryTreeRoot;
 	void addToRoot(unordered_set<QueryNode*> roots);
 	void addToRoot(QueryNode* newRoot);
 	bool isSynonym(string s);

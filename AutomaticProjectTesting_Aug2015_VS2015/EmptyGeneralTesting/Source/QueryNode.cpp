@@ -4,6 +4,8 @@
 QueryNode::QueryNode() {
 	children = unordered_set<QueryNode*>();
 	parents = unordered_set<QueryNode*>();
+	value = "";
+	synonym = "";
 }
 
 QueryNode::~QueryNode() {
