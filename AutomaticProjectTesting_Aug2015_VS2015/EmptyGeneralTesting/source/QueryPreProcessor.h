@@ -47,5 +47,5 @@ private:
 	vector<string> removeAttrRef(vector<string> temp);
 	bool addEntities(vector<string> entities);
 	void optimizeWithClause(vector<string> temp);
-};
 
+};
