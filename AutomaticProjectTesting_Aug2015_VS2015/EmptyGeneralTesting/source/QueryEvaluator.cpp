@@ -19,7 +19,7 @@ list<string> QueryEvaluator::getResults (string inputQuery) {
 		getQueryData();
 		evaluateQuery();
 		results = evaluateSelect();
-	} 
+	}
 	return results;
 }
 
@@ -34,8 +34,17 @@ string QueryEvaluator::getSelectClause() {
 	return selectClause.front();
 }
 
-bool QueryEvaluator::queryHasResult() {
-	return false;
+// returns false if any encountered entity does not have a solution
+// returns true if there are no encountered entities. this works because
+// evaluateQuery will shortcircuit if any clauses, including those with
+// no synonyms, have no results.
+bool QueryEvaluator::queryHasResult(){
+	for (auto kv : encounteredEntities) {
+		if (kv.second.size() == 0) {
+			return false;
+		}
+	}
+	return true;
 }
 
 list<string> QueryEvaluator::evaluateSelect() {
@@ -148,10 +157,12 @@ void QueryEvaluator::addToRoot(QueryNode* newRoot) {
 
 //for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.
 vector<string> QueryEvaluator::evaluateQuery() {
-	for (size_t i = 0; i < conditionClause.size(); i++) {
-		processClause(conditionClause[i]);
-	}
 	vector<string> output;
+	for (size_t i = 0; i < conditionClause.size(); i++) {
+		if (!processClause(conditionClause[i])) {
+			return output;
+		}
+	}
 	return output;
 }
 
@@ -161,52 +172,53 @@ vector<string> QueryEvaluator::recordSelectClause(string s) {
 	return output;
 }
 
-vector<vector<string>> QueryEvaluator::processClause(QueryObject clause) {
+bool QueryEvaluator::processClause(QueryObject clause) {
 	string relationType = clause.getRelation();
 	string lhs = clause.getFirstArgument();
 	string rhs = clause.getSecondArgument();
-	vector<vector<string>>output;
-	
+
 	if (formatter.stringEqual(relationType, QueryObject::RelationType_MODIFIES)) {
-		modifies(lhs, rhs);
+		return modifies(lhs, rhs);
 	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_USES)) {
-		uses(lhs, rhs);
+		return uses(lhs, rhs);
 	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_CALLS)) {
-		calls(lhs, rhs);
+		return calls(lhs, rhs);
 	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_CALLSSTAR)) {
-		callsT(lhs, rhs);
+		return callsT(lhs, rhs);
 	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_PARENT)) {
-		parent(lhs, rhs);
+		return parent(lhs, rhs);
 	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_PARENTSTAR)) {
-		parentT(lhs, rhs);
+		return parentT(lhs, rhs);
 	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_FOLLOWS)) {
-		follows(lhs, rhs);
+		return follows(lhs, rhs);
 	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_FOLLOWSSTAR)) {
-		followsT(lhs, rhs);
+		return followsT(lhs, rhs);
 	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_NEXT)) {
-		next(lhs, rhs);
+		return next(lhs, rhs);
 	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_NEXTSTAR)) {
-		nextT(lhs, rhs);
+		return nextT(lhs, rhs);
 	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_AFFECTS)) {
-		affects(lhs, rhs);
+		return affects(lhs, rhs);
 	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_AFFECTSSTAR)) {
-		affectsT(lhs, rhs);
+		return affectsT(lhs, rhs);
 	} else {
 		// check for patterns
 		string patternType = declaration.getType(relationType);
 		if (formatter.stringEqual(patternType, QueryObject::RelationType_PATTERN_ASSIGN)) {
-			patternAssign(relationType, lhs, rhs);
+			return patternAssign(relationType, lhs, rhs);
 		} else if (formatter.stringEqual(patternType, QueryObject::RelationType_PATTERN_WHILE)) {
-			patternWhile(relationType, lhs); //rhs will always be _ 
+			return patternWhile(relationType, lhs); //rhs will always be _
 		} else if (formatter.stringEqual(patternType, QueryObject::RelationType_PATTERN_IF)) {
-			patternIf(relationType, lhs); //rhs will always be _ 
-		} 
+			return patternIf(relationType, lhs); //rhs will always be _
+		}
 	}
 
-	return output;
+	return false;
 }
 
-vector<string> QueryEvaluator::parent(string leftArgument, string rightArgument) {
+bool QueryEvaluator::parent(string leftArgument, string rightArgument) {
+	return false;
+	/*
 	vector<string> output;
 	if (isSynonym(leftArgument) && isSynonym(rightArgument)) {
 		//both synonyms
@@ -243,9 +255,12 @@ vector<string> QueryEvaluator::parent(string leftArgument, string rightArgument)
 	else {
 		return output;
 	}
+	*/
 }
 
-vector<string> QueryEvaluator::parentT(string leftArgument, string rightArgument) {
+bool QueryEvaluator::parentT(string leftArgument, string rightArgument) {
+	return false;
+	/*
 	vector<string> output;
 	if (isSynonym(leftArgument) && isSynonym(rightArgument)) {
 		//both synonyms
@@ -282,9 +297,12 @@ vector<string> QueryEvaluator::parentT(string leftArgument, string rightArgument
 	else {
 		return output;
 	}
+	*/
 }
 
-vector<string> QueryEvaluator::follows(string leftArgument, string rightArgument) {
+bool QueryEvaluator::follows(string leftArgument, string rightArgument) {
+	return false;
+	/*
 	vector<string> output;
 	if (isSynonym(leftArgument) && isSynonym(rightArgument)) {
 		//both synonyms
@@ -321,9 +339,12 @@ vector<string> QueryEvaluator::follows(string leftArgument, string rightArgument
 	else {
 		return output;
 	}
+	*/
 }
 
-vector<string> QueryEvaluator::followsT(string leftArgument, string rightArgument) {
+bool QueryEvaluator::followsT(string leftArgument, string rightArgument) {
+	return false;
+	/*
 	vector<string> output;
 	if (isSynonym(leftArgument) && isSynonym(rightArgument)) {
 		//both synonyms
@@ -360,9 +381,12 @@ vector<string> QueryEvaluator::followsT(string leftArgument, string rightArgumen
 	else {
 		return output;
 	}
+	*/
 }
 
-vector<string> QueryEvaluator::modifies(string leftArgument, string rightArgument) {
+bool QueryEvaluator::modifies(string leftArgument, string rightArgument) {
+	return false;
+	/*
 	vector<string> output;
 	if (isSynonym(leftArgument) && isVariable(rightArgument)) {
 		if (formatter.stringEqual(rightArgument, getSelectClause())) {
@@ -434,9 +458,12 @@ vector<string> QueryEvaluator::modifies(string leftArgument, string rightArgumen
 	else {
 		return output;
 	}
+	*/
 }
 
-vector<string> QueryEvaluator::uses(string leftArgument, string rightArgument) {
+bool QueryEvaluator::uses(string leftArgument, string rightArgument) {
+	return false;
+	/*
 	vector<string> output;
 	if (isSynonym(leftArgument) && isVariable(rightArgument)) {
 		if (formatter.stringEqual(rightArgument, getSelectClause())) {
@@ -508,26 +535,27 @@ vector<string> QueryEvaluator::uses(string leftArgument, string rightArgument) {
 	else {
 		return output;
 	}
+	*/
 }
 
-vector<string> QueryEvaluator::calls(string leftArgument, string rightArgument) {
+bool QueryEvaluator::calls(string leftArgument, string rightArgument) {
 	bool leftSynonym = isSynonym(leftArgument);
 	bool rightSynonym = isSynonym(rightArgument);
 	if (leftSynonym && rightSynonym) {
-		calls_BothSynonyms(leftArgument, rightArgument);
+		return calls_BothSynonyms(leftArgument, rightArgument);
 	} else if (leftSynonym) {
-		calls_LeftSynonym(leftArgument, rightArgument);
+		return calls_LeftSynonym(leftArgument, rightArgument);
 	} else if (rightSynonym) {
-		calls_RightSynonym(leftArgument, rightArgument);
+		return calls_RightSynonym(leftArgument, rightArgument);
+	} else {
+		return calls_NoSynonym(leftArgument, rightArgument);
 	}
-
-	return vector<string>();
 }
 
-void QueryEvaluator::calls_BothSynonyms(string leftArgument, string rightArgument) {
+bool QueryEvaluator::calls_BothSynonyms(string leftArgument, string rightArgument) {
 	bool leftEncountered = encountered(leftArgument);
 	bool rightEncountered = encountered(rightArgument);
-
+	bool atLeastOneResult = false;
 	if (leftEncountered && rightEncountered) {
 		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
 		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
@@ -535,6 +563,7 @@ void QueryEvaluator::calls_BothSynonyms(string leftArgument, string rightArgumen
 			for (QueryNode* rightNode : rightNodes) {
 				bool result = database.calls(leftNode->getValue(), rightNode->getValue());
 				if (result) {
+					atLeastOneResult = true;
 					leftNode->insertParent(rightNode);
 					rightNode->insertParent(leftNode);
 				}
@@ -555,6 +584,7 @@ void QueryEvaluator::calls_BothSynonyms(string leftArgument, string rightArgumen
 			else {
 				unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
 				for (string result : results) {
+					atLeastOneResult = true;
 					QueryNode* newNode = QueryNode::createQueryNode(rightArgument, result);
 					leftNode->insertParent(newNode);
 					rightNodes.insert(newNode);
@@ -573,6 +603,7 @@ void QueryEvaluator::calls_BothSynonyms(string leftArgument, string rightArgumen
 			else {
 				unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
 				for (string result : results) {
+					atLeastOneResult = true;
 					QueryNode* newNode = QueryNode::createQueryNode(leftArgument, result);
 					rightNode->insertParent(newNode);
 					leftNodes.insert(newNode);
@@ -584,56 +615,68 @@ void QueryEvaluator::calls_BothSynonyms(string leftArgument, string rightArgumen
 	else {
 		vector<string> leftProcs = database.getProceduresThatCall(ProgramKnowledgeBase::WILDCARD_STRING);
 		vector<string> rightProcs = database.getProceduresCalledBy(ProgramKnowledgeBase::WILDCARD_STRING);
-		unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
-		unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
-		for (string rightProc : rightProcs) {
-			rightNodes.insert(QueryNode::createQueryNode(rightArgument, rightProc));
+		if (!leftProcs.empty() && !rightProcs.empty()) {
+			atLeastOneResult = true;
+			unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
+			unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
+			for (string rightProc : rightProcs) {
+				rightNodes.insert(QueryNode::createQueryNode(rightArgument, rightProc));
+			}
+			for (string leftProc : leftProcs) {
+				leftNodes.insert(QueryNode::createQueryNode(leftArgument, leftProc));
+			}
+			addToRoot(rightNodes);
+			addToRoot(leftNodes);
+			encounteredEntities.insert({ leftArgument, leftNodes });
+			encounteredEntities.insert({ rightArgument, rightNodes });
 		}
-		for (string leftProc : leftProcs) {
-			leftNodes.insert(QueryNode::createQueryNode(leftArgument, leftProc));
-		}
-		addToRoot(rightNodes);
-		addToRoot(leftNodes);
-		encounteredEntities.insert({ leftArgument, leftNodes });
-		encounteredEntities.insert({ rightArgument, rightNodes });
 	}
+	return atLeastOneResult;
 }
 
-void QueryEvaluator::calls_LeftSynonym(string leftArgument, string rightArgument) {
+bool QueryEvaluator::calls_LeftSynonym(string leftArgument, string rightArgument) {
+	return false;
 }
 
-void QueryEvaluator::calls_RightSynonym(string leftArgument, string rightArgument) {
+bool QueryEvaluator::calls_RightSynonym(string leftArgument, string rightArgument) {
+	return false;
 }
 
-vector<string> QueryEvaluator::callsT(string leftArgument, string rightArgument) {
-	return vector<string>();
+bool QueryEvaluator::calls_NoSynonym(string leftArgument, string rightArgument) {
+	return false;
 }
 
-vector<string> QueryEvaluator::next(string leftArgument, string rightArgument) {
-	return vector<string>();
+bool QueryEvaluator::callsT(string leftArgument, string rightArgument) {
+	return false;
 }
 
-vector<string> QueryEvaluator::nextT(string leftArgument, string rightArgument) {
-	return vector<string>();
+bool QueryEvaluator::next(string leftArgument, string rightArgument) {
+	return false;
 }
 
-vector<string> QueryEvaluator::affects(string leftArgument, string rightArgument) {
-	return vector<string>();
+bool QueryEvaluator::nextT(string leftArgument, string rightArgument) {
+	return false;
 }
 
-vector<string> QueryEvaluator::affectsT(string leftArgument, string rightArgument) {
-	return vector<string>();
+bool QueryEvaluator::affects(string leftArgument, string rightArgument) {
+	return false;
 }
 
-vector<string> QueryEvaluator::patternIf(string synonym, string conditionalVariable) {
-	return vector<string>();
+bool QueryEvaluator::affectsT(string leftArgument, string rightArgument) {
+	return false;
 }
 
-vector<string> QueryEvaluator::patternWhile(string synonym, string conditionalVariable) {
-	return vector<string>();
+bool QueryEvaluator::patternIf(string synonym, string conditionalVariable) {
+	return false;
 }
 
-vector<string> QueryEvaluator::patternAssign(string synonym, string leftArgument, string rightArgument) {
+bool QueryEvaluator::patternWhile(string synonym, string conditionalVariable) {
+	return false;
+}
+
+bool QueryEvaluator::patternAssign(string synonym, string leftArgument, string rightArgument) {
+	return false;
+	/*
 	vector<string> output;
 	if (formatter.isDoubleQuote(leftArgument) && formatter.isDoubleQuote(rightArgument)) {
 		string left = formatter.removeQuotes(leftArgument);
@@ -674,4 +717,5 @@ vector<string> QueryEvaluator::patternAssign(string synonym, string leftArgument
 	else {
 		return output;
 	}
+	*/
 }
