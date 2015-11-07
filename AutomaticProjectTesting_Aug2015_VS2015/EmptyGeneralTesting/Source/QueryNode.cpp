@@ -21,7 +21,12 @@ void QueryNode::insertParent(QueryNode* node) {
 		parent->removeChild(this);
 		parent->addChild(node);
 	}
+	this->addParent(node);
 	node->addChild(this);
+}
+
+void QueryNode::addParent(QueryNode* node) {
+	this->parents.push_back(node);
 }
 
 void QueryNode::removeParent(QueryNode* node) {
