@@ -727,15 +727,26 @@ vector<int> ProgramKnowledgeBase::getStatementsThatAffect(int stmt){
 }
 
 bool ProgramKnowledgeBase::affectsStar(int s1, int s2){
+	if (affects(s1, s2)) {
+		return true;
+	}
+	DDGnode *node1;
+	node1 = statementTable->getDDGNode(s1);
+	vector<DDGnode*> DDGlist = node1->listOfLinkedToDDG();
+	for (auto i = DDGlist.begin(); i != DDGlist.end(); i++) {
+		return affectsStar((*i)->getStatementNumber(), s2);
+	}
 	return false;
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsAffectStarredBy(int stmt){
-	return vector<int>();
+	vector<int> list = vector<int>();
+	return list;
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsThatAffectStar(int stmt){
-	return vector<int>();
+	vector<int> list = vector<int>();
+	return list;
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsOfType(Tnode::Type type){
