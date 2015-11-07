@@ -2,8 +2,8 @@
 
 
 QueryNode::QueryNode() {
-	children = unordered_set<QueryNode*>();
-	parents = unordered_set<QueryNode*>();
+	children = vector<QueryNode*>();
+	parents = vector<QueryNode*>();
 	value = "";
 	synonym = "";
 }
@@ -25,7 +25,8 @@ void QueryNode::insertParent(QueryNode* node) {
 }
 
 void QueryNode::removeParent(QueryNode* node) {
-	parents.erase(node);
+	auto it = find(parents.begin(), parents.end(), node);
+	parents.erase(it);
 }
 
 void QueryNode::destroy(unordered_map<string, unordered_set<QueryNode*>>* encounteredEntities) {
@@ -51,17 +52,17 @@ void QueryNode::destroy(unordered_map<string, unordered_set<QueryNode*>>* encoun
 }
 
 void QueryNode::removeChild(QueryNode* node) {
-	children.erase(node);
+	auto it = find(children.begin(), children.end(), node);
+	children.erase(it);
 }
 
 void QueryNode::addChild(QueryNode* node) {
-	children.insert(node);
-	node->insertParent(this);
+	this->children.push_back(node);
 }
 
-unordered_set<QueryNode*> QueryNode::getChildren() {
+vector<QueryNode*> QueryNode::getChildren() {
 	if (children.empty()) {
-		return unordered_set<QueryNode*>();
+		return vector<QueryNode*>();
 	} else {
 		return children;
 	}

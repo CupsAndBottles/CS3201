@@ -20,7 +20,7 @@ public:
 	
 	void removeChild(QueryNode * node);
 	void addChild(QueryNode* node);
-	unordered_set<QueryNode*> getChildren();
+	vector<QueryNode*> getChildren();
 
 	string getValue();
 	string getSynonym();
@@ -30,8 +30,8 @@ public:
 	bool isRoot();
 
 private:
-	unordered_set<QueryNode*> children;
-	unordered_set<QueryNode*> parents;
+	vector<QueryNode*> children;
+	vector<QueryNode*> parents;
 	string value;
 	string synonym;
 };

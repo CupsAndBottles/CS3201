@@ -120,18 +120,29 @@ unordered_set<QueryNode*> QueryEvaluator::getQNodes(string s) {
 }
 
 void QueryEvaluator::addToRoot(unordered_set<QueryNode*> newRoots) {
-	unordered_set<QueryNode*> currentRoots = queryTreeRoot.getChildren();
-	for (QueryNode* newRoot : newRoots) {
-		for (QueryNode* oldRoot : currentRoots) {
-			oldRoot->insertParent(newRoot);
+	vector<QueryNode*> currentRoots = queryTreeRoot.getChildren();
+	if (currentRoots.empty()) {
+		for (QueryNode* newRoot : newRoots) {
+			queryTreeRoot.addChild(newRoot);
+		}
+	} else {
+		for (QueryNode* newRoot : newRoots) {
+			for (QueryNode* oldRoot : currentRoots) {
+				oldRoot->insertParent(newRoot);
+			}
 		}
 	}
 }
 
+// might not be needed
 void QueryEvaluator::addToRoot(QueryNode* newRoot) {
-	unordered_set<QueryNode*> currentRoots = queryTreeRoot.getChildren();
-	for (QueryNode* oldRoot : currentRoots) {
-		oldRoot->insertParent(newRoot);
+	vector<QueryNode*> currentRoots = queryTreeRoot.getChildren();
+	if (currentRoots.empty()) {
+		queryTreeRoot.addChild(newRoot);
+	} else {
+		for (QueryNode* oldRoot : currentRoots) {
+			oldRoot->insertParent(newRoot);
+		}
 	}
 }
 
