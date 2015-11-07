@@ -1,13 +1,12 @@
 #include "QueryNode.h"
 
 
-QueryNode::QueryNode()
-{
+QueryNode::QueryNode() {
+	children = unordered_set<QueryNode*>();
+	parents = unordered_set<QueryNode*>();
 }
 
-
-QueryNode::~QueryNode()
-{
+QueryNode::~QueryNode() {
 }
 
 QueryNode::QueryNode(string syn, string val) {
@@ -59,7 +58,11 @@ void QueryNode::addChild(QueryNode* node) {
 }
 
 unordered_set<QueryNode*> QueryNode::getChildren() {
-	return children;
+	if (children.empty()) {
+		return unordered_set<QueryNode*>();
+	} else {
+		return children;
+	}
 }
 
 string QueryNode::getValue() {
