@@ -15,7 +15,7 @@ const string QueryObject::RelationType_AFFECTSSTAR = "affects*";
 const string QueryObject::RelationType_PATTERN_ASSIGN = "assign";
 const string QueryObject::RelationType_PATTERN_IF = "while";
 const string QueryObject::RelationType_PATTERN_WHILE = "if";
-
+const string QueryObject::RelationType_WITH = "with";
 const string QueryObject::WILDCARD = "_";
 
 EntTable entityTable2;
@@ -59,49 +59,52 @@ void QueryObject::toString() {
 
 int QueryObject::getDifficultyRank() {
 	if (toLowerCase(arg1) == RelationType_MODIFIES) {
-		return 10;
-	}
-	if (toLowerCase(arg1) == RelationType_USES) {
 		return 11;
 	}
+	if (toLowerCase(arg1) == RelationType_USES) {
+		return 12;
+	}
 	if (toLowerCase(arg1) == RelationType_PARENT) {
-		return 1;
+		return 2;
 	}
 	if (toLowerCase(arg1) == RelationType_PARENTSTAR) {
-		return 8;
+		return 9;
 	}
 	if (toLowerCase(arg1) == RelationType_NEXT) {
-		return 7;
+		return 8;
 	}
 	if (toLowerCase(arg1) == RelationType_NEXTSTAR) {
-		return 14;
+		return 15;
 	}
 	if (toLowerCase(arg1) == RelationType_FOLLOWS) {
 		return 6;
 	}
 	if (toLowerCase(arg1) == RelationType_FOLLOWSSTAR) {
-		return 12;
-	}
-	if (toLowerCase(arg1) == RelationType_CALLS) {
-		return 2;
-	}
-	if (toLowerCase(arg1) == RelationType_CALLSSTAR) {
-		return 9;
-	}
-	if (toLowerCase(arg1) == RelationType_AFFECTS) {
 		return 13;
 	}
-	if (toLowerCase(arg1) == RelationType_AFFECTSSTAR) {
-		return 15;
-	}
-	if (toLowerCase(arg1) == RelationType_PATTERN_ASSIGN) {
-		return 5;
-	}
-	if (toLowerCase(arg1) == RelationType_PATTERN_WHILE) {
+	if (toLowerCase(arg1) == RelationType_CALLS) {
 		return 3;
 	}
-	if (toLowerCase(arg1) == RelationType_PATTERN_IF) {
+	if (toLowerCase(arg1) == RelationType_CALLSSTAR) {
+		return 10;
+	}
+	if (toLowerCase(arg1) == RelationType_AFFECTS) {
+		return 14;
+	}
+	if (toLowerCase(arg1) == RelationType_AFFECTSSTAR) {
+		return 16;
+	}
+	if (toLowerCase(arg1) == RelationType_PATTERN_ASSIGN) {
+		return 7;
+	}
+	if (toLowerCase(arg1) == RelationType_PATTERN_WHILE) {
 		return 4;
+	}
+	if (toLowerCase(arg1) == RelationType_PATTERN_IF) {
+		return 5;
+	}
+	if (toLowerCase(arg1) == RelationType_WITH) {
+		return 1;
 	}
 }
 

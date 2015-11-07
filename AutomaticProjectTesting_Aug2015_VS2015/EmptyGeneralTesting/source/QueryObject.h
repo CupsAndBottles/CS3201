@@ -29,6 +29,7 @@ public:
 	static const string RelationType_PATTERN_ASSIGN;
 	static const string RelationType_PATTERN_IF;
 	static const string RelationType_PATTERN_WHILE;
+	static const string RelationType_WITH;
 	static const string WILDCARD;
 
 	QueryObject(string s1, string s2, string s3, int num);
