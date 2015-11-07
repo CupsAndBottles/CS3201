@@ -21,7 +21,8 @@ public:
 	~Gnode();
 
 	static Gnode *createGnode(int num);
-	static Gnode *createGnode(Type t, int num);
+	static Gnode *createGnode(string procName, int num);
+	static Gnode *createGnode(string procName, Type t, int num);
 	static void setNext(Gnode *curr, Gnode *next);
 	static void setNextIf(Gnode *curr, Gnode *ifNode, Gnode *elseNode);
 	static void setNextEndIf(Gnode *lastChildThen, Gnode *lastChildElse, Gnode *other);
@@ -36,6 +37,7 @@ public:
 	Gnode* getPrevLeft();
 	int getValue();
 	Type getType();
+	string getItsProcedure();
 	bool isEndNode();
 
 private:
@@ -45,4 +47,5 @@ private:
 	Gnode *otherPrev;
 	Type type;
 	int value;
+	string procedure;
 };
