@@ -6,6 +6,7 @@ DDGnode::DDGnode(int stmtN)
 {
 	this->stmtNum = stmtN;
 	this->edgesTo = new vector<pair<DDGnode*, string>>;
+	this->edgesFrom = new vector<pair<DDGnode*, string>>;
 }
 
 
