@@ -2,19 +2,6 @@
 
 #include "QueryPreProcessor.h"
 
-/* limitations of this tokenizer, can only use 1 delimiter at a time
-vector<string> split(const string &s, char delim) {
-	stringstream ss(s);
-	string item;
-	vector<string> stringVector;
-	while (getline(ss, item, delim)) {
-		stringVector.push_back(item);
-	}
-	return stringVector;
-}
-*/
-
-
 SemanticsCheck sCheck;
 EntTable entityTable;
 vector<string> entityList;
@@ -22,10 +9,10 @@ vector<QueryObject> queryList;
 RelationshipTable relTable;
 
 static bool sortQueries(QueryObject obj1, QueryObject obj2) {
-	if (obj1.getNumUnknownRank() < obj2.getNumUnknownRank()) {
+	if (getNumUnknownRank(obj1) < getNumUnknownRank(obj2)) {
 		return true;
 	}
-	else if (obj1.getNumUnknownRank() == obj2.getNumUnknownRank()) {
+	else if (getNumUnknownRank(obj1) == getNumUnknownRank(obj2)) {
 		if (obj1.getDifficultyRank() < obj2.getDifficultyRank()) {
 			return true;
 		}
@@ -38,6 +25,41 @@ static bool sortQueries(QueryObject obj1, QueryObject obj2) {
 	}
 }
 
+string toLowerCase(string s) {
+	transform(s.begin(), s.end(), s.begin(), ::tolower);
+	return s;
+}
+
+int getNumUnknownRank(QueryObject obj) {
+	string arg1 = obj.getRelation();
+	int numUnknowns = obj.getNumUnknowns();
+
+	if (toLowerCase(arg1) == "affects*") {
+		if (numUnknowns == 2) {
+			return 6;
+		}
+		else {
+			return 5;
+		}
+	}
+	else if (toLowerCase(arg1) == "affects" || toLowerCase(arg1) == "next*") {
+		if (numUnknowns == 2) {
+			return 4;
+		}
+		else {
+			return 3;
+		}
+	}
+	else {
+		if (numUnknowns == 2) {
+			return 2;
+		}
+		else {
+			return 1;
+		}
+	}
+}
+
 vector<string> QueryPreProcessor::split(string s, string delim) {
 	stringstream stringStream(s);
 	string line;
@@ -45,7 +67,7 @@ vector<string> QueryPreProcessor::split(string s, string delim) {
 	while (getline(stringStream, line))
 	{
 		size_t prev = 0, pos;
-		while ((pos = line.find_first_of(delim, prev)) !=string::npos)
+		while ((pos = line.find_first_of(delim, prev)) != string::npos)
 		{
 			if (pos > prev)
 				wordVector.push_back(line.substr(prev, pos - prev));
@@ -76,12 +98,6 @@ void QueryPreProcessor::inputEntitiesIntoTable(vector<string> v) {
 	}
 }
 
-
-string QueryPreProcessor::toLowerCase(string s) {
-	transform(s.begin(), s.end(), s.begin(), ::tolower);
-	return s;
-}
-
 bool QueryPreProcessor::verifySuchThatQuery(vector<string> temp) {
 	//check that this vector is of size 3
 	if (temp.size() != 3) {
@@ -97,14 +113,14 @@ bool QueryPreProcessor::verifySuchThatQuery(vector<string> temp) {
 		string relType = toLowerCase(temp[0]);
 		string arg1 = temp[1];
 		string arg2 = temp[2];
-		if (relType.compare("modifies")==0 || relType.compare("uses")==0 ) {
+		if (relType.compare("modifies") == 0 || relType.compare("uses") == 0) {
 			if (arg1.compare("_") == 0) {
 				return false;
 			}
-			if (sCheck.isSynonym(arg2,entityTable) && !sCheck.isSynVariable(arg2, entityTable)) {
+			if (sCheck.isSynonym(arg2, entityTable) && !sCheck.isSynVariable(arg2, entityTable)) {
 				return false;
 			}
-		} 
+		}
 		else if (relType.compare("calls") == 0 || relType.compare("calls*") == 0) {
 			if (sCheck.isSynonym(arg1, entityTable) && !sCheck.isSynProcedure(arg1, entityTable)) {
 				return false;
@@ -175,8 +191,17 @@ bool QueryPreProcessor::verifyPatternQuery(vector<string> temp) {
 
 void QueryPreProcessor::addQueryObject(vector<string> temp) {
 
+	int numUnknowns;
+	//find number of unknowns in this object (either 1 or 2)
+	if ((entityTable.exist(temp[1]) || temp[1] == "_") && (entityTable.exist(temp[2]) || temp[2] == "_")) {
+		numUnknowns = 2;
+	}
+	else {
+		numUnknowns = 1;
+	}
+
 	//make into query object
-	QueryObject qo = QueryObject(temp[0], temp[1], temp[2]);
+	QueryObject qo = QueryObject(temp[0], temp[1], temp[2], numUnknowns);
 
 	//add into queryList
 	queryList.push_back(qo);
@@ -239,7 +264,7 @@ vector<string> QueryPreProcessor::checkForBracketsAndComma(vector<string> argVec
 		//cout << it << endl;
 		++start;
 	}
-	
+
 	argVector.clear();
 	if (checkVector.size() == 6) {
 		if (checkVector[1].compare("(") == 0 && checkVector[3].compare(",") == 0 && checkVector[5].compare(")") == 0) {
@@ -388,7 +413,7 @@ bool QueryPreProcessor::addEntities(vector<string> entities) {
 		}
 	}
 	else {
-		for (size_t i=0; i<filteredEntities.size(); i++) {
+		for (size_t i = 0; i<filteredEntities.size(); i++) {
 			if (sCheck.isSynonym(filteredEntities.at(i), entityTable)) {
 				entityList.push_back(filteredEntities.at(i));
 			}
@@ -401,18 +426,18 @@ bool QueryPreProcessor::addEntities(vector<string> entities) {
 
 void QueryPreProcessor::optimizeWithClause(vector<string> temp) {
 
-	if (sCheck.isSynonym(temp[2], entityTable) || queryList.size()==0) {
+	if (sCheck.isSynonym(temp[2], entityTable) || queryList.size() == 0) {
 		addQueryObject(temp);
 	}
 	else if (queryList.size() != 0) {
 		QueryObject lastQueryObj = queryList[queryList.size() - 1];
 		if ((lastQueryObj.getFirstArgument()).compare(temp[1]) == 0) {
-			QueryObject newObj = QueryObject(lastQueryObj.getRelation(), temp[2], lastQueryObj.getSecondArgument());
+			QueryObject newObj = QueryObject(lastQueryObj.getRelation(), temp[2], lastQueryObj.getSecondArgument(), lastQueryObj.getNumUnknowns());
 			queryList.pop_back();
 			queryList.push_back(newObj);
 		}
 		else if ((lastQueryObj.getSecondArgument()).compare(temp[1]) == 0) {
-			QueryObject newObj = QueryObject(lastQueryObj.getRelation(), lastQueryObj.getFirstArgument(), temp[2]);
+			QueryObject newObj = QueryObject(lastQueryObj.getRelation(), lastQueryObj.getFirstArgument(), temp[2], lastQueryObj.getNumUnknowns());
 			queryList.pop_back();
 			queryList.push_back(newObj);
 		}
@@ -458,7 +483,7 @@ bool QueryPreProcessor::query(string s) {
 
 		//second phase must be a result-clause synonym (<tuple>, boolean), verify synonym, else false
 		//cout << "result-clause: ";
-		while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0 || toLowerCase(selectCl.at(i)).compare("with")==0)) {
+		while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0 || toLowerCase(selectCl.at(i)).compare("with") == 0)) {
 			//cout << selectCl.at(i) + " ";
 			entities.push_back(selectCl.at(i));
 			i++;
@@ -493,7 +518,7 @@ bool QueryPreProcessor::query(string s) {
 					i++;
 					//cout << "suchthat-cl: ";
 					//extract relCond
-					while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0 
+					while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0
 						|| toLowerCase(selectCl.at(i)).compare("and") == 0 || toLowerCase(selectCl.at(i)).compare("with") == 0)) {
 						//cout << selectCl.at(i) + " ";
 						argVector.push_back(selectCl.at(i));
@@ -680,7 +705,7 @@ bool QueryPreProcessor::query(string s) {
 						addQueryObject(queryVector);
 						queryVector.clear();
 						argVector.clear();
-					} 
+					}
 					else if (verifyPatternQuery(queryVector)) {
 						addQueryObject(queryVector);
 						queryVector.clear();

@@ -30,10 +30,10 @@ public:
 	void clearAll();
 	//void printSCL(vector<string> s);
 
+
 private:
 	vector<string> checkForBracketsAndComma(vector<string> argVector);
 	void addQueryObject(vector<string> temp);
-	string toLowerCase(string s);
 	void inputEntitiesIntoTable(vector<string> v);
 	vector<string> split(string s, string delim);
 	bool verifySuchThatQuery(vector<string> temp);
@@ -49,3 +49,7 @@ private:
 	void optimizeWithClause(vector<string> temp);
 
 };
+
+static bool sortQueries(QueryObject obj1, QueryObject obj2);
+static int getNumUnknownRank(QueryObject obj);
+static string toLowerCase(string s);

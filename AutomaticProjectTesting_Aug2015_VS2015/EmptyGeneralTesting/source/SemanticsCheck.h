@@ -41,7 +41,7 @@ private:
 	bool isLetter(char c);
 	bool isDigit(char c);
 	bool isExpression(char c);
-	
+
 	//Iteration 2 onwards
 	vector<string> split(string s, string delim);
 };

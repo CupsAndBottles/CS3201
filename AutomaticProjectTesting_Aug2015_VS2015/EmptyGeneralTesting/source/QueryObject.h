@@ -4,13 +4,14 @@
 
 #include <string>
 #include <iostream>
-
+#include <algorithm>
 
 using namespace std;
 
 class QueryObject
 {
 	string arg1, arg2, arg3;
+	int arg4;
 
 public:
 	static const string RelationType_MODIFIES;
@@ -30,17 +31,15 @@ public:
 	static const string RelationType_PATTERN_WHILE;
 	static const string WILDCARD;
 
-	QueryObject(string s1, string s2, string s3);
+	QueryObject(string s1, string s2, string s3, int num);
 	string getRelation();
 	string getFirstArgument();
 	string getSecondArgument();
+	int getNumUnknowns();
 	void toString();
-
 	int getDifficultyRank();
-	int getNumUnknownRank();
+	void decreaseUnknownByOne();
 
-private:
-	bool isUnknown(string s);
 };
 
 #endif

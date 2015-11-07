@@ -22,7 +22,7 @@ bool SemanticsCheck::isExpression(char c)
 
 
 bool SemanticsCheck::isInteger(string s)
-{ 
+{
 	char c;
 	for (size_t i = 0; i < s.length(); i++) {
 		c = s[i];
@@ -40,7 +40,7 @@ bool SemanticsCheck::isIdent(string s) {
 
 	for (size_t i = 1; i<s.length(); i++) {
 		char c = s[i];
-		if ( !(isLetter(c) || isDigit(c) || (c=='#')) ) {
+		if (!(isLetter(c) || isDigit(c) || (c == '#'))) {
 			return false;
 		}
 	}
@@ -77,7 +77,7 @@ bool SemanticsCheck::isStmtRef(string s, EntTable et) {
 	else if (isInteger(s)) {
 		return true;
 	}
-	else if (s.length()==1 && (s[0]=='_')) {
+	else if (s.length() == 1 && (s[0] == '_')) {
 		return true;
 	}
 	else {
@@ -102,7 +102,7 @@ bool SemanticsCheck::isLineRef(string s, EntTable et) {
 
 bool SemanticsCheck::wrappedInQuotation(string s) {
 	size_t i = s.length();
-	if ((s[0] == '\"') && (s[i-1] == '\"')) {
+	if ((s[0] == '\"') && (s[i - 1] == '\"')) {
 		return true;
 	}
 	else {
@@ -174,7 +174,7 @@ bool SemanticsCheck::isSynAssign(string s, EntTable et) {
 			return false;
 			cout << "is synonym but not assign" << endl;
 		}
-	}	
+	}
 	else {
 		return false;
 	}
@@ -311,7 +311,7 @@ bool SemanticsCheck::initSemanticsCheck(string s, string argType, EntTable et) {
 	else {
 		boolean = false;
 	}
-	
+
 	return boolean;
 }
 
@@ -366,7 +366,7 @@ bool SemanticsCheck::isAttrRef(string s, EntTable et) {
 	else if (et.getType(temp[0]) == "constant" && temp[1].compare("value") == 0) {
 		return true;
 	}
-	else if ( (et.getType(temp[0]) == "stmt" || et.getType(temp[0]) == "assign") && temp[1].compare("stmt#") == 0) {
+	else if ((et.getType(temp[0]) == "stmt" || et.getType(temp[0]) == "assign") && temp[1].compare("stmt#") == 0) {
 		return true;
 	}
 	else {

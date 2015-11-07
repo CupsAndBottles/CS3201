@@ -127,5 +127,20 @@ namespace UnitTesting
 			Assert::IsTrue(qpp.query("assign a, a1; stmt s; prog_line n, n1; procedure p, q; if ifstat; while w; Select <p, a> pattern a(_,_) and ifstat(\"x\",_,_) and w(\"y\",_) such that Next(20, n) and Parent*(s,6) and Calls(p,q) with q.procName = \"Second\"")); qpp.clearAll();
 			Assert::IsFalse(qpp.query("assign a; stmt s; prog_line n; Select <p, a> such that n=20"));
 		}
+
+		TEST_METHOD(testQuerySorting) {
+			qpp.clearAll();
+			bool isValid = qpp.query("assign a, a1; prog_line n1, n2; procedure p, q; Select a such that Affects*(a, a1) and Affects*(a,3) and Next*(n1,n2) and Next*(n1,5) such that Affects(a,5) and Calls(p,q) and Uses(a1,\"x\") and Modifies(a1, \"y\")");
+			vector<QueryObject> qList = qpp.getQueries();
+			Assert::IsTrue(qList.at(0).getRelation() == "Modifies");
+			Assert::IsTrue(qList.at(1).getRelation() == "Uses");
+			Assert::IsTrue(qList.at(2).getRelation() == "Calls");
+			Assert::IsTrue(qList.at(3).getRelation() == "Affects");
+			Assert::IsTrue(qList.at(4).getRelation() == "Next*");
+			Assert::IsTrue(qList.at(5).getRelation() == "Next*");
+			Assert::IsTrue(qList.at(6).getRelation() == "Affects*");
+			Assert::IsTrue(qList.at(7).getRelation() == "Affects*");
+
+		}
 	};
 }
