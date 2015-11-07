@@ -22,7 +22,7 @@ class QueryEvaluator
 public:
 	QueryEvaluator();
 	QueryEvaluator(ProgramKnowledgeBase* pkb);
-	
+
 	list<string> getResults(string inputQuery);
 
 private:
@@ -34,29 +34,31 @@ private:
 	list<string> evaluateSelect();
 	list<string> selectAll(string entityType);
 
-	vector<vector<string>> processClause(QueryObject temp);
+	bool processClause(QueryObject temp);
 	//vector<string> evaluateConditionClause(string first,string second,string third);
 	vector<string> recordSelectClause(string s);
 
-	vector<string> parent(string leftArgument, string rightArgument);
-	vector<string> parentT(string leftArgument, string rightArgument);
-	vector<string> follows(string leftArgument, string rightArgument);
-	vector<string> followsT(string leftArgument, string rightArgument);
-	vector<string> modifies(string leftArgument, string rightArgument);
-	vector<string> uses(string leftArgument, string rightArgument);
-	vector<string> calls(string leftArgument, string rightArgument);
-	void calls_BothSynonyms(string leftArgument, string rightArgument);
-	void calls_LeftSynonym(string leftArgument, string rightArgument);
-	void calls_RightSynonym(string leftArgument, string rightArgument);
+	bool parent(string leftArgument, string rightArgument);
+	bool parentT(string leftArgument, string rightArgument);
+	bool follows(string leftArgument, string rightArgument);
+	bool followsT(string leftArgument, string rightArgument);
+	bool modifies(string leftArgument, string rightArgument);
+	bool uses(string leftArgument, string rightArgument);
+	
+	bool calls(string leftArgument, string rightArgument);
+	bool calls_BothSynonyms(string leftArgument, string rightArgument);
+	bool calls_LeftSynonym(string leftArgument, string rightArgument);
+	bool calls_RightSynonym(string leftArgument, string rightArgument);
+	bool calls_NoSynonym(string leftArgument, string rightArgument);
 
-	vector<string> callsT(string leftArgument, string rightArgument);
-	vector<string> next(string leftArgument, string rightArgument);
-	vector<string> nextT(string leftArgument, string rightArgument);
-	vector<string> affects(string leftArgument, string rightArgument);
-	vector<string> affectsT(string leftArgument, string rightArgument);
-	vector<string> patternAssign(string synonym, string leftArgument, string rightArgument);
-	vector<string> patternIf(string synonym, string conditionalVariable);
-	vector<string> patternWhile(string synonym, string conditionalVariable);
+	bool callsT(string leftArgument, string rightArgument);
+	bool next(string leftArgument, string rightArgument);
+	bool nextT(string leftArgument, string rightArgument);
+	bool affects(string leftArgument, string rightArgument);
+	bool affectsT(string leftArgument, string rightArgument);
+	bool patternAssign(string synonym, string leftArgument, string rightArgument);
+	bool patternIf(string synonym, string conditionalVariable);
+	bool patternWhile(string synonym, string conditionalVariable);
 
 	QueryNode queryTreeRoot;
 	void addToRoot(unordered_set<QueryNode*> roots);
@@ -64,7 +66,7 @@ private:
 	bool isSynonym(string s);
 	bool isVariable(string s);
 	bool isProcedure(string s);
-	
+
 	unordered_map<string, unordered_set<QueryNode*>> encounteredEntities;
 	void addToEncounteredEntities(QueryNode* input);
 	bool encountered(string s);

@@ -29,6 +29,7 @@ public:
 	Gnode* getCFGNode(int i);
 	DDGnode* getDDGNode(int i);
 	void printStmtTable();
+	void printDDGNodes();
 
 private:
 	vector<NodeTriplet> *stmtTable;

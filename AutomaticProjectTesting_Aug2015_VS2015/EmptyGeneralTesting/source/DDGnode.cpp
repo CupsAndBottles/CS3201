@@ -6,6 +6,7 @@ DDGnode::DDGnode(int stmtN)
 {
 	this->stmtNum = stmtN;
 	this->edgesTo = new vector<pair<DDGnode*, string>>;
+	this->edgesFrom = new vector<pair<DDGnode*, string>>;
 }
 
 
@@ -50,6 +51,25 @@ void DDGnode::addEdge(DDGnode* node, string var)
 int DDGnode::getStatementNumber()
 {
 	return stmtNum;
+}
+
+void DDGnode::printDDGnode()
+{
+	cout << "<----------------------------------------------DDGnode of Statement ";
+	cout << this->getStatementNumber();
+	cout << ": ---------------------------------------------->" << endl;
+	cout << "From nodes:";
+	for (auto i = edgesFrom->begin(); i != edgesFrom->end(); i++) {
+		cout << " ";
+		cout << (*i).first;
+	}
+	cout << endl;
+	cout << "To nodes:";
+	for (auto i = edgesTo->begin(); i != edgesTo->end(); i++) {
+		cout << " ";
+		cout << (*i).first;
+	}
+	cout << endl;
 }
 
 void DDGnode::addFromEdge(DDGnode * node, string var)

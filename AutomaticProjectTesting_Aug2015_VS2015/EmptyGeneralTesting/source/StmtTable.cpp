@@ -76,3 +76,13 @@ void StmtTable::printStmtTable()
 		cout << "Statement :" << (i - stmtTable->begin()) << ", AST Address: <" << (*i).astNode << ">" << ", CFG Address: <" << (*i).cfgNode << ">" << ", DDG Address: <" << (*i).ddgNode << ">" << ", StmtNum: " << (*i).astNode->getStatementNumber() << endl;
 	}
 }
+
+void StmtTable::printDDGNodes()
+{
+	cout << endl << "<---------------------------------------- DDDG nodes: ----------------------------------------> " << endl << endl;
+	for (auto i = stmtTable->begin() + 1; i != stmtTable->end(); i++) {
+		if ((*i).ddgNode != NULL) {
+			(*i).ddgNode->printDDGnode();
+		}
+	}
+}

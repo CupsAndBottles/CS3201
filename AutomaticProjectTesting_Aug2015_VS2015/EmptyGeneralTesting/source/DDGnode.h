@@ -16,6 +16,7 @@ public:
 	vector<DDGnode*> listOfLinkedFromDDG();
 	void addEdge(DDGnode* node, string var);
 	int getStatementNumber();
+	void printDDGnode();
 
 private:
 	vector<pair<DDGnode*, string>> *edgesTo;
