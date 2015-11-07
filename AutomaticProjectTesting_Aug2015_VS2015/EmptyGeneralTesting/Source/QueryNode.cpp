@@ -16,6 +16,11 @@ QueryNode::QueryNode(string syn, string val) {
 	synonym = syn;
 }
 
+QueryNode* QueryNode::createQueryNode(string syn, string val) {
+	QueryNode* node = new QueryNode(syn, val);
+	return node;
+}
+
 void QueryNode::insertParent(QueryNode* node) {
 	for (QueryNode* parent : parents) {
 		parent->removeChild(this);
@@ -54,6 +59,7 @@ void QueryNode::destroy(unordered_map<string, unordered_set<QueryNode*>>* encoun
 	}
 
 	encounteredEntities->at(this->getValue()).erase(this);
+	delete[] this;
 }
 
 void QueryNode::removeChild(QueryNode* node) {

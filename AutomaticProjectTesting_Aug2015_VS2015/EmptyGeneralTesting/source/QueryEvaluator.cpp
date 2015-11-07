@@ -555,9 +555,9 @@ void QueryEvaluator::calls_BothSynonyms(string leftArgument, string rightArgumen
 			else {
 				unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
 				for (string result : results) {
-					QueryNode newNode = QueryNode(rightArgument, result);
-					leftNode->insertParent(&newNode);
-					rightNodes.insert(&newNode);
+					QueryNode* newNode = QueryNode::createQueryNode(rightArgument, result);
+					leftNode->insertParent(newNode);
+					rightNodes.insert(newNode);
 				}
 				encounteredEntities.insert({ rightArgument, rightNodes });
 			}
@@ -573,9 +573,9 @@ void QueryEvaluator::calls_BothSynonyms(string leftArgument, string rightArgumen
 			else {
 				unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
 				for (string result : results) {
-					QueryNode newNode = QueryNode(leftArgument, result);
-					rightNode->insertParent(&newNode);
-					leftNodes.insert(&newNode);
+					QueryNode* newNode = QueryNode::createQueryNode(leftArgument, result);
+					rightNode->insertParent(newNode);
+					leftNodes.insert(newNode);
 				}
 				encounteredEntities.insert({ leftArgument, leftNodes });
 			}
@@ -587,10 +587,10 @@ void QueryEvaluator::calls_BothSynonyms(string leftArgument, string rightArgumen
 		unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
 		unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
 		for (string rightProc : rightProcs) {
-			rightNodes.insert(&QueryNode(rightArgument, rightProc));
+			rightNodes.insert(QueryNode::createQueryNode(rightArgument, rightProc));
 		}
 		for (string leftProc : leftProcs) {
-			leftNodes.insert(&QueryNode(leftArgument, leftProc));
+			leftNodes.insert(QueryNode::createQueryNode(leftArgument, leftProc));
 		}
 		addToRoot(rightNodes);
 		addToRoot(leftNodes);
