@@ -695,15 +695,35 @@ vector<int> ProgramKnowledgeBase::getStatementsBeforeStar(int stmt){
 }
 
 bool ProgramKnowledgeBase::affects(int s1, int s2){
+	DDGnode *node1, *node2;
+	node1 = statementTable->getDDGNode(s1);
+	node2 = statementTable->getDDGNode(s2);
+	if (node1->linkedTo(node2)) {
+		return true;
+	}
 	return false;
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsAffectedBy(int stmt){
-	return vector<int>();
+	DDGnode *stmtNode;
+	stmtNode = statementTable->getDDGNode(stmt);
+	vector<int> list = vector<int>();
+	vector<DDGnode*> DDGlist = stmtNode->listOfLinkedToDDG();
+	for (auto i = DDGlist.begin(); i != DDGlist.end(); i++) {
+		list.push_back((*i)->getStatementNumber());
+	}
+	return list;
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsThatAffect(int stmt){
-	return vector<int>();
+	DDGnode *stmtNode;
+	stmtNode = statementTable->getDDGNode(stmt);
+	vector<int> list = vector<int>();
+	vector<DDGnode*> DDGlist = stmtNode->listOfLinkedFromDDG();
+	for (auto i = DDGlist.begin(); i != DDGlist.end(); i++) {
+		list.push_back((*i)->getStatementNumber());
+	}
+	return list;
 }
 
 bool ProgramKnowledgeBase::affectsStar(int s1, int s2){

@@ -11,10 +11,16 @@ class DDGnode
 public:
 	DDGnode(int stmtN);
 	~DDGnode();
+	bool linkedTo(DDGnode* node);
+	vector<DDGnode*> listOfLinkedToDDG();
+	vector<DDGnode*> listOfLinkedFromDDG();
 	void addEdge(DDGnode* node, string var);
+	int getStatementNumber();
 
 private:
-	vector<pair<DDGnode*, string>> *edges;
+	vector<pair<DDGnode*, string>> *edgesTo;
+	vector<pair<DDGnode*, string>> *edgesFrom;
+	void addFromEdge(DDGnode* node, string var);
 	int stmtNum;
 };
 
