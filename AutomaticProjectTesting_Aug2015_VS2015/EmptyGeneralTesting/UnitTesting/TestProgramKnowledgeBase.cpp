@@ -1034,15 +1034,39 @@ namespace UnitTesting
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 
 			Assert::IsTrue(pkb.nextStar(1, 2));
+			Assert::IsTrue(pkb.nextStar(1, 4));
+			Assert::IsTrue(pkb.nextStar(1, 7));
+			Assert::IsTrue(pkb.nextStar(1, 8));
+			Assert::IsTrue(pkb.nextStar(1, 11));
+			Assert::IsTrue(pkb.nextStar(1, 14));
 			Assert::IsTrue(pkb.nextStar(1, 15));
-
 			Assert::IsFalse(pkb.nextStar(1, 16));
+
+			Assert::IsTrue(pkb.nextStar(4, 4));
+
+			Assert::IsTrue(pkb.nextStar(3, 4));
+			Assert::IsTrue(pkb.nextStar(3, 6));
+			Assert::IsTrue(pkb.nextStar(3, 8));
+			Assert::IsTrue(pkb.nextStar(3, 10));
+			Assert::IsTrue(pkb.nextStar(3, 11));
+
+			Assert::IsTrue(pkb.nextStar(11, 10));
+			Assert::IsFalse(pkb.nextStar(11, 9));
 
 			vector<int> nextS1 = pkb.getNextStarStatements(1);
 			Assert::AreEqual(14, (int)nextS1.size());
+			
+			vector<int> nextS11 = pkb.getNextStarStatements(11);
+			Assert::AreEqual(6, (int)nextS11.size());
 
 			vector<int> prevS1 = pkb.getStatementsBeforeStar(1);
 			Assert::AreEqual(0, (int)prevS1.size());
+
+			vector<int> prevS4 = pkb.getStatementsBeforeStar(4);
+			Assert::AreEqual(4, (int)prevS4.size());
+
+			vector<int> prevS16 = pkb.getStatementsBeforeStar(16);
+			Assert::AreEqual(0, (int)prevS16.size());
 			
 			vector<int> prevS15 = pkb.getStatementsBeforeStar(15);
 			Assert::AreEqual(13, (int)prevS15.size());
