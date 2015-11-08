@@ -53,10 +53,10 @@ namespace UnitTesting
 			Assert::IsFalse(formatter.isNumericString("   9   ")); //todo:spaces will not work
 		}
 		TEST_METHOD(testStringEqual) {
-			Assert::IsTrue(formatter.stringEqual("hello", "hello"));
-			Assert::IsFalse(formatter.stringEqual("Hello", "hello")); //assume case-sensitive
-			Assert::IsTrue(formatter.stringEqual("234hello", "234hello"));
-			Assert::IsFalse(formatter.stringEqual("234hello", " 234hello "));
+			Assert::IsTrue(formatter.stringEqualCaseInsensitive("hello", "hello"));
+			Assert::IsTrue(formatter.stringEqualCaseInsensitive("Hello", "hello"));
+			Assert::IsTrue(formatter.stringEqualCaseInsensitive("234hello", "234hello"));
+			Assert::IsFalse(formatter.stringEqualCaseInsensitive("234hello", " 234hello "));
 		}
 		TEST_METHOD(testIntegerVectorToString) {
 			int myints[] = { -16,2,-77,29 };
