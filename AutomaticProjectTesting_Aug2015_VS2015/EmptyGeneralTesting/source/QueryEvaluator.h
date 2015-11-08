@@ -53,9 +53,7 @@ private:
 	list<string> evaluateSelect();
 	list<string> selectAll(string entityType);
 
-	bool processClause(QueryObject temp);
-	//vector<string> evaluateConditionClause(string first,string second,string third);
-	vector<string> recordSelectClause(string s);
+	bool processClause(QueryObject clause);
 
 	bool genericNonPattern_BothSynonyms(string leftArgument, string rightArgument, int whichRelation);
 	bool genericNonPattern_Evaluator(string leftArgument, string rightArgument, int whichRelation, bool leftNumber);

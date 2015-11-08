@@ -196,12 +196,6 @@ vector<string> QueryEvaluator::evaluateQuery() {
 	return output;
 }
 
-vector<string> QueryEvaluator::recordSelectClause(string s) {
-	//may not be required anymore for algo.
-	vector<string> output;
-	return output;
-}
-
 bool QueryEvaluator::processClause(QueryObject clause) {
 	string relationType = clause.getRelation();
 	string lhs = clause.getFirstArgument();
