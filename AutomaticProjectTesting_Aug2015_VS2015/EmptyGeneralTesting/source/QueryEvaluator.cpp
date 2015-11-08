@@ -349,7 +349,6 @@ bool QueryEvaluator::calls_BothSynonyms(string leftArgument, string rightArgumen
 bool QueryEvaluator::calls_LeftSynonym(string leftArgument, string rightArgument) {
 	bool leftEncountered = encountered(leftArgument);
 	bool atLeastOneResult = false;
-<<<<<<< HEAD
 	if (isWildCard(rightArgument)) {
 		list<string> rightProcedures = selectAll(EntTable::PROCEDURE);
 		if (leftEncountered) {
@@ -367,10 +366,8 @@ bool QueryEvaluator::calls_LeftSynonym(string leftArgument, string rightArgument
 			}
 		}
 		return atLeastOneResult;
-=======
 	if (rightArgument == "_") {
 		return false;
->>>>>>> origin/master
 	}
 	else {
 		string rightProcedure = formatter.removeQuotes(rightArgument);
@@ -406,11 +403,8 @@ bool QueryEvaluator::calls_LeftSynonym(string leftArgument, string rightArgument
 bool QueryEvaluator::calls_RightSynonym(string leftArgument, string rightArgument) {
 	bool rightEncountered = encountered(rightArgument);
 	bool atLeastOneResult = false;
-<<<<<<< HEAD
 	if (isWildCard(leftArgument)) {
-=======
 	if (leftArgument == "_") {
->>>>>>> origin/master
 		//todo: leftArgument wildcard special case
 		return false;
 	}
@@ -445,12 +439,9 @@ bool QueryEvaluator::calls_RightSynonym(string leftArgument, string rightArgumen
 }
 
 bool QueryEvaluator::calls_NoSynonym(string leftArgument, string rightArgument) {
-<<<<<<< HEAD
 	bool isValid = false;
  	if (isWildCard(leftArgument) && isWildCard(rightArgument)) {
-=======
 	if (leftArgument == "_" && rightArgument == "_") {
->>>>>>> origin/master
 		//both wildcard special case
 		return false;
 	}
