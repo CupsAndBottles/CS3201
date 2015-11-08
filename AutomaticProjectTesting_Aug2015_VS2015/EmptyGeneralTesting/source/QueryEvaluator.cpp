@@ -104,11 +104,11 @@ bool QueryEvaluator::isSynonym(string s) {
 }
 
 bool QueryEvaluator::isVariable(string s){
-	return declaration.getType(s) != EntTable::VARIABLE;
+	return declaration.getType(s) == EntTable::VARIABLE;
 }
 
 bool QueryEvaluator::isProcedure(string s) {
-	return declaration.getType(s) != EntTable::PROCEDURE;
+	return declaration.getType(s) == EntTable::PROCEDURE;
 }
 
 bool QueryEvaluator::isWildCard(string s) {
