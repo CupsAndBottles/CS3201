@@ -63,6 +63,7 @@ private:
 	QueryNode queryTreeRoot;
 	void addToRoot(unordered_set<QueryNode*> roots);
 	void addToRoot(QueryNode* newRoot);
+	void flushQueryTree();
 	bool isSynonym(string s);
 	bool isVariable(string s);
 	bool isProcedure(string s);

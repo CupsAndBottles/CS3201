@@ -17,6 +17,7 @@ list<string> QueryEvaluator::getResults (string inputQuery) {
 	bool isValidQuery = preprocessor.query(inputQuery);
 	if (isValidQuery) {
 		getQueryData();
+		flushQueryTree();
 		evaluateQuery();
 		results = evaluateSelect();
 	}
@@ -155,6 +156,15 @@ void QueryEvaluator::addToRoot(QueryNode* newRoot) {
 	} else {
 		for (QueryNode* oldRoot : currentRoots) {
 			oldRoot->insertParent(newRoot);
+		}
+	}
+}
+
+void QueryEvaluator::flushQueryTree() {
+	vector<QueryNode*> currentRoots = queryTreeRoot.getChildren();
+	if (!currentRoots.empty()) {
+		for (QueryNode* oldRoot : currentRoots) {
+			oldRoot->destroy(&encounteredEntities);
 		}
 	}
 }
