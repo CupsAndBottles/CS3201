@@ -63,6 +63,10 @@ private:
 	vector<string> genericNonPattern_RightEvaluator(string leftArgument, int whichRelation, bool leftNumber);
 
 	bool parent(string leftArgument, string rightArgument);
+	bool parent_BothSynonym(string leftArgument, string rightArgument);
+	bool parent_LeftSynonym(string leftArgument, string rightArgument);
+	bool parent_RightSynonym(string leftArgument, string rightArgument);
+	bool parent_NoSynonym(string leftArgument, string rightArgument);
 	bool parentT(string leftArgument, string rightArgument);
 	bool follows(string leftArgument, string rightArgument);
 	bool followsT(string leftArgument, string rightArgument);

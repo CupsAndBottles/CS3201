@@ -441,6 +441,7 @@ void QueryPreProcessor::optimizeWithClause(vector<string> temp) {
 bool QueryPreProcessor::query(string s) {
 	//initialize relationship table
 	relTable.initRelTable();
+	clearAll();
 
 	//cout << s << endl; cout << endl;
 
