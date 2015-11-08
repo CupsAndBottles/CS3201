@@ -18,6 +18,7 @@ list<string> QueryEvaluator::getResults (string inputQuery) {
 	if (isValidQuery) {
 		getQueryData();
 		flushQueryTree();
+		flushEncounteredEntities();
 		evaluateQuery();
 		results = evaluateSelect();
 	}
@@ -174,6 +175,12 @@ void QueryEvaluator::flushQueryTree() {
 		for (size_t i = 0; i < currentRoots.size(); i++) {
 			delete currentRoots[i];
 		}
+	}
+}
+
+void QueryEvaluator::flushEncounteredEntities() {
+	if (!encounteredEntities.empty()) {
+		encounteredEntities.clear();
 	}
 }
 

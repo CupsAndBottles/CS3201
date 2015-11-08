@@ -70,6 +70,7 @@ private:
 	void addToRoot(unordered_set<QueryNode*> roots);
 	void addToRoot(QueryNode* newRoot);
 	void flushQueryTree();
+	void flushEncounteredEntities();
 	bool isSynonym(string s);
 	bool isVariable(string s);
 	bool isProcedure(string s);
