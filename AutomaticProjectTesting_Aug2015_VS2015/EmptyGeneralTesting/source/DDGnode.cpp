@@ -61,13 +61,17 @@ void DDGnode::printDDGnode()
 	cout << "From nodes:";
 	for (auto i = edgesFrom->begin(); i != edgesFrom->end(); i++) {
 		cout << " ";
-		cout << (*i).first;
+		cout << (*i).first->getStatementNumber();
+		cout << "-";
+		cout << (*i).second;
 	}
 	cout << endl;
 	cout << "To nodes:";
 	for (auto i = edgesTo->begin(); i != edgesTo->end(); i++) {
 		cout << " ";
-		cout << (*i).first;
+		cout << (*i).first->getStatementNumber();
+		cout << "-";
+		cout << (*i).second;
 	}
 	cout << endl;
 }
