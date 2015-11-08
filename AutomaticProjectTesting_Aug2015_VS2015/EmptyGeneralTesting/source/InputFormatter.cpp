@@ -4,7 +4,7 @@ using namespace std;
 
 bool InputFormatter::isNumericString(string s) {
 	for (size_t i = 0; i < s.size(); i++) {
-		if (isdigit(s[i]) == false) {
+		if (!isdigit(s[i])) {
 			return false;
 		}
 	}
@@ -13,12 +13,7 @@ bool InputFormatter::isNumericString(string s) {
 
 bool InputFormatter::stringEqual(string s, string match) {
 	//transform(s.begin(), s.end(), s.begin(), ::tolower);
-	if (s.compare(match) == 0) {
-		return true;
-	}
-	else {
-		return false;
-	}
+	return s == match;
 }
 
 string InputFormatter::intToString(int value) {
@@ -35,12 +30,7 @@ vector<string> InputFormatter::integerVectorToString(vector<int> arr) {
 }
 
 bool InputFormatter::isDoubleQuote(string s) {
-	if (s.front() == '"') {
-		return true;
-	}
-	else {
-		return false;
-	}
+	return s.front() == '"';
 }
 
 void InputFormatter::displayQuery(string results) {
@@ -76,12 +66,7 @@ vector<string> InputFormatter::join( vector<string>a, vector<string> b) {
 
 bool InputFormatter::isUnderscore(string s) {
 	size_t i = s.length();
-	if ((s[0] == '_') && (s[i - 1] == '_')) {
-		return true;
-	}
-	else {
-		return false;
-	}
+	return (s[0] == '_') && (s[i - 1] == '_');
 }
 
 string InputFormatter::removeUnderscore(string s) {
