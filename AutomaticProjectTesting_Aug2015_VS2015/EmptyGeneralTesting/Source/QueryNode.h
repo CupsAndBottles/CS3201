@@ -27,8 +27,8 @@ public:
 	string getValue();
 	string getSynonym();
 
-	bool hasOneChild();
-	bool hasOneParent();
+	bool hasNoChildren();
+	bool hasNoParent();
 	bool isRoot();
 
 private:
