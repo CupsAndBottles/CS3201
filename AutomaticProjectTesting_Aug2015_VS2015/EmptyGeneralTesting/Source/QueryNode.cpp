@@ -36,7 +36,9 @@ void QueryNode::addParent(QueryNode* node) {
 
 void QueryNode::removeParent(QueryNode* node) {
 	auto it = find(parents.begin(), parents.end(), node);
-	parents.erase(it);
+	if (it != parents.end()) {
+		parents.erase(it);
+	}
 }
 
 void QueryNode::destroy(unordered_map<string, unordered_set<QueryNode*>>* encounteredEntities) {
@@ -66,7 +68,9 @@ void QueryNode::destroy(unordered_map<string, unordered_set<QueryNode*>>* encoun
 
 void QueryNode::removeChild(QueryNode* node) {
 	auto it = find(children.begin(), children.end(), node);
-	children.erase(it);
+	if (it != children.end()) {
+		children.erase(it);
+	}
 }
 
 void QueryNode::addChild(QueryNode* node) {
