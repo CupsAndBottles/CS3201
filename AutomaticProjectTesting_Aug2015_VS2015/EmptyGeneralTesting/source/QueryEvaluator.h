@@ -66,6 +66,7 @@ private:
 	bool isSynonym(string s);
 	bool isVariable(string s);
 	bool isProcedure(string s);
+	bool isWildCard(string s);
 
 	unordered_map<string, unordered_set<QueryNode*>> encounteredEntities;
 	void addToEncounteredEntities(QueryNode* input);

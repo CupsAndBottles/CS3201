@@ -109,6 +109,10 @@ bool QueryEvaluator::isProcedure(string s) {
 	return declaration.getType(s) != EntTable::PROCEDURE;
 }
 
+bool QueryEvaluator::isWildCard(string s) {
+	return s == QueryObject::WILDCARD;
+}
+
 void QueryEvaluator::addToEncounteredEntities(QueryNode* input) {
 	if (encountered(input->getValue())) {
 		encounteredEntities.at(input->getValue()).insert(input);
@@ -345,8 +349,23 @@ bool QueryEvaluator::calls_BothSynonyms(string leftArgument, string rightArgumen
 bool QueryEvaluator::calls_LeftSynonym(string leftArgument, string rightArgument) {
 	bool leftEncountered = encountered(leftArgument);
 	bool atLeastOneResult = false;
-	if (formatter.stringEqual(rightArgument, "_")) {
-		return false;
+	if (isWildCard(rightArgument)) {
+		list<string> rightProcedures = selectAll(EntTable::PROCEDURE);
+		if (leftEncountered) {
+			unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
+			for (string rightProcedure : rightProcedures) {	
+				for (QueryNode* leftNode : leftNodes) {
+					bool result = database.calls(leftNode->getValue(), rightProcedure);
+					if (result) {
+						atLeastOneResult = true;
+					}
+					else {
+						leftNode->destroy(&encounteredEntities);
+					}
+				}
+			}
+		}
+		return atLeastOneResult;
 	}
 	else {
 		string rightProcedure = formatter.removeQuotes(rightArgument);
@@ -382,7 +401,7 @@ bool QueryEvaluator::calls_LeftSynonym(string leftArgument, string rightArgument
 bool QueryEvaluator::calls_RightSynonym(string leftArgument, string rightArgument) {
 	bool rightEncountered = encountered(rightArgument);
 	bool atLeastOneResult = false;
-	if (formatter.stringEqual(leftArgument, "_")) {
+	if (isWildCard(leftArgument)) {
 		//todo: leftArgument wildcard special case
 		return false;
 	}
@@ -417,15 +436,23 @@ bool QueryEvaluator::calls_RightSynonym(string leftArgument, string rightArgumen
 }
 
 bool QueryEvaluator::calls_NoSynonym(string leftArgument, string rightArgument) {
-	if (formatter.stringEqual(leftArgument, "_") && formatter.stringEqual(rightArgument, "_")) {
+	bool isValid = false;
+ 	if (isWildCard(leftArgument) && isWildCard(rightArgument)) {
 		//both wildcard special case
 		return false;
+	}
+	else if (isWildCard(leftArgument)) {
+
+	}
+	else if (isWildCard(rightArgument)) {
+
 	}
 	else {
 		string leftProcedure = formatter.removeQuotes(leftArgument);
 		string rightProcedure = formatter.removeQuotes(rightArgument);
-		return database.calls(leftProcedure, rightProcedure);
+		isValid = database.calls(leftProcedure, rightProcedure);
 	}
+	return isValid;
 }
 
 bool QueryEvaluator::callsT(string leftArgument, string rightArgument) {
