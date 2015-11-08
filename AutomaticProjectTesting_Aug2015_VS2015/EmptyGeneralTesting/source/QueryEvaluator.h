@@ -26,6 +26,24 @@ public:
 	list<string> getResults(string inputQuery);
 
 private:
+	enum Relation {
+		MODIFIES,
+		USES,
+		CALLS,
+		CALLSSTAR,
+		PARENT,
+		PARENTSTAR,
+		FOLLOWS,
+		FOLLOWSSTAR,
+		NEXT,
+		NEXTSTAR,
+		AFFECTS,
+		AFFECTSSTAR,
+		PATTERN_ASSIGN,
+		PATTERN_IF,
+		PATTERN_WHILE
+	};
+
 	void getQueryData();
 	string getSelectClause();
 	string getEntityType(string s);
