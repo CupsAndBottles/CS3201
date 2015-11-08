@@ -325,8 +325,8 @@ bool QueryEvaluator::parent_BothSynonym(string leftArgument, string rightArgumen
 		}
 	}
 	else {
-		list<string> leftResults = selectAll(leftArgument);
-		list<string> rightResults = selectAll(rightArgument);
+		list<string> leftResults = selectAll(getEntityType(leftArgument));
+		list<string> rightResults = selectAll(getEntityType(rightArgument));
 		vector<string> leftParents = vector<string>();
 		vector<string> rightChildren = vector<string>();
 		for (string leftResult : leftResults) {
@@ -368,6 +368,71 @@ bool QueryEvaluator::parent_BothSynonym(string leftArgument, string rightArgumen
 bool QueryEvaluator::parent_LeftSynonym(string leftArgument, string rightArgument) {
 	bool atLeastOneResult = false;
 	bool leftEncountered = encountered(leftArgument);
+	if (isWildCard(rightArgument)) {
+		vector<string> rightChildren = vector<string>();
+		vector<string> leftParents = vector<string>();
+		list<string> leftResults = selectAll(getEntityType(leftArgument));
+		for (string leftResult : leftResults) {
+			vector<string> temp = formatter.integerVectorToString(database.getChildrenOf(stoi(leftResult)));
+			if (!temp.empty()) {
+				leftParents.push_back(leftResult);
+				for (string rightChild : temp) {
+					rightChildren.push_back(rightChild);
+				}
+			}
+		}
+		if (leftEncountered) {
+			unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
+			for (string rightChild : rightChildren) {
+				for (QueryNode* leftNode : leftNodes) {
+					bool result = database.isParent(stoi(leftNode->getValue()), stoi(rightArgument));
+					if (result) {
+						atLeastOneResult = true;
+					}
+					else {
+						leftNode->destroy(&encounteredEntities);
+					}
+				}
+			}
+		}
+		else {
+			if (!leftParents.empty() && !rightChildren.empty()) {
+				atLeastOneResult = true;
+				unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
+				for (string leftParent : leftParents) {
+					leftNodes.insert(QueryNode::createQueryNode(leftArgument, leftParent));
+				}
+				addToRoot(leftNodes);
+				encounteredEntities.insert({ leftArgument, leftNodes });
+			}
+		}
+	}
+	else {
+		if (leftEncountered) {
+			unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
+			for (QueryNode* leftNode : leftNodes) {
+				bool result = database.isParent(stoi(leftNode->getValue()), stoi(rightArgument));
+				if (result) {
+					atLeastOneResult = true;
+				}
+				else {
+					leftNode->destroy(&encounteredEntities);
+				}
+			}
+		}
+		else {
+			vector<string> leftParents = formatter.integerVectorToString(database.getParentOf(stoi(rightArgument)));
+			if (!leftParents.empty()) {
+				atLeastOneResult = true;
+				unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
+				for (string leftParent : leftParents) {
+					leftNodes.insert(QueryNode::createQueryNode(leftArgument, leftParent));
+				}
+				addToRoot(leftNodes);
+				encounteredEntities.insert({ leftArgument, leftNodes });
+			}
+		}
+	}
 	return atLeastOneResult;
 }
 
