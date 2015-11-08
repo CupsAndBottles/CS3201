@@ -1321,10 +1321,10 @@ vector<vector<int>> ProgramKnowledgeBase::findPaths(int s1, int s2)
 			}
 			paths[i].curNode = statementTable->getCFGNode(paths[i].next[0]);
 			paths[i].next = getNextStatements(paths[i].curNode->getValue());
-			//if (paths[i].curNode->getValue() == 6) {cout << paths[i].next.size() << endl;}
 			std::sort(paths[i].next.begin(), paths[i].next.end());
 
 			if (paths[i].curNode->getValue() == s2) {
+				paths[i].path.push_back(paths[i].curNode->getValue());
 				results.push_back(paths[i].path);
 				paths.erase(paths.begin() + i);
 				i--;
