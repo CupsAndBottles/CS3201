@@ -173,6 +173,7 @@ void QueryEvaluator::flushQueryTree() {
 	currentRoots = queryTreeRoot.getChildren();
 	if (!currentRoots.empty()) {
 		for (size_t i = 0; i < currentRoots.size(); i++) {
+			queryTreeRoot.removeChild(currentRoots[i]);
 			delete currentRoots[i];
 		}
 	}
