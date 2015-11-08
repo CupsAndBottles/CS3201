@@ -44,7 +44,7 @@ void QueryNode::removeParent(QueryNode* node) {
 void QueryNode::destroy(unordered_map<string, unordered_set<QueryNode*>>* encounteredEntities) {
 	for (QueryNode* parent : parents) {
 		parent->removeChild(this);
-		if (parent->hasNoChildren()) {
+		if (!parent->isRoot() && parent->hasNoChildren()) {
 			parent->destroy(encounteredEntities);
 		}
 	}
