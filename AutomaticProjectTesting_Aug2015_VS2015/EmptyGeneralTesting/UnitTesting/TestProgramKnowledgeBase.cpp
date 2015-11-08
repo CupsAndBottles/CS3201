@@ -939,7 +939,7 @@ namespace UnitTesting
 			Assert::IsFalse(pkb.next(11, 10));
 			Assert::IsFalse(pkb.next(10, 12));
 			Assert::IsFalse(pkb.next(15, 16));
-
+			
 			vector<int> next3 = pkb.getNextStatements(3);
 			Assert::AreEqual(2, (int)next3.size());
 			Assert::IsTrue(find(next3.begin(), next3.end(), 4) != next3.end());
@@ -996,6 +996,7 @@ namespace UnitTesting
 		
 			vector<int> prev16 = pkb.getStatementsBefore(16);
 			Assert::AreEqual(0, (int)prev16.size());
+			
 		}
 
 		TEST_METHOD(testPKBNextStar) {

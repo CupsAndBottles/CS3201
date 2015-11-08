@@ -73,10 +73,25 @@ namespace UnitTesting
 			Database* db = new Database();
 			db->buildDatabase(parsedProgram);
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
-
 			QueryEvaluator qe = QueryEvaluator(&pkb);
-			list<string> output = qe.getResults("procedure p, p1; Select p such that Calls(p, p1)");
-			Assert::AreEqual(2, (int)output.size());
+
+			list<string> callspp1 = qe.getResults("procedure p, p1; Select p such that Calls(p, p1)");
+			Assert::AreEqual(2, (int)callspp1.size());
+
+			list<string> callsProcp = qe.getResults("procedure p; Select p such that Calls(\"Proc\", p)");
+			Assert::AreEqual(1, (int)callsProcp.size());
+			Assert::AreEqual(string("Another"), callsProcp.front());
+
+			list<string> callspProc = qe.getResults("procedure p; Select p such that Calls(p, \"Proc\")");
+			Assert::AreEqual(1, (int)callspProc.size());
+			Assert::AreEqual(string("Other"), callspProc.front());
+
+			list<string> callsProcOtherP = qe.getResults("procedure p; Select p such that Calls(\"Proc\", \"Other\")");
+			Assert::AreEqual(3, (int)callsProcOtherP.size());
+
+			list<string> callsProcOtherBoolean = qe.getResults("procedure p; Select BOOLEAN such that Calls(\"Proc\", \"Other\")");
+			Assert::AreEqual(1, (int)callsProcOtherBoolean.size());
+			Assert::AreEqual(string("TRUE"), callspProc.front());
 		}
 	};
 }
