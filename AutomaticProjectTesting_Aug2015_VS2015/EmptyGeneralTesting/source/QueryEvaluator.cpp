@@ -623,3 +623,273 @@ bool QueryEvaluator::patternAssign(string synonym, string leftArgument, string r
 	}
 	*/
 }
+
+
+bool QueryEvaluator::genericNonPattern_BothSynonyms(string leftArgument, string rightArgument, int whichRelation) {
+	bool leftEncountered = encountered(leftArgument);
+	bool rightEncountered = encountered(rightArgument);
+	bool leftNumber = !isVariable(leftArgument) && !isProcedure(leftArgument);
+	bool atLeastOneResult = false;
+	if (leftEncountered && rightEncountered) {
+		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
+		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
+		for (QueryNode* leftNode : leftNodes) {
+			for (QueryNode* rightNode : rightNodes) {
+				bool result = genericNonPattern_Evaluator(leftNode->getValue(), rightNode->getValue(), whichRelation, leftNumber);
+				if (result) {
+					atLeastOneResult = true;
+					leftNode->insertParent(rightNode);
+					rightNode->insertParent(leftNode);
+				}
+				else {
+					leftNode->destroy(&encounteredEntities);
+					rightNode->destroy(&encounteredEntities);
+				}
+			}
+		}
+	} else if (leftEncountered) {
+		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
+		for (QueryNode* leftNode : leftNodes) {
+			vector<string> results = genericNonPattern_RightEvaluator(leftNode->getValue(), whichRelation, leftNumber);
+			if (results.empty()) {
+				leftNode->destroy(&encounteredEntities);
+			}
+			else {
+				unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
+				for (string result : results) {
+					atLeastOneResult = true;
+					QueryNode* newNode = QueryNode::createQueryNode(rightArgument, result);
+					leftNode->insertParent(newNode);
+					rightNodes.insert(newNode);
+				}
+				encounteredEntities.insert({ rightArgument, rightNodes });
+			}
+		}
+	} else if (rightEncountered) {
+		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
+		for (QueryNode* rightNode : rightNodes) {
+			vector<string> results = genericNonPattern_LeftEvaluator(rightNode->getValue(), whichRelation, leftNumber);
+			if (results.empty()) {
+				rightNode->destroy(&encounteredEntities);
+			}
+			else {
+				unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
+				for (string result : results) {
+					atLeastOneResult = true;
+					QueryNode* newNode = QueryNode::createQueryNode(leftArgument, result);
+					rightNode->insertParent(newNode);
+					leftNodes.insert(newNode);
+				}
+				encounteredEntities.insert({ leftArgument, leftNodes });
+			}
+		}
+	} else {
+		vector<string> leftPossibilities;
+		if (isVariable(leftArgument)) {
+			leftPossibilities = database.getVariableNames();
+		} else if (isProcedure(leftArgument)) {
+			leftPossibilities = database.getProcedureNames();
+		} else {
+			vector<int> statements(database.getNumberOfStatements());
+			iota(statements.begin(), statements.end(), 0);
+			leftPossibilities = formatter.integerVectorToString(statements);
+		}
+
+		vector<string> rightPossibilities;
+		if (isVariable(rightArgument)) {
+			rightPossibilities = database.getVariableNames();
+		} else if (isProcedure(leftArgument)) {
+			rightPossibilities = database.getProcedureNames();
+		} else {
+			vector<int> statements(database.getNumberOfStatements());
+			iota(statements.begin(), statements.end(), 0);
+			leftPossibilities = formatter.integerVectorToString(statements);
+		}
+
+		for (size_t i = 0; i < leftPossibilities.size(); i++) {
+			for (size_t j = 0; j < rightPossibilities.size(); j++) {
+				bool result = genericNonPattern_Evaluator(leftPossibilities[i], rightPossibilities[i], whichRelation, leftNumber);
+				if (result) {
+					return true; // short circuit
+				}
+			}
+		}
+	}
+	return atLeastOneResult;
+}
+
+bool QueryEvaluator::genericNonPattern_Evaluator(string leftValue, string rightValue, int whichRelation, bool leftNumber) {
+	bool result = false;
+	switch (whichRelation) {
+	case MODIFIES:
+		// right must be variable, so right must be a string
+		// left is statement number or procedure
+		if (leftNumber) {
+			result = database.modifies(stoi(leftValue), rightValue);
+		} else {
+			result = database.modifies(leftValue, rightValue);
+		}
+		break;
+	case USES:
+		// right must be variable, so right must be a string
+		// left is statement number or procedure
+		if (leftNumber) {
+			result = database.uses(stoi(leftValue), rightValue);
+		} else {
+			result = database.uses(leftValue, rightValue);
+		}
+		break;
+	case CALLS:
+		// both must be procedures, so both must be strings
+		result = database.calls(leftValue, rightValue);
+		break;
+	case CALLSSTAR:
+		// both must be procedures, so both must be strings
+		result = database.callsStar(leftValue, rightValue);
+		break;
+	case PARENT:
+		// both must be statement numbers
+		result = database.isParent(stoi(leftValue), stoi(rightValue));
+		break;
+	case PARENTSTAR:
+		// both must be statement numbers
+		result = database.isParentStar(stoi(leftValue), stoi(rightValue));
+		break;
+	case AFFECTS:
+		// both must be statement numbers
+		result = database.affects(stoi(leftValue), stoi(rightValue));
+		break;
+	case AFFECTSSTAR:
+		// both must be statement numbers
+		result = database.affectsStar(stoi(leftValue), stoi(rightValue));
+		break;
+	case NEXT:
+		// both must be statement numbers
+		result = database.next(stoi(leftValue), stoi(rightValue));
+		break;
+	case NEXTSTAR:
+		// both must be statement numbers
+		result = database.nextStar(stoi(leftValue), stoi(rightValue));
+		break;
+	}
+
+	return result;
+}
+
+// given a right value, evaluate possible left values
+vector<string> QueryEvaluator::genericNonPattern_LeftEvaluator(string rightValue, int whichRelation, bool leftNumber) {
+	vector<string> results;
+	switch (whichRelation) {
+	case MODIFIES:
+		// right must be variable, so right must be a string
+		// left is statement number or procedure
+		if (leftNumber) {
+			results = formatter.integerVectorToString(database.getStatementsThatModify(rightValue));
+		} else {
+			results = database.getProceduresThatModify(rightValue);
+		}
+		break;
+	case USES:
+		// right must be variable, so right must be a string
+		// left is statement number or procedure
+		if (leftNumber) {
+			results = formatter.integerVectorToString(database.getStatementsThatUse(rightValue));
+		} else {
+			results = database.getProceduresThatUse(rightValue);
+		}
+		break;
+	case CALLS:
+		// both must be procedures, so both must be strings
+		results = database.getProceduresThatCall(rightValue);
+		break;
+	case CALLSSTAR:
+		// both must be procedures, so both must be strings
+		results = database.getProceduresThatCallStar(rightValue);
+		break;
+	case PARENT:
+		// both must be statement numbers
+		results = formatter.integerVectorToString(database.getParentOf(stoi(rightValue)));
+		break;
+	case PARENTSTAR:
+		// both must be statement numbers
+		results = formatter.integerVectorToString(database.getParentsStarOf(stoi(rightValue)));
+		break;
+	case AFFECTS:
+		// both must be statement numbers
+		results = formatter.integerVectorToString(database.getStatementsThatAffect(stoi(rightValue)));
+		break;
+	case AFFECTSSTAR:
+		// both must be statement numbers
+		results = formatter.integerVectorToString(database.getStatementsThatAffectStar(stoi(rightValue)));
+		break;
+	case NEXT:
+		// both must be statement numbers
+		results = formatter.integerVectorToString(database.getStatementsBefore(stoi(rightValue)));
+		break;
+	case NEXTSTAR:
+		// both must be statement numbers
+		results = formatter.integerVectorToString(database.getStatementsBeforeStar(stoi(rightValue)));
+		break;
+	}
+
+	return results;
+}
+
+// given a left value, evaluate possible right values
+vector<string> QueryEvaluator::genericNonPattern_RightEvaluator(string leftValue, int whichRelation, bool leftNumber) {
+	vector<string> results;
+	switch (whichRelation) {
+	case MODIFIES:
+		// right must be variable, so right must be a string
+		// left is statement number or procedure
+		if (leftNumber) {
+			results = database.getVariablesModifiedBy(stoi(leftValue));
+		} else {
+			results = database.getVariablesModifiedBy(leftValue);
+		}
+		break;
+	case USES:
+		// right must be variable, so right must be a string
+		// left is statement number or procedure
+		if (leftNumber) {
+			results = database.getVariablesUsedBy(stoi(leftValue));
+		} else {
+			results = database.getVariablesUsedBy(leftValue);
+		}
+		break;
+	case CALLS:
+		// both must be procedures, so both must be strings
+		results = database.getProceduresCalledBy(leftValue);
+		break;
+	case CALLSSTAR:
+		// both must be procedures, so both must be strings
+		results = database.getProceduresCallStarredBy(leftValue);
+		break;
+	case PARENT:
+		// both must be statement numbers
+		results = formatter.integerVectorToString(database.getChildrenOf(stoi(leftValue)));
+		break;
+	case PARENTSTAR:
+		// both must be statement numbers
+		results = formatter.integerVectorToString(database.getChildrenStarOf(stoi(leftValue)));
+		break;
+	case AFFECTS:
+		// both must be statement numbers
+		results = formatter.integerVectorToString(database.getStatementsAffectedBy(stoi(leftValue)));
+		break;
+	case AFFECTSSTAR:
+		// both must be statement numbers
+		results = formatter.integerVectorToString(database.getStatementsAffectStarredBy(stoi(leftValue)));
+		break;
+	case NEXT:
+		// both must be statement numbers
+		results = formatter.integerVectorToString(database.getNextStatements(stoi(leftValue)));
+		break;
+	case NEXTSTAR:
+		// both must be statement numbers
+		results = formatter.integerVectorToString(database.getNextStarStatements(stoi(leftValue)));
+		break;
+	}
+
+	return results;
+}

@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <numeric>
 
 using namespace std;
 
@@ -55,6 +56,11 @@ private:
 	bool processClause(QueryObject temp);
 	//vector<string> evaluateConditionClause(string first,string second,string third);
 	vector<string> recordSelectClause(string s);
+
+	bool genericNonPattern_BothSynonyms(string leftArgument, string rightArgument, int whichRelation);
+	bool genericNonPattern_Evaluator(string leftArgument, string rightArgument, int whichRelation, bool leftNumber);
+	vector<string> genericNonPattern_LeftEvaluator(string rightArgument, int whichRelation, bool leftNumber);
+	vector<string> genericNonPattern_RightEvaluator(string leftArgument, int whichRelation, bool leftNumber);
 
 	bool parent(string leftArgument, string rightArgument);
 	bool parentT(string leftArgument, string rightArgument);
