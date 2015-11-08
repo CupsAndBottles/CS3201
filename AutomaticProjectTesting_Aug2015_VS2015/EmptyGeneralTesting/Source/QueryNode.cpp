@@ -22,9 +22,9 @@ QueryNode* QueryNode::createQueryNode(string syn, string val) {
 }
 
 void QueryNode::insertParent(QueryNode* node) {
-	for (QueryNode* parent : parents) {
-		parent->removeChild(this);
-		parent->addChild(node);
+	for (size_t i = 0; i < parents.size(); i++) {
+		parents[i]->removeChild(this);
+		parents[i]->addChild(node);
 	}
 	this->addParent(node);
 	node->addChild(this);
