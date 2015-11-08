@@ -42,7 +42,13 @@ private:
 	bool parentT(string leftArgument, string rightArgument);
 	bool follows(string leftArgument, string rightArgument);
 	bool followsT(string leftArgument, string rightArgument);
+
 	bool modifies(string leftArgument, string rightArgument);
+	bool modifies_BothSynonyms(string leftArgument, string rightArgument);
+	bool modifies_LeftSynonym(string leftArgument, string rightArgument);
+	bool modifies_RightSynonym(string leftArgument, string rightArgument);
+	bool modifies_NoSynonym(string leftArgument, string rightArgument);
+
 	bool uses(string leftArgument, string rightArgument);
 	
 	bool calls(string leftArgument, string rightArgument);

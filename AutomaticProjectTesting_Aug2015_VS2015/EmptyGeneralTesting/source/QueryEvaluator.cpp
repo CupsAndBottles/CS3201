@@ -251,8 +251,33 @@ bool QueryEvaluator::followsT(string leftArgument, string rightArgument) {
 }
 
 bool QueryEvaluator::modifies(string leftArgument, string rightArgument) {
-	return false;
+	bool leftSynonym = isSynonym(leftArgument);
+	bool rightSynonym = isSynonym(rightArgument);
+	if (leftSynonym && rightSynonym) {
+		return modifies_BothSynonyms(leftArgument, rightArgument);
+	} else if (leftSynonym) {
+		return modifies_LeftSynonym(leftArgument, rightArgument);
+	} else if (rightSynonym) {
+		return modifies_RightSynonym(leftArgument, rightArgument);
+	} else {
+		return modifies_NoSynonym(leftArgument, rightArgument);
+	}
+}
 
+bool QueryEvaluator::modifies_BothSynonyms(string leftArgument, string rightArgument) {
+	return false;
+}
+
+bool QueryEvaluator::modifies_LeftSynonym(string leftArgument, string rightArgument) {
+	return false;
+}
+
+bool QueryEvaluator::modifies_RightSynonym(string leftArgument, string rightArgument) {
+	return false;
+}
+
+bool QueryEvaluator::modifies_NoSynonym(string leftArgument, string rightArgument) {
+	return false;
 }
 
 bool QueryEvaluator::uses(string leftArgument, string rightArgument) {
