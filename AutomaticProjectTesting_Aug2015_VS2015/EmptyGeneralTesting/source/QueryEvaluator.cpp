@@ -206,31 +206,129 @@ bool QueryEvaluator::processClause(QueryObject clause) {
 	string relationType = clause.getRelation();
 	string lhs = clause.getFirstArgument();
 	string rhs = clause.getSecondArgument();
+	bool leftSynonym = isSynonym(lhs);
+	bool rightSynonym = isSynonym(rhs);
 
 	if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_MODIFIES)) {
-		return modifies(lhs, rhs);
+		if (leftSynonym && rightSynonym) {
+			genericNonPattern_BothSynonyms(lhs, rhs, MODIFIES);
+		} else if (leftSynonym) {
+
+		} else if (rightSynonym) {
+
+		} else {
+
+		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_USES)) {
-		return uses(lhs, rhs);
+		if (leftSynonym && rightSynonym) {
+			genericNonPattern_BothSynonyms(lhs, rhs, USES);
+		} else if (leftSynonym) {
+
+		} else if (rightSynonym) {
+
+		} else {
+
+		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_CALLS)) {
-		return calls(lhs, rhs);
+		if (leftSynonym && rightSynonym) {
+			genericNonPattern_BothSynonyms(lhs, rhs, CALLS);
+		} else if (leftSynonym) {
+
+		} else if (rightSynonym) {
+
+		} else {
+
+		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_CALLSSTAR)) {
-		return callsT(lhs, rhs);
+		if (leftSynonym && rightSynonym) {
+			genericNonPattern_BothSynonyms(lhs, rhs, CALLSSTAR);
+		} else if (leftSynonym) {
+
+		} else if (rightSynonym) {
+
+		} else {
+
+		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_PARENT)) {
-		return parent(lhs, rhs);
+		if (leftSynonym && rightSynonym) {
+			genericNonPattern_BothSynonyms(lhs, rhs, PARENT);
+		} else if (leftSynonym) {
+
+		} else if (rightSynonym) {
+
+		} else {
+
+		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_PARENTSTAR)) {
-		return parentT(lhs, rhs);
+		if (leftSynonym && rightSynonym) {
+			genericNonPattern_BothSynonyms(lhs, rhs, PARENTSTAR);
+		} else if (leftSynonym) {
+
+		} else if (rightSynonym) {
+
+		} else {
+
+		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_FOLLOWS)) {
-		return follows(lhs, rhs);
+		if (leftSynonym && rightSynonym) {
+			genericNonPattern_BothSynonyms(lhs, rhs, FOLLOWS);
+		} else if (leftSynonym) {
+
+		} else if (rightSynonym) {
+
+		} else {
+
+		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_FOLLOWSSTAR)) {
-		return followsT(lhs, rhs);
+		if (leftSynonym && rightSynonym) {
+			genericNonPattern_BothSynonyms(lhs, rhs, FOLLOWSSTAR);
+		} else if (leftSynonym) {
+
+		} else if (rightSynonym) {
+
+		} else {
+
+		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_NEXT)) {
-		return next(lhs, rhs);
+		if (leftSynonym && rightSynonym) {
+			genericNonPattern_BothSynonyms(lhs, rhs, NEXT);
+		} else if (leftSynonym) {
+
+		} else if (rightSynonym) {
+
+		} else {
+
+		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_NEXTSTAR)) {
-		return nextT(lhs, rhs);
+		if (leftSynonym && rightSynonym) {
+			genericNonPattern_BothSynonyms(lhs, rhs, NEXTSTAR);
+		} else if (leftSynonym) {
+
+		} else if (rightSynonym) {
+
+		} else {
+
+		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_AFFECTS)) {
-		return affects(lhs, rhs);
+		if (leftSynonym && rightSynonym) {
+			genericNonPattern_BothSynonyms(lhs, rhs, AFFECTS);
+		} else if (leftSynonym) {
+
+		} else if (rightSynonym) {
+
+		} else {
+
+		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_AFFECTSSTAR)) {
-		return affectsT(lhs, rhs);
+		if (leftSynonym && rightSynonym) {
+			genericNonPattern_BothSynonyms(lhs, rhs, AFFECTSSTAR);
+		} else if (leftSynonym) {
+
+		} else if (rightSynonym) {
+
+		} else {
+
+		}
 	} else {
 		// check for patterns
 		string patternType = declaration.getType(relationType);
