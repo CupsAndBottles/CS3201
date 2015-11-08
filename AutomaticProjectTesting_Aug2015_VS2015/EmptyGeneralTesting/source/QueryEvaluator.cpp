@@ -350,12 +350,13 @@ bool QueryEvaluator::calls_LeftSynonym(string leftArgument, string rightArgument
 	bool leftEncountered = encountered(leftArgument);
 	bool atLeastOneResult = false;
 	if (isWildCard(rightArgument)) {
-		list<string> rightProcedures = selectAll(EntTable::PROCEDURE);
+		vector<string> leftProcs = database.getProceduresThatCall(ProgramKnowledgeBase::WILDCARD_STRING);
+		vector<string> rightProcs = database.getProceduresCalledBy(ProgramKnowledgeBase::WILDCARD_STRING);
 		if (leftEncountered) {
 			unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
-			for (string rightProcedure : rightProcedures) {
+			for (string rightProc : rightProcs) {
 				for (QueryNode* leftNode : leftNodes) {
-					bool result = database.calls(leftNode->getValue(), rightProcedure);
+					bool result = database.calls(leftNode->getValue(), rightProc);
 					if (result) {
 						atLeastOneResult = true;
 					}
@@ -365,7 +366,17 @@ bool QueryEvaluator::calls_LeftSynonym(string leftArgument, string rightArgument
 				}
 			}
 		}
-		return atLeastOneResult;
+		else {
+			if (!leftProcs.empty() && !rightProcs.empty()) {
+				atLeastOneResult = true;
+				unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
+				for (string leftProc : leftProcs) {
+					leftNodes.insert(QueryNode::createQueryNode(leftArgument, leftProc));
+				}
+				addToRoot(leftNodes);
+				encounteredEntities.insert({ leftArgument, leftNodes });
+			}
+		}
 	}
 	else {
 		string rightProcedure = formatter.removeQuotes(rightArgument);
@@ -402,8 +413,33 @@ bool QueryEvaluator::calls_RightSynonym(string leftArgument, string rightArgumen
 	bool rightEncountered = encountered(rightArgument);
 	bool atLeastOneResult = false;
 	if (isWildCard(leftArgument)) {
-		//todo: leftArgument wildcard special case
-		return false;
+		vector<string> leftProcs = database.getProceduresThatCall(ProgramKnowledgeBase::WILDCARD_STRING);
+		vector<string> rightProcs = database.getProceduresCalledBy(ProgramKnowledgeBase::WILDCARD_STRING);
+		if (rightEncountered) {
+			unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
+			for (string leftProc : leftProcs) {
+				for (QueryNode* rightNode : rightNodes) {
+					bool result = database.calls(leftProc, rightNode->getValue());
+					if (result) {
+						atLeastOneResult = true;
+					}
+					else {
+						rightNode->destroy(&encounteredEntities);
+					}
+				}
+			}
+		}
+		else {
+			if (!leftProcs.empty() && !rightProcs.empty()) {
+				atLeastOneResult = true;
+				unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
+				for (string rightProc : rightProcs) {
+					rightNodes.insert(QueryNode::createQueryNode(rightArgument, rightProc));
+				}
+				addToRoot(rightNodes);
+				encounteredEntities.insert({ rightArgument, rightNodes });
+			}
+		}
 	}
 	else {
 		string leftProcedure = formatter.removeQuotes(leftArgument);
@@ -438,16 +474,24 @@ bool QueryEvaluator::calls_RightSynonym(string leftArgument, string rightArgumen
 bool QueryEvaluator::calls_NoSynonym(string leftArgument, string rightArgument) {
 	bool isValid = false;
  	if (isWildCard(leftArgument) && isWildCard(rightArgument)) {
-		//both wildcard special case
-		return false;
+		//calls(_,_)
+		vector<string> leftProcs = database.getProceduresThatCall(ProgramKnowledgeBase::WILDCARD_STRING);
+		return !leftProcs.empty();
 	}
 	else if (isWildCard(leftArgument)) {
-
+		//calls(_,"second")
+		string rightProcedure = formatter.removeQuotes(rightArgument);
+		vector<string> leftProcs = database.getProceduresThatCall(rightProcedure);
+		return !leftProcs.empty();
 	}
 	else if (isWildCard(rightArgument)) {
-
+		//calls("first",_)
+		string leftProcedure = formatter.removeQuotes(leftArgument);
+		vector<string> rightProcs = database.getProceduresCalledBy(leftProcedure);
+		return !rightProcs.empty();
 	}
 	else {
+		//calls("first", "second")
 		string leftProcedure = formatter.removeQuotes(leftArgument);
 		string rightProcedure = formatter.removeQuotes(rightArgument);
 		isValid = database.calls(leftProcedure, rightProcedure);
