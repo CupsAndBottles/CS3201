@@ -167,6 +167,14 @@ void QueryEvaluator::flushQueryTree() {
 			oldRoot->destroy(&encounteredEntities);
 		}
 	}
+	
+	// further clean up, roots won't be deleted by previous loop
+	currentRoots = queryTreeRoot.getChildren();
+	if (!currentRoots.empty()) {
+		for (size_t i = 0; i < currentRoots.size(); i++) {
+			delete currentRoots[i];
+		}
+	}
 }
 
 //for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.

@@ -42,21 +42,21 @@ void QueryNode::removeParent(QueryNode* node) {
 }
 
 void QueryNode::destroy(unordered_map<string, unordered_set<QueryNode*>>* encounteredEntities) {
-	for (QueryNode* child : children) {
-		child->removeParent(this);
-		if (child->hasNoParent()) {
-			child->destroy(encounteredEntities);
-			this->removeChild(child);
-			delete[] child;
+	for (size_t i = 0; i < children.size(); i++) {
+		children[i]->removeParent(this);
+		if (children[i]->hasNoParent()) {
+			children[i]->destroy(encounteredEntities);
+			this->removeChild(children[i]);
+			delete children[i];
 		}
 	}
 
-	for (QueryNode* parent : parents) {
-		parent->removeChild(this);
-		if (!parent->isRoot() && parent->hasNoChildren()) {
-			parent->destroy(encounteredEntities);
-			this->removeParent(parent);
-			delete[] parent;
+	for (size_t i = 0; i < parents.size(); i++) {
+		parents[i]->removeChild(this);
+		if (!parents[i]->isRoot() && parents[i]->hasNoChildren()) {
+			parents[i]->destroy(encounteredEntities);
+			this->removeParent(parents[i]);
+			delete parents[i];
 		}
 	}
 	
