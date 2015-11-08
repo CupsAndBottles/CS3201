@@ -969,6 +969,7 @@ bool QueryEvaluator::genericNonPattern_BothSynonyms(string leftArgument, string 
 			}
 		}
 	} else {
+		// generate all possible values for leftArgument
 		vector<string> leftPossibilities;
 		if (isVariable(leftArgument)) {
 			leftPossibilities = database.getVariableNames();
@@ -980,23 +981,32 @@ bool QueryEvaluator::genericNonPattern_BothSynonyms(string leftArgument, string 
 			leftPossibilities = formatter.integerVectorToString(statements);
 		}
 
-		vector<string> rightPossibilities;
-		if (isVariable(rightArgument)) {
-			rightPossibilities = database.getVariableNames();
-		} else if (isProcedure(leftArgument)) {
-			rightPossibilities = database.getProcedureNames();
-		} else {
-			vector<int> statements(database.getNumberOfStatements());
-			iota(statements.begin(), statements.end(), 0);
-			leftPossibilities = formatter.integerVectorToString(statements);
+		// create nodes for all possible values of leftArgument, add them to root
+		unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
+		for (size_t i = 0; i < leftPossibilities.size(); i++) {
+			QueryNode* leftNode = QueryNode::createQueryNode(leftArgument, leftPossibilities[i]);
+			leftNodes.insert(leftNode);
+		}
+		if (!leftNodes.empty()) {
+			addToRoot(leftNodes);
+			encounteredEntities.insert({leftArgument, leftNodes});
 		}
 
-		for (size_t i = 0; i < leftPossibilities.size(); i++) {
-			for (size_t j = 0; j < rightPossibilities.size(); j++) {
-				bool result = genericNonPattern_Evaluator(leftPossibilities[i], rightPossibilities[i], whichRelation, leftNumber);
-				if (result) {
-					return true; // short circuit
+		// for each left value, check for right values 
+		for (QueryNode* leftNode : leftNodes) {
+			vector<string> results = genericNonPattern_RightEvaluator(leftNode->getValue(), whichRelation, leftNumber);
+			if (results.empty()) {
+				leftNode->destroy(&encounteredEntities);
+			}
+			else {
+				unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
+				for (string result : results) {
+					atLeastOneResult = true;
+					QueryNode* newNode = QueryNode::createQueryNode(rightArgument, result);
+					leftNode->insertParent(newNode);
+					rightNodes.insert(newNode);
 				}
+				encounteredEntities.insert({rightArgument, rightNodes});
 			}
 		}
 	}
