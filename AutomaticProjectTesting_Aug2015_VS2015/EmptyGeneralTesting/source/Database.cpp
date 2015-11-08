@@ -512,10 +512,19 @@ Gnode* Database::createControlFlowGraphLinks(vector<Gnode*> listOfCfgNodes, int 
 				Gnode *next = (i+1 >= (int) listOfCfgNodes.size()) ? endNode : listOfCfgNodes.at(i+1);
 				int lastChildNum = stmtTable->getASTNode(i)->getLastContainedStatement()->getStatementNumber();
 				Gnode *lastChild = listOfCfgNodes.at(lastChildNum);
+				Gnode *other;
 				if (stmtTable->getASTNode(i)->getRightSibling() == NULL) {
-					int otherNum = stmtTable->getASTNode(i)->getSPAParent()->getStatementNumber();
+					if (stmtTable->getASTNode(i)->getSPAParent() != NULL) {
+						int otherNum = stmtTable->getASTNode(i)->getSPAParent()->getRightSibling()->getStatementNumber();
+						other = listOfCfgNodes.at(otherNum);
+					}
+					else {
+						other = endNode;
+					}
 				}
-				Gnode *other = (lastChildNum+1 >= (int) listOfCfgNodes.size()) ? endNode: listOfCfgNodes.at(lastChildNum+1);
+				else {
+					other = (lastChildNum + 1 >= (int)listOfCfgNodes.size()) ? endNode : listOfCfgNodes.at(lastChildNum + 1);
+				}
 				Gnode::setNext(parent, next);
 				Gnode::setNextWhile(parent, lastChild, other);
 			} else {
