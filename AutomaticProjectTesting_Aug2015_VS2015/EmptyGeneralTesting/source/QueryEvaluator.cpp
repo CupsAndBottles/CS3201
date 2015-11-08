@@ -353,7 +353,7 @@ bool QueryEvaluator::calls_LeftSynonym(string leftArgument, string rightArgument
 		list<string> rightProcedures = selectAll(EntTable::PROCEDURE);
 		if (leftEncountered) {
 			unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
-			for (string rightProcedure : rightProcedures) {	
+			for (string rightProcedure : rightProcedures) {
 				for (QueryNode* leftNode : leftNodes) {
 					bool result = database.calls(leftNode->getValue(), rightProcedure);
 					if (result) {
@@ -366,8 +366,6 @@ bool QueryEvaluator::calls_LeftSynonym(string leftArgument, string rightArgument
 			}
 		}
 		return atLeastOneResult;
-	if (rightArgument == "_") {
-		return false;
 	}
 	else {
 		string rightProcedure = formatter.removeQuotes(rightArgument);
@@ -404,7 +402,6 @@ bool QueryEvaluator::calls_RightSynonym(string leftArgument, string rightArgumen
 	bool rightEncountered = encountered(rightArgument);
 	bool atLeastOneResult = false;
 	if (isWildCard(leftArgument)) {
-	if (leftArgument == "_") {
 		//todo: leftArgument wildcard special case
 		return false;
 	}
@@ -441,7 +438,6 @@ bool QueryEvaluator::calls_RightSynonym(string leftArgument, string rightArgumen
 bool QueryEvaluator::calls_NoSynonym(string leftArgument, string rightArgument) {
 	bool isValid = false;
  	if (isWildCard(leftArgument) && isWildCard(rightArgument)) {
-	if (leftArgument == "_" && rightArgument == "_") {
 		//both wildcard special case
 		return false;
 	}
