@@ -13,12 +13,7 @@ static bool sortQueries(QueryObject obj1, QueryObject obj2) {
 		return true;
 	}
 	else if (getNumUnknownRank(obj1) == getNumUnknownRank(obj2)) {
-		if (obj1.getDifficultyRank() < obj2.getDifficultyRank()) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		return obj1.getDifficultyRank() < obj2.getDifficultyRank();
 	}
 	else {
 		return false;
@@ -363,12 +358,7 @@ bool QueryPreProcessor::verifyWithQuery(vector<string> temp) {
 	if (sCheck.isRef(leftAttr, entityTable) && sCheck.isRef(rightAttr, entityTable)) {
 		string type1 = getTypeOfRef(leftAttr);
 		string type2 = getTypeOfRef(rightAttr);
-		if (type1.compare(type2) == 0) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		return type1.compare(type2) == 0;
 	}
 	else {
 		return false;

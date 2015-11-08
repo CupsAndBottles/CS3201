@@ -55,21 +55,32 @@ int DDGnode::getStatementNumber()
 
 void DDGnode::printDDGnode()
 {
-	cout << "<----------------------------------------------DDGnode of Statement ";
-	cout << this->getStatementNumber();
-	cout << ": ---------------------------------------------->" << endl;
-	cout << "From nodes:";
-	for (auto i = edgesFrom->begin(); i != edgesFrom->end(); i++) {
-		cout << " ";
-		cout << (*i).first;
+	if (edgesFrom->size() > 0 || edgesTo->size() > 0) {
+		cout << "<----------------------------------------------DDGnode of Statement ";
+		cout << this->getStatementNumber();
+		cout << ": ---------------------------------------------->" << endl;
+		if (edgesFrom->size() > 0) {
+			cout << "From nodes:";
+			for (auto i = edgesFrom->begin(); i != edgesFrom->end(); i++) {
+				cout << " ";
+				cout << (*i).first->getStatementNumber();
+				cout << "-";
+				cout << (*i).second;
+			}
+			cout << endl;
+		}
+		if (edgesTo->size() > 0) {
+			cout << "To nodes:";
+			for (auto i = edgesTo->begin(); i != edgesTo->end(); i++) {
+				cout << " ";
+				cout << (*i).first->getStatementNumber();
+				cout << "-";
+				cout << (*i).second;
+			}
+			cout << endl;
+		}
 	}
-	cout << endl;
-	cout << "To nodes:";
-	for (auto i = edgesTo->begin(); i != edgesTo->end(); i++) {
-		cout << " ";
-		cout << (*i).first;
-	}
-	cout << endl;
+	
 }
 
 void DDGnode::addFromEdge(DDGnode * node, string var)

@@ -7,6 +7,7 @@ Gnode::Gnode() {
 	prev = vector<Gnode*>();
 	otherPrev = NULL;
 	type = NOTYPE;
+	procedure = "";
 }
 
 Gnode::~Gnode() {}
@@ -17,10 +18,18 @@ Gnode *Gnode::createGnode(int num) {
 	return node;
 }
 
-Gnode *Gnode::createGnode(Type t, int num) {
+Gnode *Gnode::createGnode(string procName, int num) {
+	Gnode *node = new Gnode;
+	node->value = num;
+	node->procedure = procName;
+	return node;
+}
+
+Gnode *Gnode::createGnode(string procName, Type t, int num) {
 	Gnode *node = new Gnode;
 	node->value = num;
 	node->type = t;
+	node->procedure = procName;
 	return node;
 }
 
@@ -97,6 +106,10 @@ Gnode *Gnode::getPrevLeft() {
 
 Gnode::Type Gnode::getType() {
 	return type;
+}
+
+string Gnode::getItsProcedure() {
+	return procedure;
 }
 
 bool Gnode::isEndNode() {

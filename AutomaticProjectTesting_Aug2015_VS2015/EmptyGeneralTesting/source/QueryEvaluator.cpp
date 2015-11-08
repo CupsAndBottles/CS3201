@@ -17,6 +17,8 @@ list<string> QueryEvaluator::getResults (string inputQuery) {
 	bool isValidQuery = preprocessor.query(inputQuery);
 	if (isValidQuery) {
 		getQueryData();
+		flushQueryTree();
+		flushEncounteredEntities();
 		evaluateQuery();
 		results = evaluateSelect();
 	}
@@ -109,6 +111,10 @@ bool QueryEvaluator::isProcedure(string s) {
 	return declaration.getType(s) != EntTable::PROCEDURE;
 }
 
+bool QueryEvaluator::isWildCard(string s) {
+	return s == QueryObject::WILDCARD;
+}
+
 void QueryEvaluator::addToEncounteredEntities(QueryNode* input) {
 	if (encountered(input->getValue())) {
 		encounteredEntities.at(input->getValue()).insert(input);
@@ -155,6 +161,30 @@ void QueryEvaluator::addToRoot(QueryNode* newRoot) {
 	}
 }
 
+void QueryEvaluator::flushQueryTree() {
+	vector<QueryNode*> currentRoots = queryTreeRoot.getChildren();
+	if (!currentRoots.empty()) {
+		for (QueryNode* oldRoot : currentRoots) {
+			oldRoot->destroy(&encounteredEntities);
+		}
+	}
+	
+	// further clean up, roots won't be deleted by previous loop
+	currentRoots = queryTreeRoot.getChildren();
+	if (!currentRoots.empty()) {
+		for (size_t i = 0; i < currentRoots.size(); i++) {
+			queryTreeRoot.removeChild(currentRoots[i]);
+			delete currentRoots[i];
+		}
+	}
+}
+
+void QueryEvaluator::flushEncounteredEntities() {
+	if (!encounteredEntities.empty()) {
+		encounteredEntities.clear();
+	}
+}
+
 //for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.
 vector<string> QueryEvaluator::evaluateQuery() {
 	vector<string> output;
@@ -177,38 +207,38 @@ bool QueryEvaluator::processClause(QueryObject clause) {
 	string lhs = clause.getFirstArgument();
 	string rhs = clause.getSecondArgument();
 
-	if (formatter.stringEqual(relationType, QueryObject::RelationType_MODIFIES)) {
+	if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_MODIFIES)) {
 		return modifies(lhs, rhs);
-	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_USES)) {
+	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_USES)) {
 		return uses(lhs, rhs);
-	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_CALLS)) {
+	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_CALLS)) {
 		return calls(lhs, rhs);
-	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_CALLSSTAR)) {
+	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_CALLSSTAR)) {
 		return callsT(lhs, rhs);
-	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_PARENT)) {
+	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_PARENT)) {
 		return parent(lhs, rhs);
-	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_PARENTSTAR)) {
+	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_PARENTSTAR)) {
 		return parentT(lhs, rhs);
-	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_FOLLOWS)) {
+	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_FOLLOWS)) {
 		return follows(lhs, rhs);
-	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_FOLLOWSSTAR)) {
+	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_FOLLOWSSTAR)) {
 		return followsT(lhs, rhs);
-	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_NEXT)) {
+	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_NEXT)) {
 		return next(lhs, rhs);
-	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_NEXTSTAR)) {
+	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_NEXTSTAR)) {
 		return nextT(lhs, rhs);
-	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_AFFECTS)) {
+	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_AFFECTS)) {
 		return affects(lhs, rhs);
-	} else if (formatter.stringEqual(relationType, QueryObject::RelationType_AFFECTSSTAR)) {
+	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_AFFECTSSTAR)) {
 		return affectsT(lhs, rhs);
 	} else {
 		// check for patterns
 		string patternType = declaration.getType(relationType);
-		if (formatter.stringEqual(patternType, QueryObject::RelationType_PATTERN_ASSIGN)) {
+		if (formatter.stringEqualCaseInsensitive(patternType, QueryObject::RelationType_PATTERN_ASSIGN)) {
 			return patternAssign(relationType, lhs, rhs);
-		} else if (formatter.stringEqual(patternType, QueryObject::RelationType_PATTERN_WHILE)) {
+		} else if (formatter.stringEqualCaseInsensitive(patternType, QueryObject::RelationType_PATTERN_WHILE)) {
 			return patternWhile(relationType, lhs); //rhs will always be _
-		} else if (formatter.stringEqual(patternType, QueryObject::RelationType_PATTERN_IF)) {
+		} else if (formatter.stringEqualCaseInsensitive(patternType, QueryObject::RelationType_PATTERN_IF)) {
 			return patternIf(relationType, lhs); //rhs will always be _
 		}
 	}
@@ -217,325 +247,185 @@ bool QueryEvaluator::processClause(QueryObject clause) {
 }
 
 bool QueryEvaluator::parent(string leftArgument, string rightArgument) {
-	return false;
-	/*
-	vector<string> output;
-	if (isSynonym(leftArgument) && isSynonym(rightArgument)) {
-		//both synonyms
-		if (formatter.stringEqual(leftArgument, getSelectClause())) {
-			vector<string> temp = recordSelectClause(getEntityType(rightArgument));
-			for (size_t i = 0; i < temp.size(); i++) {
-				vector<string>temp1 = formatter.integerVectorToString(database.getParentOf(stoi(temp[i])));
-				vector<string>temp2=formatter.join(output, temp1);
-				output = temp2;
-			}
-			return output;
-		}
-		else if(formatter.stringEqual(rightArgument,getSelectClause())){
-			vector<string> temp = recordSelectClause(getEntityType(leftArgument));
-			for (size_t i = 0; i < temp.size(); i++) {
-				vector<string>temp1 = formatter.integerVectorToString(database.getChildrenOf(stoi(temp[i])));
-				vector<string>temp2 = formatter.join(output, temp1);
-				output = temp2;
-			}
-			return output;
-		}
-		else {
-			return output;
-		}
+	bool leftSynonym = isSynonym(leftArgument);
+	bool rightSynonym = isSynonym(rightArgument);
+	if (leftSynonym && rightSynonym) {
+		return parent_BothSynonym(leftArgument, rightArgument);
 	}
-	else if (!isSynonym(leftArgument) && isSynonym(rightArgument)){
-		//left is known, only right is synonyms, todo:: add assert that left is integer
-		return output = formatter.integerVectorToString(database.getChildrenOf(stoi(leftArgument)));
+	else if (leftSynonym) {
+		return parent_LeftSynonym(leftArgument, rightArgument);
 	}
-	else if (isSynonym(leftArgument) && !isSynonym(rightArgument)) {
-		//right is known, only left is synonyms, todo:: add assert that right is integer
-		return output = formatter.integerVectorToString(database.getParentOf(stoi(rightArgument)));
+	else if (rightSynonym) {
+		return parent_RightSynonym(leftArgument, rightArgument);
 	}
 	else {
-		return output;
+		return parent_NoSynonym(leftArgument, rightArgument);
 	}
-	*/
+	
 }
 
-bool QueryEvaluator::parentT(string leftArgument, string rightArgument) {
-	return false;
-	/*
-	vector<string> output;
-	if (isSynonym(leftArgument) && isSynonym(rightArgument)) {
-		//both synonyms
-		if (formatter.stringEqual(leftArgument, getSelectClause())) {
-			vector<string> temp = recordSelectClause(getEntityType(rightArgument));
-			for (size_t i = 0; i < temp.size(); i++) {
-				vector<string>temp1 = formatter.integerVectorToString(database.getParentsStarOf(stoi(temp[i])));
-				vector<string>temp2 = formatter.join(output, temp1);
-				output = temp2;
+bool QueryEvaluator::parent_BothSynonym(string leftArgument, string rightArgument) {
+	bool leftEncountered = encountered(leftArgument);
+	bool rightEncountered = encountered(rightArgument);
+	bool atLeastOneResult = false;
+	if (leftEncountered && rightEncountered) {
+		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
+		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
+		for (QueryNode* leftNode : leftNodes) {
+			for (QueryNode* rightNode : rightNodes) {
+				bool result = database.calls(leftNode->getValue(), rightNode->getValue());
+				if (result) {
+					atLeastOneResult = true;
+					leftNode->insertParent(rightNode);
+					rightNode->insertParent(leftNode);
+				}
+				else {
+					leftNode->destroy(&encounteredEntities);
+					rightNode->destroy(&encounteredEntities);
+				}
 			}
-			return output;
-		}
-		else if (formatter.stringEqual(rightArgument, getSelectClause())) {
-			vector<string> temp = recordSelectClause(getEntityType(leftArgument));
-			for (size_t i = 0; i < temp.size(); i++) {
-				vector<string>temp1 = formatter.integerVectorToString(database.getChildrenStarOf(stoi(temp[i])));
-				vector<string>temp2 = formatter.join(output, temp1);
-				output = temp2;
-			}
-			return output;
-		}
-		else {
-			return output;
 		}
 	}
-	else if (!isSynonym(leftArgument) && isSynonym(rightArgument)) {
-		//left is known, only right is synonyms, todo:: add assert that left is integer
-		return output = formatter.integerVectorToString(database.getChildrenStarOf(stoi(leftArgument)));
+	else if (leftEncountered) {
+		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
+		for (QueryNode* leftNode : leftNodes) {
+			vector<string> results = formatter.integerVectorToString(database.getChildrenOf(stoi(leftNode->getValue())));
+			if (results.empty()) {
+				leftNode->destroy(&encounteredEntities);
+			}
+			else {
+				unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
+				for (string result : results) {
+					atLeastOneResult = true;
+					QueryNode* newNode = QueryNode::createQueryNode(rightArgument, result);
+					leftNode->insertParent(newNode);
+					rightNodes.insert(newNode);
+				}
+				encounteredEntities.insert({ rightArgument, rightNodes });
+			}
+		}
 	}
-	else if (isSynonym(leftArgument) && !isSynonym(rightArgument)) {
-		//right is known, only left is synonyms, todo:: add assert that right is integer
-		return output = formatter.integerVectorToString(database.getParentsStarOf(stoi(rightArgument)));
+	else if (rightEncountered) {
+		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
+		for (QueryNode* rightNode : rightNodes) {
+			vector<string> results = formatter.integerVectorToString(database.getParentOf(stoi(rightNode->getValue())));
+			if (results.empty()) {
+				rightNode->destroy(&encounteredEntities);
+			}
+			else {
+				unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
+				for (string result : results) {
+					atLeastOneResult = true;
+					QueryNode* newNode = QueryNode::createQueryNode(leftArgument, result);
+					rightNode->insertParent(newNode);
+					leftNodes.insert(newNode);
+				}
+				encounteredEntities.insert({ leftArgument, leftNodes });
+			}
+		}
 	}
 	else {
-		return output;
+		list<string> leftResults = selectAll(leftArgument);
+		list<string> rightResults = selectAll(rightArgument);
+		vector<string> leftParents = vector<string>();
+		vector<string> rightChildren = vector<string>();
+		for (string leftResult : leftResults) {
+			for (string rightResult : rightResults) {
+				if (database.isParent(stoi(leftResult), stoi(rightResult))) {
+					leftParents.push_back(leftResult);
+					break;
+				}
+			}
+		}
+		for (string rightResult : rightResults) {
+			for (string leftResult : leftResults) {
+				if (database.isParent(stoi(leftResult), stoi(rightResult))) {
+					rightChildren.push_back(leftResult);
+					break;
+				}
+			}
+		}
+		if (!leftParents.empty() && !rightChildren.empty()) {
+			atLeastOneResult = true;
+			unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
+			unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
+			for (string rightChild : rightChildren) {
+				rightNodes.insert(QueryNode::createQueryNode(rightArgument, rightChild));
+			}
+			for (string leftParent : leftParents) {
+				leftNodes.insert(QueryNode::createQueryNode(leftArgument, leftParent));
+			}
+			addToRoot(rightNodes);
+			addToRoot(leftNodes);
+			encounteredEntities.insert({ leftArgument, leftNodes });
+			encounteredEntities.insert({ rightArgument, rightNodes });
+		}
 	}
-	*/
+	return atLeastOneResult;
+}
+
+//left is synonym, right is statement# or wildcard
+bool QueryEvaluator::parent_LeftSynonym(string leftArgument, string rightArgument) {
+	bool atLeastOneResult = false;
+	bool leftEncountered = encountered(leftArgument);
+	return atLeastOneResult;
+}
+
+bool QueryEvaluator::parent_RightSynonym(string leftArgument, string rightArgument) {
+	bool atLeastOneResult = false;
+	return atLeastOneResult;
+}
+
+bool QueryEvaluator::parent_NoSynonym(string leftArgument, string rightArgument) {
+	bool atLeastOneResult = false;
+	return atLeastOneResult;
+}
+bool QueryEvaluator::parentT(string leftArgument, string rightArgument) {
+	return false;
 }
 
 bool QueryEvaluator::follows(string leftArgument, string rightArgument) {
 	return false;
-	/*
-	vector<string> output;
-	if (isSynonym(leftArgument) && isSynonym(rightArgument)) {
-		//both synonyms
-		if (formatter.stringEqual(leftArgument, getSelectClause())) {
-			vector<string> temp = recordSelectClause(getEntityType(rightArgument));
-			for (size_t i = 0; i < temp.size(); i++) {
-				vector<string>temp1 = formatter.integerVectorToString(database.getStatementFollowedBy(stoi(temp[i])));
-				vector<string>temp2 = formatter.join(output, temp1);
-				output = temp2;
-			}
-			return output;
-		}
-		else if (formatter.stringEqual(rightArgument, getSelectClause())) {
-			vector<string> temp = recordSelectClause(getEntityType(leftArgument));
-			for (size_t i = 0; i < temp.size(); i++) {
-				vector<string>temp1 = formatter.integerVectorToString(database.getStatementThatFollows(stoi(temp[i])));
-				vector<string>temp2 = formatter.join(output, temp1);
-				output = temp2;
-			}
-			return output;
-		}
-		else {
-			return output;
-		}
-	}
-	else if (!isSynonym(leftArgument) && isSynonym(rightArgument)) {
-		//left is known, only right is synonyms, todo:: add assert that left is integer
-		return output = formatter.integerVectorToString(database.getStatementThatFollows(stoi(leftArgument)));
-	}
-	else if (isSynonym(leftArgument) && !isSynonym(rightArgument)){
-		//right is known, only left is synonyms, todo:: add assert that right is integer
-		return output = formatter.integerVectorToString(database.getStatementFollowedBy(stoi(rightArgument)));
-	}
-	else {
-		return output;
-	}
-	*/
+	
 }
 
 bool QueryEvaluator::followsT(string leftArgument, string rightArgument) {
 	return false;
-	/*
-	vector<string> output;
-	if (isSynonym(leftArgument) && isSynonym(rightArgument)) {
-		//both synonyms
-		if (formatter.stringEqual(leftArgument, getSelectClause())) {
-			vector<string> temp = recordSelectClause(getEntityType(rightArgument));
-			for (size_t i = 0; i < temp.size(); i++) {
-				vector<string>temp1 = formatter.integerVectorToString(database.getStatementsFollowStarredBy(stoi(temp[i])));
-				vector<string>temp2 = formatter.join(output, temp1);
-				output = temp2;
-			}
-			return output;
-		}
-		else if (formatter.stringEqual(rightArgument, getSelectClause())) {
-			vector<string> temp = recordSelectClause(getEntityType(leftArgument));
-			for (size_t i = 0; i < temp.size(); i++) {
-				vector<string>temp1 = formatter.integerVectorToString(database.getStatementsThatFollowStar(stoi(temp[i])));
-				vector<string>temp2 = formatter.join(output, temp1);
-				output = temp2;
-			}
-			return output;
-		}
-		else {
-			return output;
-		}
-	}
-	else if (!isSynonym(leftArgument) && isSynonym(rightArgument)) {
-		//left is known, only right is synonyms, todo:: add assert that left is integer
-		return output = formatter.integerVectorToString(database.getStatementsThatFollowStar(stoi(leftArgument)));
-	}
-	else if (isSynonym(leftArgument) && !isSynonym(rightArgument)) {
-		//right is known, only left is synonyms, todo:: add assert that right is integer
-		return output = formatter.integerVectorToString(database.getStatementsFollowStarredBy(stoi(rightArgument)));
-	}
-	else {
-		return output;
-	}
-	*/
+	
 }
 
 bool QueryEvaluator::modifies(string leftArgument, string rightArgument) {
+	bool leftSynonym = isSynonym(leftArgument);
+	bool rightSynonym = isSynonym(rightArgument);
+	if (leftSynonym && rightSynonym) {
+		return modifies_BothSynonyms(leftArgument, rightArgument);
+	} else if (leftSynonym) {
+		return modifies_LeftSynonym(leftArgument, rightArgument);
+	} else if (rightSynonym) {
+		return modifies_RightSynonym(leftArgument, rightArgument);
+	} else {
+		return modifies_NoSynonym(leftArgument, rightArgument);
+	}
+}
+
+bool QueryEvaluator::modifies_BothSynonyms(string leftArgument, string rightArgument) {
 	return false;
-	/*
-	vector<string> output;
-	if (isSynonym(leftArgument) && isVariable(rightArgument)) {
-		if (formatter.stringEqual(rightArgument, getSelectClause())) {
-			if (isProcedure(leftArgument)) {
-				vector<string> temp = database.getProcedureNames();
-				for (size_t i = 0; i < temp.size(); i++) {
-					vector<string>temp1 = database.getVariablesModifiedBy(temp[i]);
-					vector<string>temp2 = formatter.join(output, temp1);
-					output = temp2;
-				}
-				return output;
-			}
-			else {
-				vector<string> temp = recordSelectClause(getEntityType(leftArgument));
-				for (size_t i = 0; i < temp.size(); i++) {
-					vector<string>temp1 = database.getVariablesModifiedBy(stoi(temp[i]));
-					vector<string>temp2 = formatter.join(output, temp1);
-					output = temp2;
-				}
-				return output;
-			}
-		}
-		else if (formatter.stringEqual(leftArgument, getSelectClause())) {
-			if (isProcedure(leftArgument)) {
-				vector<string> temp = database.getVariableNames();
-				for (size_t i = 0; i < temp.size(); i++) {
-					vector<string>temp1 = database.getProceduresThatModify(temp[i]);
-					vector<string>temp2 = formatter.join(output, temp1);
-					output = temp2;
-				}
-				return output;
-			}
-			else {
-				vector<string> temp = database.getVariableNames();
-				for (size_t i = 0; i < temp.size(); i++) {
-					vector<string>temp1 = formatter.integerVectorToString(database.getStatementsThatModify(temp[i]));
-					vector<string>temp2 = formatter.join(output, temp1);
-					output = temp2;
-				}
-				return output;
-			}
-		}
-		else {
-			return output;
-		}
-	}
+}
 
-	else if (!isSynonym(leftArgument) && isVariable(rightArgument)) {
-		//check double quote, if yes for left, do proc, else do stmt
-		if (formatter.isDoubleQuote(leftArgument)) {
-			string procedure = formatter.removeQuotes(leftArgument);
-			return output = database.getVariablesModifiedBy(procedure);
-		}
-		else if (formatter.isNumericString(leftArgument)) {
-			return output = database.getVariablesModifiedBy(stoi(leftArgument));
-		}
-	}
+bool QueryEvaluator::modifies_LeftSynonym(string leftArgument, string rightArgument) {
+	return false;
+}
 
-	else if (formatter.isDoubleQuote(rightArgument)
-		&& isSynonym(leftArgument)) {
-		string varName = formatter.removeQuotes(rightArgument);
-		if (isProcedure(leftArgument)) {
-			return output = database.getProceduresThatModify(varName);
-		}
-		else {
-			return output = formatter.integerVectorToString(database.getStatementsThatModify(varName));
-		}
-	}
-	else {
-		return output;
-	}
-	*/
+bool QueryEvaluator::modifies_RightSynonym(string leftArgument, string rightArgument) {
+	return false;
+}
+
+bool QueryEvaluator::modifies_NoSynonym(string leftArgument, string rightArgument) {
+	return false;
 }
 
 bool QueryEvaluator::uses(string leftArgument, string rightArgument) {
 	return false;
-	/*
-	vector<string> output;
-	if (isSynonym(leftArgument) && isVariable(rightArgument)) {
-		if (formatter.stringEqual(rightArgument, getSelectClause())) {
-			if (isProcedure(leftArgument)) {
-				vector<string> temp = database.getProcedureNames();
-				for (size_t i = 0; i < temp.size(); i++) {
-					vector<string>temp1 = database.getVariablesUsedBy(temp[i]);
-					vector<string>temp2 = formatter.join(output, temp1);
-					output = temp2;
-				}
-				return output;
-			}
-			else {
-				vector<string> temp = recordSelectClause(getEntityType(leftArgument));
-				for (size_t i = 0; i < temp.size(); i++) {
-					vector<string>temp1 = database.getVariablesUsedBy(stoi(temp[i]));
-					vector<string>temp2 = formatter.join(output, temp1);
-					output = temp2;
-				}
-				return output;
-			}
-		}
-		else if (formatter.stringEqual(leftArgument, getSelectClause())) {
-			if (isProcedure(leftArgument)) {
-				vector<string> temp = database.getVariableNames();
-				for (size_t i = 0; i < temp.size(); i++) {
-					vector<string>temp1 = database.getProceduresThatUse(temp[i]);
-					vector<string>temp2 = formatter.join(output, temp1);
-					output = temp2;
-				}
-				return output;
-			}
-			else {
-				vector<string> temp = database.getVariableNames();
-				for (size_t i = 0; i < temp.size(); i++) {
-					vector<string>temp1 = formatter.integerVectorToString(database.getStatementsThatUse(temp[i]));
-					vector<string>temp2 = formatter.join(output, temp1);
-					output = temp2;
-				}
-				return output;
-			}
-		}
-		else {
-			return output;
-		}
-	}
-
-	else if (!isSynonym(leftArgument) && isVariable(rightArgument)) {
-		//check double quote, if yes for left, do proc, else do stmt
-		if (formatter.isDoubleQuote(leftArgument)) {
-			string procedure = formatter.removeQuotes(leftArgument);
-			return output = database.getVariablesUsedBy(procedure);
-		}
-		else if (formatter.isNumericString(leftArgument)) {
-			return output = database.getVariablesUsedBy(stoi(leftArgument));
-		}
-	}
-
-	else if (formatter.isDoubleQuote(rightArgument)
-		&& isSynonym(leftArgument)) {
-		string varName = formatter.removeQuotes(rightArgument);
-		if (isProcedure(leftArgument)) {
-			return output = database.getProceduresThatUse(varName);
-		}
-		else {
-			return output = formatter.integerVectorToString(database.getStatementsThatUse(varName));
-		}
-	}
-	else {
-		return output;
-	}
-	*/
 }
 
 bool QueryEvaluator::calls(string leftArgument, string rightArgument) {
@@ -634,16 +524,158 @@ bool QueryEvaluator::calls_BothSynonyms(string leftArgument, string rightArgumen
 	return atLeastOneResult;
 }
 
+//leftSynoym, right is doubleQuoted procedure
 bool QueryEvaluator::calls_LeftSynonym(string leftArgument, string rightArgument) {
-	return false;
+	bool leftEncountered = encountered(leftArgument);
+	bool atLeastOneResult = false;
+	if (isWildCard(rightArgument)) {
+		vector<string> leftProcs = database.getProceduresThatCall(ProgramKnowledgeBase::WILDCARD_STRING);
+		vector<string> rightProcs = database.getProceduresCalledBy(ProgramKnowledgeBase::WILDCARD_STRING);
+		if (leftEncountered) {
+			unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
+			for (string rightProc : rightProcs) {
+				for (QueryNode* leftNode : leftNodes) {
+					bool result = database.calls(leftNode->getValue(), rightProc);
+					if (result) {
+						atLeastOneResult = true;
+					}
+					else {
+						leftNode->destroy(&encounteredEntities);
+					}
+				}
+			}
+		}
+		else {
+			if (!leftProcs.empty() && !rightProcs.empty()) {
+				atLeastOneResult = true;
+				unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
+				for (string leftProc : leftProcs) {
+					leftNodes.insert(QueryNode::createQueryNode(leftArgument, leftProc));
+				}
+				addToRoot(leftNodes);
+				encounteredEntities.insert({ leftArgument, leftNodes });
+			}
+		}
+	}
+	else {
+		string rightProcedure = formatter.removeQuotes(rightArgument);
+		if (leftEncountered) {
+			unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
+			for (QueryNode* leftNode : leftNodes) {
+				bool result = database.calls(leftNode->getValue(), rightProcedure);
+				if (result) {
+					atLeastOneResult = true;
+				}
+				else {
+					leftNode->destroy(&encounteredEntities);
+				}
+			}
+		}
+		else {
+			vector<string> leftProcs = database.getProceduresThatCall(rightProcedure);
+			if (!leftProcs.empty()) {
+				atLeastOneResult = true;
+				unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
+				for (string leftProc : leftProcs) {
+					leftNodes.insert(QueryNode::createQueryNode(leftArgument, leftProc));
+				}
+				addToRoot(leftNodes);
+				encounteredEntities.insert({ leftArgument, leftNodes });
+			}
+		}
+	}
+	return atLeastOneResult;
 }
 
+//rightSynoym, left is doubleQuoted procedure
 bool QueryEvaluator::calls_RightSynonym(string leftArgument, string rightArgument) {
-	return false;
+	bool rightEncountered = encountered(rightArgument);
+	bool atLeastOneResult = false;
+	if (isWildCard(leftArgument)) {
+		vector<string> leftProcs = database.getProceduresThatCall(ProgramKnowledgeBase::WILDCARD_STRING);
+		vector<string> rightProcs = database.getProceduresCalledBy(ProgramKnowledgeBase::WILDCARD_STRING);
+		if (rightEncountered) {
+			unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
+			for (string leftProc : leftProcs) {
+				for (QueryNode* rightNode : rightNodes) {
+					bool result = database.calls(leftProc, rightNode->getValue());
+					if (result) {
+						atLeastOneResult = true;
+					}
+					else {
+						rightNode->destroy(&encounteredEntities);
+					}
+				}
+			}
+		}
+		else {
+			if (!leftProcs.empty() && !rightProcs.empty()) {
+				atLeastOneResult = true;
+				unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
+				for (string rightProc : rightProcs) {
+					rightNodes.insert(QueryNode::createQueryNode(rightArgument, rightProc));
+				}
+				addToRoot(rightNodes);
+				encounteredEntities.insert({ rightArgument, rightNodes });
+			}
+		}
+	}
+	else {
+		string leftProcedure = formatter.removeQuotes(leftArgument);
+		if (rightEncountered) {
+			unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
+			for (QueryNode* rightNode : rightNodes) {
+				bool result = database.calls(leftProcedure, rightNode->getValue());
+				if (result) {
+					atLeastOneResult = true;
+				}
+				else {
+					rightNode->destroy(&encounteredEntities);
+				}
+			}
+		}
+		else {
+			vector<string> rightProcs = database.getProceduresCalledBy(leftProcedure);
+			if (!rightProcs.empty()) {
+				atLeastOneResult = true;
+				unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
+				for (string rightProc : rightProcs) {
+					rightNodes.insert(QueryNode::createQueryNode(rightArgument, rightProc));
+				}
+				addToRoot(rightNodes);
+				encounteredEntities.insert({ rightArgument, rightNodes });
+			}
+		}
+	}
+	return atLeastOneResult;
 }
 
 bool QueryEvaluator::calls_NoSynonym(string leftArgument, string rightArgument) {
-	return false;
+	bool isValid = false;
+ 	if (isWildCard(leftArgument) && isWildCard(rightArgument)) {
+		//calls(_,_)
+		vector<string> leftProcs = database.getProceduresThatCall(ProgramKnowledgeBase::WILDCARD_STRING);
+		return !leftProcs.empty();
+	}
+	else if (isWildCard(leftArgument)) {
+		//calls(_,"second")
+		string rightProcedure = formatter.removeQuotes(rightArgument);
+		vector<string> leftProcs = database.getProceduresThatCall(rightProcedure);
+		return !leftProcs.empty();
+	}
+	else if (isWildCard(rightArgument)) {
+		//calls("first",_)
+		string leftProcedure = formatter.removeQuotes(leftArgument);
+		vector<string> rightProcs = database.getProceduresCalledBy(leftProcedure);
+		return !rightProcs.empty();
+	}
+	else {
+		//calls("first", "second")
+		string leftProcedure = formatter.removeQuotes(leftArgument);
+		string rightProcedure = formatter.removeQuotes(rightArgument);
+		isValid = database.calls(leftProcedure, rightProcedure);
+	}
+	return isValid;
 }
 
 bool QueryEvaluator::callsT(string leftArgument, string rightArgument) {

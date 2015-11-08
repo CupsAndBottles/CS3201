@@ -22,9 +22,9 @@ QueryNode* QueryNode::createQueryNode(string syn, string val) {
 }
 
 void QueryNode::insertParent(QueryNode* node) {
-	for (QueryNode* parent : parents) {
-		parent->removeChild(this);
-		parent->addChild(node);
+	for (size_t i = 0; i < parents.size(); i++) {
+		parents[i]->removeChild(this);
+		parents[i]->addChild(node);
 	}
 	this->addParent(node);
 	node->addChild(this);
@@ -36,37 +36,38 @@ void QueryNode::addParent(QueryNode* node) {
 
 void QueryNode::removeParent(QueryNode* node) {
 	auto it = find(parents.begin(), parents.end(), node);
-	parents.erase(it);
+	if (it != parents.end()) {
+		parents.erase(it);
+	}
 }
 
 void QueryNode::destroy(unordered_map<string, unordered_set<QueryNode*>>* encounteredEntities) {
-	if (!this->isRoot()) {
-		for (QueryNode* parent : parents) {
-			if (parent->hasOneChild()) {
-				parent->destroy(encounteredEntities);
-			}
-			else {
-				parent->removeChild(this);
-			}
+	for (size_t i = 0; i < children.size(); i++) {
+		children[i]->removeParent(this);
+		if (children[i]->hasNoParent()) {
+			children[i]->destroy(encounteredEntities);
+			this->removeChild(children[i]);
+			delete children[i];
 		}
 	}
 
-	for (QueryNode* child : children) {
-		if (child->hasOneParent()) {
-			child->destroy(encounteredEntities);
-		}
-		else {
-			child->removeParent(this);
+	for (size_t i = 0; i < parents.size(); i++) {
+		parents[i]->removeChild(this);
+		if (!parents[i]->isRoot() && parents[i]->hasNoChildren()) {
+			parents[i]->destroy(encounteredEntities);
+			this->removeParent(parents[i]);
+			delete parents[i];
 		}
 	}
-
-	encounteredEntities->at(this->getValue()).erase(this);
-	delete[] this;
+	
+	encounteredEntities->at(this->getSynonym()).erase(this);
 }
 
 void QueryNode::removeChild(QueryNode* node) {
 	auto it = find(children.begin(), children.end(), node);
-	children.erase(it);
+	if (it != children.end()) {
+		children.erase(it);
+	}
 }
 
 void QueryNode::addChild(QueryNode* node) {
@@ -94,10 +95,10 @@ bool QueryNode::isRoot() {
 	return (int)parents.size() == 0;
 }
 
-bool QueryNode::hasOneChild() {
-	return (int)children.size() == 1;
+bool QueryNode::hasNoChildren() {
+	return (int)children.size() == 0;
 }
 
-bool QueryNode::hasOneParent() {
-	return (int)parents.size() == 1;
+bool QueryNode::hasNoParent() {
+	return (int)parents.size() == 0;
 }

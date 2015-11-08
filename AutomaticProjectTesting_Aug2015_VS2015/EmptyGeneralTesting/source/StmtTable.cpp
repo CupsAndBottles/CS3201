@@ -77,12 +77,12 @@ void StmtTable::printStmtTable()
 	}
 }
 
-void StmtTable::printDDGNodes()
+void StmtTable::printDDGNodes(StmtTable* st)
 {
 	cout << endl << "<---------------------------------------- DDDG nodes: ----------------------------------------> " << endl << endl;
-	for (auto i = stmtTable->begin() + 1; i != stmtTable->end(); i++) {
-		if ((*i).ddgNode != NULL) {
-			(*i).ddgNode->printDDGnode();
+	for (auto i = 0; i < st->getSize(); i++) {
+		if (st->getDDGNode(i) != NULL) {
+			st->getDDGNode(i)->printDDGnode();
 		}
 	}
 }
