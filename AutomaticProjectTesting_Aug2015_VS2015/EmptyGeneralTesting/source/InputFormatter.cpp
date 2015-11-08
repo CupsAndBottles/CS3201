@@ -11,8 +11,9 @@ bool InputFormatter::isNumericString(string s) {
 	return true;
 }
 
-bool InputFormatter::stringEqual(string s, string match) {
-	//transform(s.begin(), s.end(), s.begin(), ::tolower);
+bool InputFormatter::stringEqualCaseInsensitive(string s, string match) {
+	transform(s.begin(), s.end(), s.begin(), ::tolower);
+	transform(match.begin(), match.end(), match.begin(), ::tolower);
 	return s == match;
 }
 
