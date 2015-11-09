@@ -120,7 +120,7 @@ namespace UnitTesting
 
 			list<string> callsProcOtherBoolean = qe.getResults("procedure p; Select BOOLEAN such that Calls(\"Proc\", \"Other\")");
 			Assert::AreEqual(1, (int)callsProcOtherBoolean.size());
-			Assert::AreEqual(string("TRUE"), callspProc.front());
+			Assert::AreEqual(string("TRUE"), callsProcOtherBoolean.front());
 		}
 
 		TEST_METHOD(testParents) {
