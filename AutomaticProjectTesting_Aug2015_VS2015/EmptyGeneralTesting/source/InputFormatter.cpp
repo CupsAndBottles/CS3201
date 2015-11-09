@@ -22,7 +22,7 @@ string InputFormatter::intToString(int value) {
 	return temp;
 }
 
-vector<string> InputFormatter::integerVectorToString(vector<int> arr) {
+vector<string> InputFormatter::integerVectorToStringVector(vector<int> arr) {
 	vector<string> tempArr;
 	for (size_t i = 0; i < arr.size(); i++) {
 		tempArr.push_back(intToString(arr.at(i)));

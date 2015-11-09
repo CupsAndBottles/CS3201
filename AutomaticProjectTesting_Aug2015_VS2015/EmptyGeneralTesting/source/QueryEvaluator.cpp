@@ -381,7 +381,7 @@ bool QueryEvaluator::parent_BothSynonym(string leftArgument, string rightArgumen
 	else if (leftEncountered) {
 		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
 		for (QueryNode* leftNode : leftNodes) {
-			vector<string> results = formatter.integerVectorToString(database.getChildrenOf(stoi(leftNode->getValue())));
+			vector<string> results = formatter.integerVectorToStringVector(database.getChildrenOf(stoi(leftNode->getValue())));
 			if (results.empty()) {
 				leftNode->destroy(&encounteredEntities);
 			}
@@ -400,7 +400,7 @@ bool QueryEvaluator::parent_BothSynonym(string leftArgument, string rightArgumen
 	else if (rightEncountered) {
 		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
 		for (QueryNode* rightNode : rightNodes) {
-			vector<string> results = formatter.integerVectorToString(database.getParentOf(stoi(rightNode->getValue())));
+			vector<string> results = formatter.integerVectorToStringVector(database.getParentOf(stoi(rightNode->getValue())));
 			if (results.empty()) {
 				rightNode->destroy(&encounteredEntities);
 			}
@@ -465,7 +465,7 @@ bool QueryEvaluator::parent_LeftSynonym(string leftArgument, string rightArgumen
 		vector<string> leftParents = vector<string>();
 		list<string> leftResults = selectAll(getEntityType(leftArgument));
 		for (string leftResult : leftResults) {
-			vector<string> temp = formatter.integerVectorToString(database.getChildrenOf(stoi(leftResult)));
+			vector<string> temp = formatter.integerVectorToStringVector(database.getChildrenOf(stoi(leftResult)));
 			if (!temp.empty()) {
 				leftParents.push_back(leftResult);
 				for (string rightChild : temp) {
@@ -513,7 +513,7 @@ bool QueryEvaluator::parent_LeftSynonym(string leftArgument, string rightArgumen
 			}
 		}
 		else {
-			vector<string> leftParents = formatter.integerVectorToString(database.getParentOf(stoi(rightArgument)));
+			vector<string> leftParents = formatter.integerVectorToStringVector(database.getParentOf(stoi(rightArgument)));
 			if (!leftParents.empty()) {
 				atLeastOneResult = true;
 				unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
@@ -978,7 +978,7 @@ bool QueryEvaluator::genericNonPattern_BothSynonyms(string leftArgument, string 
 		} else {
 			vector<int> statements(database.getNumberOfStatements());
 			iota(statements.begin(), statements.end(), 0);
-			leftPossibilities = formatter.integerVectorToString(statements);
+			leftPossibilities = formatter.integerVectorToStringVector(statements);
 		}
 
 		// create nodes for all possible values of leftArgument, add them to root
@@ -1079,7 +1079,7 @@ vector<string> QueryEvaluator::genericNonPattern_LeftEvaluator(string rightValue
 		// right must be variable, so right must be a string
 		// left is statement number or procedure
 		if (leftNumber) {
-			results = formatter.integerVectorToString(database.getStatementsThatModify(rightValue));
+			results = formatter.integerVectorToStringVector(database.getStatementsThatModify(rightValue));
 		} else {
 			results = database.getProceduresThatModify(rightValue);
 		}
@@ -1088,7 +1088,7 @@ vector<string> QueryEvaluator::genericNonPattern_LeftEvaluator(string rightValue
 		// right must be variable, so right must be a string
 		// left is statement number or procedure
 		if (leftNumber) {
-			results = formatter.integerVectorToString(database.getStatementsThatUse(rightValue));
+			results = formatter.integerVectorToStringVector(database.getStatementsThatUse(rightValue));
 		} else {
 			results = database.getProceduresThatUse(rightValue);
 		}
@@ -1103,27 +1103,27 @@ vector<string> QueryEvaluator::genericNonPattern_LeftEvaluator(string rightValue
 		break;
 	case PARENT:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getParentOf(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database.getParentOf(stoi(rightValue)));
 		break;
 	case PARENTSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getParentsStarOf(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database.getParentsStarOf(stoi(rightValue)));
 		break;
 	case AFFECTS:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getStatementsThatAffect(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database.getStatementsThatAffect(stoi(rightValue)));
 		break;
 	case AFFECTSSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getStatementsThatAffectStar(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database.getStatementsThatAffectStar(stoi(rightValue)));
 		break;
 	case NEXT:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getStatementsBefore(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database.getStatementsBefore(stoi(rightValue)));
 		break;
 	case NEXTSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getStatementsBeforeStar(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database.getStatementsBeforeStar(stoi(rightValue)));
 		break;
 	}
 
@@ -1162,27 +1162,27 @@ vector<string> QueryEvaluator::genericNonPattern_RightEvaluator(string leftValue
 		break;
 	case PARENT:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getChildrenOf(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database.getChildrenOf(stoi(leftValue)));
 		break;
 	case PARENTSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getChildrenStarOf(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database.getChildrenStarOf(stoi(leftValue)));
 		break;
 	case AFFECTS:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getStatementsAffectedBy(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database.getStatementsAffectedBy(stoi(leftValue)));
 		break;
 	case AFFECTSSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getStatementsAffectStarredBy(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database.getStatementsAffectStarredBy(stoi(leftValue)));
 		break;
 	case NEXT:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getNextStatements(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database.getNextStatements(stoi(leftValue)));
 		break;
 	case NEXTSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getNextStarStatements(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database.getNextStarStatements(stoi(leftValue)));
 		break;
 	}
 
