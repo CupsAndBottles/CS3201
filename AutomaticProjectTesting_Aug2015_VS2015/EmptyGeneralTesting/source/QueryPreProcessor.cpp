@@ -136,7 +136,7 @@ bool QueryPreProcessor::verifySuchThatQuery(vector<string> temp) {
 				return false;
 			}
 		}
-		else if (relType.compare("assign") == 0 || relType.compare("assign*") == 0) {
+		else if (relType.compare("affects") == 0 || relType.compare("affects*") == 0) {
 			if (sCheck.isSynonym(arg1, entityTable) && !sCheck.isSynAssign(arg1, entityTable)) {
 				return false;
 			}
