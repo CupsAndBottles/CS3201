@@ -239,9 +239,24 @@ vector<string> QueryEvaluator::getEncounteredEntities() {
 // for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.
 // return true if all clauses are evaluated, false if not
 bool QueryEvaluator::evaluateQuery() {
-	for (size_t i = 0; i < clauses.size(); i++) {
-		if (!processClause(clauses[i]).first) {
+	int numberOfClauses = clauses.size();
+	for (int i = 0; i <numberOfClauses; i++) {
+		pair<bool, vector<string>> result = processClause(clauses[i]);
+		if (!result.first) {
 			return false;
+		}
+
+		for (string discoveredEntity : result.second) {
+			for (size_t j = i+1; j < clauses.size(); j++) {
+				QueryObject* currentClause = &clauses[j];
+				if (currentClause->getFirstArgument() == discoveredEntity ||
+					currentClause->getSecondArgument() == discoveredEntity) {
+					currentClause->decreaseUnknownByOne();
+				}
+			}
+		}
+		if (result.second.size() > 0) {
+			sort(clauses.begin()+i+1, clauses.end(), QueryPreProcessor::sortQueries);
 		}
 	}
 	return true;
