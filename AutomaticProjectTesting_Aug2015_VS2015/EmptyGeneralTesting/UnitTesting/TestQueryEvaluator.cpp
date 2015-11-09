@@ -177,7 +177,7 @@ namespace UnitTesting
 			Assert::IsTrue(find(parent_sa.begin(), parent_sa.end(), string("2")) != parent_sa.end());
 			Assert::IsTrue(find(parent_sa.begin(), parent_sa.end(), string("11")) != parent_sa.end());
 			
-			//select s such that Parent(w,iff)
+			//select s such that Parent(w,iff), nested while if
 			list<string> parent_wiff = qe.getResults("while w; if iff; Select w such that Parent(w,iff)");
 			Assert::AreEqual(2, (int)parent_wiff.size());
 			Assert::IsTrue(find(parent_wiff.begin(), parent_wiff.end(), string("6")) != parent_wiff.end()); //6 should not appear
@@ -198,7 +198,14 @@ namespace UnitTesting
 			Assert::AreEqual(0, (int)parent_w13.size());
 
 			//select iff such that Parent(iff,3)
+			list<string> parent_iff3 = qe.getResults("if iff; Select iff such that Parent(iff,3)");
+			Assert::AreEqual(1, (int)parent_iff3.size());
+			Assert::IsTrue(find(parent_iff3.begin(), parent_iff3.end(), string("2")) != parent_iff3.end());
 
+			//select s such that Parent(2,s)
+			list<string> parent_2s = qe.getResults("stmt s; Select s such that Parent(2,s)");
+			Assert::AreEqual(1, (int)parent_2s.size());
+			Assert::IsTrue(find(parent_2s.begin(), parent_2s.end(), string("3")) != parent_2s.end());
 
 		}
 	
