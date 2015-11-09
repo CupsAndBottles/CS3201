@@ -142,6 +142,7 @@ void QueryEvaluator::addToRoot(unordered_set<QueryNode*> newRoots) {
 	if (currentRoots.empty()) {
 		for (QueryNode* newRoot : newRoots) {
 			queryTreeRoot.addChild(newRoot);
+			newRoot->addParent(&queryTreeRoot);
 		}
 	} else {
 		for (QueryNode* newRoot : newRoots) {
