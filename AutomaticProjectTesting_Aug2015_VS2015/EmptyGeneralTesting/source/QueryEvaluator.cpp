@@ -189,14 +189,12 @@ void QueryEvaluator::flushEncounteredEntities() {
 }
 
 //for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.
-vector<string> QueryEvaluator::evaluateQuery() {
-	vector<string> output;
+void QueryEvaluator::evaluateQuery() {
 	for (size_t i = 0; i < conditionClause.size(); i++) {
 		if (!processClause(conditionClause[i])) {
-			return output;
+			return;
 		}
 	}
-	return output;
 }
 
 bool QueryEvaluator::processClause(QueryObject clause) {
