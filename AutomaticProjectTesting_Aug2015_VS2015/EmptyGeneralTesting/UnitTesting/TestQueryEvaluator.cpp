@@ -93,5 +93,34 @@ namespace UnitTesting
 			Assert::AreEqual(1, (int)callsProcOtherBoolean.size());
 			Assert::AreEqual(string("TRUE"), callspProc.front());
 		}
+
+		TEST_METHOD(testParents) {
+			string fileName = "programParent.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc {";
+			outputFile << "x=1;";
+			outputFile << "if x then {";
+			outputFile << "y=10;";
+			outputFile << "while y {";
+			outputFile << "z=x+y;";
+			outputFile << "d=z*0;";
+			outputFile << "if d then {";
+			outputFile << "y=y+1}";
+			outputFile << "else {";
+			outputFile << "y=y-1;}";
+			outputFile << "y=y-2;}";
+			outputFile << "x=2;}";
+			outputFile << "else {";
+			outputFile << "z=d*2;}";
+			outputFile << "x = z + 3;}";
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+			QueryEvaluator qe = QueryEvaluator(&pkb);
+		}
 	};
 }
