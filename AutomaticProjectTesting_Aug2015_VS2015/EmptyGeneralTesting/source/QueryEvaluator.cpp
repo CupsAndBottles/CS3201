@@ -243,121 +243,121 @@ bool QueryEvaluator::processClause(QueryObject clause) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, MODIFIES);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, MODIFIES);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, MODIFIES);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, MODIFIES);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_USES)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, USES);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, USES);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, USES);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, USES);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_CALLS)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, CALLS);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, CALLS);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, CALLS);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, CALLS);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_CALLSSTAR)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, CALLSSTAR);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, CALLSSTAR);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, CALLSSTAR);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, CALLSSTAR);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_PARENT)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, PARENT);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, PARENT);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, PARENT);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, PARENT);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_PARENTSTAR)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, PARENTSTAR);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, PARENTSTAR);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, PARENTSTAR);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, PARENTSTAR);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_FOLLOWS)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, FOLLOWS);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, FOLLOWS);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, FOLLOWS);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, FOLLOWS);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_FOLLOWSSTAR)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, FOLLOWSSTAR);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, FOLLOWSSTAR);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, FOLLOWSSTAR);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, FOLLOWSSTAR);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_NEXT)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, NEXT);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, NEXT);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, NEXT);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, NEXT);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_NEXTSTAR)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, NEXTSTAR);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, NEXTSTAR);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, NEXTSTAR);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, NEXTSTAR);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_AFFECTS)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, AFFECTS);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, AFFECTS);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, AFFECTS);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, AFFECTS);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_AFFECTSSTAR)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, AFFECTSSTAR);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, AFFECTSSTAR);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, AFFECTSSTAR);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, AFFECTSSTAR);
 		}
 	} else {
 		// check for patterns
