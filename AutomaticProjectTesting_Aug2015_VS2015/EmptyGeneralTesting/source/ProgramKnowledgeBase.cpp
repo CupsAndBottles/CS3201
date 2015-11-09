@@ -244,87 +244,10 @@ bool ProgramKnowledgeBase::isParent(int s1, int s2){
 		return false;
 	}
 	Tnode* s2Parent = s2Node->getSPAParent();
-	return s2Parent->getStatementNumber() == s1;
-}
-
-// linearly searches procedures for the procedure that contains the target.
-Tnode* ProgramKnowledgeBase::getProcedureContaining(int targetStmtNum){
-	Tnode* proc = this->abstractSyntaxTree->getFirstChild();
-	int procLastStmtNum = proc->getLastContainedStatement()->getStatementNumber();
-	while (targetStmtNum > procLastStmtNum){
-		Tnode* nextProc = proc->getRightSibling();
-		if(nextProc != NULL){
-			proc = nextProc;
-		} else {
-			return NULL;
-		}
-		procLastStmtNum = proc->getLastContainedStatement()->getStatementNumber();
-	}
-	return proc;
-}
-
-Tnode* ProgramKnowledgeBase::getParentProcedure(Tnode* node){
-	if (node->isProcedure() || node->isProgram()){
-		return NULL;
-	}
-	Tnode* candidate = node->getSPAParent();
-	while (!candidate->isProcedure()){
-		candidate = candidate->getSPAParent();
-	}
-	return candidate;
-}
-
-Tnode* ProgramKnowledgeBase::getLastSibling(Tnode* node){
-	Tnode* candidate = node->getRightSibling();
-	while (candidate->getRightSibling() != NULL) {
-		candidate = candidate->getRightSibling();
-	}
-	return candidate;
-}
-
-// assumes input is a node with a statement number
-Tnode* ProgramKnowledgeBase::getPreviousStatementNode(Tnode* currNode){
-	if (currNode->getLeftSibling() != NULL){
-		return currNode->getLeftSibling();
+	if (s2Parent == NULL) {
+		return false;
 	} else {
-		Tnode* parent = currNode->getSPAParent();
-		if (parent->isProgram()){
-			return NULL;
-		} else if (parent->isProcedure()){
-			if (parent->getLeftSibling() != NULL){
-				Tnode* cousin = parent->getLeftSibling()->getFirstChild()->getFirstChild();
-				while (!cousin->isLastChild()){
-					cousin = cousin->getRightSibling();
-				}
-				return cousin;
-			} else {
-				// currNode is statement 1
-				return NULL;
-			}
-		} else if (parent->isStatement()){
-			return parent;
-		} else {
-			return NULL;
-		}
-	}
-}
-
-Tnode* ProgramKnowledgeBase::getNextStatementNode(Tnode* currNode){
-	if (currNode->isLastChild()) {
-		Tnode* nextParent = currNode->getSPAParent()->getRightSibling();
-		if (nextParent != NULL) {
-			if (nextParent->isProcedure()) {
-				return nextParent->getFirstChild()->getFirstChild();
-			}
-			else {
-				return nextParent;
-			}
-		}
-		else {
-			return NULL;
-		}
-	} else {
-		return currNode->getRightSibling();
+		return s2Parent->getStatementNumber() == s1;
 	}
 }
 
@@ -1052,34 +975,6 @@ Tnode* ProgramKnowledgeBase::getNodeWithStatementNumber(int num) {
 	} catch (out_of_range e) {
 		return NULL;
 	}
-}
-
-bool ProgramKnowledgeBase::containsContainer(Tnode* node) {
-	Tnode* condVar = node->getFirstChild();
-	Tnode* stmtLst = condVar->getRightSibling();
-	Tnode* currStmt = stmtLst->getFirstChild();
-	bool foundContainer = false;
-	bool searchedElse = false;
-	while (!currStmt->isLastChild() && !foundContainer) {
-		if (currStmt->isContainer()) {
-			return true;
-		} else if (currStmt->isLastChild() && !searchedElse) {
-			if (stmtLst->getRightSibling () != NULL) {
-				searchedElse = false;
-				currStmt = stmtLst->getRightSibling();
-			} else {
-				return false;
-			}
-		} else {
-			Tnode* nextSib = currStmt->getRightSibling();
-			if (nextSib == NULL) {
-				return false;
-			} else {
-				currStmt = nextSib;
-			}
-		}
-	}
-	return foundContainer;
 }
 
 Tnode* ProgramKnowledgeBase::getNodeWithProcedureName(string procName){

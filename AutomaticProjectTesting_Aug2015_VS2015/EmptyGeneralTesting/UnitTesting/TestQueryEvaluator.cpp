@@ -177,21 +177,53 @@ namespace UnitTesting
 			Assert::IsTrue(find(parent_sa.begin(), parent_sa.end(), string("2")) != parent_sa.end());
 			Assert::IsTrue(find(parent_sa.begin(), parent_sa.end(), string("11")) != parent_sa.end());
 			
+			//select s such that Parent(w,iff), nested while if
+			list<string> parent_wiff = qe.getResults("while w; if iff; Select w such that Parent(w,iff)");
+			Assert::AreEqual(2, (int)parent_wiff.size());
+			Assert::IsTrue(find(parent_wiff.begin(), parent_wiff.end(), string("6")) != parent_wiff.end()); //6 should not appear
+
+
 			//select w such that Parent(w,7)
 			list<string> parent_w7 = qe.getResults("while w; Select w such that Parent(w,7)");
 			Assert::AreEqual(1, (int)parent_w7.size());
 			Assert::IsTrue(find(parent_w7.begin(), parent_w7.end(), string("6")) != parent_w7.end());
-			//select w such that Parent(w,9)
+
+			//select w such that Parent(w,9), corner boundary case (while cannot be a child of itself)
 			list<string> parent_w9 = qe.getResults("while w; Select w such that Parent(w,9)");
-			Assert::AreEqual(1, (int)parent_w9.size());
-			Assert::IsTrue(find(parent_w9.begin(), parent_w9.end(), string("9")) != parent_w9.end());
+			Assert::AreEqual(0, (int)parent_w9.size());
 
 			//select w such that Parent(w, 13), test for boundary of partition
 			list<string> parent_w13 = qe.getResults("while w; Select w such that Parent(w,13)");
 			Assert::AreEqual(0, (int)parent_w13.size());
 
 			//select iff such that Parent(iff,3)
+			list<string> parent_iff3 = qe.getResults("if iff; Select iff such that Parent(iff,3)");
+			Assert::AreEqual(1, (int)parent_iff3.size());
+			Assert::IsTrue(find(parent_iff3.begin(), parent_iff3.end(), string("2")) != parent_iff3.end());
 
+			//select s such that Parent(6,s), testing child of while
+			list<string> parent_6s = qe.getResults("stmt s; Select s such that Parent(6,s)");
+			Assert::AreEqual(1, (int)parent_6s.size());
+			Assert::IsTrue(find(parent_6s.begin(), parent_6s.end(), string("7")) != parent_6s.end());
+
+			//select s such that Parent(2,s), testing child of if
+			list<string> parent_2s = qe.getResults("stmt s; Select s such that Parent(2,s)");
+			Assert::AreEqual(2, (int)parent_2s.size());
+			Assert::IsTrue(find(parent_2s.begin(), parent_2s.end(), string("3")) != parent_2s.end());
+			Assert::IsTrue(find(parent_2s.begin(), parent_2s.end(), string("4")) != parent_2s.end());
+
+			//select a such that Parent(6,7)
+			list<string> parent_a = qe.getResults("assign a; Select a such that Parent(6,7)");
+			Assert::AreEqual(9, (int)parent_a.size());
+			Assert::IsTrue(find(parent_a.begin(), parent_a.end(), string("1")) != parent_a.end());
+			Assert::IsTrue(find(parent_a.begin(), parent_a.end(), string("3")) != parent_a.end());
+			Assert::IsTrue(find(parent_a.begin(), parent_a.end(), string("4")) != parent_a.end());
+			Assert::IsTrue(find(parent_a.begin(), parent_a.end(), string("5")) != parent_a.end());
+			Assert::IsTrue(find(parent_a.begin(), parent_a.end(), string("7")) != parent_a.end());
+			Assert::IsTrue(find(parent_a.begin(), parent_a.end(), string("8")) != parent_a.end());
+			Assert::IsTrue(find(parent_a.begin(), parent_a.end(), string("10")) != parent_a.end());
+			Assert::IsTrue(find(parent_a.begin(), parent_a.end(), string("12")) != parent_a.end());
+			Assert::IsTrue(find(parent_a.begin(), parent_a.end(), string("13")) != parent_a.end());
 
 		}
 	

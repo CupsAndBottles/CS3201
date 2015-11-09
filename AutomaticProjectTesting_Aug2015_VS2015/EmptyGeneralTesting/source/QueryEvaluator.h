@@ -46,7 +46,6 @@ private:
 	};
 
 	void getQueryData();
-	string getSelectClause();
 	string getEntityType(string s);
 	bool evaluateQuery();
 	bool queryHasResult();
@@ -55,26 +54,28 @@ private:
 	vector<int> generateVectorOfStatementNumbers();
 	vector<string> generatePossiblities(string argument);
 
-	bool processClause(QueryObject clause);
+	pair<bool, vector<string>> processClause(QueryObject clause);
 
-	bool genericNonPattern_BothSynonyms(string leftArgument, string rightArgument, int whichRelation);
-	bool genericNonPattern_LeftSynonym(string leftArgument, string rightArgument, int whichRelation);
-	bool genericNonPattern_RightSynonym(string leftArgument, string rightArgument, int whichRelation);
-	bool genericNonPattern_NoSynonym(string leftArgument, string rightArgument, int whichRelation);
+	pair<bool, vector<string>> genericNonPattern_BothSynonyms(string leftArgument, string rightArgument, int whichRelation);
+	pair<bool, vector<string>> genericNonPattern_LeftSynonym(string leftArgument, string rightArgument, int whichRelation);
+	pair<bool, vector<string>> genericNonPattern_RightSynonym(string leftArgument, string rightArgument, int whichRelation);
+	pair<bool, vector<string>> genericNonPattern_NoSynonym(string leftArgument, string rightArgument, int whichRelation);
 
 	bool genericNonPattern_Evaluator(string leftArgument, string rightArgument, int whichRelation, bool leftNumber);
 	vector<string> genericNonPattern_LeftEvaluator(string rightArgument, int whichRelation, bool leftNumber);
 	vector<string> genericNonPattern_RightEvaluator(string leftArgument, int whichRelation, bool leftNumber);
 
-	bool patternAssign(string synonym, string leftArgument, string rightArgument);
-	bool patternIf(string synonym, string conditionalVariable);
-	bool patternWhile(string synonym, string conditionalVariable);
+	pair<bool, vector<string>> patternAssign(string synonym, string leftArgument, string rightArgument);
+	pair<bool, vector<string>> patternIf(string synonym, string conditionalVariable);
+	pair<bool, vector<string>> patternWhile(string synonym, string conditionalVariable);
+	pair<bool, vector<string>> with(string synonym, string value);
 
 	QueryNode queryTreeRoot;
 	void addToRoot(unordered_set<QueryNode*> roots);
 	void addToRoot(QueryNode* newRoot);
 	void flushQueryTree();
 	void flushEncounteredEntities();
+	vector<string> getEncounteredEntities();
 
 	bool isSynonym(string s);
 	bool isVariable(string s);
@@ -91,7 +92,7 @@ private:
 	unordered_set<QueryNode*> getQNodes(string s);
 
 	vector<string> selectClause;
-	vector<QueryObject> conditionClause;
+	vector<QueryObject> clauses;
 	vector<vector<string>> finalResult;
 	ProgramKnowledgeBase database;
 	QueryPreProcessor preprocessor;
