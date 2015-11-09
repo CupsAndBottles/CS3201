@@ -31,7 +31,9 @@ void QueryNode::insertParent(QueryNode* node) {
 }
 
 void QueryNode::addParent(QueryNode* node) {
-	this->parents.push_back(node);
+	if (find(parents.begin(), parents.end(), node) != parents.end()) {
+		this->parents.push_back(node);
+	}
 }
 
 void QueryNode::removeParent(QueryNode* node) {
@@ -71,14 +73,15 @@ void QueryNode::removeChild(QueryNode* node) {
 }
 
 void QueryNode::addChild(QueryNode* node) {
-	this->children.push_back(node);
+	if (find(children.begin(), children.end(), node) != children.end()) {
+		this->children.push_back(node);
+	}
 }
 
 vector<QueryNode*> QueryNode::getChildren() {
 	if (children.empty()) {
 		return vector<QueryNode*>();
-	}
-	else {
+	} else {
 		return children;
 	}
 }

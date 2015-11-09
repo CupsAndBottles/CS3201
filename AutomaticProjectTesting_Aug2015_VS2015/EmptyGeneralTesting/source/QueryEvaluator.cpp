@@ -994,16 +994,23 @@ bool QueryEvaluator::genericNonPattern_BothSynonyms(string leftArgument, string 
 
 		// for each left value, check for right values
 		unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
+		unordered_map<string, QueryNode*> encounteredResults = unordered_map<string, QueryNode*>();
 		for (QueryNode* leftNode : leftNodes) {
 			vector<string> results = genericNonPattern_RightEvaluator(leftNode->getValue(), whichRelation, leftNumber);
 			if (results.empty()) {
 				leftNode->destroy(&encounteredEntities);
 			} else {
 				for (string result : results) {
-					atLeastOneResult = true;
-					QueryNode* newNode = QueryNode::createQueryNode(rightArgument, result);
-					leftNode->insertParent(newNode);
-					rightNodes.insert(newNode);
+					QueryNode* rightNode = NULL;
+					if (encounteredResults.count(result) == 0) {
+						atLeastOneResult = true;
+						rightNode = QueryNode::createQueryNode(rightArgument, result);
+						rightNodes.insert(rightNode);
+						encounteredResults.insert({result, rightNode});
+					} else {
+						rightNode = encounteredResults.at(result);
+					}
+					leftNode->insertParent(rightNode);
 				}
 			}
 		}
