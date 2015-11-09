@@ -122,7 +122,6 @@ namespace UnitTesting
 			Assert::AreEqual(1, (int)callsProcOtherBoolean.size());
 			Assert::AreEqual(string("TRUE"), callspProc.front());
 		}
-<<<<<<< HEAD
 
 		TEST_METHOD(testParents) {
 			string fileName = "programParent.txt";
@@ -151,7 +150,7 @@ namespace UnitTesting
 			db->buildDatabase(parsedProgram);
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 			QueryEvaluator qe = QueryEvaluator(&pkb);
-=======
+		}
 	
 		TEST_METHOD(testSimpleModify) {
 			string fileName = "programSimpleModify.txt";
@@ -185,7 +184,6 @@ namespace UnitTesting
 
 			list<string> sx_s = qe.getResults("stmt s; Select s such that modifies(s, \"x\")");
 			Assert::AreEqual(2, (int)sx_s.size());
->>>>>>> origin/master
 		}
 	};
 }
