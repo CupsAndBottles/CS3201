@@ -130,6 +130,10 @@ bool QueryEvaluator::isIf(string s) {
 	return declaration.getType(s) == EntTable::STATEMENT_IF;
 }
 
+bool QueryEvaluator::isCall(string s) {
+	return declaration.getType(s) == EntTable::STATEMENT_CALL;
+}
+
 void QueryEvaluator::addToEncounteredEntities(QueryNode* input) {
 	if (encountered(input->getValue())) {
 		encounteredEntities.at(input->getValue()).insert(input);

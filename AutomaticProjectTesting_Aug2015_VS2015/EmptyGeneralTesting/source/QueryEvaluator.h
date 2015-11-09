@@ -110,6 +110,7 @@ private:
 	bool isWhile(string s);
 	bool isAssign(string s);
 	bool isIf(string s);
+	bool isCall(string s);
 
 	unordered_map<string, unordered_set<QueryNode*>> encounteredEntities;
 	void addToEncounteredEntities(QueryNode* input);
