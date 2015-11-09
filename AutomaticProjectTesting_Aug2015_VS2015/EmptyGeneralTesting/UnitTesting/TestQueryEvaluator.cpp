@@ -128,16 +128,24 @@ namespace UnitTesting
 			ofstream outputFile(fileName, ofstream::trunc);
 			//if containment statement
 			outputFile << "procedure Proc {";
-			outputFile << "x = 1;"; //line 1
-			outputFile << "if x then {"; //line 2
-			outputFile << "x = x + 1;}"; //line 3
-			outputFile << "else{"; 
-			outputFile << "z = 1;}"; //line 4
+			outputFile << "x = 1;" << endl; //line 1
+			outputFile << "if x then {" << endl; //line 2, if statement
+			outputFile << "x = x + 1;}" << endl; //line 3
+			outputFile << "else{" << endl;
+			outputFile << "z = 1;}" << endl; //line 4
 			//while containment statement
-			outputFile << "i = 5;"; //line 5
-			outputFile << "while i{"; //line 6
-			outputFile << "x = x +2*y;}"; //line 7
-			outputFile << "}";
+			outputFile << "i = 5;" << endl; //line 5
+			outputFile << "while i{" << endl; //line 6, while statement
+			outputFile << "x = x +2*y;}" << endl; //line 7
+			//nested if in while loop
+			outputFile << "y=6;" << endl; //line 8
+			outputFile << "while y {" << endl; //line 9, while statement
+			outputFile << "w=10;" << endl; //line 10
+			outputFile << "if w then {" << endl; //line 11, if statement
+			outputFile << "w = w+1;}" << endl; //line 12
+			outputFile << "else {" << endl;
+			outputFile << "z=1;}}" << endl; //line 13
+			outputFile << "}" << endl;
 			
 			outputFile.close();
 
