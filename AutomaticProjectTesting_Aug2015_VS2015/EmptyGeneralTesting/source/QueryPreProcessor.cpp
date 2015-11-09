@@ -31,22 +31,25 @@ int getNumUnknownRank(QueryObject obj) {
 
 	if (toLowerCase(arg1) == "affects*") {
 		if (numUnknowns == 2) {
-			return 6;
+			return 7;
 		}
 		else {
-			return 5;
+			return 6;
 		}
 	}
 	else if (toLowerCase(arg1) == "affects" || toLowerCase(arg1) == "next*") {
 		if (numUnknowns == 2) {
-			return 4;
+			return 5;
 		}
 		else {
-			return 3;
+			return 4;
 		}
 	}
 	else {
 		if (numUnknowns == 2) {
+			return 3;
+		}
+		else if (numUnknowns ==1) {
 			return 2;
 		}
 		else {
