@@ -458,6 +458,7 @@ pair<bool, vector<string>> QueryEvaluator::with(string synonym, string value) {
 }
 
 pair<bool, vector<string>> QueryEvaluator::genericNonPattern_BothSynonyms(string leftArgument, string rightArgument, int whichRelation) {
+	vector<string> discoveredSynonyms = vector<string>();
 	bool leftEncountered = encountered(leftArgument);
 	bool rightEncountered = encountered(rightArgument);
 	bool leftNumber = !isVariable(leftArgument) && !isProcedure(leftArgument);
@@ -480,6 +481,7 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_BothSynonyms(string
 			}
 		}
 	} else if (leftEncountered) {
+		discoveredSynonyms.push_back(rightArgument);
 		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
 		for (QueryNode* leftNode : leftNodes) {
 			vector<string> results = genericNonPattern_RightEvaluator(leftNode->getValue(), whichRelation, leftNumber);
@@ -498,6 +500,7 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_BothSynonyms(string
 			}
 		}
 	} else if (rightEncountered) {
+		discoveredSynonyms.push_back(leftArgument);
 		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
 		for (QueryNode* rightNode : rightNodes) {
 			vector<string> results = genericNonPattern_LeftEvaluator(rightNode->getValue(), whichRelation, leftNumber);
@@ -516,6 +519,9 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_BothSynonyms(string
 			}
 		}
 	} else {
+		discoveredSynonyms.push_back(leftArgument);
+		discoveredSynonyms.push_back(rightArgument);
+
 		// generate all possible values for leftArgument
 		vector<string> leftPossibilities = generatePossiblities(leftArgument);
 		
@@ -554,10 +560,11 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_BothSynonyms(string
 		}
 		encounteredEntities.insert({rightArgument, rightNodes});
 	}
-	return {atLeastOneResult, vector<string>()};
+	return {atLeastOneResult, discoveredSynonyms};
 }
 
 pair<bool, vector<string>> QueryEvaluator::genericNonPattern_LeftSynonym(string leftArgument, string rightArgument, int whichRelation) {
+	vector<string> discoveredSynonyms = vector<string>();
 	bool leftEncountered = encountered(leftArgument);
 	bool leftNumber = !isVariable(leftArgument) && !isProcedure(leftArgument);
 	bool atLeastOneResult = false;
@@ -570,6 +577,7 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_LeftSynonym(string 
 			}
 		}
 	} else {
+		discoveredSynonyms.push_back(leftArgument);
 		vector<string> leftPossibilities = generatePossiblities(leftArgument);
 		unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
 		for (string leftPossiblity : leftPossibilities) {
@@ -582,10 +590,11 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_LeftSynonym(string 
 		addToRoot(leftNodes);
 		encounteredEntities.insert({leftArgument, leftNodes});
 	}
-	return {atLeastOneResult, vector<string>()};
+	return {atLeastOneResult, discoveredSynonyms};
 }
 
 pair<bool, vector<string>> QueryEvaluator::genericNonPattern_RightSynonym(string leftArgument, string rightArgument, int whichRelation) {
+	vector<string> discoveredSynonyms = vector<string>();
 	bool rightEncountered = encountered(rightArgument);
 	bool leftNumber = formatter.isNumericString(leftArgument);
 	bool atLeastOneResult = false;
@@ -599,6 +608,7 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_RightSynonym(string
 			}
 		}
 	} else {
+		discoveredSynonyms.push_back(rightArgument);
 		vector<string> rightPossibilities = generatePossiblities(rightArgument);
 		unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
 		for (string rightPossiblity : rightPossibilities) {
@@ -612,7 +622,7 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_RightSynonym(string
 		encounteredEntities.insert({rightArgument, rightNodes});
 	}
 
-	return {atLeastOneResult, vector<string>()};
+	return {atLeastOneResult, discoveredSynonyms};
 }
 
 pair<bool, vector<string>> QueryEvaluator::genericNonPattern_NoSynonym(string leftArgument, string rightArgument, int whichRelation) {
