@@ -1055,7 +1055,31 @@ bool QueryEvaluator::genericNonPattern_BothSynonyms(string leftArgument, string 
 }
 
 bool QueryEvaluator::genericNonPattern_LeftSynonym(string leftArgument, string rightArgument, int whichRelation) {
-	return false;
+	bool leftEncountered = encountered(leftArgument);
+	bool leftNumber = !isVariable(leftArgument) && !isProcedure(leftArgument);
+	bool atLeastOneResult = false;
+	if (leftEncountered) {
+		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
+		for (QueryNode* leftNode : leftNodes) {
+			bool result = genericNonPattern_Evaluator(leftNode->getValue(), rightArgument, whichRelation, leftNumber);
+			if (!result) {
+				leftNode->destroy(&encounteredEntities);
+			}
+		}
+	} else {
+		vector<string> leftPossibilities = generatePossiblities(leftArgument);
+		unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
+		for (string leftPossiblity : leftPossibilities) {
+			bool result = genericNonPattern_Evaluator(leftPossiblity, rightArgument, whichRelation, leftNumber);
+			if (result) {
+				atLeastOneResult = true;
+				leftNodes.insert(QueryNode::createQueryNode(leftArgument, leftPossiblity));
+			}
+		}
+		addToRoot(leftNodes);
+		encounteredEntities.insert({leftArgument, leftNodes});
+	}
+	return atLeastOneResult;
 }
 
 bool QueryEvaluator::genericNonPattern_RightSynonym(string leftArgument, string rightArgument, int whichRelation) {
