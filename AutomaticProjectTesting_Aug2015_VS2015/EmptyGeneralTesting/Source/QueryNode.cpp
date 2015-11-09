@@ -46,8 +46,9 @@ void QueryNode::removeParent(QueryNode* node) {
 }
 
 void QueryNode::destroy(unordered_map<string, unordered_set<QueryNode*>>* encounteredEntities) {
-	for (size_t i = 0; i < children.size(); i++) {
-		QueryNode* currentChild = children[i];
+	int numChildren = (int) children.size();
+	for (int i = 0; i < numChildren; i++) {
+		QueryNode* currentChild = children[0];
 		currentChild->removeParent(this);
 		this->removeChild(currentChild);
 		if (currentChild->hasNoParent()) {
@@ -56,8 +57,9 @@ void QueryNode::destroy(unordered_map<string, unordered_set<QueryNode*>>* encoun
 		}
 	}
 
-	for (size_t i = 0; i < parents.size(); i++) {
-		QueryNode* currentParent = parents[i];
+	int numParents = (int)parents.size();
+	for (int i = 0; i < numParents; i++) {
+		QueryNode* currentParent = parents[0];
 		currentParent->removeChild(this);
 		this->removeParent(currentParent);
 		if (!currentParent->isRoot() && currentParent->hasNoChildren()) {
