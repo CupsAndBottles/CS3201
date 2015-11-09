@@ -118,6 +118,18 @@ bool QueryEvaluator::isWildCard(string s) {
 	return s == QueryObject::WILDCARD;
 }
 
+bool QueryEvaluator::isWhile(string s) {
+	return declaration.getType(s) == EntTable::STATEMENT_WHILE;
+}
+
+bool QueryEvaluator::isAssign(string s) {
+	return declaration.getType(s) == EntTable::STATEMENT_ASSIGN;
+}
+
+bool QueryEvaluator::isIf(string s) {
+	return declaration.getType(s) == EntTable::STATEMENT_IF;
+}
+
 void QueryEvaluator::addToEncounteredEntities(QueryNode* input) {
 	if (encountered(input->getValue())) {
 		encounteredEntities.at(input->getValue()).insert(input);

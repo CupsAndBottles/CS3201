@@ -102,10 +102,14 @@ private:
 	void addToRoot(QueryNode* newRoot);
 	void flushQueryTree();
 	void flushEncounteredEntities();
+
 	bool isSynonym(string s);
 	bool isVariable(string s);
 	bool isProcedure(string s);
 	bool isWildCard(string s);
+	bool isWhile(string s);
+	bool isAssign(string s);
+	bool isIf(string s);
 
 	unordered_map<string, unordered_set<QueryNode*>> encounteredEntities;
 	void addToEncounteredEntities(QueryNode* input);
