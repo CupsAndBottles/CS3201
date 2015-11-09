@@ -25,6 +25,7 @@ void QueryNode::insertParent(QueryNode* node) {
 	for (size_t i = 0; i < parents.size(); i++) {
 		parents[i]->removeChild(this);
 		parents[i]->addChild(node);
+		this->removeParent(parents[i]);
 	}
 	this->addParent(node);
 	node->addChild(this);
@@ -46,9 +47,9 @@ void QueryNode::removeParent(QueryNode* node) {
 void QueryNode::destroy(unordered_map<string, unordered_set<QueryNode*>>* encounteredEntities) {
 	for (size_t i = 0; i < children.size(); i++) {
 		children[i]->removeParent(this);
+		this->removeChild(children[i]);
 		if (children[i]->hasNoParent()) {
 			children[i]->destroy(encounteredEntities);
-			this->removeChild(children[i]);
 			delete children[i];
 		}
 	}
