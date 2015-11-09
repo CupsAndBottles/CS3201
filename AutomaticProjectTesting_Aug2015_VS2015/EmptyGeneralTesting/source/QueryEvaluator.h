@@ -92,7 +92,7 @@ private:
 	unordered_set<QueryNode*> getQNodes(string s);
 
 	vector<string> selectClause;
-	vector<QueryObject> conditionClause;
+	vector<QueryObject> clauses;
 	vector<vector<string>> finalResult;
 	ProgramKnowledgeBase database;
 	QueryPreProcessor preprocessor;

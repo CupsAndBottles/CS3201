@@ -28,7 +28,7 @@ list<string> QueryEvaluator::getResults (string inputQuery) {
 //get data from preprocessor
 void QueryEvaluator::getQueryData() {
 	selectClause = preprocessor.getSelectEntities();
-	conditionClause = preprocessor.getQueries();
+	clauses = preprocessor.getQueries();
 	declaration = preprocessor.getEntityTable();
 }
 
@@ -239,8 +239,8 @@ vector<string> QueryEvaluator::getEncounteredEntities() {
 // for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.
 // return true if all clauses are evaluated, false if not
 bool QueryEvaluator::evaluateQuery() {
-	for (size_t i = 0; i < conditionClause.size(); i++) {
-		if (!processClause(conditionClause[i]).first) {
+	for (size_t i = 0; i < clauses.size(); i++) {
+		if (!processClause(clauses[i]).first) {
 			return false;
 		}
 	}
