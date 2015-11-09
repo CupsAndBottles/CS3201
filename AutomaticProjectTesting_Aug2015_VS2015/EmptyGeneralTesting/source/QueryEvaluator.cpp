@@ -1083,7 +1083,33 @@ bool QueryEvaluator::genericNonPattern_LeftSynonym(string leftArgument, string r
 }
 
 bool QueryEvaluator::genericNonPattern_RightSynonym(string leftArgument, string rightArgument, int whichRelation) {
-	return false;
+	bool rightEncountered = encountered(rightArgument);
+	bool leftNumber = formatter.isNumericString(leftArgument);
+	bool atLeastOneResult = false;
+
+	if (rightEncountered) {
+		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
+		for (QueryNode* rightNode : rightNodes) {
+			bool result = genericNonPattern_Evaluator(leftArgument, rightNode->getValue(), whichRelation, leftNumber);
+			if (!result) {
+				rightNode->destroy(&encounteredEntities);
+			}
+		}
+	} else {
+		vector<string> rightPossibilities = generatePossiblities(rightArgument);
+		unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
+		for (string rightPossiblity : rightPossibilities) {
+			bool result = genericNonPattern_Evaluator(leftArgument, rightPossiblity, whichRelation, leftNumber);
+			if (result) {
+				atLeastOneResult = true;
+				rightNodes.insert(QueryNode::createQueryNode(rightArgument, rightPossiblity));
+			}
+		}
+		addToRoot(rightNodes);
+		encounteredEntities.insert({rightArgument, rightNodes});
+	}
+
+	return atLeastOneResult;
 }
 
 bool QueryEvaluator::genericNonPattern_NoSynonym(string leftArgument, string rightArgument, int whichRelation) {
