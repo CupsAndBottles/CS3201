@@ -25,6 +25,7 @@ void QueryNode::insertParent(QueryNode* node) {
 	for (size_t i = 0; i < parents.size(); i++) {
 		parents[i]->removeChild(this);
 		parents[i]->addChild(node);
+		node->addParent(parents[i]);
 		this->removeParent(parents[i]);
 	}
 	this->addParent(node);
@@ -46,23 +47,25 @@ void QueryNode::removeParent(QueryNode* node) {
 
 void QueryNode::destroy(unordered_map<string, unordered_set<QueryNode*>>* encounteredEntities) {
 	for (size_t i = 0; i < children.size(); i++) {
-		children[i]->removeParent(this);
-		this->removeChild(children[i]);
-		if (children[i]->hasNoParent()) {
-			children[i]->destroy(encounteredEntities);
-			delete children[i];
+		QueryNode* currentChild = children[i];
+		currentChild->removeParent(this);
+		this->removeChild(currentChild);
+		if (currentChild->hasNoParent()) {
+			currentChild->destroy(encounteredEntities);
+			delete currentChild;
 		}
 	}
 
 	for (size_t i = 0; i < parents.size(); i++) {
-		parents[i]->removeChild(this);
-		if (!parents[i]->isRoot() && parents[i]->hasNoChildren()) {
-			parents[i]->destroy(encounteredEntities);
-			this->removeParent(parents[i]);
-			delete parents[i];
+		QueryNode* currentParent = parents[i];
+		currentParent->removeChild(this);
+		this->removeParent(currentParent);
+		if (!currentParent->isRoot() && currentParent->hasNoChildren()) {
+			currentParent->destroy(encounteredEntities);
+			delete currentParent;
 		}
 	}
-	
+
 	encounteredEntities->at(this->getSynonym()).erase(this);
 }
 
