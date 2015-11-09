@@ -35,7 +35,7 @@ public:
 private:
 	vector<string> checkForBracketsAndComma(vector<string> argVector);
 	void addQueryObject(vector<string> temp);
-	void inputEntitiesIntoTable(vector<string> v);
+	bool inputEntitiesIntoTable(vector<string> v);
 	vector<string> split(string s, string delim);
 	bool verifySuchThatQuery(vector<string> temp);
 	bool verifyPatternQuery(vector<string> temp);

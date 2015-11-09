@@ -78,7 +78,7 @@ vector<string> QueryPreProcessor::split(string s, string delim) {
 	return wordVector;
 }
 
-void QueryPreProcessor::inputEntitiesIntoTable(vector<string> v) {
+bool QueryPreProcessor::inputEntitiesIntoTable(vector<string> v) {
 	vector<string> designEntities = { "stmt","assign","while","if","procedure","variable","constant","prog_line" };
 
 	//Find stmt, assign, while... design-entities and put them into entity table
@@ -90,11 +90,17 @@ void QueryPreProcessor::inputEntitiesIntoTable(vector<string> v) {
 			//cout << wordVector[0] << endl;
 			for (size_t i = 1; i < wordVector.size(); i++) {
 				if (sCheck.isIdent(wordVector[i])) {
-					entityTable.add(wordVector[i], wordVector[0]);
+					if (entityTable.exist(wordVector[i])) {
+						return false;
+					}
+					else {
+						entityTable.add(wordVector[i], wordVector[0]);
+					}
 				}
 			}
 		}
 	}
+	return true;
 }
 
 bool QueryPreProcessor::verifySuchThatQuery(vector<string> temp) {
@@ -456,7 +462,9 @@ bool QueryPreProcessor::query(string s) {
 	//Create the design-entity(s) by tokenizing string with delimiter ; and \n. Make sure that all subsequent synonyms used in a query are being declared.
 	vector<string> temp;
 	temp = split(s, ";\n");
-	inputEntitiesIntoTable(temp);
+	if (!inputEntitiesIntoTable(temp)) {
+		return false;
+	}
 	//cout << "parsed design-entities into table" << endl;
 
 	//Work on relationship Query. Focusing on the 'Select...' line
