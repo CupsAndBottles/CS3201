@@ -127,21 +127,12 @@ namespace UnitTesting
 			string fileName = "programParent.txt";
 			ofstream outputFile(fileName, ofstream::trunc);
 			outputFile << "procedure Proc {";
-			outputFile << "x=1;";
-			outputFile << "if x then {";
-			outputFile << "y=10;";
-			outputFile << "while y {"; //while statement
-			outputFile << "z=x+y;";
-			outputFile << "d=z*0;";
-			outputFile << "if d then {"; //if statement
-			outputFile << "y=y+1}";
-			outputFile << "else {";
-			outputFile << "y=y-1;}";
-			outputFile << "y=y-2;}";
-			outputFile << "x=2;}";
-			outputFile << "else {";
-			outputFile << "z=d*2;}";
-			outputFile << "x = z + 3;}";
+			outputFile << "x = 1;"; //line 1
+			outputFile << "if x then {"; //line 2
+			outputFile << "x = x + 1;}"; //line 3
+			outputFile << "else{"; //line 4
+			outputFile << "z = 1;}"; //line 5
+			outputFile << "}";
 			outputFile.close();
 
 			Parser *parse = new Parser();
@@ -153,13 +144,13 @@ namespace UnitTesting
 			QueryEvaluator qe = QueryEvaluator(&pkb);
 
 			//select w such that parent(w, a)
-			list<string> parent_wa = qe.getResults("while w; assign a; Select w such that Parent(w, a)");
+			list<string> parent_wa = qe.getResults("if iff; assign a; Select iff such that Parent(iff, a)");
 			string output = "";
 			for (string element : parent_wa) {
 				output += element;
 			}
 			Assert::AreEqual(1, (int)parent_wa.size());
-			Assert::AreEqual(string("4"), output);
+			Assert::AreEqual(string("2"), output);
 		}
 	
 		TEST_METHOD(testSimpleModify) {
