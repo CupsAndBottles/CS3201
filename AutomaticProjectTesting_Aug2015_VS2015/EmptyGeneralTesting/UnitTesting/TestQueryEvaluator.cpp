@@ -197,10 +197,27 @@ namespace UnitTesting
 			list<string> parent_w13 = qe.getResults("while w; Select w such that Parent(w,13)");
 			Assert::AreEqual(0, (int)parent_w13.size());
 
+			//select a such that Parent(6,7)
+			list<string> parent_a = qe.getResults("assign a; Select a such that Parent(6,7)");
+			Assert::AreEqual(9, (int)parent_a.size());
+			Assert::IsTrue(find(parent_a.begin(), parent_a.end(), string("1")) != parent_a.end());
+			Assert::IsTrue(find(parent_a.begin(), parent_a.end(), string("3")) != parent_a.end());
+			Assert::IsTrue(find(parent_a.begin(), parent_a.end(), string("4")) != parent_a.end());
+			Assert::IsTrue(find(parent_a.begin(), parent_a.end(), string("5")) != parent_a.end());
+			Assert::IsTrue(find(parent_a.begin(), parent_a.end(), string("7")) != parent_a.end());
+			Assert::IsTrue(find(parent_a.begin(), parent_a.end(), string("8")) != parent_a.end());
+			Assert::IsTrue(find(parent_a.begin(), parent_a.end(), string("10")) != parent_a.end());
+			Assert::IsTrue(find(parent_a.begin(), parent_a.end(), string("12")) != parent_a.end());
+			Assert::IsTrue(find(parent_a.begin(), parent_a.end(), string("13")) != parent_a.end());
+			
 			//select iff such that Parent(iff,3)
 			list<string> parent_iff3 = qe.getResults("if iff; Select iff such that Parent(iff,3)");
 			Assert::AreEqual(1, (int)parent_iff3.size());
 			Assert::IsTrue(find(parent_iff3.begin(), parent_iff3.end(), string("2")) != parent_iff3.end());
+
+			//select w such that Parent(6,s)
+			list<string> parent_6s = qe.getResults("stmt s; Select s such that Parent(6,s)");
+			Assert::AreEqual(1, (int)parent_6s.size());
 
 			//select s such that Parent(2,s)
 			list<string> parent_2s = qe.getResults("stmt s; Select s such that Parent(2,s)");
