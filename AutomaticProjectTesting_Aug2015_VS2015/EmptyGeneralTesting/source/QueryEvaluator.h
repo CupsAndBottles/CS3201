@@ -57,6 +57,10 @@ private:
 	bool processClause(QueryObject clause);
 
 	bool genericNonPattern_BothSynonyms(string leftArgument, string rightArgument, int whichRelation);
+	bool genericNonPattern_LeftSynonym(string leftArgument, string rightArgument, int whichRelation);
+	bool genericNonPattern_RightSynonym(string leftArgument, string rightArgument, int whichRelation);
+	bool genericNonPattern_NoSynonym(string leftArgument, string rightArgument, int whichRelation);
+
 	bool genericNonPattern_Evaluator(string leftArgument, string rightArgument, int whichRelation, bool leftNumber);
 	vector<string> genericNonPattern_LeftEvaluator(string rightArgument, int whichRelation, bool leftNumber);
 	vector<string> genericNonPattern_RightEvaluator(string leftArgument, int whichRelation, bool leftNumber);

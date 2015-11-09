@@ -1019,6 +1019,18 @@ bool QueryEvaluator::genericNonPattern_BothSynonyms(string leftArgument, string 
 	return atLeastOneResult;
 }
 
+bool QueryEvaluator::genericNonPattern_LeftSynonym(string leftArgument, string rightArgument, int whichRelation) {
+	return false;
+}
+
+bool QueryEvaluator::genericNonPattern_RightSynonym(string leftArgument, string rightArgument, int whichRelation) {
+	return false;
+}
+
+bool QueryEvaluator::genericNonPattern_NoSynonym(string leftArgument, string rightArgument, int whichRelation) {
+	return false;
+}
+
 bool QueryEvaluator::genericNonPattern_Evaluator(string leftValue, string rightValue, int whichRelation, bool leftNumber) {
 	bool result = false;
 	switch (whichRelation) {
