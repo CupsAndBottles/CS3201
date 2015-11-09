@@ -48,9 +48,9 @@ private:
 	void getQueryData();
 	string getSelectClause();
 	string getEntityType(string s);
-	void evaluateQuery();
+	bool evaluateQuery();
 	bool queryHasResult();
-	list<string> evaluateSelect();
+	list<string> evaluateSelect(bool shortcircuited);
 	list<string> selectAll(string entityType);
 	vector<int> generateVectorOfStatementNumbers();
 	vector<string> generatePossiblities(string argument);

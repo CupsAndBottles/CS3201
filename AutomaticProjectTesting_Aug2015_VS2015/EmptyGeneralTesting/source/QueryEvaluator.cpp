@@ -19,8 +19,8 @@ list<string> QueryEvaluator::getResults (string inputQuery) {
 		getQueryData();
 		flushQueryTree();
 		flushEncounteredEntities();
-		evaluateQuery();
-		results = evaluateSelect();
+		bool shortcircuited = !evaluateQuery(); //evaluateQuery returns whether the query was fully evaluated
+		results = evaluateSelect(shortcircuited);
 	}
 	return results;
 }
@@ -49,8 +49,17 @@ bool QueryEvaluator::queryHasResult(){
 	return true;
 }
 
-list<string> QueryEvaluator::evaluateSelect() {
+list<string> QueryEvaluator::evaluateSelect(bool shortcircuited) {
 	list<string> results;
+	if (selectClause.front() == "BOOLEAN") {
+		if (shortcircuited) {
+			results.push_back("false");
+		} else {
+			results.push_back("true");
+		}
+		return results;
+	}
+
 	if (!queryHasResult()) {
 		return results;
 	}
@@ -223,13 +232,15 @@ void QueryEvaluator::flushEncounteredEntities() {
 	}
 }
 
-//for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.
-void QueryEvaluator::evaluateQuery() {
+// for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.
+// return true if all clauses are evaluated, false if not
+bool QueryEvaluator::evaluateQuery() {
 	for (size_t i = 0; i < conditionClause.size(); i++) {
 		if (!processClause(conditionClause[i])) {
-			return;
+			return false;
 		}
 	}
+	return true;
 }
 
 bool QueryEvaluator::processClause(QueryObject clause) {
