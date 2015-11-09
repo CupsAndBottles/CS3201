@@ -228,18 +228,26 @@ void QueryEvaluator::flushEncounteredEntities() {
 	}
 }
 
+vector<string> QueryEvaluator::getEncounteredEntities() {
+	vector<string> entities = vector<string>();
+	for (auto it : encounteredEntities) {
+		entities.push_back(it.first);
+	}
+	return entities;
+}
+
 // for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.
 // return true if all clauses are evaluated, false if not
 bool QueryEvaluator::evaluateQuery() {
 	for (size_t i = 0; i < conditionClause.size(); i++) {
-		if (!processClause(conditionClause[i])) {
+		if (!processClause(conditionClause[i]).first) {
 			return false;
 		}
 	}
 	return true;
 }
 
-bool QueryEvaluator::processClause(QueryObject clause) {
+pair<bool, vector<string>> QueryEvaluator::processClause(QueryObject clause) {
 	string relationType = clause.getRelation();
 	string lhs = clause.getFirstArgument();
 	string rhs = clause.getSecondArgument();
@@ -388,19 +396,19 @@ bool QueryEvaluator::processClause(QueryObject clause) {
 		}
 	}
 
-	return false;
+	return {false, vector<string>()};
 }
 
-bool QueryEvaluator::patternIf(string synonym, string conditionalVariable) {
-	return false;
+pair<bool, vector<string>> QueryEvaluator::patternIf(string synonym, string conditionalVariable) {
+	return {false, vector<string>()};
 }
 
-bool QueryEvaluator::patternWhile(string synonym, string conditionalVariable) {
-	return false;
+pair<bool, vector<string>> QueryEvaluator::patternWhile(string synonym, string conditionalVariable) {
+	return {false, vector<string>()};
 }
 
-bool QueryEvaluator::patternAssign(string synonym, string leftArgument, string rightArgument) {
-	return false;
+pair<bool, vector<string>> QueryEvaluator::patternAssign(string synonym, string leftArgument, string rightArgument) {
+	return {false, vector<string>()};
 	/*
 	vector<string> output;
 	if (formatter.isDoubleQuote(leftArgument) && formatter.isDoubleQuote(rightArgument)) {
@@ -445,11 +453,11 @@ bool QueryEvaluator::patternAssign(string synonym, string leftArgument, string r
 	*/
 }
 
-bool QueryEvaluator::with(string synonym, string value) {
-	return false;
+pair<bool, vector<string>> QueryEvaluator::with(string synonym, string value) {
+	return {false, vector<string>()};
 }
 
-bool QueryEvaluator::genericNonPattern_BothSynonyms(string leftArgument, string rightArgument, int whichRelation) {
+pair<bool, vector<string>> QueryEvaluator::genericNonPattern_BothSynonyms(string leftArgument, string rightArgument, int whichRelation) {
 	bool leftEncountered = encountered(leftArgument);
 	bool rightEncountered = encountered(rightArgument);
 	bool leftNumber = !isVariable(leftArgument) && !isProcedure(leftArgument);
@@ -546,10 +554,10 @@ bool QueryEvaluator::genericNonPattern_BothSynonyms(string leftArgument, string 
 		}
 		encounteredEntities.insert({rightArgument, rightNodes});
 	}
-	return atLeastOneResult;
+	return {atLeastOneResult, vector<string>()};
 }
 
-bool QueryEvaluator::genericNonPattern_LeftSynonym(string leftArgument, string rightArgument, int whichRelation) {
+pair<bool, vector<string>> QueryEvaluator::genericNonPattern_LeftSynonym(string leftArgument, string rightArgument, int whichRelation) {
 	bool leftEncountered = encountered(leftArgument);
 	bool leftNumber = !isVariable(leftArgument) && !isProcedure(leftArgument);
 	bool atLeastOneResult = false;
@@ -574,10 +582,10 @@ bool QueryEvaluator::genericNonPattern_LeftSynonym(string leftArgument, string r
 		addToRoot(leftNodes);
 		encounteredEntities.insert({leftArgument, leftNodes});
 	}
-	return atLeastOneResult;
+	return {atLeastOneResult, vector<string>()};
 }
 
-bool QueryEvaluator::genericNonPattern_RightSynonym(string leftArgument, string rightArgument, int whichRelation) {
+pair<bool, vector<string>> QueryEvaluator::genericNonPattern_RightSynonym(string leftArgument, string rightArgument, int whichRelation) {
 	bool rightEncountered = encountered(rightArgument);
 	bool leftNumber = formatter.isNumericString(leftArgument);
 	bool atLeastOneResult = false;
@@ -604,11 +612,11 @@ bool QueryEvaluator::genericNonPattern_RightSynonym(string leftArgument, string 
 		encounteredEntities.insert({rightArgument, rightNodes});
 	}
 
-	return atLeastOneResult;
+	return {atLeastOneResult, vector<string>()};
 }
 
-bool QueryEvaluator::genericNonPattern_NoSynonym(string leftArgument, string rightArgument, int whichRelation) {
-	return genericNonPattern_Evaluator(leftArgument, rightArgument, whichRelation, formatter.isNumericString(leftArgument));
+pair<bool, vector<string>> QueryEvaluator::genericNonPattern_NoSynonym(string leftArgument, string rightArgument, int whichRelation) {
+	return {genericNonPattern_Evaluator(leftArgument, rightArgument, whichRelation, formatter.isNumericString(leftArgument)), vector<string>()};
 }
 
 bool QueryEvaluator::genericNonPattern_Evaluator(string leftValue, string rightValue, int whichRelation, bool leftNumber) {
