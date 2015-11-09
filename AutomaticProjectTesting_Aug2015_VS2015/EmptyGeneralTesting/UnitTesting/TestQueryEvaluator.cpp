@@ -144,14 +144,17 @@ namespace UnitTesting
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 			QueryEvaluator qe = QueryEvaluator(&pkb);
 
-			//list<string> sv = qe.getResults("variable v; stmt s; Select s such that modifies(s, v)");
-			//Assert::AreEqual(6, (int)sv.size());
+			list<string> sv_s = qe.getResults("variable v; stmt s; Select s such that modifies(s, v)");
+			Assert::AreEqual(6, (int)sv_s.size());
 
-			list<string> svs1 = qe.getResults("variable v; stmt s, s1; Select s such that modifies(s, v) and uses(s1, v)");
-			Assert::AreEqual(2, (int)svs1.size());
+			list<string> sv_v = qe.getResults("variable v; stmt s; Select s such that modifies(s, v)");
+			Assert::AreEqual(6, (int)sv_v.size());
 
-			list<string> sx = qe.getResults("stmt s; Select s such that modifies(s, \"x\")");
-			Assert::AreEqual(2, (int)sx.size());
+			list<string> svs1_s = qe.getResults("variable v; stmt s, s1; Select s such that modifies(s, v) and uses(s1, v)");
+			Assert::AreEqual(4, (int)svs1_s.size()); // v: x, y; s: 1, 2, 3, 4; s1: 5, 6
+
+			list<string> sx_s = qe.getResults("stmt s; Select s such that modifies(s, \"x\")");
+			Assert::AreEqual(2, (int)sx_s.size());
 		}
 	};
 }
