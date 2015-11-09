@@ -22,6 +22,7 @@ void TestWrapper::parse(std::string filename) {
 	vector<string> tokenizedProgram = (*p).parseSimpleProgram(filename);
 
 	if (tokenizedProgram.size() > 0) {
+		cout << "Beginning to build database.\n";
 		Database *db = new Database();
 		db->buildDatabase(tokenizedProgram);
 		cout << "Successfully constructed AST.\n";

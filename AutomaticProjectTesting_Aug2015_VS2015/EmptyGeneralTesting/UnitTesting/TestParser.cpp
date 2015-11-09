@@ -498,5 +498,13 @@ namespace UnitTesting
 
 			generateProgram(procedures, nesting, assign, brackets, isCall);
 		}
+
+		TEST_METHOD(testProgramFromFile) {
+			string fileName = "Simple04-Source.txt";
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = (*parse).parseSimpleProgram(fileName);
+			Assert::AreNotEqual(0, (int)parsedProgram.size());
+		}
 	};
 }

@@ -26,36 +26,41 @@ vector<string> Parser::split(string str, char delimiter) {
 	s2 << delimiter;
 	s2 >> delimString;
 
-	// Insert non-whitespace delimiters into the correct position
 	if ((delimiter != ' ') && (delimiter != '\t')) {
-		if (str == delimString) {
+		// If the whole string is already the delimiter, just return it
+		if (str.compare(delimString) == 0) {
 			splitString.push_back(delimString);
 			return splitString;
 		}
-		else if (str[0] == delimiter) {
-			splitString.push_back(delimString);
-		}
 	}
 	
-	while (getline(ss, tok, delimiter)) {
-		if ((counter > 0) && (delimiter != ' ') && (delimiter != '\t')) {
-			// Insert non-whitespace delimiters into the correct position
-			splitString.push_back(delimString);
-		}
+	int startIndex = -1;
+	int length = 0;
 
-		if (tok.size() > 0) {
-			// Ignore empty tokens resulting from extra whitespace
-			splitString.push_back(tok);
-			counter++;
+	for (int i = 0; i < (int)str.size(); i++) {
+		if (str[i] == delimiter) {
+			// Need to check that there aren't repeated delimiters
+			if (i > 0 && startIndex >= 0) {
+				string split = str.substr(startIndex, length);
+				splitString.push_back(split);
+				startIndex = -1;
+				length = 0;
+			}
+			if ((delimiter != ' ') && (delimiter != '\t')) {
+				splitString.push_back(delimString);
+			}
 		}
-	}
+		else {
+			if (startIndex < 0) {
+				startIndex = i;
+			}
+			length++;
 
-	// Insert non-whitespace delimiters into the correct position
-	if ((str.size() > 0) 
-		&& (str[str.size() - 1] == delimiter) 
-		&& (delimiter != ' ') 
-		&& (delimiter != '\t')) {
-		splitString.push_back(delimString);
+			if (i == (int)str.size() - 1) {
+				string split = str.substr(startIndex, length);
+				splitString.push_back(split);
+			}
+		}
 	}
 
 	return splitString;
@@ -117,8 +122,23 @@ vector<string> Parser::parseSimpleProgram(string file)
 {
 	vector<string> program, tokenizedProgram;
 
+	cout << "Reading in program.\n";
 	program = readProgram(file);
+	cout << "Beginning to tokenize program.\n";
 	tokenizedProgram = splitByDelimiters(program);
+	if (tokenizedProgram.size() == 0) {
+		cout << "Error tokenizing program.\n";
+		return tokenizedProgram;
+	}
+	cout << "Successfully tokenized program\n";
+
+	// Output file
+	string fileName = "testDelimiters.txt";
+	ofstream outputFile(fileName, ofstream::trunc);
+	for (int i = 0; i < tokenizedProgram.size(); i++) {
+		outputFile << tokenizedProgram[i] << endl;
+	}
+	outputFile.close();
 
 	simpleParser *parser = new simpleParser(tokenizedProgram);
 

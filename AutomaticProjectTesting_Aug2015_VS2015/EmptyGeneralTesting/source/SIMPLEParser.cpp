@@ -16,7 +16,13 @@ simpleParser::simpleParser(vector<string> program) {
 }
 
 bool simpleParser::endOfProgram() {
-	return index >= (int) tokenizedProgram.size();
+	if (index >= (int)tokenizedProgram.size()) {
+		cout << "End of program has been reached.\n";
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 bool simpleParser::parseFactor() {
@@ -299,7 +305,7 @@ bool simpleParser::parseCall() {
 
 		// Store the calling procedure as key and vector of called procedures as value
 		if (callList.find(procName) != callList.end()) {
-			vector<string> called = callList[procName];
+			called = callList[procName];
 		}
 		called.push_back(token);
 		callList[procName] = called;
@@ -341,7 +347,11 @@ bool simpleParser::parseStmtList() {
 	}
 
 	if (parseStmt()) {
-		if (tokenizedProgram[index] == "}") {
+		if (endOfProgram()) {
+			cout << "Error: Program ended without closing brace in statement list.\n";
+			return false;
+		}
+		else if (tokenizedProgram[index] == "}") {
 			return true;
 		}
 		else {
@@ -349,7 +359,7 @@ bool simpleParser::parseStmtList() {
 		}
 	}
 	else {
-		cout << "No valid statements inside this statement list.\n";
+		cout << "Invalid statement inside this statement list.\n";
 		return false;
 	}
 }
@@ -377,6 +387,11 @@ bool simpleParser::parseProcedure() {
 			return false;
 		}
 
+		if (endOfProgram()) {
+			cout << "Error: Final procedure in program has no closing brace.\n";
+			return false;
+		}
+
 		if (tokenizedProgram[index] == "}") {
 			index += 1;
 			return true;
@@ -394,6 +409,7 @@ bool simpleParser::parseProcedure() {
 
 // Check that all called procedures exist
 bool simpleParser::checkProcedureExistence() {
+	cout << "Checking for procedure existence." << endl;
 	string procName;
 
 	// Check all procedures that call a procedure
@@ -419,6 +435,8 @@ bool simpleParser::checkProcedureExistence() {
 
 // Check that a procedure does not call itself
 bool simpleParser::checkSimpleRecursion() {
+	cout << "Checking for simple recursion." << endl;
+
 	for (map<string, vector<string>>::iterator it = callList.begin(); it != callList.end(); ++it) {
 		string caller = it->first;
 		vector<string> called = it->second;
@@ -435,6 +453,8 @@ bool simpleParser::checkSimpleRecursion() {
 
 // Check that any 2 procedures do not call each other
 bool simpleParser::checkMutualRecursion() {
+	cout << "Checking for mutual recursion." << endl;
+
 	// Check each procedure that calls others
 	for (map<string, vector<string>>::iterator it = callList.begin(); it != callList.end(); ++it) {
 		string callingProc = it->first;
@@ -488,6 +508,8 @@ bool simpleParser::parseProgram() {
 	if (!checkMutualRecursion()) {
 		return false;
 	}
+
+	cout << "Program has finished parsing and checking for errors." << endl;
 
 	return true;
 }
