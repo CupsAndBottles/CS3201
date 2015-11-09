@@ -239,6 +239,14 @@ bool QueryEvaluator::processClause(QueryObject clause) {
 	bool leftSynonym = isSynonym(lhs);
 	bool rightSynonym = isSynonym(rhs);
 
+	if (!leftSynonym) {
+		lhs = formatter.removeQuotes(lhs);
+	} 
+
+	if (!rightSynonym) {
+		rhs = formatter.removeQuotes(rhs);
+	}
+
 	if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_MODIFIES)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, MODIFIES);
