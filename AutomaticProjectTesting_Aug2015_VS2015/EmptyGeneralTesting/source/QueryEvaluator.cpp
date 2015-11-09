@@ -98,6 +98,24 @@ vector<int> QueryEvaluator::generateVectorOfStatementNumbers() {
 	return statements;
 }
 
+vector<string> QueryEvaluator::generatePossiblities(string argument) {
+	if (isVariable(argument)) {
+		return database.getVariableNames();
+	} else if (isProcedure(argument)) {
+		return  database.getProcedureNames();
+	} else if (isWhile(argument)) {
+		return formatter.integerVectorToStringVector(database.getStatementsOfType(Tnode::Type::STMT_WHILE));
+	} else if (isIf(argument)) {
+		return formatter.integerVectorToStringVector(database.getStatementsOfType(Tnode::Type::STMT_IF));
+	} else if (isAssign(argument)) {
+		return formatter.integerVectorToStringVector(database.getStatementsOfType(Tnode::Type::STMT_ASSIGN));
+	} else if (isCall(argument)) {
+		return formatter.integerVectorToStringVector(database.getStatementsOfType(Tnode::Type::STMT_CALL));
+	} else {
+		return formatter.integerVectorToStringVector(generateVectorOfStatementNumbers());
+	}
+}
+
 string QueryEvaluator::getEntityType(string s) {
 	return declaration.getType(s);
 }
@@ -988,15 +1006,8 @@ bool QueryEvaluator::genericNonPattern_BothSynonyms(string leftArgument, string 
 		}
 	} else {
 		// generate all possible values for leftArgument
-		vector<string> leftPossibilities;
-		if (isVariable(leftArgument)) {
-			leftPossibilities = database.getVariableNames();
-		} else if (isProcedure(leftArgument)) {
-			leftPossibilities = database.getProcedureNames();
-		} else {
-			leftPossibilities = formatter.integerVectorToStringVector(generateVectorOfStatementNumbers());
-		}
-
+		vector<string> leftPossibilities = generatePossiblities(leftArgument);
+		
 		// create nodes for all possible values of leftArgument, add them to root
 		unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
 		for (size_t i = 0; i < leftPossibilities.size(); i++) {

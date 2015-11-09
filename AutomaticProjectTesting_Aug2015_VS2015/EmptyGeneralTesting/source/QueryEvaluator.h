@@ -53,6 +53,7 @@ private:
 	list<string> evaluateSelect();
 	list<string> selectAll(string entityType);
 	vector<int> generateVectorOfStatementNumbers();
+	vector<string> generatePossiblities(string argument);
 
 	bool processClause(QueryObject clause);
 
