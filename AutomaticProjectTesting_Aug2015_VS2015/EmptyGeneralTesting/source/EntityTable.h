@@ -24,7 +24,7 @@ public:
 	static const string STATEMENT_ASSIGN;
 	static const string STATEMENT_WHILE;
 	static const string STATEMENT_IF;
-	static const string CALL;
+	static const string STATEMENT_CALL;
 };
 
 #endif
