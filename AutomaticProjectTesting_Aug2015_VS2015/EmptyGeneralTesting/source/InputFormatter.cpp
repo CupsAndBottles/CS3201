@@ -25,9 +25,17 @@ string InputFormatter::intToString(int value) {
 vector<string> InputFormatter::integerVectorToStringVector(vector<int> arr) {
 	vector<string> tempArr;
 	for (size_t i = 0; i < arr.size(); i++) {
-		tempArr.push_back(intToString(arr.at(i)));
+		tempArr.push_back(intToString(arr[i]));
 	}
 	return tempArr;
+}
+
+list<string> InputFormatter::integerVectorToStringList(vector<int> inp) {
+	list<string> results;
+	for (size_t i = 0; i < inp.size(); i++) {
+		results.push_back(intToString(inp[i]));
+	}
+	return results;
 }
 
 bool InputFormatter::isDoubleQuote(string s) {
