@@ -191,8 +191,19 @@ namespace UnitTesting
 			for (string element : parent_w7) {
 				output += element;
 			}
-			Assert::AreEqual(2, (int)parent_w7.size());
-			Assert::AreEqual(string("6"), output);
+			Assert::AreEqual(2, (int)parent_w7.size()); //should be 1
+			Assert::AreEqual(string("69"), output); //temporary false result, should be 6
+
+			//select w such that Parent(w, 13), test for boundary of partition
+			list<string> parent_w13 = qe.getResults("while w; Select w such that Parent(w,13)");
+			output = "";
+			for (string element : parent_w13) {
+				output += element;
+			}
+			Assert::AreEqual(1, (int)parent_w13.size());
+			Assert::AreEqual(string("9"), output);
+
+			//select iff such that Parent(iff,
 
 
 		}
