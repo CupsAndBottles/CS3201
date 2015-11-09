@@ -157,14 +157,44 @@ namespace UnitTesting
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 			QueryEvaluator qe = QueryEvaluator(&pkb);
 
-			//select w such that parent(w, a)
-			list<string> parent_wa = qe.getResults("if iff; assign a; Select iff such that Parent(iff, a)");
+			//select iff such that parent(iff, a)
+			list<string> parent_iffa = qe.getResults("if iff; assign a; Select iff such that Parent(iff, a)");
 			string output = "";
+			for (string element : parent_iffa) {
+				output += element;
+			}
+			Assert::AreEqual(2, (int)parent_iffa.size());
+			Assert::AreEqual(string("211"), output);
+
+			/*
+			//select s such that parent(s,a)
+			list<string> parent_sa = qe.getResults("stmt s; assign a; Select w such that Parent(s,a)");
+			output = "";
+			for (string element : parent_sa) {
+				output += element;
+			}
+			Assert::AreEqual(2, (int)parent_sa.size());
+			Assert::AreEqual(string("211"), output);
+			*/
+			//select w such that parent(w,a)
+			list<string> parent_wa = qe.getResults("while w; assign a; Select w such that Parent(w,a)");
+			output = "";
 			for (string element : parent_wa) {
 				output += element;
 			}
-			Assert::AreEqual(1, (int)parent_wa.size());
-			Assert::AreEqual(string("2"), output);
+			Assert::AreEqual(2, (int)parent_wa.size());
+			Assert::AreEqual(string("69"), output);
+			
+			//select w such that Parent(w,7)
+			list<string> parent_w7 = qe.getResults("while w; Select w such that Parent(w,7)");
+			output = "";
+			for (string element : parent_w7) {
+				output += element;
+			}
+			Assert::AreEqual(2, (int)parent_w7.size());
+			Assert::AreEqual(string("6"), output);
+
+
 		}
 	
 		TEST_METHOD(testSimpleModify) {
