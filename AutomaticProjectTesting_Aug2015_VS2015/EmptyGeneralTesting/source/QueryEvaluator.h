@@ -46,7 +46,6 @@ private:
 	};
 
 	void getQueryData();
-	string getSelectClause();
 	string getEntityType(string s);
 	bool evaluateQuery();
 	bool queryHasResult();

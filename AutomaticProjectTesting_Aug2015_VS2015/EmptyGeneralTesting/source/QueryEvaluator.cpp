@@ -32,10 +32,6 @@ void QueryEvaluator::getQueryData() {
 	declaration = preprocessor.getEntityTable();
 }
 
-string QueryEvaluator::getSelectClause() {
-	return selectClause.front();
-}
-
 // returns false if any encountered entity does not have a solution
 // returns true if there are no encountered entities. this works because
 // evaluateQuery will shortcircuit if any clauses, including those with
