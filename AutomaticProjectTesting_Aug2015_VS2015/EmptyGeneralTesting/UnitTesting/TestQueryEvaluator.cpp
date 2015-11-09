@@ -130,10 +130,10 @@ namespace UnitTesting
 			outputFile << "x=1;";
 			outputFile << "if x then {";
 			outputFile << "y=10;";
-			outputFile << "while y {";
+			outputFile << "while y {"; //while statement
 			outputFile << "z=x+y;";
 			outputFile << "d=z*0;";
-			outputFile << "if d then {";
+			outputFile << "if d then {"; //if statement
 			outputFile << "y=y+1}";
 			outputFile << "else {";
 			outputFile << "y=y-1;}";
@@ -142,6 +142,7 @@ namespace UnitTesting
 			outputFile << "else {";
 			outputFile << "z=d*2;}";
 			outputFile << "x = z + 3;}";
+			outputFile.close();
 
 			Parser *parse = new Parser();
 			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
@@ -150,6 +151,15 @@ namespace UnitTesting
 			db->buildDatabase(parsedProgram);
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 			QueryEvaluator qe = QueryEvaluator(&pkb);
+
+			//select w such that parent(w, a)
+			list<string> parent_wa = qe.getResults("while w; assign a; Select w such that Parent(w, a)");
+			string output = "";
+			for (string element : parent_wa) {
+				output += element;
+			}
+			Assert::AreEqual(1, (int)parent_wa.size());
+			Assert::AreEqual(string("4"), output);
 		}
 	
 		TEST_METHOD(testSimpleModify) {
