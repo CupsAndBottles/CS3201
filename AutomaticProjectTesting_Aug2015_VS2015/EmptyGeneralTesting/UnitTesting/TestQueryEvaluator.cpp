@@ -177,15 +177,22 @@ namespace UnitTesting
 			Assert::IsTrue(find(parent_sa.begin(), parent_sa.end(), string("2")) != parent_sa.end());
 			Assert::IsTrue(find(parent_sa.begin(), parent_sa.end(), string("11")) != parent_sa.end());
 			
+			//select s such that Parent(w,iff)
+			list<string> parent_wiff = qe.getResults("while w; if iff; Select w such that Parent(w,iff)");
+			Assert::AreEqual(2, (int)parent_wiff.size());
+			Assert::IsTrue(find(parent_wiff.begin(), parent_wiff.end(), string("6")) != parent_wiff.end()); //6 should not appear
+
+
 			//select w such that Parent(w,7)
 			list<string> parent_w7 = qe.getResults("while w; Select w such that Parent(w,7)");
 			Assert::AreEqual(1, (int)parent_w7.size());
 			Assert::IsTrue(find(parent_w7.begin(), parent_w7.end(), string("6")) != parent_w7.end());
+			/*
 			//select w such that Parent(w,9)
 			list<string> parent_w9 = qe.getResults("while w; Select w such that Parent(w,9)");
 			Assert::AreEqual(1, (int)parent_w9.size());
 			Assert::IsTrue(find(parent_w9.begin(), parent_w9.end(), string("9")) != parent_w9.end());
-
+			*/
 			//select w such that Parent(w, 13), test for boundary of partition
 			list<string> parent_w13 = qe.getResults("while w; Select w such that Parent(w,13)");
 			Assert::AreEqual(0, (int)parent_w13.size());
