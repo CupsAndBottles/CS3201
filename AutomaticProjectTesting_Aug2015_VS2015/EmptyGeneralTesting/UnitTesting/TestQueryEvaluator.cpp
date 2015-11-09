@@ -122,5 +122,36 @@ namespace UnitTesting
 			Assert::AreEqual(1, (int)callsProcOtherBoolean.size());
 			Assert::AreEqual(string("TRUE"), callspProc.front());
 		}
+	
+		TEST_METHOD(testSimpleModify) {
+			string fileName = "programSimpleModify.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc {";
+			outputFile << "x = 1;";
+			outputFile << "x = 2;";
+			outputFile << "y = 3;";
+			outputFile << "y = 4;";
+			outputFile << "z = x;";
+			outputFile << "z = y;";
+			outputFile << "}";
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+			QueryEvaluator qe = QueryEvaluator(&pkb);
+
+			//list<string> sv = qe.getResults("variable v; stmt s; Select s such that modifies(s, v)");
+			//Assert::AreEqual(6, (int)sv.size());
+
+			list<string> svs1 = qe.getResults("variable v; stmt s, s1; Select s such that modifies(s, v) and uses(s1, v)");
+			Assert::AreEqual(2, (int)svs1.size());
+
+			list<string> sx = qe.getResults("stmt s; Select s such that modifies(s, \"x\")");
+			Assert::AreEqual(2, (int)sx.size());
+		}
 	};
 }
