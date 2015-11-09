@@ -374,6 +374,8 @@ bool QueryEvaluator::processClause(QueryObject clause) {
 		} else {
 			return genericNonPattern_NoSynonym(lhs, rhs, AFFECTSSTAR);
 		}
+	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_WITH)) {
+		return with(lhs, rhs);
 	} else {
 		// check for patterns
 		string patternType = declaration.getType(relationType);
@@ -443,6 +445,9 @@ bool QueryEvaluator::patternAssign(string synonym, string leftArgument, string r
 	*/
 }
 
+bool QueryEvaluator::with(string synonym, string value) {
+	return false;
+}
 
 bool QueryEvaluator::genericNonPattern_BothSynonyms(string leftArgument, string rightArgument, int whichRelation) {
 	bool leftEncountered = encountered(leftArgument);

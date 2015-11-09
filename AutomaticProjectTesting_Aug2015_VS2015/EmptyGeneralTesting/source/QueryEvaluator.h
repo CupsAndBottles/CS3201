@@ -68,6 +68,7 @@ private:
 	bool patternAssign(string synonym, string leftArgument, string rightArgument);
 	bool patternIf(string synonym, string conditionalVariable);
 	bool patternWhile(string synonym, string conditionalVariable);
+	bool with(string synonym, string value);
 
 	QueryNode queryTreeRoot;
 	void addToRoot(unordered_set<QueryNode*> roots);
