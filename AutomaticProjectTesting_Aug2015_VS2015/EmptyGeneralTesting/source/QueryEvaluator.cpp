@@ -1113,7 +1113,7 @@ bool QueryEvaluator::genericNonPattern_RightSynonym(string leftArgument, string 
 }
 
 bool QueryEvaluator::genericNonPattern_NoSynonym(string leftArgument, string rightArgument, int whichRelation) {
-	return false;
+	return genericNonPattern_Evaluator(leftArgument, rightArgument, whichRelation, formatter.isNumericString(leftArgument));
 }
 
 bool QueryEvaluator::genericNonPattern_Evaluator(string leftValue, string rightValue, int whichRelation, bool leftNumber) {
