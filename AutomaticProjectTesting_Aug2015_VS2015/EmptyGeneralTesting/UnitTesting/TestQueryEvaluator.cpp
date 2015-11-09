@@ -226,6 +226,49 @@ namespace UnitTesting
 			Assert::IsTrue(find(parent_a.begin(), parent_a.end(), string("13")) != parent_a.end());
 
 		}
+
+		TEST_METHOD(testFollow) {
+			string fileName = "programFollow.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+
+			outputFile << "procedure Proc {";
+			outputFile << "y = 1;" <<endl; // line 1
+			outputFile << "x = 1;" <<endl; //line 2
+			outputFile << "z = 2;" << endl;
+			//outputFile << "call Another;"; // line 2
+			outputFile << "}" << endl;
+
+			//outputFile << "procedure Another {";
+			//outputFile << "x = 2;"; //line 5
+			//outputFile << "}";
+			
+			/*outputFile << "procedure Second {" << endl;
+			outputFile << "x=1;" << endl; //line 4
+			outputFile << "if x then {" << endl; //line 5, if statement
+			outputFile << "x=2;" << endl;//line 6
+			outputFile << "x = x + 1;}" << endl; //line 7
+			outputFile << "else {" << endl; 
+			outputFile << "z = 1;}" << endl; //line 8
+			outputFile << "}";*/
+
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+			QueryEvaluator qe = QueryEvaluator(&pkb);
+
+			//select s1 such that Follows(s1,s2)
+			list<string>follow_s1s2 = qe.getResults("stmt s1; stmt s2; Select s1 such that Follows(4,11)");
+			Assert::AreEqual(1, (int)follow_s1s2.size());
+			
+			//select s1 such that Follows(s1,2)
+			list<string>follow_s1_2 = qe.getResults("stmt s1; Select s1 such that Follows(s1,2)");
+			Assert::AreEqual(1, (int)follow_s1_2.size());
+		}
 	
 		TEST_METHOD(testSimpleModify) {
 			string fileName = "programSimpleModify.txt";
