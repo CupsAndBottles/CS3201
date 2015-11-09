@@ -774,7 +774,12 @@ vector<int> ProgramKnowledgeBase::getConstants() {
 }
 
 int ProgramKnowledgeBase::getNumberOfStatements() {
-	return (int) statementTable->getSize();
+	int result = (int) statementTable->getSize() - 1;
+	if (result < 0) {
+		return 0;
+	} else {
+		return result;
+	}
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsThatMatchPattern(Tnode::Type type, string var, string expr) {

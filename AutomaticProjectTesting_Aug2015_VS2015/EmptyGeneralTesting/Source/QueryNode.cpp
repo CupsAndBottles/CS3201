@@ -25,13 +25,17 @@ void QueryNode::insertParent(QueryNode* node) {
 	for (size_t i = 0; i < parents.size(); i++) {
 		parents[i]->removeChild(this);
 		parents[i]->addChild(node);
+		node->addParent(parents[i]);
+		this->removeParent(parents[i]);
 	}
 	this->addParent(node);
 	node->addChild(this);
 }
 
 void QueryNode::addParent(QueryNode* node) {
-	this->parents.push_back(node);
+	if (find(parents.begin(), parents.end(), node) == parents.end()) {
+		this->parents.push_back(node);
+	}
 }
 
 void QueryNode::removeParent(QueryNode* node) {
@@ -42,24 +46,28 @@ void QueryNode::removeParent(QueryNode* node) {
 }
 
 void QueryNode::destroy(unordered_map<string, unordered_set<QueryNode*>>* encounteredEntities) {
-	for (size_t i = 0; i < children.size(); i++) {
-		children[i]->removeParent(this);
-		if (children[i]->hasNoParent()) {
-			children[i]->destroy(encounteredEntities);
-			this->removeChild(children[i]);
-			delete children[i];
+	int numChildren = (int) children.size();
+	for (int i = 0; i < numChildren; i++) {
+		QueryNode* currentChild = children[0];
+		currentChild->removeParent(this);
+		this->removeChild(currentChild);
+		if (currentChild->hasNoParent()) {
+			currentChild->destroy(encounteredEntities);
+			delete currentChild;
 		}
 	}
 
-	for (size_t i = 0; i < parents.size(); i++) {
-		parents[i]->removeChild(this);
-		if (!parents[i]->isRoot() && parents[i]->hasNoChildren()) {
-			parents[i]->destroy(encounteredEntities);
-			this->removeParent(parents[i]);
-			delete parents[i];
+	int numParents = (int)parents.size();
+	for (int i = 0; i < numParents; i++) {
+		QueryNode* currentParent = parents[0];
+		currentParent->removeChild(this);
+		this->removeParent(currentParent);
+		if (!currentParent->isRoot() && currentParent->hasNoChildren()) {
+			currentParent->destroy(encounteredEntities);
+			delete currentParent;
 		}
 	}
-	
+
 	encounteredEntities->at(this->getSynonym()).erase(this);
 }
 
@@ -71,14 +79,15 @@ void QueryNode::removeChild(QueryNode* node) {
 }
 
 void QueryNode::addChild(QueryNode* node) {
-	this->children.push_back(node);
+	if (find(children.begin(), children.end(), node) == children.end()) {
+		this->children.push_back(node);
+	}
 }
 
 vector<QueryNode*> QueryNode::getChildren() {
 	if (children.empty()) {
 		return vector<QueryNode*>();
-	}
-	else {
+	} else {
 		return children;
 	}
 }
