@@ -29,6 +29,7 @@ public:
 	vector<QueryObject> getQueries();
 	void clearAll();
 	//void printSCL(vector<string> s);
+	static bool sortQueries(QueryObject obj1, QueryObject obj2);
 
 
 private:
@@ -48,8 +49,9 @@ private:
 	bool addEntities(vector<string> entities);
 	void optimizeWithClause(vector<string> temp);
 
+	static string toLowerCase(string s);
+	static int getNumUnknownRank(QueryObject obj);
+
 };
 
-static bool sortQueries(QueryObject obj1, QueryObject obj2);
-static int getNumUnknownRank(QueryObject obj);
-static string toLowerCase(string s);
+

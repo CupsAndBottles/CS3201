@@ -8,7 +8,7 @@ vector<string> entityList;
 vector<QueryObject> queryList;
 RelationshipTable relTable;
 
-static bool sortQueries(QueryObject obj1, QueryObject obj2) {
+bool QueryPreProcessor::sortQueries(QueryObject obj1, QueryObject obj2) {
 	if (getNumUnknownRank(obj1) < getNumUnknownRank(obj2)) {
 		return true;
 	}
@@ -20,12 +20,12 @@ static bool sortQueries(QueryObject obj1, QueryObject obj2) {
 	}
 }
 
-string toLowerCase(string s) {
+string QueryPreProcessor::toLowerCase(string s) {
 	transform(s.begin(), s.end(), s.begin(), ::tolower);
 	return s;
 }
 
-int getNumUnknownRank(QueryObject obj) {
+int QueryPreProcessor::getNumUnknownRank(QueryObject obj) {
 	string arg1 = obj.getRelation();
 	int numUnknowns = obj.getNumUnknowns();
 
