@@ -84,15 +84,18 @@ list<string> QueryEvaluator::selectAll(string entityType) {
 	} else if (entityType == EntTable::STATEMENT_IF) {
 		results = Helpers::intVectorToStringList(database.getStatementsOfType(Tnode::STMT_IF));
 	} else if (entityType == EntTable::STATEMENT || entityType == EntTable::PROGRAM_LINE) {
-		int numberOfStatements = database.getNumberOfStatements();
-		for (int i = 1; i <= numberOfStatements; i++) {
-			results.push_back(formatter.intToString(i));
-		}
+		results = formatter.integerVectorToStringList(generateVectorOfStatementNumbers());
 	} else if (entityType == EntTable::CONSTANT) {
 		vector<int> constants = database.getConstants();
 		results = Helpers::intVectorToStringList(constants);
 	}
 	return results;
+}
+
+vector<int> QueryEvaluator::generateVectorOfStatementNumbers() {
+	vector<int> statements(database.getNumberOfStatements());
+	iota(statements.begin(), statements.end(), 1);
+	return statements;
 }
 
 string QueryEvaluator::getEntityType(string s) {
@@ -976,9 +979,7 @@ bool QueryEvaluator::genericNonPattern_BothSynonyms(string leftArgument, string 
 		} else if (isProcedure(leftArgument)) {
 			leftPossibilities = database.getProcedureNames();
 		} else {
-			vector<int> statements(database.getNumberOfStatements());
-			iota(statements.begin(), statements.end(), 0);
-			leftPossibilities = formatter.integerVectorToStringVector(statements);
+			leftPossibilities = formatter.integerVectorToStringVector(generateVectorOfStatementNumbers());
 		}
 
 		// create nodes for all possible values of leftArgument, add them to root

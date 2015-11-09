@@ -52,6 +52,7 @@ private:
 	bool queryHasResult();
 	list<string> evaluateSelect();
 	list<string> selectAll(string entityType);
+	vector<int> generateVectorOfStatementNumbers();
 
 	bool processClause(QueryObject clause);
 
