@@ -366,7 +366,7 @@ bool SemanticsCheck::isAttrRef(string s, EntTable et) {
 	else if (et.getType(temp[0]) == "constant" && temp[1].compare("value") == 0) {
 		return true;
 	}
-	else if ((et.getType(temp[0]) == "stmt" || et.getType(temp[0]) == "assign") && temp[1].compare("stmt#") == 0) {
+	else if ((et.getType(temp[0]) == "stmt" || et.getType(temp[0]) == "assign" || et.getType(temp[0]) == "call" || et.getType(temp[0]) == "while" || et.getType(temp[0]) == "if") && temp[1].compare("stmt#") == 0) {
 		return true;
 	}
 	else {
