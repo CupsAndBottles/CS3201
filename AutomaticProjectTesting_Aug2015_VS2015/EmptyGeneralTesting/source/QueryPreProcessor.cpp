@@ -8,7 +8,7 @@ vector<string> entityList;
 vector<QueryObject> queryList;
 RelationshipTable relTable;
 
-static bool sortQueries(QueryObject obj1, QueryObject obj2) {
+bool QueryPreProcessor::sortQueries(QueryObject obj1, QueryObject obj2) {
 	if (getNumUnknownRank(obj1) < getNumUnknownRank(obj2)) {
 		return true;
 	}
@@ -20,37 +20,41 @@ static bool sortQueries(QueryObject obj1, QueryObject obj2) {
 	}
 }
 
-string toLowerCase(string s) {
+string QueryPreProcessor::toLowerCase(string s) {
 	transform(s.begin(), s.end(), s.begin(), ::tolower);
 	return s;
 }
 
-int getNumUnknownRank(QueryObject obj) {
+int QueryPreProcessor::getNumUnknownRank(QueryObject obj) {
 	string arg1 = obj.getRelation();
 	int numUnknowns = obj.getNumUnknowns();
 
+	if (numUnknowns == 0) {
+		return 1;
+	}
+
 	if (toLowerCase(arg1) == "affects*") {
 		if (numUnknowns == 2) {
-			return 6;
+			return 7;
 		}
 		else {
-			return 5;
+			return 6;
 		}
 	}
 	else if (toLowerCase(arg1) == "affects" || toLowerCase(arg1) == "next*") {
 		if (numUnknowns == 2) {
-			return 4;
+			return 5;
 		}
 		else {
-			return 3;
+			return 4;
 		}
 	}
 	else {
 		if (numUnknowns == 2) {
-			return 2;
+			return 3;
 		}
-		else {
-			return 1;
+		else if (numUnknowns ==1) {
+			return 2;
 		}
 	}
 }
@@ -132,7 +136,7 @@ bool QueryPreProcessor::verifySuchThatQuery(vector<string> temp) {
 				return false;
 			}
 		}
-		else if (relType.compare("assign") == 0 || relType.compare("assign*") == 0) {
+		else if (relType.compare("affects") == 0 || relType.compare("affects*") == 0) {
 			if (sCheck.isSynonym(arg1, entityTable) && !sCheck.isSynAssign(arg1, entityTable)) {
 				return false;
 			}
@@ -425,11 +429,14 @@ void QueryPreProcessor::optimizeWithClause(vector<string> temp) {
 			QueryObject newObj = QueryObject(lastQueryObj.getRelation(), temp[2], lastQueryObj.getSecondArgument(), lastQueryObj.getNumUnknowns()-1);
 			queryList.pop_back();
 			queryList.push_back(newObj);
+			addQueryObject(temp);
+
 		}
 		else if ((lastQueryObj.getSecondArgument()).compare(temp[1]) == 0) {
 			QueryObject newObj = QueryObject(lastQueryObj.getRelation(), lastQueryObj.getFirstArgument(), temp[2], lastQueryObj.getNumUnknowns()-1);
 			queryList.pop_back();
 			queryList.push_back(newObj);
+			addQueryObject(temp);
 		}
 		else {
 			addQueryObject(temp);

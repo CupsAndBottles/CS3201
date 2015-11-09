@@ -112,16 +112,10 @@ private:
 	unordered_map<string, unordered_set<string>> callsRelationIndexedByCallers;
 	unordered_map<string, unordered_set<string>> callsRelationIndexedByCallees;
 
-	bool containsContainer(Tnode * node); //not used
 	vector<Tnode*> getNodesOfType(Tnode::Type type);
 	Tnode * getNodeWithStatementNumber(int num);
 	Tnode * getNodeWithProcedureName(string procName);
-	Tnode * getParentNode(Tnode * node); //not used
-	Tnode * getProcedureContaining(int targetStmtNum); //DON'T NEED
-	Tnode * getParentProcedure(Tnode * node); //DON'T NEED
-	Tnode * getLastSibling(Tnode * node); //not used
-	Tnode * getPreviousStatementNode(Tnode * currNode); //not used
-	Tnode * getNextStatementNode(Tnode * currNode); //not used
+	Tnode * getParentNode(Tnode * node);
 	vector<Tnode*>* populateChildrenStarOf(Tnode* currNode, vector<Tnode*>* children = &vector<Tnode*>());
 
 	vector<Tnode*> getAssignsThatMatchPattern(string var, string expr);

@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <list>
 #include <algorithm>
 #include <iterator>
 #include <iostream>
@@ -13,7 +14,8 @@ public:
 	bool isNumericString(string s);
 	bool stringEqualCaseInsensitive(string s, string match);
 	string intToString(int value);
-	vector<string> integerVectorToString(vector<int> arr);
+	vector<string> integerVectorToStringVector(vector<int> arr);
+	list<string> integerVectorToStringList(vector<int> inp);
 	bool isDoubleQuote(string s);
 	void displayQuery(string results);
 	string removeQuotes(string s);
