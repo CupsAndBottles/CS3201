@@ -9,7 +9,7 @@ const string EntTable::PROGRAM_LINE = "prog_line";
 const string EntTable::STATEMENT_ASSIGN = "assign";
 const string EntTable::STATEMENT_WHILE = "while";
 const string EntTable::STATEMENT_IF = "if";
-const string EntTable::CALL = "call";
+const string EntTable::STATEMENT_CALL = "call";
 
 void EntTable::add(string name, string type) {
 	entityTable.insert(make_pair(name, type));

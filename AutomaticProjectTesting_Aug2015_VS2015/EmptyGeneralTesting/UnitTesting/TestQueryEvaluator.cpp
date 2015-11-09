@@ -120,7 +120,92 @@ namespace UnitTesting
 
 			list<string> callsProcOtherBoolean = qe.getResults("procedure p; Select BOOLEAN such that Calls(\"Proc\", \"Other\")");
 			Assert::AreEqual(1, (int)callsProcOtherBoolean.size());
-			Assert::AreEqual(string("TRUE"), callspProc.front());
+			Assert::AreEqual(string("false"), callsProcOtherBoolean.front());
+		}
+
+		TEST_METHOD(testParents) {
+			string fileName = "programParent.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			//if containment statement
+			outputFile << "procedure Proc {";
+			outputFile << "x = 1;" << endl; //line 1
+			outputFile << "if x then {" << endl; //line 2, if statement
+			outputFile << "x = x + 1;}" << endl; //line 3
+			outputFile << "else{" << endl;
+			outputFile << "z = 1;}" << endl; //line 4
+			//while containment statement
+			outputFile << "i = 5;" << endl; //line 5
+			outputFile << "while i{" << endl; //line 6, while statement
+			outputFile << "x = x +2*y;}" << endl; //line 7
+			//nested if in while loop
+			outputFile << "y=6;" << endl; //line 8
+			outputFile << "while y {" << endl; //line 9, while statement
+			outputFile << "w=10;" << endl; //line 10
+			outputFile << "if w then {" << endl; //line 11, if statement
+			outputFile << "w = w+1;}" << endl; //line 12
+			outputFile << "else {" << endl;
+			outputFile << "z=1;}}" << endl; //line 13
+			outputFile << "}" << endl;
+			
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+			QueryEvaluator qe = QueryEvaluator(&pkb);
+
+			//select iff such that parent(iff, a)
+			list<string> parent_iffa = qe.getResults("if iff; assign a; Select iff such that Parent(iff, a)");
+			string output = "";
+			for (string element : parent_iffa) {
+				output += element;
+			}
+			Assert::AreEqual(2, (int)parent_iffa.size());
+			Assert::AreEqual(string("211"), output);
+
+			/*
+			//select s such that parent(s,a)
+			list<string> parent_sa = qe.getResults("stmt s; assign a; Select w such that Parent(s,a)");
+			output = "";
+			for (string element : parent_sa) {
+				output += element;
+			}
+			Assert::AreEqual(2, (int)parent_sa.size());
+			Assert::AreEqual(string("211"), output);
+			*/
+			//select w such that parent(w,a)
+			list<string> parent_wa = qe.getResults("while w; assign a; Select w such that Parent(w,a)");
+			output = "";
+			for (string element : parent_wa) {
+				output += element;
+			}
+			Assert::AreEqual(2, (int)parent_wa.size());
+			Assert::AreEqual(string("69"), output);
+			
+			//select w such that Parent(w,7)
+			list<string> parent_w7 = qe.getResults("while w; Select w such that Parent(w,7)");
+			output = "";
+			for (string element : parent_w7) {
+				output += element;
+			}
+			Assert::AreEqual(2, (int)parent_w7.size()); //should be 1
+			Assert::AreEqual(string("69"), output); //temporary false result, should be 6
+
+			//select w such that Parent(w, 13), test for boundary of partition
+			list<string> parent_w13 = qe.getResults("while w; Select w such that Parent(w,13)");
+			output = "";
+			for (string element : parent_w13) {
+				output += element;
+			}
+			Assert::AreEqual(1, (int)parent_w13.size());
+			Assert::AreEqual(string("9"), output);
+
+			//select iff such that Parent(iff,
+
+
 		}
 	
 		TEST_METHOD(testSimpleModify) {

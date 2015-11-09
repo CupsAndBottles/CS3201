@@ -84,7 +84,7 @@ namespace UnitTesting
 			for (string n : output) {
 				temp += n;
 			}
-			Assert::AreEqual(string("7a"), temp);
+			Assert::AreEqual(string("79"), temp);
 
 			vector<string> v3{ "2","3","1","3","A","a","BC"};
 			vector<string> v4{ "1","3","a","2","A","3","1","2","1","BC" };

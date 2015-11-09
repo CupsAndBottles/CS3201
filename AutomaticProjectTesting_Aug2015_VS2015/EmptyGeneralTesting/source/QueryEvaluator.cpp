@@ -19,8 +19,8 @@ list<string> QueryEvaluator::getResults (string inputQuery) {
 		getQueryData();
 		flushQueryTree();
 		flushEncounteredEntities();
-		evaluateQuery();
-		results = evaluateSelect();
+		bool shortcircuited = !evaluateQuery(); //evaluateQuery returns whether the query was fully evaluated
+		results = evaluateSelect(shortcircuited);
 	}
 	return results;
 }
@@ -49,8 +49,17 @@ bool QueryEvaluator::queryHasResult(){
 	return true;
 }
 
-list<string> QueryEvaluator::evaluateSelect() {
+list<string> QueryEvaluator::evaluateSelect(bool shortcircuited) {
 	list<string> results;
+	if (selectClause.front() == "BOOLEAN") {
+		if (shortcircuited) {
+			results.push_back("false");
+		} else {
+			results.push_back("true");
+		}
+		return results;
+	}
+
 	if (!queryHasResult()) {
 		return results;
 	}
@@ -98,6 +107,24 @@ vector<int> QueryEvaluator::generateVectorOfStatementNumbers() {
 	return statements;
 }
 
+vector<string> QueryEvaluator::generatePossiblities(string argument) {
+	if (isVariable(argument)) {
+		return database.getVariableNames();
+	} else if (isProcedure(argument)) {
+		return  database.getProcedureNames();
+	} else if (isWhile(argument)) {
+		return formatter.integerVectorToStringVector(database.getStatementsOfType(Tnode::Type::STMT_WHILE));
+	} else if (isIf(argument)) {
+		return formatter.integerVectorToStringVector(database.getStatementsOfType(Tnode::Type::STMT_IF));
+	} else if (isAssign(argument)) {
+		return formatter.integerVectorToStringVector(database.getStatementsOfType(Tnode::Type::STMT_ASSIGN));
+	} else if (isCall(argument)) {
+		return formatter.integerVectorToStringVector(database.getStatementsOfType(Tnode::Type::STMT_CALL));
+	} else {
+		return formatter.integerVectorToStringVector(generateVectorOfStatementNumbers());
+	}
+}
+
 string QueryEvaluator::getEntityType(string s) {
 	return declaration.getType(s);
 }
@@ -116,6 +143,22 @@ bool QueryEvaluator::isProcedure(string s) {
 
 bool QueryEvaluator::isWildCard(string s) {
 	return s == QueryObject::WILDCARD;
+}
+
+bool QueryEvaluator::isWhile(string s) {
+	return declaration.getType(s) == EntTable::STATEMENT_WHILE;
+}
+
+bool QueryEvaluator::isAssign(string s) {
+	return declaration.getType(s) == EntTable::STATEMENT_ASSIGN;
+}
+
+bool QueryEvaluator::isIf(string s) {
+	return declaration.getType(s) == EntTable::STATEMENT_IF;
+}
+
+bool QueryEvaluator::isCall(string s) {
+	return declaration.getType(s) == EntTable::STATEMENT_CALL;
 }
 
 void QueryEvaluator::addToEncounteredEntities(QueryNode* input) {
@@ -189,13 +232,15 @@ void QueryEvaluator::flushEncounteredEntities() {
 	}
 }
 
-//for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.
-void QueryEvaluator::evaluateQuery() {
+// for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.
+// return true if all clauses are evaluated, false if not
+bool QueryEvaluator::evaluateQuery() {
 	for (size_t i = 0; i < conditionClause.size(); i++) {
 		if (!processClause(conditionClause[i])) {
-			return;
+			return false;
 		}
 	}
+	return true;
 }
 
 bool QueryEvaluator::processClause(QueryObject clause) {
@@ -205,125 +250,133 @@ bool QueryEvaluator::processClause(QueryObject clause) {
 	bool leftSynonym = isSynonym(lhs);
 	bool rightSynonym = isSynonym(rhs);
 
+	if (!leftSynonym) {
+		lhs = formatter.removeQuotes(lhs);
+	} 
+
+	if (!rightSynonym) {
+		rhs = formatter.removeQuotes(rhs);
+	}
+
 	if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_MODIFIES)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, MODIFIES);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, MODIFIES);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, MODIFIES);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, MODIFIES);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_USES)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, USES);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, USES);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, USES);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, USES);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_CALLS)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, CALLS);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, CALLS);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, CALLS);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, CALLS);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_CALLSSTAR)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, CALLSSTAR);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, CALLSSTAR);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, CALLSSTAR);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, CALLSSTAR);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_PARENT)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, PARENT);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, PARENT);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, PARENT);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, PARENT);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_PARENTSTAR)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, PARENTSTAR);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, PARENTSTAR);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, PARENTSTAR);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, PARENTSTAR);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_FOLLOWS)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, FOLLOWS);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, FOLLOWS);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, FOLLOWS);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, FOLLOWS);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_FOLLOWSSTAR)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, FOLLOWSSTAR);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, FOLLOWSSTAR);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, FOLLOWSSTAR);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, FOLLOWSSTAR);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_NEXT)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, NEXT);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, NEXT);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, NEXT);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, NEXT);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_NEXTSTAR)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, NEXTSTAR);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, NEXTSTAR);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, NEXTSTAR);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, NEXTSTAR);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_AFFECTS)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, AFFECTS);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, AFFECTS);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, AFFECTS);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, AFFECTS);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_AFFECTSSTAR)) {
 		if (leftSynonym && rightSynonym) {
 			return genericNonPattern_BothSynonyms(lhs, rhs, AFFECTSSTAR);
 		} else if (leftSynonym) {
-
+			return genericNonPattern_LeftSynonym(lhs, rhs, AFFECTSSTAR);
 		} else if (rightSynonym) {
-
+			return genericNonPattern_RightSynonym(lhs, rhs, AFFECTSSTAR);
 		} else {
-
+			return genericNonPattern_NoSynonym(lhs, rhs, AFFECTSSTAR);
 		}
 	} else {
 		// check for patterns
@@ -337,523 +390,6 @@ bool QueryEvaluator::processClause(QueryObject clause) {
 		}
 	}
 
-	return false;
-}
-
-bool QueryEvaluator::parent(string leftArgument, string rightArgument) {
-	bool leftSynonym = isSynonym(leftArgument);
-	bool rightSynonym = isSynonym(rightArgument);
-	if (leftSynonym && rightSynonym) {
-		return parent_BothSynonym(leftArgument, rightArgument);
-	}
-	else if (leftSynonym) {
-		return parent_LeftSynonym(leftArgument, rightArgument);
-	}
-	else if (rightSynonym) {
-		return parent_RightSynonym(leftArgument, rightArgument);
-	}
-	else {
-		return parent_NoSynonym(leftArgument, rightArgument);
-	}
-
-}
-
-bool QueryEvaluator::parent_BothSynonym(string leftArgument, string rightArgument) {
-	bool leftEncountered = encountered(leftArgument);
-	bool rightEncountered = encountered(rightArgument);
-	bool atLeastOneResult = false;
-	if (leftEncountered && rightEncountered) {
-		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
-		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
-		for (QueryNode* leftNode : leftNodes) {
-			for (QueryNode* rightNode : rightNodes) {
-				bool result = database.calls(leftNode->getValue(), rightNode->getValue());
-				if (result) {
-					atLeastOneResult = true;
-					leftNode->insertParent(rightNode);
-					rightNode->insertParent(leftNode);
-				}
-				else {
-					leftNode->destroy(&encounteredEntities);
-					rightNode->destroy(&encounteredEntities);
-				}
-			}
-		}
-	}
-	else if (leftEncountered) {
-		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
-		for (QueryNode* leftNode : leftNodes) {
-			vector<string> results = formatter.integerVectorToStringVector(database.getChildrenOf(stoi(leftNode->getValue())));
-			if (results.empty()) {
-				leftNode->destroy(&encounteredEntities);
-			}
-			else {
-				unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
-				for (string result : results) {
-					atLeastOneResult = true;
-					QueryNode* newNode = QueryNode::createQueryNode(rightArgument, result);
-					leftNode->insertParent(newNode);
-					rightNodes.insert(newNode);
-				}
-				encounteredEntities.insert({ rightArgument, rightNodes });
-			}
-		}
-	}
-	else if (rightEncountered) {
-		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
-		for (QueryNode* rightNode : rightNodes) {
-			vector<string> results = formatter.integerVectorToStringVector(database.getParentOf(stoi(rightNode->getValue())));
-			if (results.empty()) {
-				rightNode->destroy(&encounteredEntities);
-			}
-			else {
-				unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
-				for (string result : results) {
-					atLeastOneResult = true;
-					QueryNode* newNode = QueryNode::createQueryNode(leftArgument, result);
-					rightNode->insertParent(newNode);
-					leftNodes.insert(newNode);
-				}
-				encounteredEntities.insert({ leftArgument, leftNodes });
-			}
-		}
-	}
-	else {
-		list<string> leftResults = selectAll(getEntityType(leftArgument));
-		list<string> rightResults = selectAll(getEntityType(rightArgument));
-		vector<string> leftParents = vector<string>();
-		vector<string> rightChildren = vector<string>();
-		for (string leftResult : leftResults) {
-			for (string rightResult : rightResults) {
-				if (database.isParent(stoi(leftResult), stoi(rightResult))) {
-					leftParents.push_back(leftResult);
-					break;
-				}
-			}
-		}
-		for (string rightResult : rightResults) {
-			for (string leftResult : leftResults) {
-				if (database.isParent(stoi(leftResult), stoi(rightResult))) {
-					rightChildren.push_back(leftResult);
-					break;
-				}
-			}
-		}
-		if (!leftParents.empty() && !rightChildren.empty()) {
-			atLeastOneResult = true;
-			unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
-			unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
-			for (string rightChild : rightChildren) {
-				rightNodes.insert(QueryNode::createQueryNode(rightArgument, rightChild));
-			}
-			for (string leftParent : leftParents) {
-				leftNodes.insert(QueryNode::createQueryNode(leftArgument, leftParent));
-			}
-			addToRoot(rightNodes);
-			addToRoot(leftNodes);
-			encounteredEntities.insert({ leftArgument, leftNodes });
-			encounteredEntities.insert({ rightArgument, rightNodes });
-		}
-	}
-	return atLeastOneResult;
-}
-
-//left is synonym, right is statement# or wildcard
-bool QueryEvaluator::parent_LeftSynonym(string leftArgument, string rightArgument) {
-	bool atLeastOneResult = false;
-	bool leftEncountered = encountered(leftArgument);
-	if (isWildCard(rightArgument)) {
-		vector<string> rightChildren = vector<string>();
-		vector<string> leftParents = vector<string>();
-		list<string> leftResults = selectAll(getEntityType(leftArgument));
-		for (string leftResult : leftResults) {
-			vector<string> temp = formatter.integerVectorToStringVector(database.getChildrenOf(stoi(leftResult)));
-			if (!temp.empty()) {
-				leftParents.push_back(leftResult);
-				for (string rightChild : temp) {
-					rightChildren.push_back(rightChild);
-				}
-			}
-		}
-		if (leftEncountered) {
-			unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
-			for (string rightChild : rightChildren) {
-				for (QueryNode* leftNode : leftNodes) {
-					bool result = database.isParent(stoi(leftNode->getValue()), stoi(rightArgument));
-					if (result) {
-						atLeastOneResult = true;
-					}
-					else {
-						leftNode->destroy(&encounteredEntities);
-					}
-				}
-			}
-		}
-		else {
-			if (!leftParents.empty() && !rightChildren.empty()) {
-				atLeastOneResult = true;
-				unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
-				for (string leftParent : leftParents) {
-					leftNodes.insert(QueryNode::createQueryNode(leftArgument, leftParent));
-				}
-				addToRoot(leftNodes);
-				encounteredEntities.insert({ leftArgument, leftNodes });
-			}
-		}
-	}
-	else {
-		if (leftEncountered) {
-			unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
-			for (QueryNode* leftNode : leftNodes) {
-				bool result = database.isParent(stoi(leftNode->getValue()), stoi(rightArgument));
-				if (result) {
-					atLeastOneResult = true;
-				}
-				else {
-					leftNode->destroy(&encounteredEntities);
-				}
-			}
-		}
-		else {
-			vector<string> leftParents = formatter.integerVectorToStringVector(database.getParentOf(stoi(rightArgument)));
-			if (!leftParents.empty()) {
-				atLeastOneResult = true;
-				unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
-				for (string leftParent : leftParents) {
-					leftNodes.insert(QueryNode::createQueryNode(leftArgument, leftParent));
-				}
-				addToRoot(leftNodes);
-				encounteredEntities.insert({ leftArgument, leftNodes });
-			}
-		}
-	}
-	return atLeastOneResult;
-}
-
-bool QueryEvaluator::parent_RightSynonym(string leftArgument, string rightArgument) {
-	bool atLeastOneResult = false;
-	return atLeastOneResult;
-}
-
-bool QueryEvaluator::parent_NoSynonym(string leftArgument, string rightArgument) {
-	bool atLeastOneResult = false;
-	return atLeastOneResult;
-}
-bool QueryEvaluator::parentT(string leftArgument, string rightArgument) {
-	return false;
-}
-
-bool QueryEvaluator::follows(string leftArgument, string rightArgument) {
-	return false;
-
-}
-
-bool QueryEvaluator::followsT(string leftArgument, string rightArgument) {
-	return false;
-
-}
-
-bool QueryEvaluator::modifies(string leftArgument, string rightArgument) {
-	bool leftSynonym = isSynonym(leftArgument);
-	bool rightSynonym = isSynonym(rightArgument);
-	if (leftSynonym && rightSynonym) {
-		return modifies_BothSynonyms(leftArgument, rightArgument);
-	} else if (leftSynonym) {
-		return modifies_LeftSynonym(leftArgument, rightArgument);
-	} else if (rightSynonym) {
-		return modifies_RightSynonym(leftArgument, rightArgument);
-	} else {
-		return modifies_NoSynonym(leftArgument, rightArgument);
-	}
-}
-
-bool QueryEvaluator::modifies_BothSynonyms(string leftArgument, string rightArgument) {
-	return false;
-}
-
-bool QueryEvaluator::modifies_LeftSynonym(string leftArgument, string rightArgument) {
-	return false;
-}
-
-bool QueryEvaluator::modifies_RightSynonym(string leftArgument, string rightArgument) {
-	return false;
-}
-
-bool QueryEvaluator::modifies_NoSynonym(string leftArgument, string rightArgument) {
-	return false;
-}
-
-bool QueryEvaluator::uses(string leftArgument, string rightArgument) {
-	return false;
-}
-
-bool QueryEvaluator::calls(string leftArgument, string rightArgument) {
-	bool leftSynonym = isSynonym(leftArgument);
-	bool rightSynonym = isSynonym(rightArgument);
-	if (leftSynonym && rightSynonym) {
-		return calls_BothSynonyms(leftArgument, rightArgument);
-	} else if (leftSynonym) {
-		return calls_LeftSynonym(leftArgument, rightArgument);
-	} else if (rightSynonym) {
-		return calls_RightSynonym(leftArgument, rightArgument);
-	} else {
-		return calls_NoSynonym(leftArgument, rightArgument);
-	}
-}
-
-bool QueryEvaluator::calls_BothSynonyms(string leftArgument, string rightArgument) {
-	bool leftEncountered = encountered(leftArgument);
-	bool rightEncountered = encountered(rightArgument);
-	bool atLeastOneResult = false;
-	if (leftEncountered && rightEncountered) {
-		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
-		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
-		for (QueryNode* leftNode : leftNodes) {
-			for (QueryNode* rightNode : rightNodes) {
-				bool result = database.calls(leftNode->getValue(), rightNode->getValue());
-				if (result) {
-					atLeastOneResult = true;
-					leftNode->insertParent(rightNode);
-					rightNode->insertParent(leftNode);
-				}
-				else {
-					leftNode->destroy(&encounteredEntities);
-					rightNode->destroy(&encounteredEntities);
-				}
-			}
-		}
-	}
-	else if (leftEncountered) {
-		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
-		for (QueryNode* leftNode : leftNodes) {
-			vector<string> results = database.getProceduresCalledBy(leftNode->getValue());
-			if (results.empty()) {
-				leftNode->destroy(&encounteredEntities);
-			}
-			else {
-				unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
-				for (string result : results) {
-					atLeastOneResult = true;
-					QueryNode* newNode = QueryNode::createQueryNode(rightArgument, result);
-					leftNode->insertParent(newNode);
-					rightNodes.insert(newNode);
-				}
-				encounteredEntities.insert({ rightArgument, rightNodes });
-			}
-		}
-	}
-	else if (rightEncountered) {
-		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
-		for (QueryNode* rightNode : rightNodes) {
-			vector<string> results = database.getProceduresThatCall(rightNode->getValue());
-			if (results.empty()) {
-				rightNode->destroy(&encounteredEntities);
-			}
-			else {
-				unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
-				for (string result : results) {
-					atLeastOneResult = true;
-					QueryNode* newNode = QueryNode::createQueryNode(leftArgument, result);
-					rightNode->insertParent(newNode);
-					leftNodes.insert(newNode);
-				}
-				encounteredEntities.insert({ leftArgument, leftNodes });
-			}
-		}
-	}
-	else {
-		vector<string> leftProcs = database.getProceduresThatCall(ProgramKnowledgeBase::WILDCARD_STRING);
-		vector<string> rightProcs = database.getProceduresCalledBy(ProgramKnowledgeBase::WILDCARD_STRING);
-		if (!leftProcs.empty() && !rightProcs.empty()) {
-			atLeastOneResult = true;
-			unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
-			unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
-			for (string rightProc : rightProcs) {
-				rightNodes.insert(QueryNode::createQueryNode(rightArgument, rightProc));
-			}
-			for (string leftProc : leftProcs) {
-				leftNodes.insert(QueryNode::createQueryNode(leftArgument, leftProc));
-			}
-			addToRoot(rightNodes);
-			addToRoot(leftNodes);
-			encounteredEntities.insert({ leftArgument, leftNodes });
-			encounteredEntities.insert({ rightArgument, rightNodes });
-		}
-	}
-	return atLeastOneResult;
-}
-
-//leftSynoym, right is doubleQuoted procedure
-bool QueryEvaluator::calls_LeftSynonym(string leftArgument, string rightArgument) {
-	bool leftEncountered = encountered(leftArgument);
-	bool atLeastOneResult = false;
-	if (isWildCard(rightArgument)) {
-		vector<string> leftProcs = database.getProceduresThatCall(ProgramKnowledgeBase::WILDCARD_STRING);
-		vector<string> rightProcs = database.getProceduresCalledBy(ProgramKnowledgeBase::WILDCARD_STRING);
-		if (leftEncountered) {
-			unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
-			for (string rightProc : rightProcs) {
-				for (QueryNode* leftNode : leftNodes) {
-					bool result = database.calls(leftNode->getValue(), rightProc);
-					if (result) {
-						atLeastOneResult = true;
-					}
-					else {
-						leftNode->destroy(&encounteredEntities);
-					}
-				}
-			}
-		}
-		else {
-			if (!leftProcs.empty() && !rightProcs.empty()) {
-				atLeastOneResult = true;
-				unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
-				for (string leftProc : leftProcs) {
-					leftNodes.insert(QueryNode::createQueryNode(leftArgument, leftProc));
-				}
-				addToRoot(leftNodes);
-				encounteredEntities.insert({ leftArgument, leftNodes });
-			}
-		}
-	}
-	else {
-		string rightProcedure = formatter.removeQuotes(rightArgument);
-		if (leftEncountered) {
-			unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
-			for (QueryNode* leftNode : leftNodes) {
-				bool result = database.calls(leftNode->getValue(), rightProcedure);
-				if (result) {
-					atLeastOneResult = true;
-				}
-				else {
-					leftNode->destroy(&encounteredEntities);
-				}
-			}
-		}
-		else {
-			vector<string> leftProcs = database.getProceduresThatCall(rightProcedure);
-			if (!leftProcs.empty()) {
-				atLeastOneResult = true;
-				unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
-				for (string leftProc : leftProcs) {
-					leftNodes.insert(QueryNode::createQueryNode(leftArgument, leftProc));
-				}
-				addToRoot(leftNodes);
-				encounteredEntities.insert({ leftArgument, leftNodes });
-			}
-		}
-	}
-	return atLeastOneResult;
-}
-
-//rightSynoym, left is doubleQuoted procedure
-bool QueryEvaluator::calls_RightSynonym(string leftArgument, string rightArgument) {
-	bool rightEncountered = encountered(rightArgument);
-	bool atLeastOneResult = false;
-	if (isWildCard(leftArgument)) {
-		vector<string> leftProcs = database.getProceduresThatCall(ProgramKnowledgeBase::WILDCARD_STRING);
-		vector<string> rightProcs = database.getProceduresCalledBy(ProgramKnowledgeBase::WILDCARD_STRING);
-		if (rightEncountered) {
-			unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
-			for (string leftProc : leftProcs) {
-				for (QueryNode* rightNode : rightNodes) {
-					bool result = database.calls(leftProc, rightNode->getValue());
-					if (result) {
-						atLeastOneResult = true;
-					}
-					else {
-						rightNode->destroy(&encounteredEntities);
-					}
-				}
-			}
-		}
-		else {
-			if (!leftProcs.empty() && !rightProcs.empty()) {
-				atLeastOneResult = true;
-				unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
-				for (string rightProc : rightProcs) {
-					rightNodes.insert(QueryNode::createQueryNode(rightArgument, rightProc));
-				}
-				addToRoot(rightNodes);
-				encounteredEntities.insert({ rightArgument, rightNodes });
-			}
-		}
-	}
-	else {
-		string leftProcedure = formatter.removeQuotes(leftArgument);
-		if (rightEncountered) {
-			unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
-			for (QueryNode* rightNode : rightNodes) {
-				bool result = database.calls(leftProcedure, rightNode->getValue());
-				if (result) {
-					atLeastOneResult = true;
-				}
-				else {
-					rightNode->destroy(&encounteredEntities);
-				}
-			}
-		}
-		else {
-			vector<string> rightProcs = database.getProceduresCalledBy(leftProcedure);
-			if (!rightProcs.empty()) {
-				atLeastOneResult = true;
-				unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
-				for (string rightProc : rightProcs) {
-					rightNodes.insert(QueryNode::createQueryNode(rightArgument, rightProc));
-				}
-				addToRoot(rightNodes);
-				encounteredEntities.insert({ rightArgument, rightNodes });
-			}
-		}
-	}
-	return atLeastOneResult;
-}
-
-bool QueryEvaluator::calls_NoSynonym(string leftArgument, string rightArgument) {
-	bool isValid = false;
- 	if (isWildCard(leftArgument) && isWildCard(rightArgument)) {
-		//calls(_,_)
-		vector<string> leftProcs = database.getProceduresThatCall(ProgramKnowledgeBase::WILDCARD_STRING);
-		return !leftProcs.empty();
-	}
-	else if (isWildCard(leftArgument)) {
-		//calls(_,"second")
-		string rightProcedure = formatter.removeQuotes(rightArgument);
-		vector<string> leftProcs = database.getProceduresThatCall(rightProcedure);
-		return !leftProcs.empty();
-	}
-	else if (isWildCard(rightArgument)) {
-		//calls("first",_)
-		string leftProcedure = formatter.removeQuotes(leftArgument);
-		vector<string> rightProcs = database.getProceduresCalledBy(leftProcedure);
-		return !rightProcs.empty();
-	}
-	else {
-		//calls("first", "second")
-		string leftProcedure = formatter.removeQuotes(leftArgument);
-		string rightProcedure = formatter.removeQuotes(rightArgument);
-		isValid = database.calls(leftProcedure, rightProcedure);
-	}
-	return isValid;
-}
-
-bool QueryEvaluator::callsT(string leftArgument, string rightArgument) {
-	return false;
-}
-
-bool QueryEvaluator::next(string leftArgument, string rightArgument) {
-	return false;
-}
-
-bool QueryEvaluator::nextT(string leftArgument, string rightArgument) {
-	return false;
-}
-
-bool QueryEvaluator::affects(string leftArgument, string rightArgument) {
-	return false;
-}
-
-bool QueryEvaluator::affectsT(string leftArgument, string rightArgument) {
 	return false;
 }
 
@@ -972,15 +508,8 @@ bool QueryEvaluator::genericNonPattern_BothSynonyms(string leftArgument, string 
 		}
 	} else {
 		// generate all possible values for leftArgument
-		vector<string> leftPossibilities;
-		if (isVariable(leftArgument)) {
-			leftPossibilities = database.getVariableNames();
-		} else if (isProcedure(leftArgument)) {
-			leftPossibilities = database.getProcedureNames();
-		} else {
-			leftPossibilities = formatter.integerVectorToStringVector(generateVectorOfStatementNumbers());
-		}
-
+		vector<string> leftPossibilities = generatePossiblities(leftArgument);
+		
 		// create nodes for all possible values of leftArgument, add them to root
 		unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
 		for (size_t i = 0; i < leftPossibilities.size(); i++) {
@@ -1017,6 +546,68 @@ bool QueryEvaluator::genericNonPattern_BothSynonyms(string leftArgument, string 
 		encounteredEntities.insert({rightArgument, rightNodes});
 	}
 	return atLeastOneResult;
+}
+
+bool QueryEvaluator::genericNonPattern_LeftSynonym(string leftArgument, string rightArgument, int whichRelation) {
+	bool leftEncountered = encountered(leftArgument);
+	bool leftNumber = !isVariable(leftArgument) && !isProcedure(leftArgument);
+	bool atLeastOneResult = false;
+	if (leftEncountered) {
+		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
+		for (QueryNode* leftNode : leftNodes) {
+			bool result = genericNonPattern_Evaluator(leftNode->getValue(), rightArgument, whichRelation, leftNumber);
+			if (!result) {
+				leftNode->destroy(&encounteredEntities);
+			}
+		}
+	} else {
+		vector<string> leftPossibilities = generatePossiblities(leftArgument);
+		unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
+		for (string leftPossiblity : leftPossibilities) {
+			bool result = genericNonPattern_Evaluator(leftPossiblity, rightArgument, whichRelation, leftNumber);
+			if (result) {
+				atLeastOneResult = true;
+				leftNodes.insert(QueryNode::createQueryNode(leftArgument, leftPossiblity));
+			}
+		}
+		addToRoot(leftNodes);
+		encounteredEntities.insert({leftArgument, leftNodes});
+	}
+	return atLeastOneResult;
+}
+
+bool QueryEvaluator::genericNonPattern_RightSynonym(string leftArgument, string rightArgument, int whichRelation) {
+	bool rightEncountered = encountered(rightArgument);
+	bool leftNumber = formatter.isNumericString(leftArgument);
+	bool atLeastOneResult = false;
+
+	if (rightEncountered) {
+		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
+		for (QueryNode* rightNode : rightNodes) {
+			bool result = genericNonPattern_Evaluator(leftArgument, rightNode->getValue(), whichRelation, leftNumber);
+			if (!result) {
+				rightNode->destroy(&encounteredEntities);
+			}
+		}
+	} else {
+		vector<string> rightPossibilities = generatePossiblities(rightArgument);
+		unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
+		for (string rightPossiblity : rightPossibilities) {
+			bool result = genericNonPattern_Evaluator(leftArgument, rightPossiblity, whichRelation, leftNumber);
+			if (result) {
+				atLeastOneResult = true;
+				rightNodes.insert(QueryNode::createQueryNode(rightArgument, rightPossiblity));
+			}
+		}
+		addToRoot(rightNodes);
+		encounteredEntities.insert({rightArgument, rightNodes});
+	}
+
+	return atLeastOneResult;
+}
+
+bool QueryEvaluator::genericNonPattern_NoSynonym(string leftArgument, string rightArgument, int whichRelation) {
+	return genericNonPattern_Evaluator(leftArgument, rightArgument, whichRelation, formatter.isNumericString(leftArgument));
 }
 
 bool QueryEvaluator::genericNonPattern_Evaluator(string leftValue, string rightValue, int whichRelation, bool leftNumber) {

@@ -48,47 +48,24 @@ private:
 	void getQueryData();
 	string getSelectClause();
 	string getEntityType(string s);
-	void evaluateQuery();
+	bool evaluateQuery();
 	bool queryHasResult();
-	list<string> evaluateSelect();
+	list<string> evaluateSelect(bool shortcircuited);
 	list<string> selectAll(string entityType);
 	vector<int> generateVectorOfStatementNumbers();
+	vector<string> generatePossiblities(string argument);
 
 	bool processClause(QueryObject clause);
 
 	bool genericNonPattern_BothSynonyms(string leftArgument, string rightArgument, int whichRelation);
+	bool genericNonPattern_LeftSynonym(string leftArgument, string rightArgument, int whichRelation);
+	bool genericNonPattern_RightSynonym(string leftArgument, string rightArgument, int whichRelation);
+	bool genericNonPattern_NoSynonym(string leftArgument, string rightArgument, int whichRelation);
+
 	bool genericNonPattern_Evaluator(string leftArgument, string rightArgument, int whichRelation, bool leftNumber);
 	vector<string> genericNonPattern_LeftEvaluator(string rightArgument, int whichRelation, bool leftNumber);
 	vector<string> genericNonPattern_RightEvaluator(string leftArgument, int whichRelation, bool leftNumber);
 
-	bool parent(string leftArgument, string rightArgument);
-	bool parent_BothSynonym(string leftArgument, string rightArgument);
-	bool parent_LeftSynonym(string leftArgument, string rightArgument);
-	bool parent_RightSynonym(string leftArgument, string rightArgument);
-	bool parent_NoSynonym(string leftArgument, string rightArgument);
-	bool parentT(string leftArgument, string rightArgument);
-	bool follows(string leftArgument, string rightArgument);
-	bool followsT(string leftArgument, string rightArgument);
-
-	bool modifies(string leftArgument, string rightArgument);
-	bool modifies_BothSynonyms(string leftArgument, string rightArgument);
-	bool modifies_LeftSynonym(string leftArgument, string rightArgument);
-	bool modifies_RightSynonym(string leftArgument, string rightArgument);
-	bool modifies_NoSynonym(string leftArgument, string rightArgument);
-
-	bool uses(string leftArgument, string rightArgument);
-	
-	bool calls(string leftArgument, string rightArgument);
-	bool calls_BothSynonyms(string leftArgument, string rightArgument);
-	bool calls_LeftSynonym(string leftArgument, string rightArgument);
-	bool calls_RightSynonym(string leftArgument, string rightArgument);
-	bool calls_NoSynonym(string leftArgument, string rightArgument);
-
-	bool callsT(string leftArgument, string rightArgument);
-	bool next(string leftArgument, string rightArgument);
-	bool nextT(string leftArgument, string rightArgument);
-	bool affects(string leftArgument, string rightArgument);
-	bool affectsT(string leftArgument, string rightArgument);
 	bool patternAssign(string synonym, string leftArgument, string rightArgument);
 	bool patternIf(string synonym, string conditionalVariable);
 	bool patternWhile(string synonym, string conditionalVariable);
@@ -98,10 +75,15 @@ private:
 	void addToRoot(QueryNode* newRoot);
 	void flushQueryTree();
 	void flushEncounteredEntities();
+
 	bool isSynonym(string s);
 	bool isVariable(string s);
 	bool isProcedure(string s);
 	bool isWildCard(string s);
+	bool isWhile(string s);
+	bool isAssign(string s);
+	bool isIf(string s);
+	bool isCall(string s);
 
 	unordered_map<string, unordered_set<QueryNode*>> encounteredEntities;
 	void addToEncounteredEntities(QueryNode* input);
