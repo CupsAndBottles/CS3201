@@ -244,7 +244,11 @@ bool ProgramKnowledgeBase::isParent(int s1, int s2){
 		return false;
 	}
 	Tnode* s2Parent = s2Node->getSPAParent();
-	return s2Parent->getStatementNumber() == s1;
+	if (s2Parent == NULL) {
+		return false;
+	} else {
+		return s2Parent->getStatementNumber() == s1;
+	}
 }
 
 // linearly searches procedures for the procedure that contains the target.
