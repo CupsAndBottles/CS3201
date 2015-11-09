@@ -48,10 +48,11 @@ private:
 	void getQueryData();
 	string getSelectClause();
 	string getEntityType(string s);
-	vector<string> evaluateQuery();
+	void evaluateQuery();
 	bool queryHasResult();
 	list<string> evaluateSelect();
 	list<string> selectAll(string entityType);
+	vector<int> generateVectorOfStatementNumbers();
 
 	bool processClause(QueryObject clause);
 

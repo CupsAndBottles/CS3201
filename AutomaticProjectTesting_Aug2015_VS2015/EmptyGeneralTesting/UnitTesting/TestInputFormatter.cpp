@@ -61,7 +61,7 @@ namespace UnitTesting
 		TEST_METHOD(testIntegerVectorToString) {
 			int myints[] = { -16,2,-77,29 };
 			vector<int> test(myints, myints + sizeof(myints) / sizeof(int));
-			vector<string> testOutput=formatter.integerVectorToString(test);
+			vector<string> testOutput=formatter.integerVectorToStringVector(test);
 			string output="";
 			for (size_t i = 0; i < testOutput.size(); i++) {
 				output += testOutput[i];
@@ -69,7 +69,7 @@ namespace UnitTesting
 			Assert::AreEqual(string("-162-7729"), output);
 
 			vector<int> test2;
-			testOutput = formatter.integerVectorToString(test2);
+			testOutput = formatter.integerVectorToStringVector(test2);
 			output = "";
 			for (size_t i = 0; i < testOutput.size(); i++) {
 				output += testOutput[i];

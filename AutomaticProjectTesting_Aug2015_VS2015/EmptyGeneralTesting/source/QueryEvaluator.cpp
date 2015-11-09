@@ -84,15 +84,18 @@ list<string> QueryEvaluator::selectAll(string entityType) {
 	} else if (entityType == EntTable::STATEMENT_IF) {
 		results = Helpers::intVectorToStringList(database.getStatementsOfType(Tnode::STMT_IF));
 	} else if (entityType == EntTable::STATEMENT || entityType == EntTable::PROGRAM_LINE) {
-		int numberOfStatements = database.getNumberOfStatements();
-		for (int i = 1; i <= numberOfStatements; i++) {
-			results.push_back(formatter.intToString(i));
-		}
+		results = formatter.integerVectorToStringList(generateVectorOfStatementNumbers());
 	} else if (entityType == EntTable::CONSTANT) {
 		vector<int> constants = database.getConstants();
 		results = Helpers::intVectorToStringList(constants);
 	}
 	return results;
+}
+
+vector<int> QueryEvaluator::generateVectorOfStatementNumbers() {
+	vector<int> statements(database.getNumberOfStatements());
+	iota(statements.begin(), statements.end(), 1);
+	return statements;
 }
 
 string QueryEvaluator::getEntityType(string s) {
@@ -139,6 +142,7 @@ void QueryEvaluator::addToRoot(unordered_set<QueryNode*> newRoots) {
 	if (currentRoots.empty()) {
 		for (QueryNode* newRoot : newRoots) {
 			queryTreeRoot.addChild(newRoot);
+			newRoot->addParent(&queryTreeRoot);
 		}
 	} else {
 		for (QueryNode* newRoot : newRoots) {
@@ -186,14 +190,12 @@ void QueryEvaluator::flushEncounteredEntities() {
 }
 
 //for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.
-vector<string> QueryEvaluator::evaluateQuery() {
-	vector<string> output;
+void QueryEvaluator::evaluateQuery() {
 	for (size_t i = 0; i < conditionClause.size(); i++) {
 		if (!processClause(conditionClause[i])) {
-			return output;
+			return;
 		}
 	}
-	return output;
 }
 
 bool QueryEvaluator::processClause(QueryObject clause) {
@@ -205,7 +207,7 @@ bool QueryEvaluator::processClause(QueryObject clause) {
 
 	if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_MODIFIES)) {
 		if (leftSynonym && rightSynonym) {
-			genericNonPattern_BothSynonyms(lhs, rhs, MODIFIES);
+			return genericNonPattern_BothSynonyms(lhs, rhs, MODIFIES);
 		} else if (leftSynonym) {
 
 		} else if (rightSynonym) {
@@ -215,7 +217,7 @@ bool QueryEvaluator::processClause(QueryObject clause) {
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_USES)) {
 		if (leftSynonym && rightSynonym) {
-			genericNonPattern_BothSynonyms(lhs, rhs, USES);
+			return genericNonPattern_BothSynonyms(lhs, rhs, USES);
 		} else if (leftSynonym) {
 
 		} else if (rightSynonym) {
@@ -225,7 +227,7 @@ bool QueryEvaluator::processClause(QueryObject clause) {
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_CALLS)) {
 		if (leftSynonym && rightSynonym) {
-			genericNonPattern_BothSynonyms(lhs, rhs, CALLS);
+			return genericNonPattern_BothSynonyms(lhs, rhs, CALLS);
 		} else if (leftSynonym) {
 
 		} else if (rightSynonym) {
@@ -235,7 +237,7 @@ bool QueryEvaluator::processClause(QueryObject clause) {
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_CALLSSTAR)) {
 		if (leftSynonym && rightSynonym) {
-			genericNonPattern_BothSynonyms(lhs, rhs, CALLSSTAR);
+			return genericNonPattern_BothSynonyms(lhs, rhs, CALLSSTAR);
 		} else if (leftSynonym) {
 
 		} else if (rightSynonym) {
@@ -245,7 +247,7 @@ bool QueryEvaluator::processClause(QueryObject clause) {
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_PARENT)) {
 		if (leftSynonym && rightSynonym) {
-			genericNonPattern_BothSynonyms(lhs, rhs, PARENT);
+			return genericNonPattern_BothSynonyms(lhs, rhs, PARENT);
 		} else if (leftSynonym) {
 
 		} else if (rightSynonym) {
@@ -255,7 +257,7 @@ bool QueryEvaluator::processClause(QueryObject clause) {
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_PARENTSTAR)) {
 		if (leftSynonym && rightSynonym) {
-			genericNonPattern_BothSynonyms(lhs, rhs, PARENTSTAR);
+			return genericNonPattern_BothSynonyms(lhs, rhs, PARENTSTAR);
 		} else if (leftSynonym) {
 
 		} else if (rightSynonym) {
@@ -265,7 +267,7 @@ bool QueryEvaluator::processClause(QueryObject clause) {
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_FOLLOWS)) {
 		if (leftSynonym && rightSynonym) {
-			genericNonPattern_BothSynonyms(lhs, rhs, FOLLOWS);
+			return genericNonPattern_BothSynonyms(lhs, rhs, FOLLOWS);
 		} else if (leftSynonym) {
 
 		} else if (rightSynonym) {
@@ -275,7 +277,7 @@ bool QueryEvaluator::processClause(QueryObject clause) {
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_FOLLOWSSTAR)) {
 		if (leftSynonym && rightSynonym) {
-			genericNonPattern_BothSynonyms(lhs, rhs, FOLLOWSSTAR);
+			return genericNonPattern_BothSynonyms(lhs, rhs, FOLLOWSSTAR);
 		} else if (leftSynonym) {
 
 		} else if (rightSynonym) {
@@ -285,7 +287,7 @@ bool QueryEvaluator::processClause(QueryObject clause) {
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_NEXT)) {
 		if (leftSynonym && rightSynonym) {
-			genericNonPattern_BothSynonyms(lhs, rhs, NEXT);
+			return genericNonPattern_BothSynonyms(lhs, rhs, NEXT);
 		} else if (leftSynonym) {
 
 		} else if (rightSynonym) {
@@ -295,7 +297,7 @@ bool QueryEvaluator::processClause(QueryObject clause) {
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_NEXTSTAR)) {
 		if (leftSynonym && rightSynonym) {
-			genericNonPattern_BothSynonyms(lhs, rhs, NEXTSTAR);
+			return genericNonPattern_BothSynonyms(lhs, rhs, NEXTSTAR);
 		} else if (leftSynonym) {
 
 		} else if (rightSynonym) {
@@ -305,7 +307,7 @@ bool QueryEvaluator::processClause(QueryObject clause) {
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_AFFECTS)) {
 		if (leftSynonym && rightSynonym) {
-			genericNonPattern_BothSynonyms(lhs, rhs, AFFECTS);
+			return genericNonPattern_BothSynonyms(lhs, rhs, AFFECTS);
 		} else if (leftSynonym) {
 
 		} else if (rightSynonym) {
@@ -315,7 +317,7 @@ bool QueryEvaluator::processClause(QueryObject clause) {
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_AFFECTSSTAR)) {
 		if (leftSynonym && rightSynonym) {
-			genericNonPattern_BothSynonyms(lhs, rhs, AFFECTSSTAR);
+			return genericNonPattern_BothSynonyms(lhs, rhs, AFFECTSSTAR);
 		} else if (leftSynonym) {
 
 		} else if (rightSynonym) {
@@ -381,7 +383,7 @@ bool QueryEvaluator::parent_BothSynonym(string leftArgument, string rightArgumen
 	else if (leftEncountered) {
 		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
 		for (QueryNode* leftNode : leftNodes) {
-			vector<string> results = formatter.integerVectorToString(database.getChildrenOf(stoi(leftNode->getValue())));
+			vector<string> results = formatter.integerVectorToStringVector(database.getChildrenOf(stoi(leftNode->getValue())));
 			if (results.empty()) {
 				leftNode->destroy(&encounteredEntities);
 			}
@@ -400,7 +402,7 @@ bool QueryEvaluator::parent_BothSynonym(string leftArgument, string rightArgumen
 	else if (rightEncountered) {
 		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
 		for (QueryNode* rightNode : rightNodes) {
-			vector<string> results = formatter.integerVectorToString(database.getParentOf(stoi(rightNode->getValue())));
+			vector<string> results = formatter.integerVectorToStringVector(database.getParentOf(stoi(rightNode->getValue())));
 			if (results.empty()) {
 				rightNode->destroy(&encounteredEntities);
 			}
@@ -465,7 +467,7 @@ bool QueryEvaluator::parent_LeftSynonym(string leftArgument, string rightArgumen
 		vector<string> leftParents = vector<string>();
 		list<string> leftResults = selectAll(getEntityType(leftArgument));
 		for (string leftResult : leftResults) {
-			vector<string> temp = formatter.integerVectorToString(database.getChildrenOf(stoi(leftResult)));
+			vector<string> temp = formatter.integerVectorToStringVector(database.getChildrenOf(stoi(leftResult)));
 			if (!temp.empty()) {
 				leftParents.push_back(leftResult);
 				for (string rightChild : temp) {
@@ -513,7 +515,7 @@ bool QueryEvaluator::parent_LeftSynonym(string leftArgument, string rightArgumen
 			}
 		}
 		else {
-			vector<string> leftParents = formatter.integerVectorToString(database.getParentOf(stoi(rightArgument)));
+			vector<string> leftParents = formatter.integerVectorToStringVector(database.getParentOf(stoi(rightArgument)));
 			if (!leftParents.empty()) {
 				atLeastOneResult = true;
 				unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
@@ -976,9 +978,7 @@ bool QueryEvaluator::genericNonPattern_BothSynonyms(string leftArgument, string 
 		} else if (isProcedure(leftArgument)) {
 			leftPossibilities = database.getProcedureNames();
 		} else {
-			vector<int> statements(database.getNumberOfStatements());
-			iota(statements.begin(), statements.end(), 0);
-			leftPossibilities = formatter.integerVectorToString(statements);
+			leftPossibilities = formatter.integerVectorToStringVector(generateVectorOfStatementNumbers());
 		}
 
 		// create nodes for all possible values of leftArgument, add them to root
@@ -992,23 +992,29 @@ bool QueryEvaluator::genericNonPattern_BothSynonyms(string leftArgument, string 
 			encounteredEntities.insert({leftArgument, leftNodes});
 		}
 
-		// for each left value, check for right values 
+		// for each left value, check for right values
+		unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
+		unordered_map<string, QueryNode*> encounteredResults = unordered_map<string, QueryNode*>();
 		for (QueryNode* leftNode : leftNodes) {
 			vector<string> results = genericNonPattern_RightEvaluator(leftNode->getValue(), whichRelation, leftNumber);
 			if (results.empty()) {
 				leftNode->destroy(&encounteredEntities);
-			}
-			else {
-				unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
+			} else {
 				for (string result : results) {
-					atLeastOneResult = true;
-					QueryNode* newNode = QueryNode::createQueryNode(rightArgument, result);
-					leftNode->insertParent(newNode);
-					rightNodes.insert(newNode);
+					QueryNode* rightNode = NULL;
+					if (encounteredResults.count(result) == 0) {
+						atLeastOneResult = true;
+						rightNode = QueryNode::createQueryNode(rightArgument, result);
+						rightNodes.insert(rightNode);
+						encounteredResults.insert({result, rightNode});
+					} else {
+						rightNode = encounteredResults.at(result);
+					}
+					leftNode->insertParent(rightNode);
 				}
-				encounteredEntities.insert({rightArgument, rightNodes});
 			}
 		}
+		encounteredEntities.insert({rightArgument, rightNodes});
 	}
 	return atLeastOneResult;
 }
@@ -1079,7 +1085,7 @@ vector<string> QueryEvaluator::genericNonPattern_LeftEvaluator(string rightValue
 		// right must be variable, so right must be a string
 		// left is statement number or procedure
 		if (leftNumber) {
-			results = formatter.integerVectorToString(database.getStatementsThatModify(rightValue));
+			results = formatter.integerVectorToStringVector(database.getStatementsThatModify(rightValue));
 		} else {
 			results = database.getProceduresThatModify(rightValue);
 		}
@@ -1088,7 +1094,7 @@ vector<string> QueryEvaluator::genericNonPattern_LeftEvaluator(string rightValue
 		// right must be variable, so right must be a string
 		// left is statement number or procedure
 		if (leftNumber) {
-			results = formatter.integerVectorToString(database.getStatementsThatUse(rightValue));
+			results = formatter.integerVectorToStringVector(database.getStatementsThatUse(rightValue));
 		} else {
 			results = database.getProceduresThatUse(rightValue);
 		}
@@ -1103,27 +1109,27 @@ vector<string> QueryEvaluator::genericNonPattern_LeftEvaluator(string rightValue
 		break;
 	case PARENT:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getParentOf(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database.getParentOf(stoi(rightValue)));
 		break;
 	case PARENTSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getParentsStarOf(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database.getParentsStarOf(stoi(rightValue)));
 		break;
 	case AFFECTS:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getStatementsThatAffect(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database.getStatementsThatAffect(stoi(rightValue)));
 		break;
 	case AFFECTSSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getStatementsThatAffectStar(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database.getStatementsThatAffectStar(stoi(rightValue)));
 		break;
 	case NEXT:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getStatementsBefore(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database.getStatementsBefore(stoi(rightValue)));
 		break;
 	case NEXTSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getStatementsBeforeStar(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database.getStatementsBeforeStar(stoi(rightValue)));
 		break;
 	}
 
@@ -1162,27 +1168,27 @@ vector<string> QueryEvaluator::genericNonPattern_RightEvaluator(string leftValue
 		break;
 	case PARENT:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getChildrenOf(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database.getChildrenOf(stoi(leftValue)));
 		break;
 	case PARENTSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getChildrenStarOf(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database.getChildrenStarOf(stoi(leftValue)));
 		break;
 	case AFFECTS:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getStatementsAffectedBy(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database.getStatementsAffectedBy(stoi(leftValue)));
 		break;
 	case AFFECTSSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getStatementsAffectStarredBy(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database.getStatementsAffectStarredBy(stoi(leftValue)));
 		break;
 	case NEXT:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getNextStatements(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database.getNextStatements(stoi(leftValue)));
 		break;
 	case NEXTSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToString(database.getNextStarStatements(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database.getNextStarStatements(stoi(leftValue)));
 		break;
 	}
 
