@@ -29,6 +29,10 @@ int getNumUnknownRank(QueryObject obj) {
 	string arg1 = obj.getRelation();
 	int numUnknowns = obj.getNumUnknowns();
 
+	if (numUnknowns == 0) {
+		return 1;
+	}
+
 	if (toLowerCase(arg1) == "affects*") {
 		if (numUnknowns == 2) {
 			return 7;
@@ -51,9 +55,6 @@ int getNumUnknownRank(QueryObject obj) {
 		}
 		else if (numUnknowns ==1) {
 			return 2;
-		}
-		else {
-			return 1;
 		}
 	}
 }
