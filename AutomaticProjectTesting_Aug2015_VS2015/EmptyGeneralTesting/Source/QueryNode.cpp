@@ -31,7 +31,7 @@ void QueryNode::insertParent(QueryNode* node) {
 }
 
 void QueryNode::addParent(QueryNode* node) {
-	if (find(parents.begin(), parents.end(), node) != parents.end()) {
+	if (find(parents.begin(), parents.end(), node) == parents.end()) {
 		this->parents.push_back(node);
 	}
 }
@@ -73,7 +73,7 @@ void QueryNode::removeChild(QueryNode* node) {
 }
 
 void QueryNode::addChild(QueryNode* node) {
-	if (find(children.begin(), children.end(), node) != children.end()) {
+	if (find(children.begin(), children.end(), node) == children.end()) {
 		this->children.push_back(node);
 	}
 }
