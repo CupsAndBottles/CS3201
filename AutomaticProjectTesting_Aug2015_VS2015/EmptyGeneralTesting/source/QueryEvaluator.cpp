@@ -211,7 +211,11 @@ void QueryEvaluator::flushQueryTree() {
 	vector<QueryNode*> currentRoots = queryTreeRoot.getChildren();
 	if (!currentRoots.empty()) {
 		for (QueryNode* oldRoot : currentRoots) {
-			oldRoot->destroy(&encounteredEntities);
+			try {
+				oldRoot->destroy(&encounteredEntities);
+			} catch (bad_alloc) {
+				continue;
+			}
 		}
 	}
 
