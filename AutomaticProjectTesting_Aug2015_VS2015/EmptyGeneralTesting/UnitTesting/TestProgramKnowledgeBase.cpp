@@ -1117,6 +1117,21 @@ namespace UnitTesting
 
 			Assert::IsTrue(pkb.affects(5, 14));
 			Assert::IsFalse(pkb.affects(5, 9));
+
+			vector<int> vec = pkb.getStatementsAffectedBy(4);
+			Assert::AreEqual(4, (int)vec.size());
+			Assert::AreEqual(7, vec[0]);
+			Assert::AreEqual(11, vec[1]);
+			Assert::AreEqual(14, vec[2]);
+			Assert::AreEqual(16, vec[3]);
+
+			vec = pkb.getStatementsThatAffect(14);
+			Assert::AreEqual(5, (int)vec.size());
+			Assert::AreEqual(4, vec[0]);
+			Assert::AreEqual(5, vec[1]);
+			Assert::AreEqual(9, vec[2]);
+			Assert::AreEqual(12, vec[3]);
+			Assert::AreEqual(13, vec[4]);
 		}
 	};
 }
