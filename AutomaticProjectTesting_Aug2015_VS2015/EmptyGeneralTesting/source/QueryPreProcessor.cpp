@@ -553,8 +553,7 @@ bool QueryPreProcessor::query(string s) {
 						}
 						if (equalSignFound) {
 							if (verifyWithQuery(queryVectorForWith)) {
-								removeAttrRef(queryVectorForWith); //turns vector (with, p.procName, _) -> (with, p, _)
-								optimizeWithClause(queryVectorForWith);
+								optimizeWithClause(removeAttrRef(queryVectorForWith));
 								queryVectorForWith.clear();
 								argVector.clear();
 							}
@@ -616,8 +615,7 @@ bool QueryPreProcessor::query(string s) {
 				}
 				queryVector = formatWithQuery(argVector);
 				if (verifyWithQuery(queryVector)) {
-					removeAttrRef(queryVector); //turns vector (with, p.procName, _) -> (with, p, _)
-					optimizeWithClause(queryVector);
+					optimizeWithClause(removeAttrRef(queryVector));
 					queryVector.clear();
 					argVector.clear();
 				}
