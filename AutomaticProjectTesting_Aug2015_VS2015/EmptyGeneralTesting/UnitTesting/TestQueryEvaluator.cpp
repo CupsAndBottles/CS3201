@@ -405,5 +405,33 @@ namespace UnitTesting
 			list<string> sx_s = qe.getResults("stmt s; Select s such that modifies(s, \"x\")");
 			Assert::AreEqual(2, (int)sx_s.size());
 		}
+
+		TEST_METHOD(testPatternAssign) {
+			string fileName = "source.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc {";
+			outputFile << "x = 1;";
+			outputFile << "x = 2;";
+			outputFile << "y = 3;";
+			outputFile << "y = 4;";
+			outputFile << "z = x;";
+			outputFile << "z = y;";
+			outputFile << "}";
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+			QueryEvaluator qe = QueryEvaluator(&pkb);
+
+			list<string> query1 = qe.getResults("assign a; Select a pattern a (\"x\",_)");
+			Assert::AreEqual(2, (int)query1.size());
+
+			list<string> query2 = qe.getResults("assign a; Select a pattern a (_,\"x\")");
+			Assert::AreEqual(1, (int)query2.size());
+		}
 	};
 }
