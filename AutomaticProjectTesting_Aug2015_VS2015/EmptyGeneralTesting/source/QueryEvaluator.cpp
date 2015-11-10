@@ -211,7 +211,11 @@ void QueryEvaluator::flushQueryTree() {
 	vector<QueryNode*> currentRoots = queryTreeRoot.getChildren();
 	if (!currentRoots.empty()) {
 		for (QueryNode* oldRoot : currentRoots) {
-			oldRoot->destroy(&encounteredEntities);
+			try {
+				oldRoot->destroy(&encounteredEntities);
+			} catch (bad_alloc) {
+				continue;
+			}
 		}
 	}
 
@@ -436,15 +440,198 @@ pair<bool, vector<string>> QueryEvaluator::processClause(QueryObject clause) {
 				return genericHandler_NoSynonym(lhs, rhs, PATTERN_IF);
 			}
 		} else if (formatter.stringEqualCaseInsensitive(patternType, QueryObject::RelationType_PATTERN_ASSIGN)) {
-			return patternAssign(relationType, lhs, rhs);
+			bool variableSynonym = isSynonym(lhs);
+			bool assignSynonym = isSynonym(relationType);
+			if (assignSynonym && variableSynonym) {
+				return patternAssign_AssignAndVariableSynonyms(relationType, lhs, rhs);
+			} else if (variableSynonym) {
+				return patternAssign_VariableSynonym(relationType, lhs, rhs);
+			} else if (assignSynonym) {
+				return patternAssign_AssignSynonym(relationType, lhs, rhs);
+			}
 		}
 	}
 
 	return {false, vector<string>()};
 }
 
-pair<bool, vector<string>> QueryEvaluator::patternAssign(string synonym, string variable, string expression) {
-	return {false, vector<string>()};
+pair<bool, vector<string>> QueryEvaluator::patternAssign_AssignAndVariableSynonyms(string assign, string variable, string expression) {
+	bool atLeastOneResult = false;
+	vector<string> discoveredEntities = vector<string>();
+	bool encounteredAssign = encountered(assign);
+	bool encounteredVariable = encountered(variable);
+	bool isWildcardExpression = isWildCard(expression);
+	bool isSubexpression = formatter.hasBracketingUnderscores(expression);
+	string subexpression = "";
+	if (isSubexpression) {
+		subexpression = formatter.removeUnderscores(expression);
+	}
+
+	if (encounteredAssign && encounteredVariable) {
+		unordered_set<QueryNode*> assignNodes = getQNodes(assign);
+		unordered_set<QueryNode*> variableNodes = getQNodes(variable);
+		for (QueryNode* assignNode : assignNodes) {
+			try {
+				assignNode->getSynonym();
+			} catch (bad_alloc) {
+				continue;
+			}
+
+			for (QueryNode* variableNode : variableNodes) {
+				try {
+					variableNode->getSynonym();
+				} catch (bad_alloc) {
+					continue;
+				}
+
+				bool result = false;
+				if (isSubexpression) {
+					result = database.patternAssignContain(stoi(assignNode->getValue()), variableNode->getValue(), subexpression);
+				} else if (isWildcardExpression) {
+					result = true;
+				} else {
+					result = database.patternAssignMatch(stoi(assignNode->getValue()), variableNode->getValue(), expression);
+				}
+
+				if (result) {
+					atLeastOneResult = true;
+					variableNode->insertParent(assignNode);
+					assignNode->insertParent(variableNode);
+				} else {
+					variableNode->destroy(&encounteredEntities);
+					assignNode->destroy(&encounteredEntities);
+				}
+			}
+		}
+	} else if (encounteredAssign) {
+		discoveredEntities.push_back(variable);
+		unordered_set<QueryNode*> assignNodes = getQNodes(assign);
+		unordered_map<string, QueryNode*> validVariableValues = unordered_map<string, QueryNode*>();
+		for (QueryNode* assignNode : assignNodes) {
+			try {
+				assignNode->getSynonym();
+			} catch (bad_alloc) {
+				continue;
+			}
+
+			string variableValue = database.getVariablesModifiedBy(stoi(assignNode->getValue()))[0];
+			bool result = false;
+			if (isSubexpression) {
+				result = database.patternAssignContain(stoi(assignNode->getValue()), variableValue, subexpression);
+			} else if (isWildcardExpression) {
+				result = true;
+			} else {
+				result = database.patternAssignMatch(stoi(assignNode->getValue()), variableValue, expression);
+			}
+
+			if (result) {
+				atLeastOneResult = true;
+				QueryNode* variableNode = NULL;
+				if (validVariableValues.count(variableValue) == 0) {
+					variableNode = QueryNode::createQueryNode(variable, variableValue);
+					addToEncounteredEntities(variableNode);
+				} else {
+					variableNode = validVariableValues.at(variableValue);
+				}
+				assignNode->insertParent(variableNode);
+			} else {
+				assignNode->destroy(&encounteredEntities);
+			}
+		}
+	} else if (encounteredVariable) {
+		discoveredEntities.push_back(assign);
+		unordered_set<QueryNode*> variableNodes = getQNodes(variable);
+		unordered_map<string, QueryNode*> assignNodes = unordered_map<string, QueryNode*>();
+		for (QueryNode* variableNode : variableNodes) {
+			try {
+				variableNode->getSynonym();
+			} catch (bad_alloc) {
+				continue;
+			}
+
+			bool result = false;
+			vector<string> assignValues = formatter.integerVectorToStringVector(database.getStatementsThatModify(variableNode->getValue()));
+			assignValues = filterStatementsByTargetType(assignValues, getEntityType(assign));
+			for (string assignValue : assignValues) {
+				if (isSubexpression) {
+					result = database.patternAssignContain(stoi(assignValue), variableNode->getValue(), subexpression);
+				} else if (isWildcardExpression) {
+					result = true;
+				} else {
+					result = database.patternAssignMatch(stoi(assignValue), variableNode->getValue(), expression);
+				}
+
+				if (result) {
+					atLeastOneResult = true;
+					QueryNode* assignNode = NULL;
+					if (assignNodes.count(assignValue) == 0) {
+						assignNode = QueryNode::createQueryNode(assign, assignValue);
+						addToEncounteredEntities(assignNode);
+					} else {
+						assignNode = assignNodes.at(assignValue);
+					}
+					variableNode->insertParent(assignNode);
+				} else {
+					variableNode->destroy(&encounteredEntities);
+				}
+			}
+		}
+	} else {
+		discoveredEntities.push_back(assign);
+		discoveredEntities.push_back(variable);
+		vector<string> assignPossibilities = generatePossiblities(assign);
+		unordered_set<QueryNode*> assignNodes = unordered_set<QueryNode*>();
+		for (string assignPossiblity : assignPossibilities) {
+			assignNodes.insert(QueryNode::createQueryNode(assign, assignPossiblity));
+		}
+		encounteredEntities.insert({assign, assignNodes});
+		addToRoot(assignNodes);
+
+		unordered_map<string, QueryNode*> variableNodes = unordered_map<string, QueryNode*>();
+		for (QueryNode* assignNode : assignNodes) {
+			try {
+				assignNode->getSynonym();
+			} catch (bad_alloc) {
+				continue;
+			}
+
+			vector<string> variableValues = database.getVariablesModifiedBy(stoi(assignNode->getValue()));
+			for (string variableValue : variableValues) {
+				bool result = false;
+				if (isWildcardExpression) {
+					result = true;
+				} else if (isSubexpression) {
+					result = database.patternAssignContain(stoi(assignNode->getValue()), variableValue, subexpression);
+				} else {
+					result = database.patternAssignMatch(stoi(assignNode->getValue()), variableValue, expression);
+				}
+
+				if (result) {
+					atLeastOneResult = true;
+					QueryNode* variableNode = NULL;
+					if (variableNodes.count(variableValue) == 0) {
+						variableNode = QueryNode::createQueryNode(variable, variableValue);
+						addToEncounteredEntities(variableNode);
+					} else {
+						variableNode = variableNodes.at(variableValue);
+					}
+					assignNode->insertParent(variableNode);
+				} else {
+					assignNode->destroy(&encounteredEntities, true);
+				}
+			}
+		}
+	}
+
+	return {atLeastOneResult, discoveredEntities};
+}
+
+pair<bool, vector<string>> QueryEvaluator::patternAssign_AssignSynonym(string assign, string variable, string expression) {
+	return pair<bool, vector<string>>();
+}
+
+pair<bool, vector<string>> QueryEvaluator::patternAssign_VariableSynonym(string assign, string variable, string expression) {
+	return pair<bool, vector<string>>();
 }
 
 pair<bool, vector<string>> QueryEvaluator::with(string synonym, string value) {
@@ -620,7 +807,6 @@ pair<bool, vector<string>> QueryEvaluator::genericHandler_BothSynonyms(string le
 				}
 			}
 		}
-		encounteredEntities.insert({rightArgument, rightNodes});
 	}
 	return {atLeastOneResult, discoveredSynonyms};
 }
@@ -640,7 +826,9 @@ pair<bool, vector<string>> QueryEvaluator::genericHandler_LeftSynonym(string lef
 			}
 
 			bool result = genericEvaluator_BothValues(leftNode->getValue(), rightArgument, whichRelation, leftNumber);
-			if (!result) {
+			if (result) {
+				atLeastOneResult = true;
+			} else {
 				leftNode->destroy(&encounteredEntities);
 			}
 		}

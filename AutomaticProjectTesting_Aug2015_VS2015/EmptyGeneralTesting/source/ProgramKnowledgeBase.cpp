@@ -239,6 +239,29 @@ vector<string> ProgramKnowledgeBase::getVariablesUsedBy(string procName){
 }
 
 bool ProgramKnowledgeBase::isParent(int s1, int s2){
+	if (s1 == WILDCARD_INT && s2 == WILDCARD_INT) {
+		vector<int> whiles = getStatementsOfType(Tnode::Type::STMT_WHILE);
+		vector<int> ifs = getStatementsOfType(Tnode::Type::STMT_IF);
+		return !whiles.empty() || !ifs.empty();
+	} else if (s1 == WILDCARD_INT) {
+		Tnode* s2Node = getNodeWithStatementNumber(s2);
+		Tnode* s2Parent = s2Node->getSPAParent();
+		if (s2Parent == NULL) {
+			return false;
+		} else if (s2Parent->isProcedure()){
+			return false;
+		} else {
+			return true;
+		}
+	} else if (s2 == WILDCARD_INT) {
+		Tnode* s1node = getNodeWithStatementNumber(s1);
+		if (s1node == NULL) {
+			return false;
+		} else {
+			return s1node->isIf() || s1node->isWhile();
+		}
+	}
+
 	Tnode* s2Node = getNodeWithStatementNumber(s2);
 	if (s2Node == NULL) {
 		return false;
@@ -252,6 +275,14 @@ bool ProgramKnowledgeBase::isParent(int s1, int s2){
 }
 
 vector<int> ProgramKnowledgeBase::getParentOf(int stmt){
+	if (stmt == WILDCARD_INT) {
+		vector<int> whiles = getStatementsOfType(Tnode::Type::STMT_WHILE);
+		vector<int> ifs = getStatementsOfType(Tnode::Type::STMT_IF);
+		whiles.reserve(whiles.size() + ifs.size());
+		whiles.insert(whiles.end(), ifs.begin(), ifs.end());
+		return whiles;
+	}
+
 	Tnode* node = getNodeWithStatementNumber(stmt);
 	if (node == NULL) {
 		return vector<int>();
@@ -266,6 +297,10 @@ vector<int> ProgramKnowledgeBase::getParentOf(int stmt){
 }
 
 vector<int> ProgramKnowledgeBase::getParentsStarOf(int stmt, vector<Tnode*>* parents){
+	if (stmt == WILDCARD_INT) {
+		return getParentOf(stmt);
+	}
+
 	Tnode* node = getNodeWithStatementNumber(stmt);
 	if (node == NULL) {
 		return vector<int>();
@@ -284,6 +319,20 @@ vector<int> ProgramKnowledgeBase::getParentsStarOf(int stmt, vector<Tnode*>* par
 }
 
 vector<int> ProgramKnowledgeBase::getChildrenOf(int stmt){
+	if (stmt == WILDCARD_INT) {
+		vector<int> whiles = getStatementsOfType(Tnode::Type::STMT_WHILE);
+		vector<int> ifs = getStatementsOfType(Tnode::Type::STMT_IF);
+		whiles.reserve(whiles.size() + ifs.size());
+		whiles.insert(whiles.end(), ifs.begin(), ifs.end());
+		vector<int> results = vector<int>();
+		for (int parent : whiles) {
+			vector<int> children = getChildrenOf(parent);
+			results.reserve(results.size() + children.size());
+			results.insert(results.end(), children.begin(), children.end());
+		}
+		return results;
+	}
+
 	Tnode* node = getNodeWithStatementNumber(stmt);
 	if (node == NULL) {
 		return vector<int>();
@@ -312,6 +361,10 @@ vector<int> ProgramKnowledgeBase::getChildrenOf(int stmt){
 }
 
 bool ProgramKnowledgeBase::isParentStar(int s1, int s2){
+	if (s1 == WILDCARD_INT || s2 == WILDCARD_INT) {
+		return isParent(s1, s2);
+	}
+
 	Tnode* node2 = getNodeWithStatementNumber(s2);
 	Tnode* node1 = getNodeWithStatementNumber(s1);
 	if (node1 == NULL || node2 == NULL) {
@@ -333,6 +386,9 @@ bool ProgramKnowledgeBase::isParentStar(int s1, int s2){
 }
 
 vector<int> ProgramKnowledgeBase::getChildrenStarOf(int stmt){
+	if (stmt == WILDCARD_INT) {
+		return getChildrenOf(stmt);
+	}
 	Tnode* node = getNodeWithStatementNumber(stmt);
 	if (node == NULL) {
 		return vector<int>();
@@ -376,8 +432,10 @@ vector<Tnode*> ProgramKnowledgeBase::getAssignsThatMatchPattern(string var, stri
 	for (Tnode* assign : assigns) {
 		expression = assign->getFirstChild()->getRightSibling();
 		variable = assign->getFirstChild();
-		if (variable->getName() == var && expression->isEquals(expressionTreeRoot)) {
-			results.push_back(assign);
+		if (variable->getName() == var || var == WILDCARD_STRING) {
+			if (expression->isEquals(expressionTreeRoot)) {
+				results.push_back(assign);
+			}
 		}
 	}
 	return results;
@@ -415,8 +473,8 @@ vector<Tnode*> ProgramKnowledgeBase::getIfsThatMatchPattern(string var) {
 }
 
 vector<Tnode*> ProgramKnowledgeBase::getAssignsThatContainPattern(string var, string expr) {
-	vector<string> expressionTokens = Parser().splitByDelimiters(vector<string>(1, expr));
-	Tnode* expressionTreeRoot = Database().getExpressionTree(expressionTokens);
+	vector<string> expressionTokens = Parser::splitByDelimiters(vector<string>(1, expr));
+	Tnode* expressionTreeRoot = Database::getExpressionTree(expressionTokens);
 	vector<Tnode*> assigns = getNodesOfType(Tnode::STMT_ASSIGN);
 	vector<Tnode*> results = vector<Tnode*>();
 	Tnode* expression = NULL;
@@ -424,14 +482,41 @@ vector<Tnode*> ProgramKnowledgeBase::getAssignsThatContainPattern(string var, st
 	for (Tnode* assign : assigns) {
 		expression = assign->getFirstChild()->getRightSibling();
 		variable = assign->getFirstChild();
-		if (variable->getName() == var && expression->contains(expressionTreeRoot)) {
-			results.push_back(assign);
+		if (variable->getName() == var || var == WILDCARD_STRING) {
+			if (expression->contains(expressionTreeRoot)) {
+				results.push_back(assign);
+			}
 		}
 	}
 	return results;
 }
 
 bool ProgramKnowledgeBase::isFollows(int s1, int s2){
+	if (s1 == WILDCARD_INT || s2 == WILDCARD_INT) {
+		vector<int> possibleLefts(getNumberOfStatements());
+		iota(possibleLefts.begin(), possibleLefts.end(), 1);
+		for (int left : possibleLefts) {
+			if (isFollows(left, s2)) {
+				return true;
+			}
+		}
+		return false;
+	} else if (s1 == WILDCARD_INT) {
+		Tnode* node1 = getNodeWithStatementNumber(s2);
+		if (node1 == NULL) {
+			return false;
+		} else {
+			return node1->getRightSibling() != NULL;
+		}
+	} else if (s2 == WILDCARD_INT) {
+		Tnode* node2 = getNodeWithStatementNumber(s2);
+		if (node2 == NULL) {
+			return false;
+		} else {
+			return node2->getLeftSibling() != NULL;
+		}
+	}
+
 	Tnode* node1 = getNodeWithStatementNumber(s1);
 	Tnode* node2 = getNodeWithStatementNumber(s2);
 	if (node1 == NULL || node2 == NULL) {
@@ -442,6 +527,18 @@ bool ProgramKnowledgeBase::isFollows(int s1, int s2){
 }
 
 vector<int> ProgramKnowledgeBase::getStatementThatFollows(int stmt){
+	if (stmt == WILDCARD_INT) {
+		vector<int> results = vector<int>();
+		vector<int> possibleLefts(getNumberOfStatements());
+		iota(possibleLefts.begin(), possibleLefts.end(), 1);
+		for (int left : possibleLefts) {
+			if (isFollows(left, stmt)) {
+				results.push_back(left);
+			}
+		}
+		return results;
+	}
+
 	Tnode* node = getNodeWithStatementNumber(stmt);
 	if (node == NULL) {
 		return vector<int>();
@@ -456,6 +553,18 @@ vector<int> ProgramKnowledgeBase::getStatementThatFollows(int stmt){
 }
 
 vector<int> ProgramKnowledgeBase::getStatementFollowedBy(int stmt){
+	if (stmt == WILDCARD_INT) {
+		vector<int> results = vector<int>();
+		vector<int> possibleRights(getNumberOfStatements());
+		iota(possibleRights.begin(), possibleRights.end(), 1);
+		for (int right : possibleRights) {
+			if (isFollows(stmt, right)) {
+				results.push_back(right);
+			}
+		}
+		return results;
+	}
+
 	Tnode* node = getNodeWithStatementNumber(stmt);
 	if (node == NULL) {
 		return vector<int>();
@@ -657,7 +766,9 @@ bool ProgramKnowledgeBase::affectsStar(int s1, int s2){
 	node1 = statementTable->getDDGNode(s1);
 	vector<DDGnode*> DDGlist = node1->listOfLinkedToDDG();
 	for (auto i = DDGlist.begin(); i != DDGlist.end(); i++) {
-		return affectsStar((*i)->getStatementNumber(), s2);
+		if (affectsStar((*i)->getStatementNumber(), s2)) {
+			return true;
+		}
 	}
 	return false;
 }
@@ -843,6 +954,44 @@ vector<int> ProgramKnowledgeBase::getStatementsThatContainPattern(Tnode::Type ty
 	} else {
 		return vector<int>();
 	}
+}
+
+bool ProgramKnowledgeBase::patternAssignMatch(int stmt, string var, string expr) {
+	Tnode* assign = statementTable->getASTNode(stmt);
+	if (assign == NULL) {
+		return false;
+	}
+
+	if (assign->getType() != Tnode::Type::STMT_ASSIGN) {
+		return false;
+	} 
+
+	if (assign->getFirstChild()->getName() != var) {
+		return false;
+	}
+
+	vector<string> expressionTokens = Parser::splitByDelimiters(vector<string>(1, expr));
+	Tnode* expressionTreeRoot = Database::getExpressionTree(expressionTokens);
+	return expressionTreeRoot->isEquals(assign->getFirstChild()->getRightSibling());
+}
+
+bool ProgramKnowledgeBase::patternAssignContain(int stmt, string var, string expr) {
+	Tnode* assign = statementTable->getASTNode(stmt);
+	if (assign == NULL) {
+		return false;
+	}
+
+	if (assign->getType() != Tnode::Type::STMT_ASSIGN) {
+		return false;
+	}
+
+	if (assign->getFirstChild()->getName() != var) {
+		return false;
+	}
+
+	vector<string> expressionTokens = Parser::splitByDelimiters(vector<string>(1, expr));
+	Tnode* expressionTreeRoot = Database::getExpressionTree(expressionTokens);
+	return expressionTreeRoot->contains(assign->getFirstChild()->getRightSibling());
 }
 
 bool ProgramKnowledgeBase::calls(string p1, string p2) {

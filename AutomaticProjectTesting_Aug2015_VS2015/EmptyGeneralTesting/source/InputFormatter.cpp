@@ -86,7 +86,7 @@ bool InputFormatter::hasBracketingUnderscores(string s) {
 	return (s[0] == '_') && (s[i - 1] == '_');
 }
 
-string InputFormatter::removeUnderscore(string s) {
+string InputFormatter::removeUnderscores(string s) {
 	string substring = s.substr(1, s.length() - 2);
 	return removeQuotes(substring);
 }
