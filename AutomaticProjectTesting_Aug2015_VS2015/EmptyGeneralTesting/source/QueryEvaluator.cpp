@@ -472,7 +472,32 @@ pair<bool, vector<string>> QueryEvaluator::patternAssign(string synonym, string 
 }
 
 pair<bool, vector<string>> QueryEvaluator::with(string synonym, string value) {
-	return {false, vector<string>()};
+	bool atLeastOneResult = false;
+	vector<string> discoveredSynonyms = vector<string>();
+	if (encountered(synonym)) {
+		unordered_set<QueryNode*> nodes = getQNodes(synonym);
+		for (QueryNode* node : nodes) {
+			if (node->getValue() == value) {
+				atLeastOneResult = true;
+			} else {
+				node->destroy(&encounteredEntities);
+			}
+		}
+	} else {
+		discoveredSynonyms.push_back(synonym);
+		unordered_set<QueryNode*> nodes = unordered_set<QueryNode*>();
+		vector<string> possibilities = generatePossiblities(synonym);
+		for (string possiblity : possibilities) {
+			if (possiblity == value) {
+				atLeastOneResult = true;
+				nodes.insert(QueryNode::createQueryNode(synonym, possiblity));
+			}
+		}
+		encounteredEntities.insert({synonym, nodes});
+		addToRoot(nodes);
+	}
+
+	return {atLeastOneResult, discoveredSynonyms};
 }
 
 pair<bool, vector<string>> QueryEvaluator::genericNonPattern_BothSynonyms(string leftArgument, string rightArgument, int whichRelation) {
