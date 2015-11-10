@@ -528,7 +528,7 @@ pair<bool, vector<string>> QueryEvaluator::genericHandler_BothSynonyms(string le
 			}
 
 			vector<string> results = genericEvaluator_RightValue(leftNode->getValue(), whichRelation, leftNumber);
-			results = filterStatementsByTargetType(results, getEntityType(leftArgument));
+			results = filterStatementsByTargetType(results, getEntityType(rightArgument));
 
 			if (results.empty()) {
 				leftNode->destroy(&encounteredEntities);
@@ -555,7 +555,7 @@ pair<bool, vector<string>> QueryEvaluator::genericHandler_BothSynonyms(string le
 			}
 
 			vector<string> results = genericEvaluator_LeftValue(rightNode->getValue(), whichRelation, leftNumber);
-			results = filterStatementsByTargetType(results, getEntityType(rightArgument));
+			results = filterStatementsByTargetType(results, getEntityType(leftArgument));
 			
 			if (results.empty()) {
 				rightNode->destroy(&encounteredEntities);
