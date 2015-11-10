@@ -463,12 +463,8 @@ pair<bool, vector<string>> QueryEvaluator::processClause(QueryObject clause) {
 
 			if (assignSynonym && variableSynonym) {
 				return patternAssign_AssignAndVariableSynonyms(relationType, variable, rhs);
-			} else if (variableSynonym) {
-				return patternAssign_VariableSynonym(relationType, variable, rhs);
 			} else if (assignSynonym) {
 				return patternAssign_AssignSynonym(relationType, variable, rhs);
-			} else {
-				return patternAssign_NoSynonym(relationType, variable, rhs);
 			}
 		}
 	}
@@ -648,14 +644,6 @@ pair<bool, vector<string>> QueryEvaluator::patternAssign_AssignAndVariableSynony
 }
 
 pair<bool, vector<string>> QueryEvaluator::patternAssign_AssignSynonym(string assign, string variable, string expression) {
-	return pair<bool, vector<string>>();
-}
-
-pair<bool, vector<string>> QueryEvaluator::patternAssign_VariableSynonym(string assign, string variable, string expression) {
-	return pair<bool, vector<string>>();
-}
-
-pair<bool, vector<string>> QueryEvaluator::patternAssign_NoSynonym(string assign, string variable, string expression) {
 	return pair<bool, vector<string>>();
 }
 
