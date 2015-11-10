@@ -774,6 +774,22 @@ bool ProgramKnowledgeBase::patternIf(int stmt, string conditionalVariable) {
 	}
 }
 
+vector<string> ProgramKnowledgeBase::getConditionalVariableOfIf(int stmt) {
+	vector<string> results = vector<string>();
+	Tnode* ifNode = statementTable->getASTNode(stmt);
+	if (ifNode == NULL) {
+		return results;
+	}
+
+	if (ifNode->getType() != Tnode::Type::STMT_IF) {
+		return results;
+	}
+
+	string var = ifNode->getFirstChild()->getName();
+	results.push_back(var);
+	return results;
+}
+
 bool ProgramKnowledgeBase::patternWhile(int stmt, string conditionalVariable) {
 	Tnode* whileNode = statementTable->getASTNode(stmt);
 	if (whileNode == NULL) {
@@ -790,6 +806,22 @@ bool ProgramKnowledgeBase::patternWhile(int stmt, string conditionalVariable) {
 	} else {
 		return false;
 	}
+}
+
+vector<string> ProgramKnowledgeBase::getConditionalVariableOfWhile(int stmt) {
+	vector<string> results = vector<string>();
+	Tnode* whileNode = statementTable->getASTNode(stmt);
+	if (whileNode == NULL) {
+		return results;
+	}
+
+	if (whileNode->getType() != Tnode::Type::STMT_WHILE) {
+		return results;
+	}
+
+	string var = whileNode->getFirstChild()->getName();
+	results.push_back(var);
+	return results;
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsThatMatchPattern(Tnode::Type type, string var, string expr) {

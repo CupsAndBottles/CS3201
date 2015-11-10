@@ -82,7 +82,9 @@ public:
 	int getNumberOfStatements();
 
 	bool patternIf(int stmt, string conditionalVariable);
+	vector<string> getConditionalVariableOfIf(int stmt);
 	bool patternWhile(int stmt, string conditionalVariable);
+	vector<string> getConditionalVariableOfWhile(int stmt);
 	vector<int> getStatementsThatMatchPattern(Tnode::Type type, string var, string expr);
 	vector<int> getStatementsThatContainPattern(Tnode::Type type, string var, string expr);
 
