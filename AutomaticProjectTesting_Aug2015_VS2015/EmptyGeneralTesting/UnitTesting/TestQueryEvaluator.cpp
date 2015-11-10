@@ -279,11 +279,10 @@ namespace UnitTesting
 			
 			//select s such that Follows(s,a)
 			list<string>follow_sa = qe.getResults("stmt s; assign a; Select s such that Follows(s,a)");
-			Assert::AreEqual(3, (int)follow_sa.size());
+			Assert::AreEqual(2, (int)follow_sa.size());
 			Assert::IsTrue(find(follow_sa.begin(), follow_sa.end(), string("1")) != follow_sa.end());
 			Assert::IsTrue(find(follow_sa.begin(), follow_sa.end(), string("2")) != follow_sa.end());
-			Assert::IsTrue(find(follow_sa.begin(), follow_sa.end(), string("3")) != follow_sa.end()); //error: this should not be true.
-
+			
 			//select a such that Follows(a,c)
 			list<string>follow_ac = qe.getResults("assign a; call c; Select a such that Follows(a,c)");
 			Assert::AreEqual(1, (int)follow_ac.size());
