@@ -297,6 +297,10 @@ vector<int> ProgramKnowledgeBase::getParentOf(int stmt){
 }
 
 vector<int> ProgramKnowledgeBase::getParentsStarOf(int stmt, vector<Tnode*>* parents){
+	if (stmt == WILDCARD_INT) {
+		return getParentOf(stmt);
+	}
+
 	Tnode* node = getNodeWithStatementNumber(stmt);
 	if (node == NULL) {
 		return vector<int>();
@@ -357,6 +361,10 @@ vector<int> ProgramKnowledgeBase::getChildrenOf(int stmt){
 }
 
 bool ProgramKnowledgeBase::isParentStar(int s1, int s2){
+	if (s1 == WILDCARD_INT || s2 == WILDCARD_INT) {
+		return isParent(s1, s2);
+	}
+
 	Tnode* node2 = getNodeWithStatementNumber(s2);
 	Tnode* node1 = getNodeWithStatementNumber(s1);
 	if (node1 == NULL || node2 == NULL) {
@@ -378,6 +386,9 @@ bool ProgramKnowledgeBase::isParentStar(int s1, int s2){
 }
 
 vector<int> ProgramKnowledgeBase::getChildrenStarOf(int stmt){
+	if (stmt == WILDCARD_INT) {
+		return getChildrenOf(stmt);
+	}
 	Tnode* node = getNodeWithStatementNumber(stmt);
 	if (node == NULL) {
 		return vector<int>();
