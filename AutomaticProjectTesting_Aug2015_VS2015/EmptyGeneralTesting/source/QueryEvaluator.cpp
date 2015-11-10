@@ -822,7 +822,9 @@ pair<bool, vector<string>> QueryEvaluator::genericHandler_LeftSynonym(string lef
 			}
 
 			bool result = genericEvaluator_BothValues(leftNode->getValue(), rightArgument, whichRelation, leftNumber);
-			if (!result) {
+			if (result) {
+				atLeastOneResult = true;
+			} else {
 				leftNode->destroy(&encounteredEntities);
 			}
 		}
