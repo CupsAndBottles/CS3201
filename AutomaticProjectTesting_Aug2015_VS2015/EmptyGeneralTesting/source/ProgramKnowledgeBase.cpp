@@ -1101,12 +1101,16 @@ void ProgramKnowledgeBase::calculateRelations(Tnode* currNode, vector<Tnode*>* p
 }
 
 void ProgramKnowledgeBase::updateUses(const vector<Tnode*> users, Tnode* used){
+	if (used->isConstant()) {
+		return;
+	}
+
 	if (used->isExpression()) {
 		vector<Tnode*> varCons = *getVariablesAndConstantsFromExpression(used);
 		for (Tnode* vc : varCons) {
 			updateUses(users, vc);
 		}
-	} else { // conditional variables or single variables extracted from expressions
+	} else { // conditional variables or single variables extracted from expressions or constants
 		for (Tnode* n : users) {
 			if (!n->isProgram() && !n->isProcedure() && !n->isStatementList()) {
 				updateUses(n, used);
