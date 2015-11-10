@@ -11,7 +11,7 @@ Select w
 2 - Parent 
 assign a;
 Select a such that Parent(a, 9)
-7
+none
 5000
 3 - Parent
 variable v;
@@ -56,7 +56,7 @@ Select s such that Follows(s, 4)
 11 - Return all Follows*
 assign a;
 Select a such that Follows*(a, 13)
-1, 2
+1
 5000
 12 - Follows*
 procedure p;

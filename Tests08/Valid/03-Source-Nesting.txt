@@ -14,7 +14,8 @@ procedure kitkat {
 	else {
 		z = d * 2;}
 	x = z + 3;
-	call water;}
+	call water;
+}
 
 procedure snickers {
 	i = 1;
