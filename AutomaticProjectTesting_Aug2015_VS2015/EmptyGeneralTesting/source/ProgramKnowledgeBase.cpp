@@ -755,6 +755,43 @@ int ProgramKnowledgeBase::getNumberOfStatements() {
 	}
 }
 
+bool ProgramKnowledgeBase::patternIf(int stmt, string conditionalVariable) {
+	Tnode* ifNode = statementTable->getASTNode(stmt);
+	if (ifNode == NULL) {
+		return false;
+	}
+
+	if (ifNode->getType() != Tnode::Type::STMT_IF) {
+		return false;
+	}
+
+	if (conditionalVariable == ProgramKnowledgeBase::WILDCARD_STRING ||
+		conditionalVariable == ifNode->getFirstChild()->getName()) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool ProgramKnowledgeBase::patternWhile(int stmt, string conditionalVariable) {
+	Tnode* whileNode = statementTable->getASTNode(stmt);
+	if (whileNode == NULL) {
+		return false;
+	}
+
+	if (whileNode->getType() != Tnode::Type::STMT_WHILE) {
+		return false;
+	}
+
+	if (conditionalVariable == ProgramKnowledgeBase::WILDCARD_STRING || 
+		conditionalVariable == whileNode->getFirstChild()->getName()) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 vector<int> ProgramKnowledgeBase::getStatementsThatMatchPattern(Tnode::Type type, string var, string expr) {
 	switch (type) {
 		case Tnode::STMT_WHILE:
