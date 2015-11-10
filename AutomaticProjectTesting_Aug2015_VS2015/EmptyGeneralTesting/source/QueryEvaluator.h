@@ -85,6 +85,7 @@ private:
 	bool isAssign(string s);
 	bool isIf(string s);
 	bool isCall(string s);
+	vector<string> filterStatementsByTargetType(vector<string> results, string targetType);
 
 	unordered_map<string, unordered_set<QueryNode*>> encounteredEntities;
 	void addToEncounteredEntities(QueryNode* input);

@@ -1114,9 +1114,117 @@ namespace UnitTesting
 			Assert::IsTrue(pkb.affects(4, 14));
 			Assert::IsTrue(pkb.affects(4, 16));
 			Assert::IsFalse(pkb.affects(4, 12));
+			Assert::IsTrue(pkb.affects(9, 9));
+			Assert::IsFalse(pkb.affects(7, 7));
+			Assert::IsFalse(pkb.affects(7, 11));
+			Assert::IsTrue(pkb.affects(11, 12));
+			Assert::IsFalse(pkb.affects(11, 14));
 
 			Assert::IsTrue(pkb.affects(5, 14));
-			Assert::IsFalse(pkb.affects(5, 9));
+			Assert::IsTrue(pkb.affects(5, 9));
+
+			vector<int> vec = pkb.getStatementsAffectedBy(4);
+			Assert::AreEqual(4, (int)vec.size());
+			Assert::AreEqual(7, vec[0]);
+			Assert::AreEqual(11, vec[1]);
+			Assert::AreEqual(14, vec[2]);
+			Assert::AreEqual(16, vec[3]);
+
+			vec = pkb.getStatementsThatAffect(14);
+			Assert::AreEqual(5, (int)vec.size());
+			Assert::AreEqual(4, vec[0]);
+			Assert::AreEqual(5, vec[1]);
+			Assert::AreEqual(9, vec[2]);
+			Assert::AreEqual(12, vec[3]);
+			Assert::AreEqual(13, vec[4]);
+		}
+
+		TEST_METHOD(testPKBAffectsStar) {
+			string fileName = "programAffects.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc {" << endl;
+			outputFile << "x = 2;" << endl; // 1
+			outputFile << "z = y;" << endl; // 2
+			outputFile << "call Second;}" << endl; // 3
+			outputFile << "procedure Second {" << endl;
+			outputFile << "x=0;" << endl; // 4
+			outputFile << "i=5;" << endl; // 5
+			outputFile << "while i {" << endl; // 6
+			outputFile << "x = x + 2*y;" << endl; //7
+			outputFile << "call Third;" << endl; // 8 
+			outputFile << "i = i - 1;} " << endl; // 9
+			outputFile << "if x then {" << endl; // 10
+			outputFile << "x = x+1;" << endl; // 11
+			outputFile << "x = x+1;}" << endl; // 12
+			outputFile << "else {" << endl; // 
+			outputFile << "z=1;}" << endl; // 13
+			outputFile << "z = z+x+i;" << endl; //14
+			outputFile << "y=z+2;" << endl; // 15
+			outputFile << "x=x*y+z;}" << endl; //16
+			outputFile << "procedure Third {" << endl;
+			outputFile << "x = 5;" << endl; // 17
+			outputFile << "v = x;" << endl; // 18
+			outputFile << "}";
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Assert::AreNotEqual(0, (int)parsedProgram.size());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+
+			Assert::IsTrue(pkb.affectsStar(11, 14));
+			Assert::IsTrue(pkb.affectsStar(9, 9));
+			Assert::IsFalse(pkb.affectsStar(16, 14));
+			Assert::IsFalse(pkb.affectsStar(7, 12));
+			Assert::IsFalse(pkb.affects(7, 7));
+
+			vector<int> vec = pkb.getStatementsAffectStarredBy(2);
+			Assert::AreEqual(0, (int)vec.size());
+
+			vec = pkb.getStatementsAffectStarredBy(4);
+			Assert::AreEqual(6, (int)vec.size());
+			Assert::AreEqual(7, vec[0]);
+			Assert::AreEqual(11, vec[1]);
+			Assert::AreEqual(12, vec[2]);
+			Assert::AreEqual(14, vec[3]);
+			Assert::AreEqual(15, vec[4]);
+			Assert::AreEqual(16, vec[5]);
+
+			vec = pkb.getStatementsAffectStarredBy(7);
+			Assert::AreEqual(0, (int)vec.size());
+
+			vec = pkb.getStatementsAffectStarredBy(9);
+			Assert::AreEqual(4, (int)vec.size());
+			Assert::AreEqual(9, vec[0]);
+			Assert::AreEqual(14, vec[1]);
+			Assert::AreEqual(15, vec[2]);
+			Assert::AreEqual(16, vec[3]);
+
+			vec = pkb.getStatementsThatAffectStar(18);
+			Assert::AreEqual(1, (int)vec.size());
+			Assert::AreEqual(17, vec[0]);
+
+			vec = pkb.getStatementsThatAffectStar(2);
+			Assert::AreEqual(0, (int)vec.size());
+
+			vec = pkb.getStatementsThatAffectStar(9);
+			Assert::AreEqual(2, (int)vec.size());
+			Assert::AreEqual(5, vec[0]);
+			Assert::AreEqual(9, vec[1]);
+
+			vec = pkb.getStatementsThatAffectStar(16);
+			Assert::AreEqual(8, (int)vec.size());
+			Assert::AreEqual(4, vec[0]);
+			Assert::AreEqual(5, vec[1]);
+			Assert::AreEqual(9, vec[2]);
+			Assert::AreEqual(11, vec[3]);
+			Assert::AreEqual(12, vec[4]);
+			Assert::AreEqual(13, vec[5]);
+			Assert::AreEqual(14, vec[6]);
+			Assert::AreEqual(15, vec[7]);
 		}
 	};
 }

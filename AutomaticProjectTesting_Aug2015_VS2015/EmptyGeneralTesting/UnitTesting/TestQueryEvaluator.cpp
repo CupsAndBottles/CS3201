@@ -114,8 +114,8 @@ namespace UnitTesting
 			list<string> callspProc = qe.getResults("procedure p; Select p such that Calls(p, \"Proc\")");
 			Assert::AreEqual(1, (int)callspProc.size());
 			Assert::AreEqual(string("Other"), callspProc.front());
-
-			list<string> callsProcOtherP = qe.getResults("procedure p; Select p such that Calls(\"Proc\", \"Other\")");
+			
+			list<string> callsProcOtherP = qe.getResults("procedure p; Select p such that Calls(\"Proc\", \"Another\")");
 			Assert::AreEqual(3, (int)callsProcOtherP.size());
 
 			list<string> callsProcOtherBoolean = qe.getResults("procedure p; Select BOOLEAN such that Calls(\"Proc\", \"Other\")");
@@ -179,9 +179,8 @@ namespace UnitTesting
 			
 			//select s such that Parent(w,iff), nested while if
 			list<string> parent_wiff = qe.getResults("while w; if iff; Select w such that Parent(w,iff)");
-			Assert::AreEqual(2, (int)parent_wiff.size());
-			Assert::IsTrue(find(parent_wiff.begin(), parent_wiff.end(), string("6")) != parent_wiff.end()); //6 should not appear
-
+			Assert::AreEqual(1, (int)parent_wiff.size());
+			Assert::AreEqual(string("9"), parent_wiff.front());
 
 			//select w such that Parent(w,7)
 			list<string> parent_w7 = qe.getResults("while w; Select w such that Parent(w,7)");
@@ -233,24 +232,14 @@ namespace UnitTesting
 
 			outputFile << "procedure Proc {";
 			outputFile << "y = 1;" <<endl; // line 1
-			outputFile << "x = 1;" <<endl; //line 2
-			outputFile << "z = 2;" << endl;
-			//outputFile << "call Another;"; // line 2
+			outputFile << "x = 2;" <<endl; //line 2
+			outputFile << "z = 3;" << endl;//line 3
+			outputFile << "call Second;" << endl; //line 4
 			outputFile << "}" << endl;
 
-			//outputFile << "procedure Another {";
-			//outputFile << "x = 2;"; //line 5
-			//outputFile << "}";
-			
-			/*outputFile << "procedure Second {" << endl;
-			outputFile << "x=1;" << endl; //line 4
-			outputFile << "if x then {" << endl; //line 5, if statement
-			outputFile << "x=2;" << endl;//line 6
-			outputFile << "x = x + 1;}" << endl; //line 7
-			outputFile << "else {" << endl; 
-			outputFile << "z = 1;}" << endl; //line 8
-			outputFile << "}";*/
-
+			outputFile << "procedure Second {";
+			outputFile << "w=4;" << endl; //line 5
+			outputFile << "}" << endl;
 			outputFile.close();
 
 			Parser *parse = new Parser();
@@ -261,13 +250,96 @@ namespace UnitTesting
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 			QueryEvaluator qe = QueryEvaluator(&pkb);
 
-			//select s1 such that Follows(s1,s2)
-			list<string>follow_s1s2 = qe.getResults("stmt s1; stmt s2; Select s1 such that Follows(4,11)");
-			Assert::AreEqual(1, (int)follow_s1s2.size());
+			//select s such that Follows(s,2)
+			list<string>follow_s2 = qe.getResults("stmt s; Select s such that Follows(s,2)");
+			Assert::AreEqual(1, (int)follow_s2.size());
+			Assert::IsTrue(find(follow_s2.begin(), follow_s2.end(), string("1")) != follow_s2.end());
+
+			//select s such that Follows(2,s)
+			list<string>follow_2s = qe.getResults("stmt s; Select s such that Follows(2,s)");
+			Assert::AreEqual(1, (int)follow_2s.size());
+			Assert::IsTrue(find(follow_2s.begin(), follow_2s.end(), string("3")) != follow_2s.end());
 			
-			//select s1 such that Follows(s1,2)
-			list<string>follow_s1_2 = qe.getResults("stmt s1; Select s1 such that Follows(s1,2)");
-			Assert::AreEqual(1, (int)follow_s1_2.size());
+			//select s such that Follows(s,s1)
+			list<string>follow_ss1 = qe.getResults("stmt s; stmt s1; Select s such that Follows(s,s1)");
+			Assert::AreEqual(3, (int)follow_ss1.size());
+			Assert::IsTrue(find(follow_ss1.begin(), follow_ss1.end(), string("1")) != follow_ss1.end());
+			Assert::IsTrue(find(follow_ss1.begin(), follow_ss1.end(), string("2")) != follow_ss1.end());
+			Assert::IsTrue(find(follow_ss1.begin(), follow_ss1.end(), string("3")) != follow_ss1.end());
+
+			//select a such that Follows(1,2)
+			list<string>follow_12 = qe.getResults("assign a; Select a such that Follows(1,2)");
+			Assert::AreEqual(4, (int)follow_12.size());
+			Assert::IsTrue(find(follow_12.begin(), follow_12.end(), string("1")) != follow_12.end());
+			Assert::IsTrue(find(follow_12.begin(), follow_12.end(), string("2")) != follow_12.end());
+			Assert::IsTrue(find(follow_12.begin(), follow_12.end(), string("3")) != follow_12.end());
+			Assert::IsTrue(find(follow_12.begin(), follow_12.end(), string("5")) != follow_12.end());
+			Assert::IsFalse(find(follow_12.begin(), follow_12.end(), string("4")) != follow_12.end());
+
+			
+			//select s such that Follows(s,a)
+			list<string>follow_sa = qe.getResults("stmt s; assign a; Select s such that Follows(s,a)");
+			Assert::AreEqual(2, (int)follow_sa.size());
+			Assert::IsTrue(find(follow_sa.begin(), follow_sa.end(), string("1")) != follow_sa.end());
+			Assert::IsTrue(find(follow_sa.begin(), follow_sa.end(), string("2")) != follow_sa.end());
+			
+			//select a such that Follows(a,c)
+			list<string>follow_ac = qe.getResults("assign a; call c; Select a such that Follows(a,c)");
+			Assert::AreEqual(1, (int)follow_ac.size());
+			Assert::IsTrue(find(follow_ac.begin(), follow_ac.end(), string("3")) != follow_ac.end());
+			
+			//select s1 such that Follows(s1,s2), negative test
+			list<string>follow_s1s2 = qe.getResults("stmt s; Select s such that Follows(4,11)");
+			Assert::AreEqual(0, (int)follow_s1s2.size());
+		}
+		TEST_METHOD(testUses) {
+			string fileName = "programUses.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc {";
+			outputFile << "x = y;" <<endl; //line 1
+			outputFile << "if x then {" << endl; //line 2, if statement
+			outputFile << "x = y + 1;}" << endl; //line 3
+			outputFile << "else{" << endl;
+			outputFile << "z = x + y;}" << endl; //line 4
+			outputFile << "i = 5;" << endl; //line 5
+			outputFile << "while i{" << endl; //line 6, while statement
+			outputFile << "x=1;" << endl;//line 7
+			outputFile << "x = i +2*y;}" << endl; //line 8
+			outputFile << "}";
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+			QueryEvaluator qe = QueryEvaluator(&pkb);
+
+			//select v such that Uses(4,v)
+			list<string> uses_4v = qe.getResults("variable v; stmt s; Select s such that Uses(4, v)");
+			Assert::AreEqual(2, (int)uses_4v.size()); //error: gives 8
+			Assert::IsTrue(find(uses_4v.begin(), uses_4v.end(), string("x")) != uses_4v.end());
+			Assert::IsTrue(find(uses_4v.begin(), uses_4v.end(), string("y")) != uses_4v.end());
+			
+			//select s such that Uses(s,"x")
+			list<string> uses_sX = qe.getResults("variable v; stmt s; Select s such that Uses(s, \"x\")");
+			Assert::AreEqual(2, (int)uses_sX.size()); //passes, but can't assure its working as expected
+			Assert::IsTrue(find(uses_sX.begin(), uses_sX.end(), string("2")) != uses_sX.end());
+			Assert::IsTrue(find(uses_sX.begin(), uses_sX.end(), string("4")) != uses_sX.end());
+			
+			//select s such that Uses(s,v)
+			list<string> uses_sv = qe.getResults("variable v; stmt s; Select s such that Uses(s, v)");
+			Assert::AreEqual(6, (int)uses_sv.size()); //error: gives 8
+			Assert::IsTrue(find(uses_sv.begin(), uses_sv.end(), string("1")) != uses_sv.end());
+			Assert::IsTrue(find(uses_sv.begin(), uses_sv.end(), string("2")) != uses_sv.end());
+			Assert::IsTrue(find(uses_sv.begin(), uses_sv.end(), string("3")) != uses_sv.end());
+			Assert::IsTrue(find(uses_sv.begin(), uses_sv.end(), string("4")) != uses_sv.end());
+			Assert::IsFalse(find(uses_sv.begin(), uses_sv.end(), string("5")) != uses_sv.end());
+			Assert::IsTrue(find(uses_sv.begin(), uses_sv.end(), string("6")) != uses_sv.end());
+			Assert::IsFalse(find(uses_sv.begin(), uses_sv.end(), string("8")) != uses_sv.end());
+
+
 		}
 	
 		TEST_METHOD(testSimpleModify) {

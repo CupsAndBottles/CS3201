@@ -47,12 +47,15 @@ bool QueryEvaluator::queryHasResult(){
 
 list<string> QueryEvaluator::evaluateSelect(bool shortcircuited) {
 	list<string> results;
-	if (selectClause.front() == "BOOLEAN") {
-		if (shortcircuited) {
+	if (shortcircuited) {
+		if (selectClause.front() == "BOOLEAN") {
 			results.push_back("false");
-		} else {
-			results.push_back("true");
 		}
+		return results;
+	}
+
+	if (selectClause.front() == "BOOLEAN") {
+		results.push_back("true");
 		return results;
 	}
 
@@ -469,7 +472,32 @@ pair<bool, vector<string>> QueryEvaluator::patternAssign(string synonym, string 
 }
 
 pair<bool, vector<string>> QueryEvaluator::with(string synonym, string value) {
-	return {false, vector<string>()};
+	bool atLeastOneResult = false;
+	vector<string> discoveredSynonyms = vector<string>();
+	if (encountered(synonym)) {
+		unordered_set<QueryNode*> nodes = getQNodes(synonym);
+		for (QueryNode* node : nodes) {
+			if (node->getValue() == value) {
+				atLeastOneResult = true;
+			} else {
+				node->destroy(&encounteredEntities);
+			}
+		}
+	} else {
+		discoveredSynonyms.push_back(synonym);
+		unordered_set<QueryNode*> nodes = unordered_set<QueryNode*>();
+		vector<string> possibilities = generatePossiblities(synonym);
+		for (string possiblity : possibilities) {
+			if (possiblity == value) {
+				atLeastOneResult = true;
+				nodes.insert(QueryNode::createQueryNode(synonym, possiblity));
+			}
+		}
+		encounteredEntities.insert({synonym, nodes});
+		addToRoot(nodes);
+	}
+
+	return {atLeastOneResult, discoveredSynonyms};
 }
 
 pair<bool, vector<string>> QueryEvaluator::genericNonPattern_BothSynonyms(string leftArgument, string rightArgument, int whichRelation) {
@@ -500,6 +528,8 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_BothSynonyms(string
 		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
 		for (QueryNode* leftNode : leftNodes) {
 			vector<string> results = genericNonPattern_RightEvaluator(leftNode->getValue(), whichRelation, leftNumber);
+			results = filterStatementsByTargetType(results, getEntityType(leftArgument));
+
 			if (results.empty()) {
 				leftNode->destroy(&encounteredEntities);
 			}
@@ -519,6 +549,8 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_BothSynonyms(string
 		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
 		for (QueryNode* rightNode : rightNodes) {
 			vector<string> results = genericNonPattern_LeftEvaluator(rightNode->getValue(), whichRelation, leftNumber);
+			results = filterStatementsByTargetType(results, getEntityType(rightArgument));
+			
 			if (results.empty()) {
 				rightNode->destroy(&encounteredEntities);
 			}
@@ -556,6 +588,8 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_BothSynonyms(string
 		unordered_map<string, QueryNode*> encounteredResults = unordered_map<string, QueryNode*>();
 		for (QueryNode* leftNode : leftNodes) {
 			vector<string> results = genericNonPattern_RightEvaluator(leftNode->getValue(), whichRelation, leftNumber);
+			results = filterStatementsByTargetType(results, getEntityType(rightArgument));
+			
 			if (results.empty()) {
 				leftNode->destroy(&encounteredEntities);
 			} else {
@@ -681,6 +715,14 @@ bool QueryEvaluator::genericNonPattern_Evaluator(string leftValue, string rightV
 		// both must be statement numbers
 		result = database.isParentStar(stoi(leftValue), stoi(rightValue));
 		break;
+	case FOLLOWS:
+		// both must be statement numbers
+		result = database.isFollows(stoi(leftValue), stoi(rightValue));
+		break;
+	case FOLLOWSSTAR:
+		// both must be statement numbers
+		result = database.followsStar(stoi(leftValue), stoi(rightValue));
+		break;
 	case AFFECTS:
 		// both must be statement numbers
 		result = database.affects(stoi(leftValue), stoi(rightValue));
@@ -739,6 +781,14 @@ vector<string> QueryEvaluator::genericNonPattern_LeftEvaluator(string rightValue
 	case PARENTSTAR:
 		// both must be statement numbers
 		results = formatter.integerVectorToStringVector(database.getParentsStarOf(stoi(rightValue)));
+		break;
+	case FOLLOWS:
+		// both must be statement numbers
+		results = formatter.integerVectorToStringVector(database.getStatementFollowedBy(stoi(rightValue)));
+		break;
+	case FOLLOWSSTAR:
+		// both must be statement numbers
+		results = formatter.integerVectorToStringVector(database.getStatementsFollowStarredBy(stoi(rightValue)));
 		break;
 	case AFFECTS:
 		// both must be statement numbers
@@ -799,6 +849,14 @@ vector<string> QueryEvaluator::genericNonPattern_RightEvaluator(string leftValue
 		// both must be statement numbers
 		results = formatter.integerVectorToStringVector(database.getChildrenStarOf(stoi(leftValue)));
 		break;
+	case FOLLOWS:
+		// both must be statement numbers
+		results = formatter.integerVectorToStringVector(database.getStatementThatFollows(stoi(leftValue)));
+		break;
+	case FOLLOWSSTAR:
+		// both must be statement numbers
+		results = formatter.integerVectorToStringVector(database.getStatementsThatFollowStar(stoi(leftValue)));
+		break;
 	case AFFECTS:
 		// both must be statement numbers
 		results = formatter.integerVectorToStringVector(database.getStatementsAffectedBy(stoi(leftValue)));
@@ -818,4 +876,38 @@ vector<string> QueryEvaluator::genericNonPattern_RightEvaluator(string leftValue
 	}
 
 	return results;
+}
+
+vector<string> QueryEvaluator::filterStatementsByTargetType(vector<string> input, string targetType) {
+	if (targetType != EntTable::STATEMENT_ASSIGN && 
+		targetType != EntTable::STATEMENT_WHILE && 
+		targetType != EntTable::STATEMENT_IF && 
+		targetType != EntTable::STATEMENT_CALL) {
+		return input;
+	}
+
+	vector<int> targetStatements;
+	if (targetType == EntTable::STATEMENT_ASSIGN) {
+		targetStatements = database.getStatementsOfType(Tnode::Type::STMT_ASSIGN);
+	} else if (targetType == EntTable::STATEMENT_WHILE) {
+		targetStatements = database.getStatementsOfType(Tnode::Type::STMT_WHILE);
+	} else if (targetType == EntTable::STATEMENT_IF) {
+		targetStatements = database.getStatementsOfType(Tnode::Type::STMT_IF);
+	} else if (targetType == EntTable::STATEMENT_CALL) {
+		targetStatements = database.getStatementsOfType(Tnode::Type::STMT_CALL);
+	}
+
+	vector<int> inputInt = formatter.stringVectorToIntegerVector(input);
+	sort(inputInt.begin(), inputInt.end());
+	sort(targetStatements.begin(), targetStatements.end());
+	
+	vector<int> resultsInt(max(inputInt.size(), targetStatements.size()));
+	auto it = set_intersection(inputInt.begin(),
+							   inputInt.begin() + inputInt.size(),
+							   targetStatements.begin(), 
+							   targetStatements.begin() + targetStatements.size(),
+							   resultsInt.begin());
+	resultsInt.resize(it - resultsInt.begin());
+
+	return formatter.integerVectorToStringVector(resultsInt);
 }

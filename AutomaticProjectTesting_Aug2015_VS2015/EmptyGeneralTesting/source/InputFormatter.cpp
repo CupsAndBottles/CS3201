@@ -30,6 +30,14 @@ vector<string> InputFormatter::integerVectorToStringVector(vector<int> arr) {
 	return tempArr;
 }
 
+vector<int> InputFormatter::stringVectorToIntegerVector(vector<string> inp) {
+	vector<int> results = vector<int>();
+	for (string i : inp) {
+		results.push_back(stoi(i));
+	}
+	return results;
+}
+
 list<string> InputFormatter::integerVectorToStringList(vector<int> inp) {
 	list<string> results;
 	for (size_t i = 0; i < inp.size(); i++) {
