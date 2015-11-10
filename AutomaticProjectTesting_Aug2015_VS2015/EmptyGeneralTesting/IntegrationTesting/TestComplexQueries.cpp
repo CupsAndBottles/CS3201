@@ -101,6 +101,30 @@ namespace UnitTesting
 			list<string> ans4 = qe.getResults("if iff; while w;assign a;stmt s; Select iff such that Parent(iff,w) and Parent(w,a) and Modifies(a,\"z\") and Uses(s,\"z\")");
 			Assert::AreEqual(1, (int)ans4.size());
 			Assert::IsTrue(find(ans4.begin(), ans4.end(), string("2")) != ans4.end());
+			
+			//Select w such that Parent*(w,8) and Uses(w,"y") and Parent(w,iff) and Parent*(iff2,iff), ans:4
+			list<string> ans5 = qe.getResults("while w;if iff;if iff2; Select w such that Parent*(w,8) and Uses(w,\"y\") and Parent(w,iff) and Parent*(iff2,iff)");
+			Assert::AreEqual(1, (int)ans5.size());
+			Assert::IsTrue(find(ans5.begin(), ans5.end(), string("4")) != ans5.end());
+
+			//Select n1 such that Next(n,n1) and Parent(n1,w) and Parent*(n1,a) and Next*(n1,13) and Affects(a,5)
+			//list<string> ans6 = qe.getResults("prog_line n, n1; while w, assign a; Select n1 such that Next(n,n1) and Parent(n1,w) and Parent*(n1,a) and Next*(n1,13) and Affects(a,5)");
+			list<string> ans6 = qe.getResults("prog_line n, n1; while w, assign a; Select n1 such that Next(n,n1) and Parent(n1,w) and Parent*(n1,a) and Next*(n1,13)");
+			Assert::AreEqual(1, (int)ans6.size());
+			Assert::IsTrue(find(ans6.begin(), ans6.end(), string("2")) != ans6.end());
+
+
+			list<string> ans7 = qe.getResults("stmt s; while w; Select w pattern w(\"y\", _)");
+			Assert::AreEqual(1, (int)ans7.size());
+			Assert::IsTrue(find(ans7.begin(), ans7.end(), string("4")) != ans7.end());
+
+			list<string> ans8 = qe.getResults("if ifstat; select ifstat pattern ifstat(\"i\", _, _)");
+			Assert::AreEqual(1, (int)ans8.size());
+			Assert::IsTrue(find(ans8.begin(), ans8.end(), string("16")) != ans8.end());
+
+			list<string> ans9 = qe.getResults("procedure p, q; Select p such that calls(p, q) with q.procName = \"kitkat\"");
+			Assert::AreEqual(1, (int)ans9.size());
+			Assert::IsTrue(find(ans9.begin(), ans9.end(), string("snickers")) != ans9.end());
 		}
 	};
 }

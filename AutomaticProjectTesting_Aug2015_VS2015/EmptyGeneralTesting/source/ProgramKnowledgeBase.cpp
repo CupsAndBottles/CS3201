@@ -766,7 +766,9 @@ bool ProgramKnowledgeBase::affectsStar(int s1, int s2){
 	node1 = statementTable->getDDGNode(s1);
 	vector<DDGnode*> DDGlist = node1->listOfLinkedToDDG();
 	for (auto i = DDGlist.begin(); i != DDGlist.end(); i++) {
-		return affectsStar((*i)->getStatementNumber(), s2);
+		if (affectsStar((*i)->getStatementNumber(), s2)) {
+			return true;
+		}
 	}
 	return false;
 }
