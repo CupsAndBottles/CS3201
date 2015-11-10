@@ -316,9 +316,21 @@ namespace UnitTesting
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 			QueryEvaluator qe = QueryEvaluator(&pkb);
 
-			//select v such that Uses(s,v)
+			//select v such that Uses(4,v)
+			list<string> uses_4v = qe.getResults("variable v; stmt s; Select s such that Uses(4, v)");
+			Assert::AreEqual(2, (int)uses_4v.size()); //error: gives 8
+			Assert::IsTrue(find(uses_4v.begin(), uses_4v.end(), string("x")) != uses_4v.end());
+			Assert::IsTrue(find(uses_4v.begin(), uses_4v.end(), string("y")) != uses_4v.end());
+			
+			//select s such that Uses(s,"x")
+			list<string> uses_sX = qe.getResults("variable v; stmt s; Select s such that Uses(s, \"x\")");
+			Assert::AreEqual(2, (int)uses_sX.size()); //passes, but can't assure its working as expected
+			Assert::IsTrue(find(uses_sX.begin(), uses_sX.end(), string("2")) != uses_sX.end());
+			Assert::IsTrue(find(uses_sX.begin(), uses_sX.end(), string("4")) != uses_sX.end());
+			
+			//select s such that Uses(s,v)
 			list<string> uses_sv = qe.getResults("variable v; stmt s; Select s such that Uses(s, v)");
-			Assert::AreEqual(6, (int)uses_sv.size());
+			Assert::AreEqual(6, (int)uses_sv.size()); //error: gives 8
 			Assert::IsTrue(find(uses_sv.begin(), uses_sv.end(), string("1")) != uses_sv.end());
 			Assert::IsTrue(find(uses_sv.begin(), uses_sv.end(), string("2")) != uses_sv.end());
 			Assert::IsTrue(find(uses_sv.begin(), uses_sv.end(), string("3")) != uses_sv.end());
