@@ -235,6 +235,11 @@ namespace UnitTesting
 			outputFile << "y = 1;" <<endl; // line 1
 			outputFile << "x = 2;" <<endl; //line 2
 			outputFile << "z = 3;" << endl;//line 3
+			outputFile << "call Second;" << endl;
+			outputFile << "}" << endl;
+
+			outputFile << "procedure Second {";
+			outputFile << "w=4;" << endl; //line 4
 			outputFile << "}" << endl;
 			outputFile.close();
 
@@ -246,13 +251,39 @@ namespace UnitTesting
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 			QueryEvaluator qe = QueryEvaluator(&pkb);
 
-			//select s1 such that Follows(s1,2)
-			list<string>follow_s1_2 = qe.getResults("stmt s; Select s such that Follows(s,2)");
-			Assert::AreEqual(1, (int)follow_s1_2.size()); //error: gives 0 as result
+			//select s such that Follows(s,2)
+			list<string>follow_s2 = qe.getResults("stmt s; Select s such that Follows(s,2)");
+			Assert::AreEqual(1, (int)follow_s2.size());
+			Assert::IsTrue(find(follow_s2.begin(), follow_s2.end(), string("1")) != follow_s2.end());
+
+			//select s such that Follows(2,s)
+			list<string>follow_2s = qe.getResults("stmt s; Select s such that Follows(2,s)");
+			Assert::AreEqual(1, (int)follow_2s.size());
+			Assert::IsTrue(find(follow_2s.begin(), follow_2s.end(), string("3")) != follow_2s.end());
 			
-			//select s1 such that Follows(s1,s2)
+			//select s such that Follows(s,s1)
+			list<string>follow_ss1 = qe.getResults("stmt s; stmt s1; Select s such that Follows(s,s1)");
+			Assert::AreEqual(3, (int)follow_ss1.size());
+			Assert::IsTrue(find(follow_ss1.begin(), follow_ss1.end(), string("1")) != follow_ss1.end());
+			Assert::IsTrue(find(follow_ss1.begin(), follow_ss1.end(), string("2")) != follow_ss1.end());
+			Assert::IsTrue(find(follow_ss1.begin(), follow_ss1.end(), string("3")) != follow_ss1.end());
+			//select s such that Follows(s,a)
+			list<string>follow_sa = qe.getResults("stmt s; assign a; Select s such that Follows(s,a)");
+			Assert::AreEqual(2, (int)follow_ss1.size());
+			Assert::IsTrue(find(follow_sa.begin(), follow_sa.end(), string("1")) != follow_sa.end());
+			Assert::IsTrue(find(follow_sa.begin(), follow_sa.end(), string("2")) != follow_sa.end());
+			//Assert::IsTrue(find(follow_sa.begin(), follow_sa.end(), string("3")) != follow_sa.end());
+
+			//select a such that Follows(a,c)
+			list<string>follow_ac = qe.getResults("assign a; call c; Select a such that Follows(a,c)");
+			Assert::AreEqual(1, (int)follow_ac.size());
+			Assert::IsTrue(find(follow_ac.begin(), follow_ac.end(), string("3")) != follow_ac.end());
+			//Assert::IsTrue(find(follow_ss1.begin(), follow_ss1.end(), string("2")) != follow_ss1.end());
+			//Assert::IsTrue(find(follow_ss1.begin(), follow_ss1.end(), string("3")) != follow_ss1.end());
+
+			//select s1 such that Follows(s1,s2), negative test
 			list<string>follow_s1s2 = qe.getResults("stmt s; Select s such that Follows(4,11)");
-			Assert::AreEqual(0, (int)follow_s1s2.size()); //error: gives 3 as result
+			Assert::AreEqual(0, (int)follow_s1s2.size());
 			
 			
 		}
