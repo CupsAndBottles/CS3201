@@ -239,6 +239,29 @@ vector<string> ProgramKnowledgeBase::getVariablesUsedBy(string procName){
 }
 
 bool ProgramKnowledgeBase::isParent(int s1, int s2){
+	if (s1 == WILDCARD_INT && s2 == WILDCARD_INT) {
+		vector<int> whiles = getStatementsOfType(Tnode::Type::STMT_WHILE);
+		vector<int> ifs = getStatementsOfType(Tnode::Type::STMT_IF);
+		return !whiles.empty() || !ifs.empty();
+	} else if (s1 == WILDCARD_INT) {
+		Tnode* s2Node = getNodeWithStatementNumber(s2);
+		Tnode* s2Parent = s2Node->getSPAParent();
+		if (s2Parent == NULL) {
+			return false;
+		} else if (s2Parent->isProcedure()){
+			return false;
+		} else {
+			return true;
+		}
+	} else if (s2 == WILDCARD_INT) {
+		Tnode* s1node = getNodeWithStatementNumber(s1);
+		if (s1node == NULL) {
+			return false;
+		} else {
+			return s1node->isIf() || s1node->isWhile();
+		}
+	}
+
 	Tnode* s2Node = getNodeWithStatementNumber(s2);
 	if (s2Node == NULL) {
 		return false;
@@ -252,6 +275,14 @@ bool ProgramKnowledgeBase::isParent(int s1, int s2){
 }
 
 vector<int> ProgramKnowledgeBase::getParentOf(int stmt){
+	if (stmt == WILDCARD_INT) {
+		vector<int> whiles = getStatementsOfType(Tnode::Type::STMT_WHILE);
+		vector<int> ifs = getStatementsOfType(Tnode::Type::STMT_IF);
+		whiles.reserve(whiles.size() + ifs.size());
+		whiles.insert(whiles.end(), ifs.begin(), ifs.end());
+		return whiles;
+	}
+
 	Tnode* node = getNodeWithStatementNumber(stmt);
 	if (node == NULL) {
 		return vector<int>();
@@ -284,6 +315,20 @@ vector<int> ProgramKnowledgeBase::getParentsStarOf(int stmt, vector<Tnode*>* par
 }
 
 vector<int> ProgramKnowledgeBase::getChildrenOf(int stmt){
+	if (stmt == WILDCARD_INT) {
+		vector<int> whiles = getStatementsOfType(Tnode::Type::STMT_WHILE);
+		vector<int> ifs = getStatementsOfType(Tnode::Type::STMT_IF);
+		whiles.reserve(whiles.size() + ifs.size());
+		whiles.insert(whiles.end(), ifs.begin(), ifs.end());
+		vector<int> results = vector<int>();
+		for (int parent : whiles) {
+			vector<int> children = getChildrenOf(parent);
+			results.reserve(results.size() + children.size());
+			results.insert(results.end(), children.begin(), children.end());
+		}
+		return results;
+	}
+
 	Tnode* node = getNodeWithStatementNumber(stmt);
 	if (node == NULL) {
 		return vector<int>();
