@@ -287,16 +287,46 @@ namespace UnitTesting
 			list<string>follow_ac = qe.getResults("assign a; call c; Select a such that Follows(a,c)");
 			Assert::AreEqual(1, (int)follow_ac.size());
 			Assert::IsTrue(find(follow_ac.begin(), follow_ac.end(), string("3")) != follow_ac.end());
-			//Assert::IsTrue(find(follow_ss1.begin(), follow_ss1.end(), string("2")) != follow_ss1.end());
-			//Assert::IsTrue(find(follow_ss1.begin(), follow_ss1.end(), string("3")) != follow_ss1.end());
-
+			
 			//select s1 such that Follows(s1,s2), negative test
 			list<string>follow_s1s2 = qe.getResults("stmt s; Select s such that Follows(4,11)");
 			Assert::AreEqual(0, (int)follow_s1s2.size());
-			
-			
 		}
 		TEST_METHOD(testUses) {
+			string fileName = "programUses.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc {";
+			outputFile << "x = y;" <<endl; //line 1
+			outputFile << "if x then {" << endl; //line 2, if statement
+			outputFile << "x = y + 1;}" << endl; //line 3
+			outputFile << "else{" << endl;
+			outputFile << "z = x + y;}" << endl; //line 4
+			outputFile << "i = 5;" << endl; //line 5
+			outputFile << "while i{" << endl; //line 6, while statement
+			outputFile << "x=1;" << endl;//line 7
+			outputFile << "x = i +2*y;}" << endl; //line 8
+			outputFile << "}";
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+			QueryEvaluator qe = QueryEvaluator(&pkb);
+
+			//select v such that Uses(s,v)
+			list<string> uses_sv = qe.getResults("variable v; stmt s; Select s such that Uses(s, v)");
+			Assert::AreEqual(6, (int)uses_sv.size());
+			Assert::IsTrue(find(uses_sv.begin(), uses_sv.end(), string("1")) != uses_sv.end());
+			Assert::IsTrue(find(uses_sv.begin(), uses_sv.end(), string("2")) != uses_sv.end());
+			Assert::IsTrue(find(uses_sv.begin(), uses_sv.end(), string("3")) != uses_sv.end());
+			Assert::IsTrue(find(uses_sv.begin(), uses_sv.end(), string("4")) != uses_sv.end());
+			Assert::IsFalse(find(uses_sv.begin(), uses_sv.end(), string("5")) != uses_sv.end());
+			Assert::IsTrue(find(uses_sv.begin(), uses_sv.end(), string("6")) != uses_sv.end());
+			Assert::IsFalse(find(uses_sv.begin(), uses_sv.end(), string("8")) != uses_sv.end());
+
 
 		}
 	
