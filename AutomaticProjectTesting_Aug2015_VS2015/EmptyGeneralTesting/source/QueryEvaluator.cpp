@@ -420,24 +420,28 @@ pair<bool, vector<string>> QueryEvaluator::processClause(QueryObject clause) {
 		// check for patterns
 		string patternType = declaration.getType(relationType);
 		if (formatter.stringEqualCaseInsensitive(patternType, QueryObject::RelationType_PATTERN_WHILE)) {
+			leftSynonym = isSynonym(relationType);
+			rightSynonym = isSynonym(lhs);
 			if (leftSynonym && rightSynonym) {
-				return genericHandler_BothSynonyms(lhs, rhs, PATTERN_WHILE);
+				return genericHandler_BothSynonyms(relationType, lhs, PATTERN_WHILE);
 			} else if (rightSynonym) {
-				return genericHandler_RightSynonym(lhs, rhs, PATTERN_WHILE);
+				return genericHandler_RightSynonym(relationType, lhs, PATTERN_WHILE);
 			} else if (leftSynonym) {
-				return genericHandler_LeftSynonym(lhs, rhs, PATTERN_WHILE);
+				return genericHandler_LeftSynonym(relationType, lhs, PATTERN_WHILE);
 			} else {
-				return genericHandler_NoSynonym(lhs, rhs, PATTERN_WHILE);
+				return genericHandler_NoSynonym(relationType, lhs, PATTERN_WHILE);
 			}
 		} else if (formatter.stringEqualCaseInsensitive(patternType, QueryObject::RelationType_PATTERN_IF)) {
+			leftSynonym = isSynonym(relationType);
+			rightSynonym = isSynonym(lhs);
 			if (leftSynonym && rightSynonym) {
-				return genericHandler_BothSynonyms(lhs, rhs, PATTERN_IF);
+				return genericHandler_BothSynonyms(relationType, lhs, PATTERN_IF);
 			} else if (rightSynonym) {
-				return genericHandler_RightSynonym(lhs, rhs, PATTERN_IF);
+				return genericHandler_RightSynonym(relationType, lhs, PATTERN_IF);
 			} else if (leftSynonym) {
-				return genericHandler_LeftSynonym(lhs, rhs, PATTERN_IF);
+				return genericHandler_LeftSynonym(relationType, lhs, PATTERN_IF);
 			} else {
-				return genericHandler_NoSynonym(lhs, rhs, PATTERN_IF);
+				return genericHandler_NoSynonym(relationType, lhs, PATTERN_IF);
 			}
 		} else if (formatter.stringEqualCaseInsensitive(patternType, QueryObject::RelationType_PATTERN_ASSIGN)) {
 			bool variableSynonym = isSynonym(lhs);
