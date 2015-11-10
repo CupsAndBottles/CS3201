@@ -1178,6 +1178,7 @@ namespace UnitTesting
 			Assert::IsTrue(pkb.affectsStar(11, 14));
 			Assert::IsTrue(pkb.affectsStar(9, 9));
 			Assert::IsFalse(pkb.affectsStar(16, 14));
+			Assert::IsTrue(pkb.affectsStar(4, 12));
 			Assert::IsFalse(pkb.affectsStar(7, 12));
 			Assert::IsFalse(pkb.affects(7, 7));
 
