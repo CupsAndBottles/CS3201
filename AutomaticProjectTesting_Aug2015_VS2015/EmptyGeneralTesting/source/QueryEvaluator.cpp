@@ -239,6 +239,16 @@ vector<string> QueryEvaluator::getEncounteredEntities() {
 	return entities;
 }
 
+void QueryEvaluator::addToEncounteredEntities(string synonym, QueryNode* node) {
+	try {
+		encounteredEntities.at(synonym).insert(node);
+	} catch (exception _Xout_of_range) {
+		unordered_set<QueryNode*> newSet = unordered_set<QueryNode*>();
+		newSet.insert(node);
+		encounteredEntities.insert({synonym, newSet});
+	}
+}
+
 // for loop to iterate through vector of QueryObjects, break loop if any QueryObject returns empty.
 // return true if all clauses are evaluated, false if not
 bool QueryEvaluator::evaluateQuery() {
@@ -443,6 +453,12 @@ pair<bool, vector<string>> QueryEvaluator::with(string synonym, string value) {
 	if (encountered(synonym)) {
 		unordered_set<QueryNode*> nodes = getQNodes(synonym);
 		for (QueryNode* node : nodes) {
+			try {
+				node->getSynonym();
+			} catch (bad_alloc) {
+				continue;
+			}
+
 			if (node->getValue() == value) {
 				atLeastOneResult = true;
 			} else {
@@ -476,7 +492,19 @@ pair<bool, vector<string>> QueryEvaluator::genericHandler_BothSynonyms(string le
 		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
 		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
 		for (QueryNode* leftNode : leftNodes) {
+			try {
+				leftNode->getSynonym();
+			} catch (bad_alloc) {
+				continue;
+			}
+
 			for (QueryNode* rightNode : rightNodes) {
+				try {
+					rightNode->getSynonym();
+				} catch (bad_alloc) {
+					continue;
+				}
+
 				bool result = genericEvaluator_BothValues(leftNode->getValue(), rightNode->getValue(), whichRelation, leftNumber);
 				if (result) {
 					atLeastOneResult = true;
@@ -493,6 +521,12 @@ pair<bool, vector<string>> QueryEvaluator::genericHandler_BothSynonyms(string le
 		discoveredSynonyms.push_back(rightArgument);
 		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
 		for (QueryNode* leftNode : leftNodes) {
+			try {
+				leftNode->getSynonym();
+			} catch (bad_alloc) {
+				continue;
+			}
+
 			vector<string> results = genericEvaluator_RightValue(leftNode->getValue(), whichRelation, leftNumber);
 			results = filterStatementsByTargetType(results, getEntityType(leftArgument));
 
@@ -505,15 +539,21 @@ pair<bool, vector<string>> QueryEvaluator::genericHandler_BothSynonyms(string le
 					atLeastOneResult = true;
 					QueryNode* newNode = QueryNode::createQueryNode(rightArgument, result);
 					leftNode->insertParent(newNode);
+					addToEncounteredEntities(rightArgument, newNode);
 					rightNodes.insert(newNode);
 				}
-				encounteredEntities.insert({ rightArgument, rightNodes });
 			}
 		}
 	} else if (rightEncountered) {
 		discoveredSynonyms.push_back(leftArgument);
 		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
 		for (QueryNode* rightNode : rightNodes) {
+			try {
+				rightNode->getSynonym();
+			} catch (bad_alloc) {
+				continue;
+			}
+
 			vector<string> results = genericEvaluator_LeftValue(rightNode->getValue(), whichRelation, leftNumber);
 			results = filterStatementsByTargetType(results, getEntityType(rightArgument));
 			
@@ -526,9 +566,9 @@ pair<bool, vector<string>> QueryEvaluator::genericHandler_BothSynonyms(string le
 					atLeastOneResult = true;
 					QueryNode* newNode = QueryNode::createQueryNode(leftArgument, result);
 					rightNode->insertParent(newNode);
+					addToEncounteredEntities(leftArgument, newNode);
 					leftNodes.insert(newNode);
 				}
-				encounteredEntities.insert({ leftArgument, leftNodes });
 			}
 		}
 	} else {
@@ -553,11 +593,17 @@ pair<bool, vector<string>> QueryEvaluator::genericHandler_BothSynonyms(string le
 		unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
 		unordered_map<string, QueryNode*> encounteredResults = unordered_map<string, QueryNode*>();
 		for (QueryNode* leftNode : leftNodes) {
+			try {
+				leftNode->getSynonym();
+			} catch (bad_alloc) {
+				continue;
+			}
+
 			vector<string> results = genericEvaluator_RightValue(leftNode->getValue(), whichRelation, leftNumber);
 			results = filterStatementsByTargetType(results, getEntityType(rightArgument));
 			
 			if (results.empty()) {
-				leftNode->destroy(&encounteredEntities);
+				leftNode->destroy(&encounteredEntities, true);
 			} else {
 				for (string result : results) {
 					QueryNode* rightNode = NULL;
@@ -566,6 +612,7 @@ pair<bool, vector<string>> QueryEvaluator::genericHandler_BothSynonyms(string le
 						rightNode = QueryNode::createQueryNode(rightArgument, result);
 						rightNodes.insert(rightNode);
 						encounteredResults.insert({result, rightNode});
+						addToEncounteredEntities(rightArgument, rightNode);
 					} else {
 						rightNode = encounteredResults.at(result);
 					}
@@ -586,6 +633,12 @@ pair<bool, vector<string>> QueryEvaluator::genericHandler_LeftSynonym(string lef
 	if (leftEncountered) {
 		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
 		for (QueryNode* leftNode : leftNodes) {
+			try {
+				leftNode->getSynonym();
+			} catch (bad_alloc) {
+				continue;
+			}
+
 			bool result = genericEvaluator_BothValues(leftNode->getValue(), rightArgument, whichRelation, leftNumber);
 			if (!result) {
 				leftNode->destroy(&encounteredEntities);
@@ -617,6 +670,12 @@ pair<bool, vector<string>> QueryEvaluator::genericHandler_RightSynonym(string le
 	if (rightEncountered) {
 		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
 		for (QueryNode* rightNode : rightNodes) {
+			try {
+				rightNode->getSynonym();
+			} catch (bad_alloc) {
+				continue;
+			}
+
 			bool result = genericEvaluator_BothValues(leftArgument, rightNode->getValue(), whichRelation, leftNumber);
 			if (!result) {
 				rightNode->destroy(&encounteredEntities);

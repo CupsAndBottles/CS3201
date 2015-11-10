@@ -74,6 +74,7 @@ private:
 	void flushQueryTree();
 	void flushEncounteredEntities();
 	vector<string> getEncounteredEntities();
+	void addToEncounteredEntities(string synonym, QueryNode* node);
 
 	bool isSynonym(string s);
 	bool isVariable(string s);
