@@ -499,11 +499,117 @@ namespace UnitTesting
 			generateProgram(procedures, nesting, assign, brackets, isCall);
 		}
 
-		TEST_METHOD(testProgramFromFile) {
-			string fileName = "Simple04-Source.txt";
+		TEST_METHOD(testSingleLineProgram) {
+			string fileName = "source.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc {";
+			outputFile << "a = 1;"; // 1
+			outputFile << "while a {"; // 2
+			outputFile << "b = 1;"; // 3
+			outputFile << "b = 2;"; // 4
+			outputFile << "while b {"; // 5
+			outputFile << "c = 1;"; // 6
+			outputFile << "c = 2;"; // 7
+			outputFile << "while c {"; // 8
+			outputFile << "d = 1;"; // 9
+			outputFile << "d = 2;}}}"; // 10
+			outputFile << "e = a + b + c + d;"; // 11
+			outputFile << "}";
+			outputFile.close();
 
 			Parser *parse = new Parser();
-			vector<string> parsedProgram = (*parse).parseSimpleProgram(fileName);
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Assert::AreNotEqual(0, (int)parsedProgram.size());
+
+			string fileName2 = "test.txt";
+			ofstream outputFile2(fileName2, ofstream::trunc);
+			outputFile2 << "procedure kitkat {";
+			outputFile2 << "x = 1;"; //line 1
+			outputFile2 << "if x then {"; //line 2, if statement
+			outputFile2 << "y = 10;"; //line 3
+			outputFile2 << "while y {"; // line 4
+			outputFile2 << "z = x + y;"; //line 5
+			outputFile2 << "d = z * 0;"; //line 6
+			outputFile2 << "if d then {"; //line7
+			outputFile2 << "y = y + 1;}"; //line 8
+			outputFile2 << "else {";
+			outputFile2 << "y = y - 1;}"; //line 9
+			outputFile2 << "y = y-2;}"; //line 10
+			outputFile2 << "x=2;}"; //line 11
+			outputFile2 << "else {";
+			outputFile2 << "z = d * 2;}"; //line 12
+			outputFile2 << "x = z + 3;"; //line 13
+			outputFile2 << "call water;"; //line 14
+			outputFile2 << "}";
+			outputFile2 << "procedure snickers {";
+			outputFile2 << "i = 1;"; //line 15
+			outputFile2 << "if i then {"; //line 16
+			outputFile2 << "call kitkat;}"; //line 17
+			outputFile2 << "else {";
+			outputFile2 << "call water;}}"; //line 18
+			outputFile2 << "procedure water {";
+			outputFile2 << "q = 8;"; //line 19
+			outputFile2 << "while q {"; //line 20
+			outputFile2 << "q = q -1; }}"; //line 21
+			outputFile2.close();
+
+			Parser *parse2 = new Parser();
+			vector<string> parsedProgram2 = parse2->parseSimpleProgram(fileName2); 
+			remove(fileName2.c_str());
+			Assert::AreNotEqual(0, (int)parsedProgram2.size());
+		}
+
+		TEST_METHOD(testAssignOnMultipleLines) {
+			string fileName = "source.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc {" << endl;
+			outputFile << "e = a + b +" << endl;
+			outputFile << " c + d;" << endl;
+			outputFile << "}" << endl;
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Assert::AreNotEqual(0, (int)parsedProgram.size());
+		}
+
+		TEST_METHOD(testWhileOnMultipleLines) {
+			string fileName = "source.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc {" << endl;
+			outputFile << "while " << endl;
+			outputFile << "a {" << endl;
+			outputFile << "e = a + b +" << endl;
+			outputFile << " c + d;" << endl;
+			outputFile << "}" << endl;
+			outputFile << "}" << endl;
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Assert::AreNotEqual(0, (int)parsedProgram.size());
+		}
+
+		TEST_METHOD(testProcedureOnMultipleLines) {
+			string fileName = "source.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure " << endl;
+			outputFile << "Proc " << endl;
+			outputFile << "{" << endl;
+			outputFile << "while " << endl;
+			outputFile << "a {" << endl;
+			outputFile << "e = a + b +" << endl;
+			outputFile << " c + d;" << endl;
+			outputFile << "}" << endl;
+			outputFile << "}" << endl;
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
 			Assert::AreNotEqual(0, (int)parsedProgram.size());
 		}
 	};
