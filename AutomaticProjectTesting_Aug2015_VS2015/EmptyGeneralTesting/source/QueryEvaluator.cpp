@@ -681,6 +681,14 @@ bool QueryEvaluator::genericNonPattern_Evaluator(string leftValue, string rightV
 		// both must be statement numbers
 		result = database.isParentStar(stoi(leftValue), stoi(rightValue));
 		break;
+	case FOLLOWS:
+		// both must be statement numbers
+		result = database.isFollows(stoi(leftValue), stoi(rightValue));
+		break;
+	case FOLLOWSSTAR:
+		// both must be statement numbers
+		result = database.followsStar(stoi(leftValue), stoi(rightValue));
+		break;
 	case AFFECTS:
 		// both must be statement numbers
 		result = database.affects(stoi(leftValue), stoi(rightValue));
@@ -740,6 +748,14 @@ vector<string> QueryEvaluator::genericNonPattern_LeftEvaluator(string rightValue
 		// both must be statement numbers
 		results = formatter.integerVectorToStringVector(database.getParentsStarOf(stoi(rightValue)));
 		break;
+	case FOLLOWS:
+		// both must be statement numbers
+		results = formatter.integerVectorToStringVector(database.getStatementFollowedBy(stoi(rightValue)));
+		break;
+	case FOLLOWSSTAR:
+		// both must be statement numbers
+		results = formatter.integerVectorToStringVector(database.getStatementsFollowStarredBy(stoi(rightValue)));
+		break;
 	case AFFECTS:
 		// both must be statement numbers
 		results = formatter.integerVectorToStringVector(database.getStatementsThatAffect(stoi(rightValue)));
@@ -798,6 +814,14 @@ vector<string> QueryEvaluator::genericNonPattern_RightEvaluator(string leftValue
 	case PARENTSTAR:
 		// both must be statement numbers
 		results = formatter.integerVectorToStringVector(database.getChildrenStarOf(stoi(leftValue)));
+		break;
+	case FOLLOWS:
+		// both must be statement numbers
+		results = formatter.integerVectorToStringVector(database.getStatementThatFollows(stoi(leftValue)));
+		break;
+	case FOLLOWSSTAR:
+		// both must be statement numbers
+		results = formatter.integerVectorToStringVector(database.getStatementsThatFollowStar(stoi(leftValue)));
 		break;
 	case AFFECTS:
 		// both must be statement numbers
