@@ -15,6 +15,7 @@ public:
 	bool stringEqualCaseInsensitive(string s, string match);
 	string intToString(int value);
 	vector<string> integerVectorToStringVector(vector<int> arr);
+	vector<int> stringVectorToIntegerVector(vector<string> inp);
 	list<string> integerVectorToStringList(vector<int> inp);
 	bool isDoubleQuote(string s);
 	void displayQuery(string results);
