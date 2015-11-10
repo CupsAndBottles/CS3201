@@ -7,7 +7,7 @@
 #include <iostream>
 #include <stack>
 #include <queue>
-
+#include <numeric>
 using namespace std;
 
 class ProgramKnowledgeBase{

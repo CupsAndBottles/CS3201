@@ -492,6 +492,31 @@ vector<Tnode*> ProgramKnowledgeBase::getAssignsThatContainPattern(string var, st
 }
 
 bool ProgramKnowledgeBase::isFollows(int s1, int s2){
+	if (s1 == WILDCARD_INT || s2 == WILDCARD_INT) {
+		vector<int> possibleLefts(getNumberOfStatements());
+		iota(possibleLefts.begin(), possibleLefts.end(), 1);
+		for (int left : possibleLefts) {
+			if (isFollows(left, s2)) {
+				return true;
+			}
+		}
+		return false;
+	} else if (s1 == WILDCARD_INT) {
+		Tnode* node1 = getNodeWithStatementNumber(s2);
+		if (node1 == NULL) {
+			return false;
+		} else {
+			return node1->getRightSibling() != NULL;
+		}
+	} else if (s2 == WILDCARD_INT) {
+		Tnode* node2 = getNodeWithStatementNumber(s2);
+		if (node2 == NULL) {
+			return false;
+		} else {
+			return node2->getLeftSibling() != NULL;
+		}
+	}
+
 	Tnode* node1 = getNodeWithStatementNumber(s1);
 	Tnode* node2 = getNodeWithStatementNumber(s2);
 	if (node1 == NULL || node2 == NULL) {
@@ -502,6 +527,18 @@ bool ProgramKnowledgeBase::isFollows(int s1, int s2){
 }
 
 vector<int> ProgramKnowledgeBase::getStatementThatFollows(int stmt){
+	if (stmt == WILDCARD_INT) {
+		vector<int> results = vector<int>();
+		vector<int> possibleLefts(getNumberOfStatements());
+		iota(possibleLefts.begin(), possibleLefts.end(), 1);
+		for (int left : possibleLefts) {
+			if (isFollows(left, stmt)) {
+				results.push_back(left);
+			}
+		}
+		return results;
+	}
+
 	Tnode* node = getNodeWithStatementNumber(stmt);
 	if (node == NULL) {
 		return vector<int>();
@@ -516,6 +553,18 @@ vector<int> ProgramKnowledgeBase::getStatementThatFollows(int stmt){
 }
 
 vector<int> ProgramKnowledgeBase::getStatementFollowedBy(int stmt){
+	if (stmt == WILDCARD_INT) {
+		vector<int> results = vector<int>();
+		vector<int> possibleRights(getNumberOfStatements());
+		iota(possibleRights.begin(), possibleRights.end(), 1);
+		for (int right : possibleRights) {
+			if (isFollows(stmt, right)) {
+				results.push_back(right);
+			}
+		}
+		return results;
+	}
+
 	Tnode* node = getNodeWithStatementNumber(stmt);
 	if (node == NULL) {
 		return vector<int>();
