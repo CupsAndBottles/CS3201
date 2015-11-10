@@ -421,37 +421,54 @@ pair<bool, vector<string>> QueryEvaluator::processClause(QueryObject clause) {
 		string patternType = declaration.getType(relationType);
 		if (formatter.stringEqualCaseInsensitive(patternType, QueryObject::RelationType_PATTERN_WHILE)) {
 			leftSynonym = isSynonym(relationType);
-			rightSynonym = isSynonym(lhs);
-			if (leftSynonym && rightSynonym) {
-				return genericHandler_BothSynonyms(relationType, lhs, PATTERN_WHILE);
-			} else if (rightSynonym) {
-				return genericHandler_RightSynonym(relationType, lhs, PATTERN_WHILE);
+			string variable = clause.getFirstArgument();
+			bool variableSynonym = isSynonym(variable);
+			if (!variableSynonym) {
+				variable = formatter.removeQuotes(variable);
+			}
+
+			if (leftSynonym && variableSynonym) {
+				return genericHandler_BothSynonyms(relationType, variable, PATTERN_WHILE);
+			} else if (variableSynonym) {
+				return genericHandler_RightSynonym(relationType, variable, PATTERN_WHILE);
 			} else if (leftSynonym) {
-				return genericHandler_LeftSynonym(relationType, lhs, PATTERN_WHILE);
+				return genericHandler_LeftSynonym(relationType, variable, PATTERN_WHILE);
 			} else {
-				return genericHandler_NoSynonym(relationType, lhs, PATTERN_WHILE);
+				return genericHandler_NoSynonym(relationType, variable, PATTERN_WHILE);
 			}
 		} else if (formatter.stringEqualCaseInsensitive(patternType, QueryObject::RelationType_PATTERN_IF)) {
 			leftSynonym = isSynonym(relationType);
-			rightSynonym = isSynonym(lhs);
-			if (leftSynonym && rightSynonym) {
-				return genericHandler_BothSynonyms(relationType, lhs, PATTERN_IF);
-			} else if (rightSynonym) {
-				return genericHandler_RightSynonym(relationType, lhs, PATTERN_IF);
+			string variable = clause.getFirstArgument();
+			bool variableSynonym = isSynonym(variable);
+			if (!variableSynonym) {
+				variable = formatter.removeQuotes(variable);
+			}
+
+			if (leftSynonym && variableSynonym) {
+				return genericHandler_BothSynonyms(relationType, variable, PATTERN_IF);
+			} else if (variableSynonym) {
+				return genericHandler_RightSynonym(relationType, variable, PATTERN_IF);
 			} else if (leftSynonym) {
-				return genericHandler_LeftSynonym(relationType, lhs, PATTERN_IF);
+				return genericHandler_LeftSynonym(relationType, variable, PATTERN_IF);
 			} else {
-				return genericHandler_NoSynonym(relationType, lhs, PATTERN_IF);
+				return genericHandler_NoSynonym(relationType, variable, PATTERN_IF);
 			}
 		} else if (formatter.stringEqualCaseInsensitive(patternType, QueryObject::RelationType_PATTERN_ASSIGN)) {
-			bool variableSynonym = isSynonym(lhs);
+			string variable = clause.getFirstArgument();
+			bool variableSynonym = isSynonym(variable);
+			if (!variableSynonym) {
+				variable = formatter.removeQuotes(variable);
+			}
 			bool assignSynonym = isSynonym(relationType);
+
 			if (assignSynonym && variableSynonym) {
-				return patternAssign_AssignAndVariableSynonyms(relationType, lhs, rhs);
+				return patternAssign_AssignAndVariableSynonyms(relationType, variable, rhs);
 			} else if (variableSynonym) {
-				return patternAssign_VariableSynonym(relationType, lhs, rhs);
+				return patternAssign_VariableSynonym(relationType, variable, rhs);
 			} else if (assignSynonym) {
-				return patternAssign_AssignSynonym(relationType, lhs, rhs);
+				return patternAssign_AssignSynonym(relationType, variable, rhs);
+			} else {
+				return patternAssign_NoSynonym(relationType, variable, rhs);
 			}
 		}
 	}
@@ -635,6 +652,10 @@ pair<bool, vector<string>> QueryEvaluator::patternAssign_AssignSynonym(string as
 }
 
 pair<bool, vector<string>> QueryEvaluator::patternAssign_VariableSynonym(string assign, string variable, string expression) {
+	return pair<bool, vector<string>>();
+}
+
+pair<bool, vector<string>> QueryEvaluator::patternAssign_NoSynonym(string assign, string variable, string expression) {
 	return pair<bool, vector<string>>();
 }
 

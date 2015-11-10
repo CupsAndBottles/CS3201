@@ -68,6 +68,7 @@ private:
 	pair<bool, vector<string>> patternAssign_AssignAndVariableSynonyms(string assign, string variable, string expression);
 	pair<bool, vector<string>> patternAssign_AssignSynonym(string assign, string variable, string expression);
 	pair<bool, vector<string>> patternAssign_VariableSynonym(string assign, string variable, string expression);
+	pair<bool, vector<string>> patternAssign_NoSynonym(string assign, string variable, string expression);
 
 	pair<bool, vector<string>> with(string synonym, string value);
 
