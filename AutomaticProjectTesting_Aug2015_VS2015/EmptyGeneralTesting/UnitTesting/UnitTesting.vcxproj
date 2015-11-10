@@ -164,13 +164,11 @@
   <ItemGroup>
     <ClCompile Include="TestCfg.cpp" />
     <ClCompile Include="TestProgramKnowledgeBase.cpp" />
-    <ClCompile Include="TestQueryEvaluator.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="TestAST.cpp" />
     <ClCompile Include="TestInputFormatter.cpp" />
     <ClCompile Include="TestParser.cpp" />
     <ClCompile Include="TestProcTable.cpp" />
-    <ClCompile Include="TestQueryEvaluator2.cpp" />
     <ClCompile Include="TestQueryPreProc.cpp" />
     <ClCompile Include="TestVarTable.cpp" />
   </ItemGroup>

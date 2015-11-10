@@ -1,0 +1,360 @@
+1 - Test if SPA tool returns all if statements
+if ifstat;
+Select ifstat
+2, 7, 16
+5000
+2 - Test if SPA tool returns all while statements
+while w;
+Select w
+4, 20
+5000
+3 - Parent 
+assign a;
+Select a such that Parent(a, 9)
+none
+5000
+1 - Parent
+variable v;
+Select v such that Parent(2, 10)
+none
+5000
+5 - Parent
+variable v;
+Select v such that Parent(2, 3)
+x, y, z, d, i, q
+5000
+6 - Parent*
+prog_line n;
+Select n such that Parent*(2, n)
+3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+5000
+7 - Parent*
+stmt s;
+Select s such that Parent*(s, 12)
+2
+5000
+8 - Parent*
+procedure p;
+Select p such that Parent*(16, 19)
+none
+5000
+9 - Return all Follows
+variable v;
+Select v such that Follows(4, 11)
+x, y, z, d, i, q
+5000
+10 - Follows
+procedure p;
+Select p such that Follows(2, 3)
+none
+5000
+11 - Follows
+stmt s;
+Select s such that Follows(s, 4)
+3
+5000
+12 - Return all Follows*
+assign a;
+Select a such that Follows*(a, 13)
+1
+5000
+13 - Return all Follows*
+stmt s;
+Select s such that Follows*(s, 13)
+1
+5000
+14 - Follows*
+procedure p;
+Select p such that Follows*(14, 15)
+none
+5000
+15 - Follows*
+stmt s;
+Select s such that Follows*(21, s)
+none
+5000
+16 - Calls
+procedure p,q;
+Select p such that Calls(p,q)
+snickers, kitkat
+5000
+17 - Duplicated Calls
+procedure p,q;
+Select p such that Calls(p,q) and Calls(p,q)
+snickers, kitkat
+5000
+18 - Calls*
+procedure p,q;
+Select p such that Calls*(p,q)
+snickers, kitkat
+5000
+19 - Calls
+procedure p,q;
+Select p such that Calls(p,"kitkat")
+snickers
+5000
+20 - Calls
+procedure p,q;
+Select p such that Calls(p,"water")
+snickers, kitkat
+5000
+21 - Calls
+procedure p,q;
+Select p such that Calls("kitkat", p)
+water
+5000
+22 - follows
+procedure p,q; assign a, a1; stmt s, s1;
+Select s such that follows(s, s1)
+1, 2, 3, 4 ,5, 6, 7, 13, 15, 19
+5000
+23 - parent and follows
+procedure p,q; assign a, a1; stmt s, s1;
+Select s such that follows(s, s1) and parent(s, a)
+2 4 7
+5000
+24 - calls and follows
+procedure p,q; assign a, a1; stmt s, s1;
+Select s such that follows(s, s1) and calls(p,q)
+1, 2, 3, 4 ,5, 6, 7, 13, 15, 19
+5000
+25 - Uses
+assign a; stmt s; procedure p; if iff; while w; call c; variable v;
+Select a such that Uses(a, v)
+5, 6, 8, 9, 10, 12, 13, 21
+5000
+26 - Uses
+assign a; stmt s; procedure p; if iff; while w; call c; variable v;
+Select s such that Uses(s, "x")
+2, 4, 5
+5000
+27 - Uses
+assign a; stmt s; procedure p; if iff; while w; call c; variable v;
+Select p such that Uses(p, "d")
+kitkat
+5000
+28 - Uses
+assign a; stmt s; procedure p; if iff; while w; call c; variable v;
+Select w such that Uses(w, v)
+4, 20
+5000
+29 - parent/ calls/ follows
+while w; if iff; call c; stmt s; variable v; procedure p;
+Select p such that parent(w, iff) and calls(p, "water") and follows(s,c)
+kitkat, snickers
+5000
+30 - uses / parent/ calls/ follows
+while w; if iff; call c; stmt s; variable v; procedure p;
+Select p such that uses(w,v) and parent(w, iff) and calls(p, "water") and follows(s,c)
+snickers, kitkat
+5000
+31 - modifies
+assign a; if iff; while w; procedure p; call c; stmt s;
+select s such that modifies(s, "q")
+14, 19, 20, 21
+5000
+32 - modifies
+assign a; if iff; while w; procedure p; call c; stmt s;
+select s such that modifies(s, _)
+1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,19,20,21
+5000
+33 - modifies
+assign a; if iff; while w; procedure p; call c; stmt s; variable
+select s such that modifies(s, v)
+1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,19,20,21
+5000
+34 - modifies
+assign a; if iff; while w; procedure p; call c; stmt s; variable
+select p such that modifies(p, v)
+kitkat, snickers, water
+5000
+35 - modifies
+assign a; if iff; while w; procedure p; call c; stmt s; variable
+select w such that modifies(w, v)
+4, 20
+5000
+36 - modifies
+assign a; if iff; while w; procedure p; call c; stmt s; variable
+select w such that modifies(1, "x")
+4, 20
+5000
+37 - calls/ modifies
+procedure p;
+Select p such that calls(p, "water") and modifies(p, "x")
+kitkat
+5000
+38 - uses / parent/ calls/ follows
+while w; if iff; call c; stmt s; variable v; procedure p;
+Select p such that uses(w,v) and parent(w, iff) and calls(p, "water") and follows(s,c)
+kitkat, snickers
+5000
+39 - uses / parent/ calls/ follows / modifies
+while w; if iff; call c; stmt s; variable v; procedure p;
+Select p such that uses(w,v) and parent(w, iff) and calls(p, "water") and follows(s,c) and modifies(p, "x")
+kitkat
+5000
+40 - with and calls
+procedure p, q; constant c;
+Select p such that calls(p, q) with c.value=10
+snickers kitkat
+5000
+41 - parent and modifies
+if iff; while w; assign a; stmt s;
+Select iff such that Parent(iff, w) and Parent(w,a) and Modifies(a,"z") and Uses(s,"z")
+2
+5000
+42 - next
+prog_line n, n2;
+Select n such that Next(n,21)
+20
+5000
+43 - next
+prog_line n, n2;
+Select n such that Next(9,n)
+10
+5000
+44 - next
+prog_line n, n2;
+Select n such that Next(21,n)
+20
+5000
+45 - next
+prog_line n, n2;
+Select n such that Next(n,n2)
+1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,19,20,21
+5000
+46 - next
+prog_line n, n2;
+Select n such that Next(14,n)
+none
+5000
+47 - next
+prog_line n, n2;
+Select n such that Next(17,n)
+none
+5000
+48 - next
+prog_line n, n2;
+Select n such that Next(18,n)
+none
+5000
+49 - next*
+prog_line n, n2;
+Select n such that Next*(19,n)
+20, 21
+5000
+50 - next*
+prog_line n, n2;
+Select n such that next*(n,5)
+1,2,3,4,5,6,7,8,9,10
+5000
+51 - next*
+prog_line n, n2;
+Select n such that Next*(n,n2)
+1,2,3,4,5,6,7,8,9,10,11,12,13,15,16,19,20,21
+5000
+52 - affects
+assign a, a1;
+Select a such that affects(1,a)
+5
+5000
+53 - affects
+assign a, a1;
+Select a such that affects(a,8)
+10,3
+5000
+54 - affects
+assign a, a1;
+Select a such that affects(a,a1)
+1,3,5,8,9,10,12,19,21
+5000
+55 - uses / parent/ calls/ follows / modifies / next / <tuple>
+while w; if iff; call c; stmt s; variable v; procedure p; prog_line n;
+Select <p,n> such that uses(w,v) and parent(w, iff) and calls(p, "water") and follows(s,c) and modifies(p, "x") and next(21,n)
+kitkat, 20
+5000
+56 - parent* / parent / uses
+while w; if iff, iff2;
+Select w such that parent*(w,8) and uses(w,"y") and parent(w,iff) and parent(iff2,w)
+4
+5000
+57 - next / parent / parent*
+prog_line n1,n; while w; assign a;
+Select n1 such that Next(n,n1) and Parent(n1,w) and parent*(n1,a)
+2
+5000
+58 - next / parent / parent* / next* 
+prog_line n,n1,n2; while w; assign a;
+Select n1 such that Next(n,n1) and Parent(n1,w) and parent*(n1,a) and next*(n2,13)
+2
+5000
+59 - pattern while
+stmt s; while w;
+Select w pattern w("y",_);
+4
+5000
+60 - pattern if
+if ifstat;
+select ifstat pattern ifstat("i",_,_)
+16
+5000S
+62 - with
+procedure p, q;
+Select p such that calls(p,q) with q.procName="kitkat"
+snickers
+5000
+63 - with
+procedure p, q; constant c;
+Select p such that calls(p,q) with c.value=2
+kitkat, snickers
+5000
+64 - with (FAIL)
+stmt s; constant c;
+Select s with s.stmt# = c.value
+tbc
+5000
+65 - pattern while / pattern if / with
+while w; if ifstat; variable v;
+Select <w, ifstat> pattern w("y",_) and ifstat(v,_,_) with v.varName="d"
+4, 7
+5000
+66 - pattern while / modifies
+while w; if ifstat; variable v; stmt s, s1;
+Select s pattern w(v,_) and modifies(s,v)
+3,4,7,8,9,10,14,19,20,21
+5000
+67 - pattern while / modifies / parent* (FAIL)
+while w; if ifstat; variable v; stmt s, s1;
+Select s pattern w(v,_) and modifies(s,v) and parent*(s,s1)
+4,7,20
+5000
+68 - Follows* / parent*
+stmt s,s1;
+Select s such that Follows*(s, 13) and parent*(s,s1)
+2
+5000
+69 - Affects*
+assign a, a1;
+select a such that affects*(a,a1)
+1,3,5,8,9,10,12,19,21
+5000
+70 - Affects*
+assign a, a1;
+select a1 such that affects*(a,a1) with a.stmt#=1
+5,6,13
+5000
+71 - Affects* / follows*
+assign a, a1, a2;
+select a such that affects*(a,a1) and follows*(a2, a)
+10
+5000
+72 - Affects* / follows*
+assign a, a1, a2;
+select a2 such that affects*(a,a1) and follows*(a2, a)
+10
+5000
+73 - Affects* / follows* / parents* (FAIL)
+assign a, a1, a2; stmt s;
+select s such that affects*(a,a1) and follows*(a2, a) and parent*(s,a)
+tbc
+5000
