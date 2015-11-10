@@ -432,8 +432,10 @@ vector<Tnode*> ProgramKnowledgeBase::getAssignsThatMatchPattern(string var, stri
 	for (Tnode* assign : assigns) {
 		expression = assign->getFirstChild()->getRightSibling();
 		variable = assign->getFirstChild();
-		if (variable->getName() == var && expression->isEquals(expressionTreeRoot)) {
-			results.push_back(assign);
+		if (variable->getName() == var || var == WILDCARD_STRING) {
+			if (expression->isEquals(expressionTreeRoot)) {
+				results.push_back(assign);
+			}
 		}
 	}
 	return results;
@@ -480,8 +482,10 @@ vector<Tnode*> ProgramKnowledgeBase::getAssignsThatContainPattern(string var, st
 	for (Tnode* assign : assigns) {
 		expression = assign->getFirstChild()->getRightSibling();
 		variable = assign->getFirstChild();
-		if (variable->getName() == var && expression->contains(expressionTreeRoot)) {
-			results.push_back(assign);
+		if (variable->getName() == var || var == WILDCARD_STRING) {
+			if (expression->contains(expressionTreeRoot)) {
+				results.push_back(assign);
+			}
 		}
 	}
 	return results;
