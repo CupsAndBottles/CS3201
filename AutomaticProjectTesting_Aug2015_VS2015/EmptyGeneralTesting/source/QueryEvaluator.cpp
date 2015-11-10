@@ -433,7 +433,7 @@ pair<bool, vector<string>> QueryEvaluator::processClause(QueryObject clause) {
 	return {false, vector<string>()};
 }
 
-pair<bool, vector<string>> QueryEvaluator::patternAssign(string synonym, string leftArgument, string rightArgument) {
+pair<bool, vector<string>> QueryEvaluator::patternAssign(string synonym, string variable, string expression) {
 	return {false, vector<string>()};
 }
 
