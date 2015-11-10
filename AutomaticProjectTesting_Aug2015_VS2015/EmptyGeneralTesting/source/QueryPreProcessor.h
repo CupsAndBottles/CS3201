@@ -28,7 +28,6 @@ public:
 	vector<string> getSelectEntities();
 	vector<QueryObject> getQueries();
 	void clearAll();
-	//void printSCL(vector<string> s);
 	static bool sortQueries(QueryObject obj1, QueryObject obj2);
 
 
@@ -41,14 +40,12 @@ private:
 	bool verifyPatternQuery(vector<string> temp);
 	vector<string> mergeQuotations(vector<string> temp);
 	vector<string> removeAndTokens(vector<string> temp);
-
 	vector<string> formatWithQuery(vector<string> temp);
 	bool verifyWithQuery(vector<string> temp);
 	string getTypeOfRef(string s);
 	vector<string> removeAttrRef(vector<string> temp);
 	bool addEntities(vector<string> entities);
 	void optimizeWithClause(vector<string> temp);
-
 	static string toLowerCase(string s);
 	static int getNumUnknownRank(QueryObject obj);
 
