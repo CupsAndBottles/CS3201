@@ -282,123 +282,123 @@ pair<bool, vector<string>> QueryEvaluator::processClause(QueryObject clause) {
 
 	if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_MODIFIES)) {
 		if (leftSynonym && rightSynonym) {
-			return genericNonPattern_BothSynonyms(lhs, rhs, MODIFIES);
+			return genericHandler_BothSynonyms(lhs, rhs, MODIFIES);
 		} else if (leftSynonym) {
-			return genericNonPattern_LeftSynonym(lhs, rhs, MODIFIES);
+			return genericHandler_LeftSynonym(lhs, rhs, MODIFIES);
 		} else if (rightSynonym) {
-			return genericNonPattern_RightSynonym(lhs, rhs, MODIFIES);
+			return genericHandler_RightSynonym(lhs, rhs, MODIFIES);
 		} else {
-			return genericNonPattern_NoSynonym(lhs, rhs, MODIFIES);
+			return genericHandler_NoSynonym(lhs, rhs, MODIFIES);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_USES)) {
 		if (leftSynonym && rightSynonym) {
-			return genericNonPattern_BothSynonyms(lhs, rhs, USES);
+			return genericHandler_BothSynonyms(lhs, rhs, USES);
 		} else if (leftSynonym) {
-			return genericNonPattern_LeftSynonym(lhs, rhs, USES);
+			return genericHandler_LeftSynonym(lhs, rhs, USES);
 		} else if (rightSynonym) {
-			return genericNonPattern_RightSynonym(lhs, rhs, USES);
+			return genericHandler_RightSynonym(lhs, rhs, USES);
 		} else {
-			return genericNonPattern_NoSynonym(lhs, rhs, USES);
+			return genericHandler_NoSynonym(lhs, rhs, USES);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_CALLS)) {
 		if (leftSynonym && rightSynonym) {
-			return genericNonPattern_BothSynonyms(lhs, rhs, CALLS);
+			return genericHandler_BothSynonyms(lhs, rhs, CALLS);
 		} else if (leftSynonym) {
-			return genericNonPattern_LeftSynonym(lhs, rhs, CALLS);
+			return genericHandler_LeftSynonym(lhs, rhs, CALLS);
 		} else if (rightSynonym) {
-			return genericNonPattern_RightSynonym(lhs, rhs, CALLS);
+			return genericHandler_RightSynonym(lhs, rhs, CALLS);
 		} else {
-			return genericNonPattern_NoSynonym(lhs, rhs, CALLS);
+			return genericHandler_NoSynonym(lhs, rhs, CALLS);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_CALLSSTAR)) {
 		if (leftSynonym && rightSynonym) {
-			return genericNonPattern_BothSynonyms(lhs, rhs, CALLSSTAR);
+			return genericHandler_BothSynonyms(lhs, rhs, CALLSSTAR);
 		} else if (leftSynonym) {
-			return genericNonPattern_LeftSynonym(lhs, rhs, CALLSSTAR);
+			return genericHandler_LeftSynonym(lhs, rhs, CALLSSTAR);
 		} else if (rightSynonym) {
-			return genericNonPattern_RightSynonym(lhs, rhs, CALLSSTAR);
+			return genericHandler_RightSynonym(lhs, rhs, CALLSSTAR);
 		} else {
-			return genericNonPattern_NoSynonym(lhs, rhs, CALLSSTAR);
+			return genericHandler_NoSynonym(lhs, rhs, CALLSSTAR);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_PARENT)) {
 		if (leftSynonym && rightSynonym) {
-			return genericNonPattern_BothSynonyms(lhs, rhs, PARENT);
+			return genericHandler_BothSynonyms(lhs, rhs, PARENT);
 		} else if (leftSynonym) {
-			return genericNonPattern_LeftSynonym(lhs, rhs, PARENT);
+			return genericHandler_LeftSynonym(lhs, rhs, PARENT);
 		} else if (rightSynonym) {
-			return genericNonPattern_RightSynonym(lhs, rhs, PARENT);
+			return genericHandler_RightSynonym(lhs, rhs, PARENT);
 		} else {
-			return genericNonPattern_NoSynonym(lhs, rhs, PARENT);
+			return genericHandler_NoSynonym(lhs, rhs, PARENT);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_PARENTSTAR)) {
 		if (leftSynonym && rightSynonym) {
-			return genericNonPattern_BothSynonyms(lhs, rhs, PARENTSTAR);
+			return genericHandler_BothSynonyms(lhs, rhs, PARENTSTAR);
 		} else if (leftSynonym) {
-			return genericNonPattern_LeftSynonym(lhs, rhs, PARENTSTAR);
+			return genericHandler_LeftSynonym(lhs, rhs, PARENTSTAR);
 		} else if (rightSynonym) {
-			return genericNonPattern_RightSynonym(lhs, rhs, PARENTSTAR);
+			return genericHandler_RightSynonym(lhs, rhs, PARENTSTAR);
 		} else {
-			return genericNonPattern_NoSynonym(lhs, rhs, PARENTSTAR);
+			return genericHandler_NoSynonym(lhs, rhs, PARENTSTAR);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_FOLLOWS)) {
 		if (leftSynonym && rightSynonym) {
-			return genericNonPattern_BothSynonyms(lhs, rhs, FOLLOWS);
+			return genericHandler_BothSynonyms(lhs, rhs, FOLLOWS);
 		} else if (leftSynonym) {
-			return genericNonPattern_LeftSynonym(lhs, rhs, FOLLOWS);
+			return genericHandler_LeftSynonym(lhs, rhs, FOLLOWS);
 		} else if (rightSynonym) {
-			return genericNonPattern_RightSynonym(lhs, rhs, FOLLOWS);
+			return genericHandler_RightSynonym(lhs, rhs, FOLLOWS);
 		} else {
-			return genericNonPattern_NoSynonym(lhs, rhs, FOLLOWS);
+			return genericHandler_NoSynonym(lhs, rhs, FOLLOWS);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_FOLLOWSSTAR)) {
 		if (leftSynonym && rightSynonym) {
-			return genericNonPattern_BothSynonyms(lhs, rhs, FOLLOWSSTAR);
+			return genericHandler_BothSynonyms(lhs, rhs, FOLLOWSSTAR);
 		} else if (leftSynonym) {
-			return genericNonPattern_LeftSynonym(lhs, rhs, FOLLOWSSTAR);
+			return genericHandler_LeftSynonym(lhs, rhs, FOLLOWSSTAR);
 		} else if (rightSynonym) {
-			return genericNonPattern_RightSynonym(lhs, rhs, FOLLOWSSTAR);
+			return genericHandler_RightSynonym(lhs, rhs, FOLLOWSSTAR);
 		} else {
-			return genericNonPattern_NoSynonym(lhs, rhs, FOLLOWSSTAR);
+			return genericHandler_NoSynonym(lhs, rhs, FOLLOWSSTAR);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_NEXT)) {
 		if (leftSynonym && rightSynonym) {
-			return genericNonPattern_BothSynonyms(lhs, rhs, NEXT);
+			return genericHandler_BothSynonyms(lhs, rhs, NEXT);
 		} else if (leftSynonym) {
-			return genericNonPattern_LeftSynonym(lhs, rhs, NEXT);
+			return genericHandler_LeftSynonym(lhs, rhs, NEXT);
 		} else if (rightSynonym) {
-			return genericNonPattern_RightSynonym(lhs, rhs, NEXT);
+			return genericHandler_RightSynonym(lhs, rhs, NEXT);
 		} else {
-			return genericNonPattern_NoSynonym(lhs, rhs, NEXT);
+			return genericHandler_NoSynonym(lhs, rhs, NEXT);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_NEXTSTAR)) {
 		if (leftSynonym && rightSynonym) {
-			return genericNonPattern_BothSynonyms(lhs, rhs, NEXTSTAR);
+			return genericHandler_BothSynonyms(lhs, rhs, NEXTSTAR);
 		} else if (leftSynonym) {
-			return genericNonPattern_LeftSynonym(lhs, rhs, NEXTSTAR);
+			return genericHandler_LeftSynonym(lhs, rhs, NEXTSTAR);
 		} else if (rightSynonym) {
-			return genericNonPattern_RightSynonym(lhs, rhs, NEXTSTAR);
+			return genericHandler_RightSynonym(lhs, rhs, NEXTSTAR);
 		} else {
-			return genericNonPattern_NoSynonym(lhs, rhs, NEXTSTAR);
+			return genericHandler_NoSynonym(lhs, rhs, NEXTSTAR);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_AFFECTS)) {
 		if (leftSynonym && rightSynonym) {
-			return genericNonPattern_BothSynonyms(lhs, rhs, AFFECTS);
+			return genericHandler_BothSynonyms(lhs, rhs, AFFECTS);
 		} else if (leftSynonym) {
-			return genericNonPattern_LeftSynonym(lhs, rhs, AFFECTS);
+			return genericHandler_LeftSynonym(lhs, rhs, AFFECTS);
 		} else if (rightSynonym) {
-			return genericNonPattern_RightSynonym(lhs, rhs, AFFECTS);
+			return genericHandler_RightSynonym(lhs, rhs, AFFECTS);
 		} else {
-			return genericNonPattern_NoSynonym(lhs, rhs, AFFECTS);
+			return genericHandler_NoSynonym(lhs, rhs, AFFECTS);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_AFFECTSSTAR)) {
 		if (leftSynonym && rightSynonym) {
-			return genericNonPattern_BothSynonyms(lhs, rhs, AFFECTSSTAR);
+			return genericHandler_BothSynonyms(lhs, rhs, AFFECTSSTAR);
 		} else if (leftSynonym) {
-			return genericNonPattern_LeftSynonym(lhs, rhs, AFFECTSSTAR);
+			return genericHandler_LeftSynonym(lhs, rhs, AFFECTSSTAR);
 		} else if (rightSynonym) {
-			return genericNonPattern_RightSynonym(lhs, rhs, AFFECTSSTAR);
+			return genericHandler_RightSynonym(lhs, rhs, AFFECTSSTAR);
 		} else {
-			return genericNonPattern_NoSynonym(lhs, rhs, AFFECTSSTAR);
+			return genericHandler_NoSynonym(lhs, rhs, AFFECTSSTAR);
 		}
 	} else if (formatter.stringEqualCaseInsensitive(relationType, QueryObject::RelationType_WITH)) {
 		return with(lhs, rhs);
@@ -407,23 +407,23 @@ pair<bool, vector<string>> QueryEvaluator::processClause(QueryObject clause) {
 		string patternType = declaration.getType(relationType);
 		if (formatter.stringEqualCaseInsensitive(patternType, QueryObject::RelationType_PATTERN_WHILE)) {
 			if (leftSynonym && rightSynonym) {
-				return genericNonPattern_BothSynonyms(lhs, rhs, PATTERN_WHILE);
+				return genericHandler_BothSynonyms(lhs, rhs, PATTERN_WHILE);
 			} else if (rightSynonym) {
-				return genericNonPattern_RightSynonym(lhs, rhs, PATTERN_WHILE);
+				return genericHandler_RightSynonym(lhs, rhs, PATTERN_WHILE);
 			} else if (leftSynonym) {
-				return genericNonPattern_LeftSynonym(lhs, rhs, PATTERN_WHILE);
+				return genericHandler_LeftSynonym(lhs, rhs, PATTERN_WHILE);
 			} else {
-				return genericNonPattern_NoSynonym(lhs, rhs, PATTERN_WHILE);
+				return genericHandler_NoSynonym(lhs, rhs, PATTERN_WHILE);
 			}
 		} else if (formatter.stringEqualCaseInsensitive(patternType, QueryObject::RelationType_PATTERN_IF)) {
 			if (leftSynonym && rightSynonym) {
-				return genericNonPattern_BothSynonyms(lhs, rhs, PATTERN_IF);
+				return genericHandler_BothSynonyms(lhs, rhs, PATTERN_IF);
 			} else if (rightSynonym) {
-				return genericNonPattern_RightSynonym(lhs, rhs, PATTERN_IF);
+				return genericHandler_RightSynonym(lhs, rhs, PATTERN_IF);
 			} else if (leftSynonym) {
-				return genericNonPattern_LeftSynonym(lhs, rhs, PATTERN_IF);
+				return genericHandler_LeftSynonym(lhs, rhs, PATTERN_IF);
 			} else {
-				return genericNonPattern_NoSynonym(lhs, rhs, PATTERN_IF);
+				return genericHandler_NoSynonym(lhs, rhs, PATTERN_IF);
 			}
 		} else if (formatter.stringEqualCaseInsensitive(patternType, QueryObject::RelationType_PATTERN_ASSIGN)) {
 			return patternAssign(relationType, lhs, rhs);
@@ -508,7 +508,7 @@ pair<bool, vector<string>> QueryEvaluator::with(string synonym, string value) {
 	return {atLeastOneResult, discoveredSynonyms};
 }
 
-pair<bool, vector<string>> QueryEvaluator::genericNonPattern_BothSynonyms(string leftArgument, string rightArgument, int whichRelation) {
+pair<bool, vector<string>> QueryEvaluator::genericHandler_BothSynonyms(string leftArgument, string rightArgument, int whichRelation) {
 	vector<string> discoveredSynonyms = vector<string>();
 	bool leftEncountered = encountered(leftArgument);
 	bool rightEncountered = encountered(rightArgument);
@@ -519,7 +519,7 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_BothSynonyms(string
 		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
 		for (QueryNode* leftNode : leftNodes) {
 			for (QueryNode* rightNode : rightNodes) {
-				bool result = genericNonPattern_Evaluator(leftNode->getValue(), rightNode->getValue(), whichRelation, leftNumber);
+				bool result = genericEvaluator_BothValues(leftNode->getValue(), rightNode->getValue(), whichRelation, leftNumber);
 				if (result) {
 					atLeastOneResult = true;
 					leftNode->insertParent(rightNode);
@@ -535,7 +535,7 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_BothSynonyms(string
 		discoveredSynonyms.push_back(rightArgument);
 		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
 		for (QueryNode* leftNode : leftNodes) {
-			vector<string> results = genericNonPattern_RightEvaluator(leftNode->getValue(), whichRelation, leftNumber);
+			vector<string> results = genericEvaluator_RightValue(leftNode->getValue(), whichRelation, leftNumber);
 			results = filterStatementsByTargetType(results, getEntityType(leftArgument));
 
 			if (results.empty()) {
@@ -556,7 +556,7 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_BothSynonyms(string
 		discoveredSynonyms.push_back(leftArgument);
 		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
 		for (QueryNode* rightNode : rightNodes) {
-			vector<string> results = genericNonPattern_LeftEvaluator(rightNode->getValue(), whichRelation, leftNumber);
+			vector<string> results = genericEvaluator_LeftValue(rightNode->getValue(), whichRelation, leftNumber);
 			results = filterStatementsByTargetType(results, getEntityType(rightArgument));
 			
 			if (results.empty()) {
@@ -595,7 +595,7 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_BothSynonyms(string
 		unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
 		unordered_map<string, QueryNode*> encounteredResults = unordered_map<string, QueryNode*>();
 		for (QueryNode* leftNode : leftNodes) {
-			vector<string> results = genericNonPattern_RightEvaluator(leftNode->getValue(), whichRelation, leftNumber);
+			vector<string> results = genericEvaluator_RightValue(leftNode->getValue(), whichRelation, leftNumber);
 			results = filterStatementsByTargetType(results, getEntityType(rightArgument));
 			
 			if (results.empty()) {
@@ -620,7 +620,7 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_BothSynonyms(string
 	return {atLeastOneResult, discoveredSynonyms};
 }
 
-pair<bool, vector<string>> QueryEvaluator::genericNonPattern_LeftSynonym(string leftArgument, string rightArgument, int whichRelation) {
+pair<bool, vector<string>> QueryEvaluator::genericHandler_LeftSynonym(string leftArgument, string rightArgument, int whichRelation) {
 	vector<string> discoveredSynonyms = vector<string>();
 	bool leftEncountered = encountered(leftArgument);
 	bool leftNumber = !isVariable(leftArgument) && !isProcedure(leftArgument);
@@ -628,7 +628,7 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_LeftSynonym(string 
 	if (leftEncountered) {
 		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
 		for (QueryNode* leftNode : leftNodes) {
-			bool result = genericNonPattern_Evaluator(leftNode->getValue(), rightArgument, whichRelation, leftNumber);
+			bool result = genericEvaluator_BothValues(leftNode->getValue(), rightArgument, whichRelation, leftNumber);
 			if (!result) {
 				leftNode->destroy(&encounteredEntities);
 			}
@@ -638,7 +638,7 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_LeftSynonym(string 
 		vector<string> leftPossibilities = generatePossiblities(leftArgument);
 		unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
 		for (string leftPossiblity : leftPossibilities) {
-			bool result = genericNonPattern_Evaluator(leftPossiblity, rightArgument, whichRelation, leftNumber);
+			bool result = genericEvaluator_BothValues(leftPossiblity, rightArgument, whichRelation, leftNumber);
 			if (result) {
 				atLeastOneResult = true;
 				leftNodes.insert(QueryNode::createQueryNode(leftArgument, leftPossiblity));
@@ -650,7 +650,7 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_LeftSynonym(string 
 	return {atLeastOneResult, discoveredSynonyms};
 }
 
-pair<bool, vector<string>> QueryEvaluator::genericNonPattern_RightSynonym(string leftArgument, string rightArgument, int whichRelation) {
+pair<bool, vector<string>> QueryEvaluator::genericHandler_RightSynonym(string leftArgument, string rightArgument, int whichRelation) {
 	vector<string> discoveredSynonyms = vector<string>();
 	bool rightEncountered = encountered(rightArgument);
 	bool leftNumber = formatter.isNumericString(leftArgument);
@@ -659,7 +659,7 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_RightSynonym(string
 	if (rightEncountered) {
 		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
 		for (QueryNode* rightNode : rightNodes) {
-			bool result = genericNonPattern_Evaluator(leftArgument, rightNode->getValue(), whichRelation, leftNumber);
+			bool result = genericEvaluator_BothValues(leftArgument, rightNode->getValue(), whichRelation, leftNumber);
 			if (!result) {
 				rightNode->destroy(&encounteredEntities);
 			}
@@ -669,7 +669,7 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_RightSynonym(string
 		vector<string> rightPossibilities = generatePossiblities(rightArgument);
 		unordered_set<QueryNode*> rightNodes = unordered_set<QueryNode*>();
 		for (string rightPossiblity : rightPossibilities) {
-			bool result = genericNonPattern_Evaluator(leftArgument, rightPossiblity, whichRelation, leftNumber);
+			bool result = genericEvaluator_BothValues(leftArgument, rightPossiblity, whichRelation, leftNumber);
 			if (result) {
 				atLeastOneResult = true;
 				rightNodes.insert(QueryNode::createQueryNode(rightArgument, rightPossiblity));
@@ -682,11 +682,11 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_RightSynonym(string
 	return {atLeastOneResult, discoveredSynonyms};
 }
 
-pair<bool, vector<string>> QueryEvaluator::genericNonPattern_NoSynonym(string leftArgument, string rightArgument, int whichRelation) {
-	return {genericNonPattern_Evaluator(leftArgument, rightArgument, whichRelation, formatter.isNumericString(leftArgument)), vector<string>()};
+pair<bool, vector<string>> QueryEvaluator::genericHandler_NoSynonym(string leftArgument, string rightArgument, int whichRelation) {
+	return {genericEvaluator_BothValues(leftArgument, rightArgument, whichRelation, formatter.isNumericString(leftArgument)), vector<string>()};
 }
 
-bool QueryEvaluator::genericNonPattern_Evaluator(string leftValue, string rightValue, int whichRelation, bool leftNumber) {
+bool QueryEvaluator::genericEvaluator_BothValues(string leftValue, string rightValue, int whichRelation, bool leftNumber) {
 	bool result = false;
 	switch (whichRelation) {
 	case MODIFIES:
@@ -761,7 +761,7 @@ bool QueryEvaluator::genericNonPattern_Evaluator(string leftValue, string rightV
 }
 
 // given a right value, evaluate possible left values
-vector<string> QueryEvaluator::genericNonPattern_LeftEvaluator(string rightValue, int whichRelation, bool leftNumber) {
+vector<string> QueryEvaluator::genericEvaluator_LeftValue(string rightValue, int whichRelation, bool leftNumber) {
 	vector<string> results;
 	switch (whichRelation) {
 	case MODIFIES:
@@ -836,7 +836,7 @@ vector<string> QueryEvaluator::genericNonPattern_LeftEvaluator(string rightValue
 }
 
 // given a left value, evaluate possible right values
-vector<string> QueryEvaluator::genericNonPattern_RightEvaluator(string leftValue, int whichRelation, bool leftNumber) {
+vector<string> QueryEvaluator::genericEvaluator_RightValue(string leftValue, int whichRelation, bool leftNumber) {
 	vector<string> results;
 	switch (whichRelation) {
 	case MODIFIES:
