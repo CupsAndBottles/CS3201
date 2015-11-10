@@ -94,19 +94,19 @@ namespace UnitTesting
 			Assert::IsTrue(find(results.begin(), results.end(), string("4")) != results.end());
 			Assert::IsTrue(find(results.begin(), results.end(), string("5")) != results.end());
 
-			//commented code are those that are failing
-			/*results = qe.getResults("assign a; Select a such that Affects*(4, a)");
+			
+			results = qe.getResults("assign a; Select a such that Affects*(4, a)");
 			Assert::AreEqual(6, (int)results.size());
 			Assert::IsTrue(find(results.begin(), results.end(), string("7")) != results.end());
 			Assert::IsTrue(find(results.begin(), results.end(), string("11")) != results.end());
 			Assert::IsTrue(find(results.begin(), results.end(), string("12")) != results.end());
 			Assert::IsTrue(find(results.begin(), results.end(), string("14")) != results.end());
 			Assert::IsTrue(find(results.begin(), results.end(), string("15")) != results.end());
-			Assert::IsTrue(find(results.begin(), results.end(), string("16")) != results.end());*/
+			Assert::IsTrue(find(results.begin(), results.end(), string("16")) != results.end());
 
 			results = qe.getResults("Select BOOLEAN such that Affects*(4, 12)");
 			Assert::AreEqual(1, (int)results.size());
-			//Assert::IsTrue(find(results.begin(), results.end(), string("true")) != results.end());
+			Assert::IsTrue(find(results.begin(), results.end(), string("true")) != results.end());
 
 			results = qe.getResults("assign a; Select a such that Affects*(a, 14)");
 			Assert::AreEqual(6, (int)results.size());
@@ -129,11 +129,11 @@ namespace UnitTesting
 			Assert::IsTrue(find(results.begin(), results.end(), string("15")) != results.end());
 			Assert::IsTrue(find(results.begin(), results.end(), string("17")) != results.end());
 
-			/*results = qe.getResults("Select BOOLEAN such that Affects(_, _)");
+			results = qe.getResults("Select BOOLEAN such that Affects(_, _)");
 			Assert::AreEqual(1, (int)results.size());
-			Assert::IsTrue(find(results.begin(), results.end(), string("true")) != results.end());*/
+			Assert::IsTrue(find(results.begin(), results.end(), string("true")) != results.end());
 
-			/*results = qe.getResults("assign a; Select a such that Affects(a, _)");
+			results = qe.getResults("assign a; Select a such that Affects(a, _)");
 			Assert::AreEqual(9, (int)results.size());
 			Assert::IsTrue(find(results.begin(), results.end(), string("4")) != results.end());
 			Assert::IsTrue(find(results.begin(), results.end(), string("5")) != results.end());
@@ -143,9 +143,9 @@ namespace UnitTesting
 			Assert::IsTrue(find(results.begin(), results.end(), string("13")) != results.end());
 			Assert::IsTrue(find(results.begin(), results.end(), string("14")) != results.end());
 			Assert::IsTrue(find(results.begin(), results.end(), string("15")) != results.end());
-			Assert::IsTrue(find(results.begin(), results.end(), string("17")) != results.end());*/
+			Assert::IsTrue(find(results.begin(), results.end(), string("17")) != results.end());
 
-			/*results = qe.getResults("assign a; Select a such that Affects(_, a)");
+			results = qe.getResults("assign a; Select a such that Affects(_, a)");
 			Assert::AreEqual(8, (int)results.size());
 			Assert::IsTrue(find(results.begin(), results.end(), string("7")) != results.end());
 			Assert::IsTrue(find(results.begin(), results.end(), string("9")) != results.end());
@@ -154,7 +154,7 @@ namespace UnitTesting
 			Assert::IsTrue(find(results.begin(), results.end(), string("14")) != results.end());
 			Assert::IsTrue(find(results.begin(), results.end(), string("15")) != results.end());
 			Assert::IsTrue(find(results.begin(), results.end(), string("16")) != results.end());
-			Assert::IsTrue(find(results.begin(), results.end(), string("18")) != results.end());*/
+			Assert::IsTrue(find(results.begin(), results.end(), string("18")) != results.end());
 		}
 	};
 }
