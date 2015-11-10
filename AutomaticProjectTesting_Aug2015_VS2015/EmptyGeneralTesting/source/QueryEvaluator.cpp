@@ -960,10 +960,12 @@ bool QueryEvaluator::genericEvaluator_BothValues(string leftValue, string rightV
 		// left must be statement number
 		// right must be variable
 		result = database.patternIf(stoi(leftValue), rightValue);
+		break;
 	case PATTERN_WHILE:
 		// left must be statement number
 		// right must be variable
 		result = database.patternWhile(stoi(leftValue), rightValue);
+		break;
 	}
 
 	return result;
@@ -1035,10 +1037,12 @@ vector<string> QueryEvaluator::genericEvaluator_LeftValue(string rightValue, int
 		// left must be statement number
 		// right must be variable
 		results = formatter.integerVectorToStringVector(database.getStatementsThatMatchPattern(Tnode::Type::STMT_IF, rightValue, ProgramKnowledgeBase::WILDCARD_STRING));
+		break;
 	case PATTERN_WHILE:
 		// left must be statement number
 		// right must be variable
 		results = formatter.integerVectorToStringVector(database.getStatementsThatMatchPattern(Tnode::Type::STMT_WHILE, rightValue, ProgramKnowledgeBase::WILDCARD_STRING));
+		break;
 	}
 
 	return results;
@@ -1110,10 +1114,12 @@ vector<string> QueryEvaluator::genericEvaluator_RightValue(string leftValue, int
 		// left must be statement number
 		// right must be variable
 		results = database.getConditionalVariableOfIf(stoi(leftValue));
+		break;
 	case PATTERN_WHILE:
 		// left must be statement number
 		// right must be variable
 		results = database.getConditionalVariableOfWhile(stoi(leftValue));
+		break;
 	}
 
 	return results;
