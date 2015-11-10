@@ -256,6 +256,9 @@ namespace UnitTesting
 			
 			
 		}
+		TEST_METHOD(testUses) {
+
+		}
 	
 		TEST_METHOD(testSimpleModify) {
 			string fileName = "programSimpleModify.txt";
