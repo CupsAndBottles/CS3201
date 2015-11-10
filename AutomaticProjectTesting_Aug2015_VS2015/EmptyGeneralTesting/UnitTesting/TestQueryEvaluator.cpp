@@ -234,11 +234,11 @@ namespace UnitTesting
 			outputFile << "y = 1;" <<endl; // line 1
 			outputFile << "x = 2;" <<endl; //line 2
 			outputFile << "z = 3;" << endl;//line 3
-			outputFile << "call Second;" << endl;
+			outputFile << "call Second;" << endl; //line 4
 			outputFile << "}" << endl;
 
 			outputFile << "procedure Second {";
-			outputFile << "w=4;" << endl; //line 4
+			outputFile << "w=4;" << endl; //line 5
 			outputFile << "}" << endl;
 			outputFile.close();
 
@@ -267,12 +267,22 @@ namespace UnitTesting
 			Assert::IsTrue(find(follow_ss1.begin(), follow_ss1.end(), string("2")) != follow_ss1.end());
 			Assert::IsTrue(find(follow_ss1.begin(), follow_ss1.end(), string("3")) != follow_ss1.end());
 
+			//select a such that Follows(1,2)
+			list<string>follow_12 = qe.getResults("assign a; Select a such that Follows(1,2)");
+			Assert::AreEqual(4, (int)follow_12.size());
+			Assert::IsTrue(find(follow_12.begin(), follow_12.end(), string("1")) != follow_12.end());
+			Assert::IsTrue(find(follow_12.begin(), follow_12.end(), string("2")) != follow_12.end());
+			Assert::IsTrue(find(follow_12.begin(), follow_12.end(), string("3")) != follow_12.end());
+			Assert::IsTrue(find(follow_12.begin(), follow_12.end(), string("5")) != follow_12.end());
+			Assert::IsFalse(find(follow_12.begin(), follow_12.end(), string("4")) != follow_12.end());
+
+			
 			//select s such that Follows(s,a)
 			list<string>follow_sa = qe.getResults("stmt s; assign a; Select s such that Follows(s,a)");
-			Assert::AreEqual(2, (int)follow_sa.size());
+			Assert::AreEqual(3, (int)follow_sa.size());
 			Assert::IsTrue(find(follow_sa.begin(), follow_sa.end(), string("1")) != follow_sa.end());
 			Assert::IsTrue(find(follow_sa.begin(), follow_sa.end(), string("2")) != follow_sa.end());
-			//Assert::IsTrue(find(follow_sa.begin(), follow_sa.end(), string("3")) != follow_sa.end());
+			Assert::IsTrue(find(follow_sa.begin(), follow_sa.end(), string("3")) != follow_sa.end()); //error: this should not be true.
 
 			//select a such that Follows(a,c)
 			list<string>follow_ac = qe.getResults("assign a; call c; Select a such that Follows(a,c)");
