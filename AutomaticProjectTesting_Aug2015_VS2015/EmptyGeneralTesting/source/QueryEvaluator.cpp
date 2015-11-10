@@ -436,21 +436,12 @@ pair<bool, vector<string>> QueryEvaluator::processClause(QueryObject clause) {
 				return genericHandler_NoSynonym(lhs, rhs, PATTERN_IF);
 			}
 		} else if (formatter.stringEqualCaseInsensitive(patternType, QueryObject::RelationType_PATTERN_ASSIGN)) {
-			bool expressionSynonym = isSynonym(rhs);
 			bool variableSynonym = isSynonym(lhs);
 			bool assignSynonym = isSynonym(relationType);
-			if (expressionSynonym && variableSynonym && assignSynonym) {
-				return patternAssign_AllSynonyms(relationType, lhs, rhs);
-			} else if (assignSynonym && variableSynonym) {
+			if (assignSynonym && variableSynonym) {
 				return patternAssign_AssignAndVariableSynonyms(relationType, lhs, rhs);
-			} else if (variableSynonym && expressionSynonym) {
-				return patternAssign_VariableAndExpressionSynonyms(relationType, lhs, rhs);
-			} else if (assignSynonym && expressionSynonym) {
-				return patternAssign_AssignAndExpressionSynonyms(relationType, lhs, rhs);
 			} else if (variableSynonym) {
 				return patternAssign_VariableSynonym(relationType, lhs, rhs);
-			} else if (expressionSynonym) {
-				return patternAssign_ExpressionSynonym(relationType, lhs, rhs);
 			} else if (assignSynonym) {
 				return patternAssign_AssignSynonym(relationType, lhs, rhs);
 			}
@@ -458,10 +449,6 @@ pair<bool, vector<string>> QueryEvaluator::processClause(QueryObject clause) {
 	}
 
 	return {false, vector<string>()};
-}
-
-pair<bool, vector<string>> QueryEvaluator::patternAssign_AllSynonyms(string assign, string variable, string expression) {
-	return pair<bool, vector<string>>();
 }
 
 pair<bool, vector<string>> QueryEvaluator::patternAssign_AssignAndVariableSynonyms(string assign, string variable, string expression) {
@@ -635,23 +622,11 @@ pair<bool, vector<string>> QueryEvaluator::patternAssign_AssignAndVariableSynony
 	return {atLeastOneResult, discoveredEntities};
 }
 
-pair<bool, vector<string>> QueryEvaluator::patternAssign_VariableAndExpressionSynonyms(string assign, string variable, string expression) {
-	return pair<bool, vector<string>>();
-}
-
-pair<bool, vector<string>> QueryEvaluator::patternAssign_AssignAndExpressionSynonyms(string assign, string variable, string expression) {
-	return pair<bool, vector<string>>();
-}
-
 pair<bool, vector<string>> QueryEvaluator::patternAssign_AssignSynonym(string assign, string variable, string expression) {
 	return pair<bool, vector<string>>();
 }
 
 pair<bool, vector<string>> QueryEvaluator::patternAssign_VariableSynonym(string assign, string variable, string expression) {
-	return pair<bool, vector<string>>();
-}
-
-pair<bool, vector<string>> QueryEvaluator::patternAssign_ExpressionSynonym(string assign, string variable, string expression) {
 	return pair<bool, vector<string>>();
 }
 
