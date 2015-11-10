@@ -464,5 +464,87 @@ namespace UnitTesting
 			Assert::AreEqual(2, vectornodes.at(10)->getNext().at(0)->getValue());
 			Assert::AreEqual(11, vectornodes.at(2)->getNext().at(1)->getValue());
 		}
+
+		TEST_METHOD(testLinkSourceThree) {
+			string fileName = "kitkat.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure kitkat {" << endl;
+			outputFile << "x = 1;" << endl; // 1
+			outputFile << "if x then {" << endl; // 2
+			outputFile << "y = 10;" << endl; // 3
+			outputFile << "while y {" << endl; // 4
+			outputFile << "z = x + y;" << endl; // 5
+			outputFile << "d = z * 0;" << endl; // 6
+			outputFile << "if d then {" << endl; // 7
+			outputFile << "y = y + 1;} " << endl; // 8
+			outputFile << "else {" << endl; 
+			outputFile << "y = y - 1;}" << endl; // 9
+			outputFile << "y = y - 2;}" << endl; // 10
+			outputFile << "x = 2;}" << endl; // 11
+			outputFile << "else {" << endl; 
+			outputFile << "z = d * 2;}" << endl; // 12
+			outputFile << "x = z + 3;" << endl; // 13
+			outputFile << "call water;" << endl; // 14
+			outputFile << "}";
+			outputFile << " " << endl; 
+			outputFile << "procedure snickers {" << endl;
+			outputFile << "i = 1;" << endl; // 15
+			outputFile << "if i then {" << endl; // 16
+			outputFile << "call kitkat;}" << endl; // 17
+			outputFile << "else {" << endl; 
+			outputFile << "call water;}" << endl; // 18
+			outputFile << "}";
+			outputFile << " " << endl;
+			outputFile << "procedure water {" << endl; 
+			outputFile << "q = 8;" << endl; // 19
+			outputFile << "while q {" << endl; // 20
+			outputFile << "q = q - 1;}" << endl; // 21
+			outputFile << "}" << endl; 
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Assert::AreNotEqual(0, (int)parsedProgram.size());
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			db->buildControlFlowGraph();
+			Gnode *cfgRoot = db->getControlFlowGraphRoot();
+			vector<Gnode*> vectornodes = db->getControlFlowGraphNodes();
+			vector<Gnode*> cfgRoots = db->getControlFlowGraphRootList();
+
+			Assert::AreEqual(1, cfgRoots.at(0)->getValue());
+			Assert::AreEqual(15, cfgRoots.at(1)->getValue());
+			Assert::AreEqual(19, cfgRoots.at(2)->getValue());
+
+			Assert::AreEqual(2, vectornodes.at(1)->getNext().at(0)->getValue());
+			Assert::AreEqual(12, vectornodes.at(2)->getNext().at(0)->getValue());
+			Assert::AreEqual(3, vectornodes.at(2)->getNext().at(1)->getValue());
+			Assert::AreEqual(4, vectornodes.at(3)->getNext().at(0)->getValue());
+			Assert::AreEqual(5, vectornodes.at(4)->getNext().at(0)->getValue());
+			Assert::AreEqual(11, vectornodes.at(4)->getNext().at(1)->getValue());
+			Assert::AreEqual(6, vectornodes.at(5)->getNext().at(0)->getValue());
+			Assert::AreEqual(7, vectornodes.at(6)->getNext().at(0)->getValue());
+			Assert::AreEqual(9, vectornodes.at(7)->getNext().at(0)->getValue());
+			Assert::AreEqual(8, vectornodes.at(7)->getNext().at(1)->getValue());
+			Assert::AreEqual(10, vectornodes.at(8)->getNext().at(0)->getValue());
+			Assert::AreEqual(10, vectornodes.at(9)->getNext().at(0)->getValue());
+			Assert::AreEqual(4, vectornodes.at(10)->getNext().at(0)->getValue());
+			Assert::AreEqual(13, vectornodes.at(11)->getNext().at(0)->getValue());
+			Assert::AreEqual(13, vectornodes.at(12)->getNext().at(0)->getValue());
+			Assert::AreEqual(14, vectornodes.at(13)->getNext().at(0)->getValue());
+
+			//Assert::IsNull(vectornodes.at(14)->getNext().at(0));  gets index out of range
+																 // which is expected.
+																 // this applies to 17, 18 and 20
+			Assert::AreEqual(16, vectornodes.at(15)->getNext().at(0)->getValue());
+			Assert::AreEqual(18, vectornodes.at(16)->getNext().at(0)->getValue());
+			Assert::AreEqual(17, vectornodes.at(16)->getNext().at(1)->getValue());
+			
+			Assert::AreEqual(20, vectornodes.at(19)->getNext().at(0)->getValue());
+			Assert::AreEqual(21, vectornodes.at(20)->getNext().at(0)->getValue());
+			Assert::AreEqual(20, vectornodes.at(21)->getNext().at(0)->getValue());
+		}
+
 	};
 }
