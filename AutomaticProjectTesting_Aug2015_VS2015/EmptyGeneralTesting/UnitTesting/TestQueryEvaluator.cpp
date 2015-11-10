@@ -429,9 +429,12 @@ namespace UnitTesting
 
 			list<string> query1 = qe.getResults("assign a; Select a pattern a (\"x\",_)");
 			Assert::AreEqual(2, (int)query1.size());
+			Assert::IsTrue(find(query1.begin(), query1.end(), string("1")) != query1.end());
+			Assert::IsTrue(find(query1.begin(), query1.end(), string("2")) != query1.end());
 
 			list<string> query2 = qe.getResults("assign a; Select a pattern a (_,\"x\")");
 			Assert::AreEqual(1, (int)query2.size());
+			Assert::IsTrue(find(query2.begin(), query2.end(), string("5")) != query1.end());
 		}
 	};
 }
