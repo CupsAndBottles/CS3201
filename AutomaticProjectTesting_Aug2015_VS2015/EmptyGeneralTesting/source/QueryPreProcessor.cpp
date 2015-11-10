@@ -79,7 +79,7 @@ vector<string> QueryPreProcessor::split(string s, string delim) {
 }
 
 bool QueryPreProcessor::inputEntitiesIntoTable(vector<string> v) {
-	vector<string> designEntities = { "stmt","assign","while","if","procedure","variable","constant","prog_line" };
+	vector<string> designEntities = { "stmt","assign","while","if","procedure","variable","constant","prog_line","call" };
 
 	//Find stmt, assign, while... design-entities and put them into entity table
 	for (vector<string>::iterator it = v.begin(); it != v.end(); ++it) {
