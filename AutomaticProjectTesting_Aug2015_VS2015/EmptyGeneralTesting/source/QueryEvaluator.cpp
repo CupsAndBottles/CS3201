@@ -47,12 +47,15 @@ bool QueryEvaluator::queryHasResult(){
 
 list<string> QueryEvaluator::evaluateSelect(bool shortcircuited) {
 	list<string> results;
-	if (selectClause.front() == "BOOLEAN") {
-		if (shortcircuited) {
+	if (shortcircuited) {
+		if (selectClause.front() == "BOOLEAN") {
 			results.push_back("false");
-		} else {
-			results.push_back("true");
 		}
+		return results;
+	}
+
+	if (selectClause.front() == "BOOLEAN") {
+		results.push_back("true");
 		return results;
 	}
 
