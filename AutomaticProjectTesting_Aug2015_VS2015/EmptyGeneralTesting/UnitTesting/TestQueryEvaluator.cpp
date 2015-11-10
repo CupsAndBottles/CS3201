@@ -179,9 +179,8 @@ namespace UnitTesting
 			
 			//select s such that Parent(w,iff), nested while if
 			list<string> parent_wiff = qe.getResults("while w; if iff; Select w such that Parent(w,iff)");
-			Assert::AreEqual(2, (int)parent_wiff.size());
-			Assert::IsTrue(find(parent_wiff.begin(), parent_wiff.end(), string("6")) != parent_wiff.end()); //6 should not appear
-
+			Assert::AreEqual(1, (int)parent_wiff.size());
+			Assert::AreEqual(string("9"), parent_wiff.front());
 
 			//select w such that Parent(w,7)
 			list<string> parent_w7 = qe.getResults("while w; Select w such that Parent(w,7)");
