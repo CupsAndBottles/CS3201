@@ -23,5 +23,5 @@ public:
 	vector<string> intersection(vector<string> a, vector<string> b);
 	vector<string> join(vector<string> a, vector<string> b);
 	bool hasBracketingUnderscores(string s);
-	string removeUnderscore(string s);
+	string removeUnderscores(string s);
 };
