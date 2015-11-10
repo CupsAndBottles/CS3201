@@ -316,6 +316,23 @@ namespace UnitTesting
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 			QueryEvaluator qe = QueryEvaluator(&pkb);
 
+			//select p such that Uses(p,v)
+			list<string> uses_ppv = qe.getResults("variable v; procedure p; Select p such that Uses(p, v)");
+			Assert::AreEqual(1, (int)uses_ppv.size());
+			Assert::IsTrue(find(uses_ppv.begin(), uses_ppv.end(), string("Proc")) != uses_ppv.end());
+
+			//select v such that Uses(p.v)
+			list<string> uses_vpv = qe.getResults("variable v; procedure p; Select v such that Uses(p, v)");
+			Assert::AreEqual(3, (int)uses_vpv.size());
+			Assert::IsTrue(find(uses_vpv.begin(), uses_vpv.end(), string("y")) != uses_vpv.end());
+			Assert::IsTrue(find(uses_vpv.begin(), uses_vpv.end(), string("x")) != uses_vpv.end());
+			Assert::IsTrue(find(uses_vpv.begin(), uses_vpv.end(), string("i")) != uses_vpv.end());
+
+			//select v such that Uses(6,v), see what variables are selected for while
+			list<string> uses_6v = qe.getResults("variable v; Select v such that Uses(6,v)");
+			Assert::AreEqual(2, (int)uses_6v.size());
+			Assert::IsTrue(find(uses_6v.begin(), uses_6v.end(), string("i")) != uses_6v.end());
+			Assert::IsTrue(find(uses_6v.begin(), uses_6v.end(), string("y")) != uses_6v.end());
 			//select a such that Uses(1, "y")
 			list<string> uses_1y = qe.getResults("assign a; Select a such that Uses(1, \"y\")");
 			Assert::AreEqual(6, (int)uses_1y.size());
@@ -329,8 +346,8 @@ namespace UnitTesting
 			Assert::IsTrue(find(uses_1y.begin(), uses_1y.end(), string("8")) != uses_1y.end());
 			
 			//select v such that Uses(4,v)
-			list<string> uses_4v = qe.getResults("variable v; stmt s; Select s such that Uses(4, v)");
-			Assert::AreEqual(2, (int)uses_4v.size()); //error: gives 8
+			list<string> uses_4v = qe.getResults("variable v; Select v such that Uses(4, v)");
+			Assert::AreEqual(2, (int)uses_4v.size());
 			Assert::IsTrue(find(uses_4v.begin(), uses_4v.end(), string("x")) != uses_4v.end());
 			Assert::IsTrue(find(uses_4v.begin(), uses_4v.end(), string("y")) != uses_4v.end());
 			
