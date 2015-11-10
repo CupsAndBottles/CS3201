@@ -46,6 +46,22 @@ void QueryNode::removeParent(QueryNode* node) {
 }
 
 void QueryNode::destroy(unordered_map<string, unordered_set<QueryNode*>>* encounteredEntities, bool rootSetOperation) {
+	if (rootSetOperation) {
+		int numChildren = (int)children.size();
+		for (int i = 0; i < numChildren; i++) {
+			QueryNode* currentChild = children[0];
+			currentChild->removeParent(this);
+			this->removeChild(currentChild);
+			if (currentChild->hasNoParent()) {
+				// link to root
+				parents[0]->addChild(currentChild);
+				currentChild->addParent(parents[0]);
+			}
+		}
+		encounteredEntities->at(this->getSynonym()).erase(this);
+		return;
+	}
+
 	int numChildren = (int) children.size();
 	for (int i = 0; i < numChildren; i++) {
 		QueryNode* currentChild = children[0];
@@ -62,7 +78,7 @@ void QueryNode::destroy(unordered_map<string, unordered_set<QueryNode*>>* encoun
 		QueryNode* currentParent = parents[0];
 		currentParent->removeChild(this);
 		this->removeParent(currentParent);
-		if (!currentParent->isRoot() && currentParent->hasNoChildren() && !rootSetOperation) {
+		if (!currentParent->isRoot() && currentParent->hasNoChildren()) {
 			currentParent->destroy(encounteredEntities);
 			delete currentParent;
 		}
