@@ -420,24 +420,28 @@ pair<bool, vector<string>> QueryEvaluator::processClause(QueryObject clause) {
 		// check for patterns
 		string patternType = declaration.getType(relationType);
 		if (formatter.stringEqualCaseInsensitive(patternType, QueryObject::RelationType_PATTERN_WHILE)) {
+			leftSynonym = isSynonym(relationType);
+			rightSynonym = isSynonym(lhs);
 			if (leftSynonym && rightSynonym) {
-				return genericHandler_BothSynonyms(lhs, rhs, PATTERN_WHILE);
+				return genericHandler_BothSynonyms(relationType, lhs, PATTERN_WHILE);
 			} else if (rightSynonym) {
-				return genericHandler_RightSynonym(lhs, rhs, PATTERN_WHILE);
+				return genericHandler_RightSynonym(relationType, lhs, PATTERN_WHILE);
 			} else if (leftSynonym) {
-				return genericHandler_LeftSynonym(lhs, rhs, PATTERN_WHILE);
+				return genericHandler_LeftSynonym(relationType, lhs, PATTERN_WHILE);
 			} else {
-				return genericHandler_NoSynonym(lhs, rhs, PATTERN_WHILE);
+				return genericHandler_NoSynonym(relationType, lhs, PATTERN_WHILE);
 			}
 		} else if (formatter.stringEqualCaseInsensitive(patternType, QueryObject::RelationType_PATTERN_IF)) {
+			leftSynonym = isSynonym(relationType);
+			rightSynonym = isSynonym(lhs);
 			if (leftSynonym && rightSynonym) {
-				return genericHandler_BothSynonyms(lhs, rhs, PATTERN_IF);
+				return genericHandler_BothSynonyms(relationType, lhs, PATTERN_IF);
 			} else if (rightSynonym) {
-				return genericHandler_RightSynonym(lhs, rhs, PATTERN_IF);
+				return genericHandler_RightSynonym(relationType, lhs, PATTERN_IF);
 			} else if (leftSynonym) {
-				return genericHandler_LeftSynonym(lhs, rhs, PATTERN_IF);
+				return genericHandler_LeftSynonym(relationType, lhs, PATTERN_IF);
 			} else {
-				return genericHandler_NoSynonym(lhs, rhs, PATTERN_IF);
+				return genericHandler_NoSynonym(relationType, lhs, PATTERN_IF);
 			}
 		} else if (formatter.stringEqualCaseInsensitive(patternType, QueryObject::RelationType_PATTERN_ASSIGN)) {
 			bool variableSynonym = isSynonym(lhs);
@@ -956,10 +960,12 @@ bool QueryEvaluator::genericEvaluator_BothValues(string leftValue, string rightV
 		// left must be statement number
 		// right must be variable
 		result = database.patternIf(stoi(leftValue), rightValue);
+		break;
 	case PATTERN_WHILE:
 		// left must be statement number
 		// right must be variable
 		result = database.patternWhile(stoi(leftValue), rightValue);
+		break;
 	}
 
 	return result;
@@ -1031,10 +1037,12 @@ vector<string> QueryEvaluator::genericEvaluator_LeftValue(string rightValue, int
 		// left must be statement number
 		// right must be variable
 		results = formatter.integerVectorToStringVector(database.getStatementsThatMatchPattern(Tnode::Type::STMT_IF, rightValue, ProgramKnowledgeBase::WILDCARD_STRING));
+		break;
 	case PATTERN_WHILE:
 		// left must be statement number
 		// right must be variable
 		results = formatter.integerVectorToStringVector(database.getStatementsThatMatchPattern(Tnode::Type::STMT_WHILE, rightValue, ProgramKnowledgeBase::WILDCARD_STRING));
+		break;
 	}
 
 	return results;
@@ -1106,10 +1114,12 @@ vector<string> QueryEvaluator::genericEvaluator_RightValue(string leftValue, int
 		// left must be statement number
 		// right must be variable
 		results = database.getConditionalVariableOfIf(stoi(leftValue));
+		break;
 	case PATTERN_WHILE:
 		// left must be statement number
 		// right must be variable
 		results = database.getConditionalVariableOfWhile(stoi(leftValue));
+		break;
 	}
 
 	return results;
