@@ -49,7 +49,7 @@ void Gnode::setNextEndIf(Gnode *lastChildThen, Gnode *lastChildElse, Gnode *othe
 	lastChildThen->right = other;
 	lastChildElse->right = other;
 	other->prev.push_back(lastChildElse);
-	other->otherPrev = lastChildThen;
+	other->prev.push_back(lastChildThen);
 }
 
 void Gnode::setNextWhile(Gnode* parent, Gnode* lastchild, Gnode* other){
@@ -73,11 +73,6 @@ vector <Gnode *> Gnode::getNext() {
 }
 
 vector <Gnode *> Gnode::getPrev() {
-
-	if ((!prev.empty()) && (otherPrev != NULL)) {
-		prev.push_back(otherPrev);
-	}
-
 	return prev;
 }
 
