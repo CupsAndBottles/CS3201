@@ -1020,6 +1020,7 @@ void ProgramKnowledgeBase::calculateRelations(Tnode* currNode, vector<Tnode*>* p
 			calculateRelations(callee, parents, processedProcedures);
 		}
 		// else: callee procedure has already been processed or is in the stack, don't recurse into it
+		parents->pop_back(); // remove calls node from stack of parents
 	} else if (currNode->isAssigns()) {
 		parents->push_back(currNode);
 		Tnode* assignLeft = currNode->getFirstChild();
