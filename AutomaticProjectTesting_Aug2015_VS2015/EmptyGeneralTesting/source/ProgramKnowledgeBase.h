@@ -86,7 +86,10 @@ public:
 	bool patternWhile(int stmt, string conditionalVariable);
 	vector<string> getConditionalVariableOfWhile(int stmt);
 	vector<int> getStatementsThatMatchPattern(Tnode::Type type, string var, string expr);
+
 	vector<int> getStatementsThatContainPattern(Tnode::Type type, string var, string expr);
+	bool patternAssignMatch(int stmt, string var, string expr);
+	bool patternAssignContain(int stmt, string var, string expr);
 
 	bool calls(string p1, string p2);
 	vector<string> getProceduresThatCall(string proc);

@@ -415,8 +415,8 @@ vector<Tnode*> ProgramKnowledgeBase::getIfsThatMatchPattern(string var) {
 }
 
 vector<Tnode*> ProgramKnowledgeBase::getAssignsThatContainPattern(string var, string expr) {
-	vector<string> expressionTokens = Parser().splitByDelimiters(vector<string>(1, expr));
-	Tnode* expressionTreeRoot = Database().getExpressionTree(expressionTokens);
+	vector<string> expressionTokens = Parser::splitByDelimiters(vector<string>(1, expr));
+	Tnode* expressionTreeRoot = Database::getExpressionTree(expressionTokens);
 	vector<Tnode*> assigns = getNodesOfType(Tnode::STMT_ASSIGN);
 	vector<Tnode*> results = vector<Tnode*>();
 	Tnode* expression = NULL;
@@ -843,6 +843,44 @@ vector<int> ProgramKnowledgeBase::getStatementsThatContainPattern(Tnode::Type ty
 	} else {
 		return vector<int>();
 	}
+}
+
+bool ProgramKnowledgeBase::patternAssignMatch(int stmt, string var, string expr) {
+	Tnode* assign = statementTable->getASTNode(stmt);
+	if (assign == NULL) {
+		return false;
+	}
+
+	if (assign->getType() != Tnode::Type::STMT_ASSIGN) {
+		return false;
+	} 
+
+	if (assign->getFirstChild()->getName() != var) {
+		return false;
+	}
+
+	vector<string> expressionTokens = Parser::splitByDelimiters(vector<string>(1, expr));
+	Tnode* expressionTreeRoot = Database::getExpressionTree(expressionTokens);
+	return expressionTreeRoot->isEquals(assign->getFirstChild()->getRightSibling());
+}
+
+bool ProgramKnowledgeBase::patternAssignContain(int stmt, string var, string expr) {
+	Tnode* assign = statementTable->getASTNode(stmt);
+	if (assign == NULL) {
+		return false;
+	}
+
+	if (assign->getType() != Tnode::Type::STMT_ASSIGN) {
+		return false;
+	}
+
+	if (assign->getFirstChild()->getName() != var) {
+		return false;
+	}
+
+	vector<string> expressionTokens = Parser::splitByDelimiters(vector<string>(1, expr));
+	Tnode* expressionTreeRoot = Database::getExpressionTree(expressionTokens);
+	return expressionTreeRoot->contains(assign->getFirstChild()->getRightSibling());
 }
 
 bool ProgramKnowledgeBase::calls(string p1, string p2) {
