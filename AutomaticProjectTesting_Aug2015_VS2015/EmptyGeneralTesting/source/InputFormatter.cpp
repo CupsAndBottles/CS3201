@@ -81,7 +81,7 @@ vector<string> InputFormatter::join( vector<string>a, vector<string> b) {
 	return c;
 }
 
-bool InputFormatter::isUnderscore(string s) {
+bool InputFormatter::hasBracketingUnderscores(string s) {
 	size_t i = s.length();
 	return (s[0] == '_') && (s[i - 1] == '_');
 }

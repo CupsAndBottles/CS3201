@@ -22,6 +22,6 @@ public:
 	string removeQuotes(string s);
 	vector<string> intersection(vector<string> a, vector<string> b);
 	vector<string> join(vector<string> a, vector<string> b);
-	bool isUnderscore(string s);
+	bool hasBracketingUnderscores(string s);
 	string removeUnderscore(string s);
 };
