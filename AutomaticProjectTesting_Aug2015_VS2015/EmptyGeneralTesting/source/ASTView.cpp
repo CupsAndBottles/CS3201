@@ -19,6 +19,7 @@ vector<vector<Tnode*>> astVector;
 vector<vector<int>> window;
 vector<vector<int>> starting;
 int spacing = 35;
+double zoom = 0.5;
 static boolean glutInited = false;
 
 void init(void)
@@ -64,7 +65,9 @@ void display(void)
 	vector<Tnode*> children = vector<Tnode*>();
 	Tnode *curNode, *childNode;
 
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glLoadIdentity();
+	glScalef(zoom, zoom, 1.0f);
 	for (unsigned int i = 0; i < astVector.size(); i++) {
 		for (unsigned int j = 0; j < astVector.at(i).size(); j++) {
 			curNode = astVector.at(i).at(j);
@@ -212,6 +215,20 @@ string enumToPrintable(int enumVal)
 	}
 }
 
+void mouseWheel(int button, int dir, int x, int y)
+{
+	if (dir > 0)
+	{
+		zoom -= 0.5;
+	}
+	else
+	{
+		zoom -= 0.5;
+	}
+	glutPostRedisplay();
+	return;
+}
+
 int viewASTCall(vector<vector<Tnode*>> inputVector, string fileName) {
 	if (!glutInited) {
 		char fakeParam[] = "fake";
@@ -227,7 +244,7 @@ int viewASTCall(vector<vector<Tnode*>> inputVector, string fileName) {
 	glutInitWindowSize(horizontal, vertical);
 	glutInitWindowPosition(0, 0);
 	glutCreateWindow(fileName.c_str());
-
+	glEnable(GL_DEPTH_TEST);
 	astVector = inputVector;
 
 	for (unsigned int i = 0; i < astVector.size(); i++) {
@@ -244,6 +261,7 @@ int viewASTCall(vector<vector<Tnode*>> inputVector, string fileName) {
 
 	glutDisplayFunc(display);
 	glutReshapeFunc(resize);
+	glutMouseWheelFunc(mouseWheel);
 	init();
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 	glutMainLoop();
