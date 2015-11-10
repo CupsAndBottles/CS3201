@@ -663,12 +663,62 @@ bool ProgramKnowledgeBase::affectsStar(int s1, int s2){
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsAffectStarredBy(int stmt){
-	vector<int> list = vector<int>();
+	vector<int> list = vector<int>(), stmtProcessed = vector<int>(), tempVec = vector<int>();
+	queue<int> toProcess = queue<int>();
+	int currProcessingStmt = stmt;
+	stmtProcessed.push_back(currProcessingStmt);
+
+	tempVec = getStatementsAffectedBy(currProcessingStmt);
+	for (int i = 0; i < tempVec.size(); i++) {
+		toProcess.push(tempVec[i]);
+	}
+	list = tempVec;
+
+	while (!toProcess.empty()) {
+		currProcessingStmt = toProcess.front();
+		stmtProcessed.push_back(currProcessingStmt);
+		toProcess.pop();
+		tempVec = getStatementsAffectedBy(currProcessingStmt);
+		for (int i = 0; i < tempVec.size(); i++) {
+			if (find(stmtProcessed.begin(), stmtProcessed.end(), tempVec[i]) == stmtProcessed.end()) {
+				toProcess.push(tempVec[i]);
+				if (find(list.begin(), list.end(), tempVec[i]) == list.end()) {
+					list.push_back(tempVec[i]);
+				}
+			}
+		}
+	}
+	sort(list.begin(), list.end());
 	return list;
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsThatAffectStar(int stmt){
-	vector<int> list = vector<int>();
+	vector<int> list = vector<int>(), stmtProcessed = vector<int>(), tempVec = vector<int>();
+	queue<int> toProcess = queue<int>();
+	int currProcessingStmt = stmt;
+	stmtProcessed.push_back(currProcessingStmt);
+
+	tempVec = getStatementsThatAffect(currProcessingStmt);
+	for (int i = 0; i < tempVec.size(); i++) {
+		toProcess.push(tempVec[i]);
+	}
+	list = tempVec;
+
+	while (!toProcess.empty()) {
+		currProcessingStmt = toProcess.front();
+		stmtProcessed.push_back(currProcessingStmt);
+		toProcess.pop();
+		tempVec = getStatementsThatAffect(currProcessingStmt);
+		for (int i = 0; i < tempVec.size(); i++) {
+			if (find(stmtProcessed.begin(), stmtProcessed.end(), tempVec[i]) == stmtProcessed.end()) {
+				toProcess.push(tempVec[i]);
+				if (find(list.begin(), list.end(), tempVec[i]) == list.end()) {
+					list.push_back(tempVec[i]);
+				}
+			}
+		}
+	}
+	sort(list.begin(), list.end());
 	return list;
 }
 

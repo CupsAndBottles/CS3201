@@ -1178,8 +1178,53 @@ namespace UnitTesting
 			Assert::IsTrue(pkb.affectsStar(11, 14));
 			Assert::IsTrue(pkb.affectsStar(9, 9));
 			Assert::IsFalse(pkb.affectsStar(16, 14));
-			Assert::IsTrue(pkb.affectsStar(7, 12));
+			Assert::IsFalse(pkb.affectsStar(7, 12));
 			Assert::IsFalse(pkb.affects(7, 7));
+
+			vector<int> vec = pkb.getStatementsAffectStarredBy(2);
+			Assert::AreEqual(0, (int)vec.size());
+
+			vec = pkb.getStatementsAffectStarredBy(4);
+			Assert::AreEqual(6, (int)vec.size());
+			Assert::AreEqual(7, vec[0]);
+			Assert::AreEqual(11, vec[1]);
+			Assert::AreEqual(12, vec[2]);
+			Assert::AreEqual(14, vec[3]);
+			Assert::AreEqual(15, vec[4]);
+			Assert::AreEqual(16, vec[5]);
+
+			vec = pkb.getStatementsAffectStarredBy(7);
+			Assert::AreEqual(0, (int)vec.size());
+
+			vec = pkb.getStatementsAffectStarredBy(9);
+			Assert::AreEqual(4, (int)vec.size());
+			Assert::AreEqual(9, vec[0]);
+			Assert::AreEqual(14, vec[1]);
+			Assert::AreEqual(15, vec[2]);
+			Assert::AreEqual(16, vec[3]);
+
+			vec = pkb.getStatementsThatAffectStar(18);
+			Assert::AreEqual(1, (int)vec.size());
+			Assert::AreEqual(17, vec[0]);
+
+			vec = pkb.getStatementsThatAffectStar(2);
+			Assert::AreEqual(0, (int)vec.size());
+
+			vec = pkb.getStatementsThatAffectStar(9);
+			Assert::AreEqual(2, (int)vec.size());
+			Assert::AreEqual(5, vec[0]);
+			Assert::AreEqual(9, vec[1]);
+
+			vec = pkb.getStatementsThatAffectStar(16);
+			Assert::AreEqual(8, (int)vec.size());
+			Assert::AreEqual(4, vec[0]);
+			Assert::AreEqual(5, vec[1]);
+			Assert::AreEqual(9, vec[2]);
+			Assert::AreEqual(11, vec[3]);
+			Assert::AreEqual(12, vec[4]);
+			Assert::AreEqual(13, vec[5]);
+			Assert::AreEqual(14, vec[6]);
+			Assert::AreEqual(15, vec[7]);
 		}
 	};
 }
