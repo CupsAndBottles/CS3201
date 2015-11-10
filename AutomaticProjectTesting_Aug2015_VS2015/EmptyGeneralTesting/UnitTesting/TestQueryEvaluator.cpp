@@ -325,7 +325,8 @@ namespace UnitTesting
 			Assert::IsTrue(find(uses_sv.begin(), uses_sv.end(), string("4")) != uses_sv.end());
 			Assert::IsFalse(find(uses_sv.begin(), uses_sv.end(), string("5")) != uses_sv.end());
 			Assert::IsTrue(find(uses_sv.begin(), uses_sv.end(), string("6")) != uses_sv.end());
-			Assert::IsFalse(find(uses_sv.begin(), uses_sv.end(), string("8")) != uses_sv.end());
+			Assert::IsFalse(find(uses_sv.begin(), uses_sv.end(), string("7")) != uses_sv.end());
+			Assert::IsTrue(find(uses_sv.begin(), uses_sv.end(), string("8")) != uses_sv.end());
 
 
 		}
