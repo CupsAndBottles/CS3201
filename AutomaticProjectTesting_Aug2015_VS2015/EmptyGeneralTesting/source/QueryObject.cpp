@@ -13,8 +13,8 @@ const string QueryObject::RelationType_CALLSSTAR = "calls*";
 const string QueryObject::RelationType_AFFECTS = "affects";
 const string QueryObject::RelationType_AFFECTSSTAR = "affects*";
 const string QueryObject::RelationType_PATTERN_ASSIGN = "assign";
-const string QueryObject::RelationType_PATTERN_IF = "while";
-const string QueryObject::RelationType_PATTERN_WHILE = "if";
+const string QueryObject::RelationType_PATTERN_WHILE = "while";
+const string QueryObject::RelationType_PATTERN_IF = "if";
 const string QueryObject::RelationType_WITH = "with";
 const string QueryObject::WILDCARD = "_";
 
