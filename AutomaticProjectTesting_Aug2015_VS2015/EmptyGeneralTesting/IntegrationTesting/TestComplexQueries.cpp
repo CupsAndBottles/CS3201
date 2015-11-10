@@ -61,6 +61,9 @@ namespace UnitTesting
 			list<string> ans1 = qe.getResults("procedure p,q; assign a, a1; stmt s, s1; Select s such that follows(s, s1) and calls(p, q)");
 			Assert::AreEqual(10, (int)ans1.size());
 
+			list<string> ans2 = qe.getResults("while w; if iff; call c; stmt s; variable v; procedure p; Select p such that uses(w,v) and parent(w, iff) and calls(p, \"water\") and follows(s, c)");
+			Assert::AreEqual(1, (int)ans2.size());
+
 		}
 	};
 }
