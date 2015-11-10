@@ -44,7 +44,6 @@ private:
 	Gnode *left;
 	Gnode *right;
 	vector<Gnode*> prev;
-	Gnode *otherPrev;
 	Type type;
 	int value;
 	string procedure;

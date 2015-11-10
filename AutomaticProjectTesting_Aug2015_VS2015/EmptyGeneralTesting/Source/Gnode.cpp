@@ -5,7 +5,6 @@ Gnode::Gnode() {
 	left = NULL;
 	right = NULL;
 	prev = vector<Gnode*>();
-	otherPrev = NULL;
 	type = NOTYPE;
 	procedure = "";
 }
