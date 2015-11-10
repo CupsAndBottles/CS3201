@@ -114,8 +114,8 @@ namespace UnitTesting
 			list<string> callspProc = qe.getResults("procedure p; Select p such that Calls(p, \"Proc\")");
 			Assert::AreEqual(1, (int)callspProc.size());
 			Assert::AreEqual(string("Other"), callspProc.front());
-
-			list<string> callsProcOtherP = qe.getResults("procedure p; Select p such that Calls(\"Proc\", \"Other\")");
+			
+			list<string> callsProcOtherP = qe.getResults("procedure p; Select p such that Calls(\"Proc\", \"Another\")");
 			Assert::AreEqual(3, (int)callsProcOtherP.size());
 
 			list<string> callsProcOtherBoolean = qe.getResults("procedure p; Select BOOLEAN such that Calls(\"Proc\", \"Other\")");
