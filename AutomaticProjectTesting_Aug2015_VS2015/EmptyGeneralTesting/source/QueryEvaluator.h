@@ -56,16 +56,16 @@ private:
 
 	pair<bool, vector<string>> processClause(QueryObject clause);
 
-	pair<bool, vector<string>> genericNonPattern_BothSynonyms(string leftArgument, string rightArgument, int whichRelation);
-	pair<bool, vector<string>> genericNonPattern_LeftSynonym(string leftArgument, string rightArgument, int whichRelation);
-	pair<bool, vector<string>> genericNonPattern_RightSynonym(string leftArgument, string rightArgument, int whichRelation);
-	pair<bool, vector<string>> genericNonPattern_NoSynonym(string leftArgument, string rightArgument, int whichRelation);
+	pair<bool, vector<string>> genericHandler_BothSynonyms(string leftArgument, string rightArgument, int whichRelation);
+	pair<bool, vector<string>> genericHandler_LeftSynonym(string leftArgument, string rightArgument, int whichRelation);
+	pair<bool, vector<string>> genericHandler_RightSynonym(string leftArgument, string rightArgument, int whichRelation);
+	pair<bool, vector<string>> genericHandler_NoSynonym(string leftArgument, string rightArgument, int whichRelation);
 
-	bool genericNonPattern_Evaluator(string leftArgument, string rightArgument, int whichRelation, bool leftNumber);
-	vector<string> genericNonPattern_LeftEvaluator(string rightArgument, int whichRelation, bool leftNumber);
-	vector<string> genericNonPattern_RightEvaluator(string leftArgument, int whichRelation, bool leftNumber);
+	bool genericEvaluator_BothValues(string leftArgument, string rightArgument, int whichRelation, bool leftNumber);
+	vector<string> genericEvaluator_LeftValue(string rightArgument, int whichRelation, bool leftNumber);
+	vector<string> genericEvaluator_RightValue(string leftArgument, int whichRelation, bool leftNumber);
 
-	pair<bool, vector<string>> patternAssign(string synonym, string leftArgument, string rightArgument);
+	pair<bool, vector<string>> patternAssign(string synonym, string variable, string expression);
 	pair<bool, vector<string>> with(string synonym, string value);
 
 	QueryNode queryTreeRoot;
