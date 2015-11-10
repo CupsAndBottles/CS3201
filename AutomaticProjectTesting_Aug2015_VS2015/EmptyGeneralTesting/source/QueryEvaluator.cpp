@@ -787,7 +787,6 @@ pair<bool, vector<string>> QueryEvaluator::genericHandler_BothSynonyms(string le
 				}
 			}
 		}
-		encounteredEntities.insert({rightArgument, rightNodes});
 	}
 	return {atLeastOneResult, discoveredSynonyms};
 }
