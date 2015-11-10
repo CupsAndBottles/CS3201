@@ -58,14 +58,49 @@ namespace UnitTesting
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 			QueryEvaluator qe = QueryEvaluator(&pkb);
 
+			//select s such that follows(s,s1) and calls(p,q), ans:exclude: 8,9,10,11,12,14,16,17,18,20,21
 			list<string> ans1 = qe.getResults("procedure p,q; assign a, a1; stmt s, s1; Select s such that follows(s, s1) and calls(p, q)");
 			Assert::AreEqual(10, (int)ans1.size());
-
+			Assert::IsTrue(find(ans1.begin(), ans1.end(), string("1")) != ans1.end());
+			Assert::IsTrue(find(ans1.begin(), ans1.end(), string("2")) != ans1.end());
+			Assert::IsTrue(find(ans1.begin(), ans1.end(), string("3")) != ans1.end());
+			Assert::IsTrue(find(ans1.begin(), ans1.end(), string("4")) != ans1.end());
+			Assert::IsTrue(find(ans1.begin(), ans1.end(), string("5")) != ans1.end());
+			Assert::IsTrue(find(ans1.begin(), ans1.end(), string("6")) != ans1.end());
+			Assert::IsTrue(find(ans1.begin(), ans1.end(), string("7")) != ans1.end());
+			Assert::IsFalse(find(ans1.begin(), ans1.end(), string("8")) != ans1.end());
+			Assert::IsFalse(find(ans1.begin(), ans1.end(), string("9")) != ans1.end());
+			Assert::IsFalse(find(ans1.begin(), ans1.end(), string("10")) != ans1.end());
+			Assert::IsFalse(find(ans1.begin(), ans1.end(), string("11")) != ans1.end());
+			Assert::IsFalse(find(ans1.begin(), ans1.end(), string("12")) != ans1.end());
+			Assert::IsTrue(find(ans1.begin(), ans1.end(), string("13")) != ans1.end());
+			Assert::IsFalse(find(ans1.begin(), ans1.end(), string("14")) != ans1.end());
+			Assert::IsTrue(find(ans1.begin(), ans1.end(), string("15")) != ans1.end());
+			Assert::IsFalse(find(ans1.begin(), ans1.end(), string("16")) != ans1.end());
+			Assert::IsFalse(find(ans1.begin(), ans1.end(), string("17")) != ans1.end());
+			Assert::IsFalse(find(ans1.begin(), ans1.end(), string("18")) != ans1.end());
+			Assert::IsTrue(find(ans1.begin(), ans1.end(), string("19")) != ans1.end());
+			Assert::IsFalse(find(ans1.begin(), ans1.end(), string("20")) != ans1.end());
+			Assert::IsFalse(find(ans1.begin(), ans1.end(), string("21")) != ans1.end());
+			
+			//Select p such that uses(w,v) and parent(w, iff) and calls(p,"water") and follows(s,c) Ans: kitkat,snickers
 			list<string> ans2 = qe.getResults("while w; if iff; call c; stmt s; variable v; procedure p; Select p such that uses(w,v) and parent(w, iff) and calls(p, \"water\") and follows(s, c)");
 			Assert::AreEqual(2, (int)ans2.size());
+			Assert::IsTrue(find(ans2.begin(), ans2.end(), string("kitkat")) != ans2.end());
+			Assert::IsTrue(find(ans2.begin(), ans2.end(), string("snickers")) != ans2.end());
+			Assert::IsFalse(find(ans2.begin(), ans2.end(), string("water")) != ans2.end());
 
+			//Select p such that Calls(p, "water") and modifies(p, "x");
 			list<string> ans3 = qe.getResults("procedure p; Select p such that calls(p, \"water\") and modifies(p, \"x\")");
-			Assert::AreEqual(1, (int)ans3.size()); //ans kitkat
+			Assert::AreEqual(1, (int)ans3.size()); //ans kitkat, err0r gives 0
+			Assert::IsTrue(find(ans3.begin(), ans3.end(), string("kitkat")) != ans3.end());
+			Assert::IsFalse(find(ans3.begin(), ans3.end(), string("snickers")) != ans3.end());
+			Assert::IsFalse(find(ans3.begin(), ans3.end(), string("water")) != ans3.end());
+
+			//Select iff such that Parent(iff, w) and Parent(w,a) and Modifies(a,"z") and Uses(s,"z"), ANs:2 (pass)
+			list<string> ans4 = qe.getResults("if iff; while w;assign a;stmt s; Select iff such that Parent(iff,w) and Parent(w,a) and Modifies(a,\"z\") and Uses(s,\"z\")");
+			Assert::AreEqual(1, (int)ans4.size());
+			Assert::IsTrue(find(ans4.begin(), ans4.end(), string("2")) != ans4.end());
 		}
 	};
 }
