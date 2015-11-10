@@ -65,7 +65,15 @@ private:
 	vector<string> genericEvaluator_LeftValue(string rightArgument, int whichRelation, bool leftNumber);
 	vector<string> genericEvaluator_RightValue(string leftArgument, int whichRelation, bool leftNumber);
 
+	pair<bool, vector<string>> patternAssign_AllSynonyms(string assign, string variable, string expression);
 	pair<bool, vector<string>> patternAssign_AssignAndVariableSynonyms(string assign, string variable, string expression);
+	pair<bool, vector<string>> patternAssign_VariableAndExpressionSynonyms(string assign, string variable, string expression);
+	pair<bool, vector<string>> patternAssign_AssignAndExpressionSynonyms(string assign, string variable, string expression);
+	
+	pair<bool, vector<string>> patternAssign_AssignSynonym(string assign, string variable, string expression);
+	pair<bool, vector<string>> patternAssign_VariableSynonym(string assign, string variable, string expression);
+	pair<bool, vector<string>> patternAssign_ExpressionSynonym(string assign, string variable, string expression);
+
 	pair<bool, vector<string>> with(string synonym, string value);
 
 	QueryNode queryTreeRoot;
