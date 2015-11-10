@@ -21,7 +21,7 @@ namespace UnitTesting
 			outputFile << "procedure kitkat {";
 			outputFile << "x = 1;" << endl; //line 1
 			outputFile << "if x then {" << endl; //line 2, if statement
-			outputFile << "y = 10;}" << endl; //line 3
+			outputFile << "y = 10;" << endl; //line 3
 			outputFile << "while y {" << endl; // line 4
 			outputFile << "z = x + y;" << endl; //line 5
 			outputFile << "d = z * 0;" << endl; //line 6
@@ -30,7 +30,7 @@ namespace UnitTesting
 			outputFile << "else {" << endl;
 			outputFile << "y = y - 1;}" << endl; //line 9
 			outputFile << "y = y-2;}" << endl; //line 10
-			outputFile << "x-2;}" << endl; //line 11
+			outputFile << "x=2;}" << endl; //line 11
 			outputFile << "else {" << endl;
 			outputFile << "z = d * 2;}" << endl; //line 12
 			outputFile << "x = z + 3;" << endl; //line 13
@@ -50,6 +50,8 @@ namespace UnitTesting
 
 			Parser *parse = new Parser();
 			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			Assert::AreNotEqual(0, (int)parsedProgram.size());
+
 			remove(fileName.c_str());
 			Database* db = new Database();
 			db->buildDatabase(parsedProgram);
