@@ -316,6 +316,18 @@ namespace UnitTesting
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 			QueryEvaluator qe = QueryEvaluator(&pkb);
 
+			//select a such that Uses(1, "y")
+			list<string> uses_1y = qe.getResults("assign a; Select a such that Uses(1, \"y\")");
+			Assert::AreEqual(6, (int)uses_1y.size());
+			Assert::IsTrue(find(uses_1y.begin(), uses_1y.end(), string("1")) != uses_1y.end());
+			Assert::IsFalse(find(uses_1y.begin(), uses_1y.end(), string("2")) != uses_1y.end());
+			Assert::IsTrue(find(uses_1y.begin(), uses_1y.end(), string("3")) != uses_1y.end());
+			Assert::IsTrue(find(uses_1y.begin(), uses_1y.end(), string("4")) != uses_1y.end());
+			Assert::IsTrue(find(uses_1y.begin(), uses_1y.end(), string("5")) != uses_1y.end());
+			Assert::IsFalse(find(uses_1y.begin(), uses_1y.end(), string("6")) != uses_1y.end());
+			Assert::IsTrue(find(uses_1y.begin(), uses_1y.end(), string("7")) != uses_1y.end());
+			Assert::IsTrue(find(uses_1y.begin(), uses_1y.end(), string("8")) != uses_1y.end());
+			
 			//select v such that Uses(4,v)
 			list<string> uses_4v = qe.getResults("variable v; stmt s; Select s such that Uses(4, v)");
 			Assert::AreEqual(2, (int)uses_4v.size()); //error: gives 8
