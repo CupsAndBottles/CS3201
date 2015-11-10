@@ -267,9 +267,10 @@ namespace UnitTesting
 			Assert::IsTrue(find(follow_ss1.begin(), follow_ss1.end(), string("1")) != follow_ss1.end());
 			Assert::IsTrue(find(follow_ss1.begin(), follow_ss1.end(), string("2")) != follow_ss1.end());
 			Assert::IsTrue(find(follow_ss1.begin(), follow_ss1.end(), string("3")) != follow_ss1.end());
+
 			//select s such that Follows(s,a)
 			list<string>follow_sa = qe.getResults("stmt s; assign a; Select s such that Follows(s,a)");
-			Assert::AreEqual(2, (int)follow_ss1.size());
+			Assert::AreEqual(2, (int)follow_sa.size());
 			Assert::IsTrue(find(follow_sa.begin(), follow_sa.end(), string("1")) != follow_sa.end());
 			Assert::IsTrue(find(follow_sa.begin(), follow_sa.end(), string("2")) != follow_sa.end());
 			//Assert::IsTrue(find(follow_sa.begin(), follow_sa.end(), string("3")) != follow_sa.end());
