@@ -405,23 +405,31 @@ pair<bool, vector<string>> QueryEvaluator::processClause(QueryObject clause) {
 	} else {
 		// check for patterns
 		string patternType = declaration.getType(relationType);
-		if (formatter.stringEqualCaseInsensitive(patternType, QueryObject::RelationType_PATTERN_ASSIGN)) {
-			return patternAssign(relationType, lhs, rhs);
-		} else if (formatter.stringEqualCaseInsensitive(patternType, QueryObject::RelationType_PATTERN_WHILE)) {
-			return patternWhile(relationType, lhs); //rhs will always be _
+		if (formatter.stringEqualCaseInsensitive(patternType, QueryObject::RelationType_PATTERN_WHILE)) {
+			if (leftSynonym && rightSynonym) {
+				return genericNonPattern_BothSynonyms(lhs, rhs, PATTERN_WHILE);
+			} else if (rightSynonym) {
+				return genericNonPattern_RightSynonym(lhs, rhs, PATTERN_WHILE);
+			} else if (leftSynonym) {
+				return genericNonPattern_LeftSynonym(lhs, rhs, PATTERN_WHILE);
+			} else {
+				return genericNonPattern_NoSynonym(lhs, rhs, PATTERN_WHILE);
+			}
 		} else if (formatter.stringEqualCaseInsensitive(patternType, QueryObject::RelationType_PATTERN_IF)) {
-			return patternIf(relationType, lhs); //rhs will always be _
+			if (leftSynonym && rightSynonym) {
+				return genericNonPattern_BothSynonyms(lhs, rhs, PATTERN_IF);
+			} else if (rightSynonym) {
+				return genericNonPattern_RightSynonym(lhs, rhs, PATTERN_IF);
+			} else if (leftSynonym) {
+				return genericNonPattern_LeftSynonym(lhs, rhs, PATTERN_IF);
+			} else {
+				return genericNonPattern_NoSynonym(lhs, rhs, PATTERN_IF);
+			}
+		} else if (formatter.stringEqualCaseInsensitive(patternType, QueryObject::RelationType_PATTERN_ASSIGN)) {
+			return patternAssign(relationType, lhs, rhs);
 		}
 	}
 
-	return {false, vector<string>()};
-}
-
-pair<bool, vector<string>> QueryEvaluator::patternIf(string synonym, string conditionalVariable) {
-	return {false, vector<string>()};
-}
-
-pair<bool, vector<string>> QueryEvaluator::patternWhile(string synonym, string conditionalVariable) {
 	return {false, vector<string>()};
 }
 
@@ -739,6 +747,14 @@ bool QueryEvaluator::genericNonPattern_Evaluator(string leftValue, string rightV
 		// both must be statement numbers
 		result = database.nextStar(stoi(leftValue), stoi(rightValue));
 		break;
+	case PATTERN_IF:
+		// left must be statement number
+		// right must be variable
+		result = database.patternIf(stoi(leftValue), rightValue);
+	case PATTERN_WHILE:
+		// left must be statement number
+		// right must be variable
+		result = database.patternWhile(stoi(leftValue), rightValue);
 	}
 
 	return result;
@@ -806,6 +822,14 @@ vector<string> QueryEvaluator::genericNonPattern_LeftEvaluator(string rightValue
 		// both must be statement numbers
 		results = formatter.integerVectorToStringVector(database.getStatementsBeforeStar(stoi(rightValue)));
 		break;
+	case PATTERN_IF:
+		// left must be statement number
+		// right must be variable
+		results = formatter.integerVectorToStringVector(database.getStatementsThatMatchPattern(Tnode::Type::STMT_IF, rightValue, ProgramKnowledgeBase::WILDCARD_STRING));
+	case PATTERN_WHILE:
+		// left must be statement number
+		// right must be variable
+		results = formatter.integerVectorToStringVector(database.getStatementsThatMatchPattern(Tnode::Type::STMT_WHILE, rightValue, ProgramKnowledgeBase::WILDCARD_STRING));
 	}
 
 	return results;
@@ -873,6 +897,14 @@ vector<string> QueryEvaluator::genericNonPattern_RightEvaluator(string leftValue
 		// both must be statement numbers
 		results = formatter.integerVectorToStringVector(database.getNextStarStatements(stoi(leftValue)));
 		break;
+	case PATTERN_IF:
+		// left must be statement number
+		// right must be variable
+		results = database.getConditionalVariableOfIf(stoi(leftValue));
+	case PATTERN_WHILE:
+		// left must be statement number
+		// right must be variable
+		results = database.getConditionalVariableOfWhile(stoi(leftValue));
 	}
 
 	return results;

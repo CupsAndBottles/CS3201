@@ -66,8 +66,6 @@ private:
 	vector<string> genericNonPattern_RightEvaluator(string leftArgument, int whichRelation, bool leftNumber);
 
 	pair<bool, vector<string>> patternAssign(string synonym, string leftArgument, string rightArgument);
-	pair<bool, vector<string>> patternIf(string synonym, string conditionalVariable);
-	pair<bool, vector<string>> patternWhile(string synonym, string conditionalVariable);
 	pair<bool, vector<string>> with(string synonym, string value);
 
 	QueryNode queryTreeRoot;
