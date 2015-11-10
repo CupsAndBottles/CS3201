@@ -1114,13 +1114,14 @@ namespace UnitTesting
 			Assert::IsTrue(pkb.affects(4, 14));
 			Assert::IsTrue(pkb.affects(4, 16));
 			Assert::IsFalse(pkb.affects(4, 12));
-			//Assert::IsTrue(pkb.affects(9, 9));
+			Assert::IsTrue(pkb.affects(9, 9));
+			Assert::IsFalse(pkb.affects(7, 7));
 			Assert::IsFalse(pkb.affects(7, 11));
 			Assert::IsTrue(pkb.affects(11, 12));
 			Assert::IsFalse(pkb.affects(11, 14));
 
 			Assert::IsTrue(pkb.affects(5, 14));
-			Assert::IsFalse(pkb.affects(5, 9));
+			Assert::IsTrue(pkb.affects(5, 9));
 
 			vector<int> vec = pkb.getStatementsAffectedBy(4);
 			Assert::AreEqual(4, (int)vec.size());
@@ -1178,7 +1179,7 @@ namespace UnitTesting
 			Assert::IsTrue(pkb.affectsStar(9, 9));
 			Assert::IsFalse(pkb.affectsStar(16, 14));
 			Assert::IsTrue(pkb.affectsStar(7, 12));
-			Assert::IsTrue(pkb.affects(7, 7));
+			Assert::IsFalse(pkb.affects(7, 7));
 		}
 	};
 }
