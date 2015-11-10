@@ -490,10 +490,10 @@ namespace UnitTesting
 		}
 
 		TEST_METHOD(testGenerator) {
-			int procedures = 3;
+			int procedures = 1;
 			int nesting = 2;
-			int assign = 2;
-			int brackets = 5;
+			int assign = 1;
+			int brackets = 0;
 			bool isCall = true;
 
 			generateProgram(procedures, nesting, assign, brackets, isCall);

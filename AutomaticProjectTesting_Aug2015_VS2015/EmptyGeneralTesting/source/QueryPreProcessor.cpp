@@ -4,7 +4,7 @@
 
 SemanticsCheck sCheck;
 EntTable entityTable;
-vector<string> entityList;
+vector<string> resultList;
 vector<QueryObject> queryList;
 RelationshipTable relTable;
 
@@ -397,7 +397,7 @@ bool QueryPreProcessor::addEntities(vector<string> entities) {
 	vector<string> filteredEntities = split(mergedString, "<>, ");
 	if (filteredEntities.size() == 1) {
 		if (sCheck.isSynonym(filteredEntities.at(0), entityTable) || (toLowerCase(filteredEntities.at(0)).compare("boolean") == 0)) {
-			entityList.push_back(filteredEntities.at(0));
+			resultList.push_back(filteredEntities.at(0));
 		}
 		else {
 			return false;
@@ -406,7 +406,7 @@ bool QueryPreProcessor::addEntities(vector<string> entities) {
 	else {
 		for (size_t i = 0; i<filteredEntities.size(); i++) {
 			if (sCheck.isSynonym(filteredEntities.at(i), entityTable)) {
-				entityList.push_back(filteredEntities.at(i));
+				resultList.push_back(filteredEntities.at(i));
 			}
 			else {
 				return false;
@@ -714,7 +714,7 @@ EntTable QueryPreProcessor::getEntityTable() {
 }
 
 vector<string> QueryPreProcessor::getSelectEntities() {
-	return entityList;
+	return resultList;
 }
 
 vector<QueryObject> QueryPreProcessor::getQueries() {
@@ -723,6 +723,6 @@ vector<QueryObject> QueryPreProcessor::getQueries() {
 
 void QueryPreProcessor::clearAll() {
 	entityTable.clear();
-	entityList.clear();
+	resultList.clear();
 	queryList.clear();
 }
