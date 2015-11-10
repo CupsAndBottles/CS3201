@@ -503,6 +503,8 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_BothSynonyms(string
 		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
 		for (QueryNode* leftNode : leftNodes) {
 			vector<string> results = genericNonPattern_RightEvaluator(leftNode->getValue(), whichRelation, leftNumber);
+			results = filterStatementsByTargetType(results, getEntityType(leftArgument));
+
 			if (results.empty()) {
 				leftNode->destroy(&encounteredEntities);
 			}
@@ -522,6 +524,8 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_BothSynonyms(string
 		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
 		for (QueryNode* rightNode : rightNodes) {
 			vector<string> results = genericNonPattern_LeftEvaluator(rightNode->getValue(), whichRelation, leftNumber);
+			results = filterStatementsByTargetType(results, getEntityType(rightArgument));
+			
 			if (results.empty()) {
 				rightNode->destroy(&encounteredEntities);
 			}
@@ -559,6 +563,8 @@ pair<bool, vector<string>> QueryEvaluator::genericNonPattern_BothSynonyms(string
 		unordered_map<string, QueryNode*> encounteredResults = unordered_map<string, QueryNode*>();
 		for (QueryNode* leftNode : leftNodes) {
 			vector<string> results = genericNonPattern_RightEvaluator(leftNode->getValue(), whichRelation, leftNumber);
+			results = filterStatementsByTargetType(results, getEntityType(rightArgument));
+			
 			if (results.empty()) {
 				leftNode->destroy(&encounteredEntities);
 			} else {
@@ -845,4 +851,38 @@ vector<string> QueryEvaluator::genericNonPattern_RightEvaluator(string leftValue
 	}
 
 	return results;
+}
+
+vector<string> QueryEvaluator::filterStatementsByTargetType(vector<string> input, string targetType) {
+	if (targetType != EntTable::STATEMENT_ASSIGN && 
+		targetType != EntTable::STATEMENT_WHILE && 
+		targetType != EntTable::STATEMENT_IF && 
+		targetType != EntTable::STATEMENT_CALL) {
+		return input;
+	}
+
+	vector<int> targetStatements;
+	if (targetType == EntTable::STATEMENT_ASSIGN) {
+		targetStatements = database.getStatementsOfType(Tnode::Type::STMT_ASSIGN);
+	} else if (targetType == EntTable::STATEMENT_WHILE) {
+		targetStatements = database.getStatementsOfType(Tnode::Type::STMT_WHILE);
+	} else if (targetType == EntTable::STATEMENT_IF) {
+		targetStatements = database.getStatementsOfType(Tnode::Type::STMT_IF);
+	} else if (targetType == EntTable::STATEMENT_CALL) {
+		targetStatements = database.getStatementsOfType(Tnode::Type::STMT_CALL);
+	}
+
+	vector<int> inputInt = formatter.stringVectorToIntegerVector(input);
+	sort(inputInt.begin(), inputInt.end());
+	sort(targetStatements.begin(), targetStatements.end());
+	
+	vector<int> resultsInt(max(inputInt.size(), targetStatements.size()));
+	auto it = set_intersection(inputInt.begin(),
+							   inputInt.begin() + inputInt.size(),
+							   targetStatements.begin(), 
+							   targetStatements.begin() + targetStatements.size(),
+							   resultsInt.begin());
+	resultsInt.resize(it - resultsInt.begin());
+
+	return formatter.integerVectorToStringVector(resultsInt);
 }
