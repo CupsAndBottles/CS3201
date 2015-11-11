@@ -1123,7 +1123,8 @@ bool ProgramKnowledgeBase::patternAssignContain(int stmt, string var, string exp
 
 	vector<string> expressionTokens = Parser::splitByDelimiters(vector<string>(1, expr));
 	Tnode* expressionTreeRoot = Database::getExpressionTree(expressionTokens);
-	return expressionTreeRoot->contains(assign->getFirstChild()->getRightSibling());
+	Tnode* expression = assign->getFirstChild()->getRightSibling();
+	return expression->contains(expressionTreeRoot);
 }
 
 bool ProgramKnowledgeBase::calls(string p1, string p2) {
