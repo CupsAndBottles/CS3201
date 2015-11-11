@@ -1116,6 +1116,10 @@ bool ProgramKnowledgeBase::patternAssignContain(int stmt, string var, string exp
 		return false;
 	}
 
+	if (expr == WILDCARD_STRING) {
+		return true;
+	}
+
 	vector<string> expressionTokens = Parser::splitByDelimiters(vector<string>(1, expr));
 	Tnode* expressionTreeRoot = Database::getExpressionTree(expressionTokens);
 	return expressionTreeRoot->contains(assign->getFirstChild()->getRightSibling());
