@@ -31,3 +31,19 @@ procedure inter {
 	else {
 		drink = water;}
 }
+
+procedure tedious {
+	if x then {
+		a = 1;}
+	else {
+		if b then {
+			c = 3;
+			if c then {
+				e = 5;}
+			else {
+				e = 6;}
+			d = 4;}
+		else {
+			d = 4 * a;}
+		f = c + d + a;}
+}
