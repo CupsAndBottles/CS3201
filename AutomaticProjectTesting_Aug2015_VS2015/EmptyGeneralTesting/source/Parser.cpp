@@ -124,6 +124,11 @@ vector<string> Parser::parseSimpleProgram(string file)
 
 	cout << "Reading in program.\n";
 	program = readProgram(file);
+	if (program.size() == 0) {
+		cout << "Stopping parsing because program cannot be read in.\n";
+		return program;
+	}
+
 	cout << "Beginning to tokenize program.\n";
 	tokenizedProgram = splitByDelimiters(program);
 	if (tokenizedProgram.size() == 0) {
