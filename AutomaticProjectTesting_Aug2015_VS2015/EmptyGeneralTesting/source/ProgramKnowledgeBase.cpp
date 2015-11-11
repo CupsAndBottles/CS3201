@@ -389,8 +389,11 @@ vector<int> ProgramKnowledgeBase::getChildrenStarOf(int stmt){
 	if (stmt == WILDCARD_INT) {
 		return getChildrenOf(stmt);
 	}
+
 	Tnode* node = getNodeWithStatementNumber(stmt);
 	if (node == NULL) {
+		return vector<int>();
+	} else if (!node->isContainer()) {
 		return vector<int>();
 	}
 
