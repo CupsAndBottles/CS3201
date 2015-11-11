@@ -153,4 +153,3 @@ stmt s; assign a;
 Select s pattern a("x",_) such that follows*(s,6)
 4
 5000
-
