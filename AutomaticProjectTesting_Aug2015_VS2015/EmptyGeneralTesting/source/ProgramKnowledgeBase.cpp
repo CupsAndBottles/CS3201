@@ -40,14 +40,11 @@ ProgramKnowledgeBase::ProgramKnowledgeBase(string filePath) {
 void ProgramKnowledgeBase::updateDBFile() {
 }
 
+//stmt cannot be wildcard
 bool ProgramKnowledgeBase::modifies(int stmt, string var){
 	try{
-		if (var == ProgramKnowledgeBase::WILDCARD_STRING && stmt == ProgramKnowledgeBase::WILDCARD_INT) {
-			return modifiesRelationIndexedByVariables.size() > 0;
-		} else if (var == ProgramKnowledgeBase::WILDCARD_STRING) {
+		if (var == ProgramKnowledgeBase::WILDCARD_STRING) {
 			return modifiesRelationIndexedByStatements.at(stmt).size() > 0;
-		} else if (stmt == ProgramKnowledgeBase::WILDCARD_INT){
-			return modifiesRelationIndexedByVariables.at(var).size() > 0;
 		} else {
 			return modifiesRelationIndexedByStatements.at(stmt).count(var) == 1;
 		}
@@ -73,26 +70,18 @@ vector<int> ProgramKnowledgeBase::getStatementsThatModify(string var){
 	}
 }
 
+//stmt cannot be wildcard
 vector<string> ProgramKnowledgeBase::getVariablesModifiedBy(int stmt){
 	try{
-		if (stmt == ProgramKnowledgeBase::WILDCARD_INT) {
-			vector<string> results = vector<string>();
-			for (pair<string, unordered_set<int>> keyVals : modifiesRelationIndexedByVariables) {
-				if (keyVals.second.size() > 0) {
-					results.push_back(keyVals.first);
-				}
-			}
-		}
 		return Helpers::flattenStringSetToStringVector(&modifiesRelationIndexedByStatements.at(stmt));
 	} catch (std::out_of_range){
 		return vector<string>();
 	}
 }
 
+//procName cannot be wildcard
 bool ProgramKnowledgeBase::modifies(string procName, string var){
-	if (procName == ProgramKnowledgeBase::WILDCARD_STRING) {
-		return getProceduresThatModify(var).size() > 0;
-	} else if (var == ProgramKnowledgeBase::WILDCARD_STRING) {
+	if (var == ProgramKnowledgeBase::WILDCARD_STRING) {
 		return getVariablesModifiedBy(procName).size() > 0;
 	}
 
@@ -137,13 +126,10 @@ vector<string> ProgramKnowledgeBase::getVariablesModifiedBy(string procName){
 	return results;
 }
 
+//stmt cannot be wildcard
 bool ProgramKnowledgeBase::uses(int stmt, string var){
 	try{
-		if (stmt == ProgramKnowledgeBase::WILDCARD_INT && var == ProgramKnowledgeBase::WILDCARD_STRING) {
-			return usesRelationIndexedByVariables.size() > 0;
-		} else if (stmt == ProgramKnowledgeBase::WILDCARD_INT) {
-			return usesRelationIndexedByVariables.at(var).size() > 0;
-		} else if (var == ProgramKnowledgeBase::WILDCARD_STRING) {
+		if (var == ProgramKnowledgeBase::WILDCARD_STRING) {
 			return usesRelationIndexedByStatements.at(stmt).size() > 0;
 		} else {
 			return usesRelationIndexedByStatements.at(stmt).count(var) == 1;
@@ -171,29 +157,19 @@ vector<int> ProgramKnowledgeBase::getStatementsThatUse(string var){
 	}
 }
 
+//stmt cannot be wildcard
 vector<string> ProgramKnowledgeBase::getVariablesUsedBy(int stmt){
-	try{
-		if (stmt == ProgramKnowledgeBase::WILDCARD_INT) {
-			vector<string> results = vector<string>();
-			for (pair<string, unordered_set<int>> keyVals : usesRelationIndexedByVariables) {
-				if (keyVals.second.size() > 0) {
-					results.push_back(keyVals.first);
-				}
-			}
-			return results;
-		} else {
-			return Helpers::flattenStringSetToStringVector(&usesRelationIndexedByStatements.at(stmt));
-		}
+	try {
+		return Helpers::flattenStringSetToStringVector(&usesRelationIndexedByStatements.at(stmt));
 	} catch (std::out_of_range){
 		return vector<string>();
 	}
 }
 
+//procName cannot be wildcard
 bool ProgramKnowledgeBase::uses(string procName, string var)
 {
-	if (procName == ProgramKnowledgeBase::WILDCARD_STRING) {
-		return getProceduresThatUse(var).size() > 0;
-	} else if (var == ProgramKnowledgeBase::WILDCARD_STRING) {
+	if (var == ProgramKnowledgeBase::WILDCARD_STRING) {
 		return getVariablesUsedBy(procName).size() > 0;
 	}
 
