@@ -126,9 +126,18 @@ namespace UnitTesting
 			Assert::AreEqual(1, (int)ans9.size());
 			Assert::IsTrue(find(ans9.begin(), ans9.end(), string("snickers")) != ans9.end());
 
+			/*
+			Select s pattern w(v,_) and modifies(s, v) and parent*(s,s1)
+			w = 4, 20
+			v = y, q
+			s = 2, 3, 4, 7, 8
+			s1 = 2, 4, 7, 20
+			*/
+
 			//Remove this afer it is fixed - from here onwards
 			list<string> ans10 = qe.getResults("while w; if ifstat; variable v; stmt s, s1; Select s pattern w(v,_) and modifies(s, v) and parent*(s,s1)");
-			Assert::AreEqual(3, (int)ans10.size());
+			Assert::AreEqual(4, (int)ans10.size());
+			Assert::IsTrue(find(ans10.begin(), ans10.end(), string("2")) != ans10.end());
 			Assert::IsTrue(find(ans10.begin(), ans10.end(), string("4")) != ans10.end());
 			Assert::IsTrue(find(ans10.begin(), ans10.end(), string("7")) != ans10.end());
 			Assert::IsTrue(find(ans10.begin(), ans10.end(), string("20")) != ans10.end());
