@@ -819,6 +819,7 @@ bool ProgramKnowledgeBase::affectsStar(int s1, int s2){
 	if (s1 == WILDCARD_INT || s2 == WILDCARD_INT) {
 		return affects(s1, s2);
 	}
+
 	if (affects(s1, s2)) {
 		return true;
 	}
