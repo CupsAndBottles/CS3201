@@ -546,5 +546,68 @@ namespace UnitTesting
 			Assert::AreEqual(20, vectornodes.at(21)->getNext().at(0)->getValue());
 		}
 
+		TEST_METHOD(TestLinkSourceFour) {
+			string fileName = "source4.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure Proc1 {" << endl;
+			outputFile << "x = y + ( z * ( y - a ) + b );" << endl; // 1
+			outputFile << "call Proc2;" << endl; // 2
+			outputFile << "call Proc3;" << endl; // 3
+			outputFile << "call Proc4;" << endl; // 4
+			outputFile << "}";
+			outputFile << " " << endl;
+			outputFile << "procedure Proc2 {" << endl; 
+			outputFile << "while x {" << endl; // 5
+			outputFile << "while y {" << endl; // 6
+			outputFile << "while z {" << endl; // 7
+			outputFile << "y = (x * (a * b) ); }" << endl; // 8
+			outputFile << "}" << endl; 
+			outputFile << "}" << endl;
+			outputFile << "call Proc3;" << endl; // 9
+			outputFile << "call Proc4;" << endl; // 10
+			outputFile << "}" << endl;
+			outputFile << " " << endl;
+			outputFile << "procedure Proc3 {" << endl;
+			outputFile << "call Proc4;" << endl; // 11
+			outputFile << "}" << endl;
+			outputFile << " " << endl;
+			outputFile << "procedure Proc4 {" << endl;
+			outputFile << "z = 1;" << endl;
+			outputFile << "if z then {" << endl;
+			outputFile << "z = z + 1;}" << endl;
+			outputFile << "else {" << endl;
+			outputFile << "z = 1; }" << endl;
+			outputFile << "}" << endl;
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = (*parse).parseSimpleProgram(fileName);
+			Assert::AreNotEqual(0, (int)parsedProgram.size());
+
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			vector<Gnode*> vectornodes = db->getControlFlowGraphNodes();
+			vector<Gnode*> cfgRoots = db->getControlFlowGraphRootList();
+
+			Assert::AreEqual(1, cfgRoots.at(0)->getValue());
+			Assert::AreEqual(5, cfgRoots.at(1)->getValue());
+			Assert::AreEqual(11, cfgRoots.at(2)->getValue());
+			Assert::AreEqual(12, cfgRoots.at(3)->getValue());
+
+			for (int i = 1; i < 4; i++) {
+				Assert::AreEqual(i + 1, vectornodes.at(i)->getNext().at(0)->getValue());
+			}
+
+			Assert::AreEqual(6, vectornodes.at(5)->getNext().at(0)->getValue());
+			Assert::AreEqual(9, vectornodes.at(5)->getNext().at(1)->getValue());
+			Assert::AreEqual(7, vectornodes.at(6)->getNext().at(0)->getValue());
+			Assert::AreEqual(5, vectornodes.at(6)->getNext().at(1)->getValue());
+			Assert::AreEqual(8, vectornodes.at(7)->getNext().at(0)->getValue());
+			Assert::AreEqual(6, vectornodes.at(7)->getNext().at(1)->getValue());
+			Assert::AreEqual(7, vectornodes.at(8)->getNext().at(0)->getValue());
+			Assert::AreEqual(10, vectornodes.at(9)->getNext().at(0)->getValue());
+
+		}
+
 	};
 }
