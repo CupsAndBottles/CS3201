@@ -172,12 +172,12 @@ bool QueryEvaluator::isCall(string s) {
 }
 
 void QueryEvaluator::addToEncounteredEntities(QueryNode* input) {
-	if (encountered(input->getValue())) {
+	if (encountered(input->getSynonym())) {
 		encounteredEntities.at(input->getValue()).insert(input);
 	} else {
 		unordered_set<QueryNode*> newSet = unordered_set<QueryNode*>();
 		newSet.insert(input);
-		encounteredEntities.insert({input->getValue(), newSet});
+		encounteredEntities.insert({input->getSynonym(), newSet});
 	}
 }
 
