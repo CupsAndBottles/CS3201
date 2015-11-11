@@ -657,7 +657,53 @@ pair<bool, vector<string>> QueryEvaluator::patternAssign_AssignAndVariableSynony
 }
 
 pair<bool, vector<string>> QueryEvaluator::patternAssign_AssignSynonym(string assign, string variable, string expression) {
-	return pair<bool, vector<string>>();
+	bool atLeastOneResult = false;
+	vector<string> discoveredSynonyms = vector<string>();
+	bool isSubexpression = formatter.hasBracketingUnderscores(expression);
+	string subexpression = "";
+	if (isSubexpression) {
+		subexpression = formatter.removeUnderscores(expression);
+	} else if (isWildCard(expression)) {
+		expression = ProgramKnowledgeBase::WILDCARD_STRING;
+	}
+
+	if (encountered(assign)) {
+		unordered_set<QueryNode*> assignNodes = getQNodes(assign);
+		for (QueryNode* assignNode : assignNodes) {
+			bool result = false;
+			if (isSubexpression) {
+				result = database->patternAssignContain(stoi(assignNode->getValue()), variable, subexpression);
+			} else {
+				result = database->patternAssignMatch(stoi(assignNode->getValue()), variable, expression);
+			}
+			if (result) {
+				atLeastOneResult = true;
+			} else {
+				assignNode->destroy(&encounteredEntities);
+			}
+		}
+	} else {
+		discoveredSynonyms.push_back(assign);
+		vector<string> assignPossibilities = generatePossiblities(assign);
+		unordered_set<QueryNode*> assignNodes = unordered_set<QueryNode*>();
+		for (string assignPossibility : assignPossibilities) {
+			bool result = false;
+			if (isSubexpression) {
+				result = database->patternAssignContain(stoi(assignPossibility), variable, subexpression);
+			} else {
+				result = database->patternAssignMatch(stoi(assignPossibility), variable, expression);
+			}
+
+			if (result) {
+				atLeastOneResult = true;
+				assignNodes.insert(QueryNode::createQueryNode(assign, assignPossibility));
+			}
+		}
+		addToRoot(assignNodes);
+		encounteredEntities.insert({assign, assignNodes});
+	}
+
+	return {atLeastOneResult, discoveredSynonyms};
 }
 
 pair<bool, vector<string>> QueryEvaluator::with(string synonym, string value) {
