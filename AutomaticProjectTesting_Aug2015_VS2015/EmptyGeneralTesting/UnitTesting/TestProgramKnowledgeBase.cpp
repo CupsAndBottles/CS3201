@@ -608,15 +608,7 @@ namespace UnitTesting
 
 			Assert::IsTrue(pkb.modifies("Proc", "_"));
 			Assert::IsTrue(pkb.modifies("Other", "_"));
-			Assert::IsTrue(pkb.modifies("_", "x"));
-			Assert::IsTrue(pkb.modifies("_", "y"));
-			Assert::IsTrue(pkb.modifies("_", "_"));
 			
-			vector<string> vars = pkb.getVariablesModifiedBy("_");
-			Assert::AreEqual(2, (int)vars.size());
-			Assert::IsTrue(find(vars.begin(), vars.end(), "x") != vars.end());
-			Assert::IsTrue(find(vars.begin(), vars.end(), "y") != vars.end());
-
 			vector<string> procs = pkb.getProceduresThatModify("_");
 			Assert::AreEqual(2, (int)procs.size());
 			Assert::IsTrue(find(procs.begin(), procs.end(), "Other") != procs.end());
@@ -687,9 +679,6 @@ namespace UnitTesting
 			Assert::IsTrue(pkb.uses("Proc", "_"));
 			Assert::IsTrue(pkb.uses(1, "_"));
 			Assert::IsTrue(pkb.uses(2, "_"));
-			Assert::IsFalse(pkb.uses("_", "x"));
-			Assert::IsTrue(pkb.uses("_", "y"));
-			Assert::IsTrue(pkb.uses("_", "_"));
 
 			vector<int> users = pkb.getStatementsThatUse("_");
 			Assert::AreEqual(2, int(users.size()));
@@ -699,10 +688,6 @@ namespace UnitTesting
 			vector<string> usersProcs = pkb.getProceduresThatUse("_");
 			Assert::AreEqual(1, int(usersProcs.size()));
 			Assert::AreEqual(string("Proc"), usersProcs[0]);
-
-			vector<string> variablesProcs = pkb.getVariablesUsedBy("_");
-			Assert::AreEqual(1, int(variablesProcs.size()));
-			Assert::AreEqual(string("y"), variablesProcs[0]);
 		}
 
 		TEST_METHOD(testPKBFollows) {
