@@ -54,7 +54,11 @@ void Gnode::setNextEndIf(Gnode *lastChildThen, Gnode *lastChildElse, Gnode *othe
 
 void Gnode::setNextWhile(Gnode* parent, Gnode* lastchild, Gnode* other){
 	parent->left = other;
-	lastchild->right = parent;
+	if (lastchild->type == Gnode::STMT_WHILE) {
+		lastchild->left = parent;
+	} else {
+		lastchild->right = parent;
+	}
 	other->prev.push_back(parent);
 	parent->prev.push_back(lastchild);
 }
