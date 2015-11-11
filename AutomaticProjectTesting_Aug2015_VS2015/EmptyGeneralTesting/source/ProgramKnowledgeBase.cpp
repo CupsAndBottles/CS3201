@@ -1117,7 +1117,7 @@ bool ProgramKnowledgeBase::patternAssignContain(int stmt, string var, string exp
 		return false;
 	}
 
-	if (assign->getFirstChild()->getName() != var) {
+	if (assign->getFirstChild()->getName() != var && var != WILDCARD_STRING) {
 		return false;
 	}
 
