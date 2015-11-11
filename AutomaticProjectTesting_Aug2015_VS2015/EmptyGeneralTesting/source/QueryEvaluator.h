@@ -53,6 +53,7 @@ private:
 	list<string> selectAll(string entityType);
 	vector<int> generateVectorOfStatementNumbers();
 	vector<string> generatePossiblities(string argument);
+	int convertToInteger(string input);
 
 	pair<bool, vector<string>> processClause(QueryObject clause);
 

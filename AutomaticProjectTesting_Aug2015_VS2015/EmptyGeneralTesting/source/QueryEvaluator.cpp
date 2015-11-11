@@ -127,6 +127,14 @@ vector<string> QueryEvaluator::generatePossiblities(string argument) {
 	}
 }
 
+int QueryEvaluator::convertToInteger(string input) {
+	if (isWildCard(input)) {
+		return ProgramKnowledgeBase::WILDCARD_INT;
+	} else {
+		return stoi(input);
+	}
+}
+
 string QueryEvaluator::getEntityType(string s) {
 	return declaration.getType(s);
 }
