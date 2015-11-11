@@ -23,7 +23,7 @@ namespace UnitTesting
 			outputFile << "procedure Proc {";
 			outputFile << "x = y + 1;";
 			outputFile << "y = z + 2;";
-			outputFile << "}";
+			outputFile << "}" << endl;
 			outputFile << "procedure Other {";
 			outputFile << "a = b + 3;";
 			outputFile << "b = c + 1;";
