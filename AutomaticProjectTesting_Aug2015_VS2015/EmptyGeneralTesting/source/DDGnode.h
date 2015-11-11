@@ -12,6 +12,10 @@ public:
 	DDGnode(int stmtN);
 	~DDGnode();
 	bool linkedTo(DDGnode* node);
+	bool linkedFrom(DDGnode* node);
+	bool hasToLinks();
+	bool hasFromLinks();
+	bool hasLinks();
 	vector<DDGnode*> listOfLinkedToDDG();
 	vector<DDGnode*> listOfLinkedFromDDG();
 	void addEdge(DDGnode* node, string var);
