@@ -23,10 +23,19 @@ QueryNode* QueryNode::createQueryNode(string syn, string val) {
 
 void QueryNode::insertParent(QueryNode* node) {
 	for (size_t i = 0; i < parents.size(); i++) {
-		parents[i]->removeChild(this);
-		parents[i]->addChild(node);
-		node->addParent(parents[i]);
-		this->removeParent(parents[i]);
+		if (parents[i]->getSynonym() != node->getSynonym()) {
+			parents[i]->removeChild(this);
+			parents[i]->addChild(node);
+			node->addParent(parents[i]);
+			this->removeParent(parents[i]);
+		} else {
+			// connect grandparents
+			vector<QueryNode*> grandparents = parents[i]->getParents();
+			for (size_t j = 0; j < grandparents.size(); j++) {
+				grandparents[j]->addChild(node);
+				node->addParent(grandparents[j]);
+			}
+		}
 	}
 	this->addParent(node);
 	node->addChild(this);
@@ -43,6 +52,10 @@ void QueryNode::removeParent(QueryNode* node) {
 	if (it != parents.end()) {
 		parents.erase(it);
 	}
+}
+
+vector<QueryNode*> QueryNode::getParents() {
+	return parents;
 }
 
 void QueryNode::destroy(unordered_map<string, unordered_set<QueryNode*>>* encounteredEntities, bool rootSetOperation) {
