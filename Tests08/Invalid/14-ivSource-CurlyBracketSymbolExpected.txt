@@ -1,0 +1,6 @@
+procedure bracket {
+	if x then {
+		g = 30 + g;}
+	else {
+		g = 30 - r;
+}

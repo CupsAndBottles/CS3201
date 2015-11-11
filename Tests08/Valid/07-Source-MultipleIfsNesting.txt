@@ -1,0 +1,33 @@
+procedure simple {
+	if x then {
+		drink = tea;
+		tea = 10 * sugar + oolong_leaves + hot_water;
+		if sweet then {
+			sweet = sugar - 1;
+			if hot then {
+				temp = tea + cold_water;
+				temp = temp - 10;}
+			else {
+				temp = tea + hot_water;
+				temp = temp + 10;}
+			tea = tea + sweet; }
+		else {
+			sweet = sugar + 1;}
+		drink = 2 * tea;}
+	else {
+		drink = coffee;}
+	default = water;
+}
+
+procedure inter {
+	if drink then {
+		if coffee then {
+			if spinelli then {
+				rating = 3;}
+			else {
+				rating = 0;}}
+		else {
+			drink = tea;}}
+	else {
+		drink = water;}
+}

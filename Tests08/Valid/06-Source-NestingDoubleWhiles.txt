@@ -1,0 +1,23 @@
+procedure simple {
+	switch = 1;
+	while switch {
+		lamp = 1;
+		while lights {
+			lights = 10;}
+		lamp = lamp + lights;}
+	switch = 0;
+}
+
+procedure intermediate {
+	while bulb {
+		colour = yellow;
+		while yellow {
+			colour = yellow - 0.2;}}
+	hue = colour;
+}
+
+procedure complex {
+	while lights {
+		while dim {
+			colour = yellow + 1;}}
+}

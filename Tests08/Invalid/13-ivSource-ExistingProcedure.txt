@@ -1,0 +1,10 @@
+procedure exist {
+	while x then {
+		y = 1;
+	}
+	d = 2;
+}
+
+procedure exist {
+	z = 1;
+}
