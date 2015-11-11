@@ -1093,8 +1093,13 @@ bool ProgramKnowledgeBase::patternAssignMatch(int stmt, string var, string expr)
 		return false;
 	} 
 
-	if (assign->getFirstChild()->getName() != var) {
+	string variableName = assign->getFirstChild()->getName();
+	if (variableName != var && var != WILDCARD_STRING) {
 		return false;
+	}
+
+	if (expr == WILDCARD_STRING) {
+		return true;
 	}
 
 	vector<string> expressionTokens = Parser::splitByDelimiters(vector<string>(1, expr));
@@ -1114,10 +1119,6 @@ bool ProgramKnowledgeBase::patternAssignContain(int stmt, string var, string exp
 
 	if (assign->getFirstChild()->getName() != var) {
 		return false;
-	}
-
-	if (expr == WILDCARD_STRING) {
-		return true;
 	}
 
 	vector<string> expressionTokens = Parser::splitByDelimiters(vector<string>(1, expr));
