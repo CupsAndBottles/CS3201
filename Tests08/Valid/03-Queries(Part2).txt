@@ -323,10 +323,10 @@ while w; if ifstat; variable v; stmt s, s1;
 Select s pattern w(v,_) and modifies(s,v)
 3,4,7,8,9,10,14,19,20,21
 5000
-67 - pattern while / modifies / parent* (FAIL)
+67 - pattern while / modifies / parent*
 while w; if ifstat; variable v; stmt s, s1;
 Select s pattern w(v,_) and modifies(s,v) and parent*(s,s1)
-4,7,20
+2,4,7,20
 5000
 68 - Follows* / parent*
 stmt s,s1;
@@ -353,8 +353,8 @@ assign a, a1, a2;
 select a2 such that affects*(a,a1) and follows*(a2, a)
 10
 5000
-73 - Affects* / follows* / parents* (FAIL)
+73 - Affects* / follows* / parents*
 assign a, a1, a2; stmt s;
 select s such that affects*(a,a1) and follows*(a2, a) and parent*(s,a)
-tbc
+2,4
 5000
