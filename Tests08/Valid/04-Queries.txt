@@ -105,21 +105,16 @@ Select w pattern w1("y",_) and pattern w2("z",_) and Parent*(w,w1) such that Par
 5000
 22 - Test if pattern
 if ifstat;
-Select ifstat such that pattern ifstat("z",_,_)
+Select ifstat pattern ifstat("z",_,_)
 13
 5000
 23 - Test if pattern
 if ifstat;
-Select ifstat such that pattern ifstat("y",_,_)
+Select ifstat pattern ifstat("y",_,_)
 none
 5000
 24 - Test if pattern wrong syntax
 if ifstat;
-Select ifstat such that pattern ifstat("z",_,"z=1")
+Select ifstat pattern ifstat("z",_,"z=1")
 none
-5000
-25 - Test multiple patterns
-if ifstat; assign a; stmt s; while w;
-Select s pattern a(_,"z+1") and ifstat("z",_,_) and pattern w("x",_)
-1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16
 5000

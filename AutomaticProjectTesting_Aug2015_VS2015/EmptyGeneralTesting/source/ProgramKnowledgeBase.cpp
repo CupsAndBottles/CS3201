@@ -628,6 +628,37 @@ vector<int> ProgramKnowledgeBase::getStatementsFollowStarredBy(int stmt)
 }
 
 bool ProgramKnowledgeBase::next(int s1, int s2){
+	Gnode* wildCardNode;
+	if (s1 == WILDCARD_INT && s2 == WILDCARD_INT) {
+		for (int i = 1; i < statementTable->getSize(); i++) {
+			wildCardNode = statementTable->getCFGNode(i);
+			if (wildCardNode != NULL) {
+				if (!wildCardNode->getNext().empty()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	else if (s1 == WILDCARD_INT) {
+		wildCardNode = statementTable->getCFGNode(s2);
+		if (!wildCardNode->getPrev().empty()) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	else if (s2 == WILDCARD_INT) {
+		wildCardNode = statementTable->getCFGNode(s1);
+		if (!wildCardNode->getNext().empty()) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
 	Gnode* node1 = statementTable->getCFGNode(s1);
 	Gnode* node2 = statementTable->getCFGNode(s2);
 	if (node1 == NULL || node2 == NULL) {
@@ -639,16 +670,48 @@ bool ProgramKnowledgeBase::next(int s1, int s2){
 }
 
 vector<int> ProgramKnowledgeBase::getNextStatements(int stmt){
+	vector<int> list = vector<int>();
+	Gnode *wildCardNode;
+	if (stmt == WILDCARD_INT) {
+		for (int i = 1; i < statementTable->getSize(); i++) {
+			wildCardNode = statementTable->getCFGNode(i);
+			if (wildCardNode != NULL) {
+				if (!wildCardNode->getPrev().empty()) {
+					list.push_back(wildCardNode->getValue());
+				}
+			}
+		}
+		return list;
+	}
+
 	Gnode* startNode = statementTable->getCFGNode(stmt);
 	return Helpers::flattenCFGNodeVectorToIntVector(&startNode->getNext());
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsBefore(int stmt) {
+	vector<int> list = vector<int>();
+	Gnode *wildCardNode;
+	if (stmt == WILDCARD_INT) {
+		for (int i = 1; i < statementTable->getSize(); i++) {
+			wildCardNode = statementTable->getCFGNode(i);
+			if (wildCardNode != NULL) {
+				if (!wildCardNode->getNext().empty()) {
+					list.push_back(wildCardNode->getValue());
+				}
+			}
+		}
+		return list;
+	}
+
 	Gnode* startNode = statementTable->getCFGNode(stmt);
 	return Helpers::flattenCFGNodeVectorToIntVector(&startNode->getPrev());
 }
 
 bool ProgramKnowledgeBase::nextStar(int s1, int s2){
+	if (s1 == WILDCARD_INT || s2 == WILDCARD_INT) {
+		return next(s1, s2);
+	}
+
 	Gnode* node1 = statementTable->getCFGNode(s1);
 	Gnode* node2 = statementTable->getCFGNode(s2);
 	if (node1 == NULL || node2 == NULL) {
@@ -678,6 +741,10 @@ bool ProgramKnowledgeBase::nextStar(int s1, int s2){
 }
 
 vector<int> ProgramKnowledgeBase::getNextStarStatements(int stmt){
+	if (stmt == WILDCARD_INT) {
+		return getNextStatements(stmt);
+	}
+
 	Gnode* startNode = statementTable->getCFGNode(stmt);
 	queue<Gnode*> nodesToBeProcessed = queue<Gnode*>();
 	unordered_set<Gnode*> processedNodes = unordered_set<Gnode*>();
@@ -704,6 +771,10 @@ vector<int> ProgramKnowledgeBase::getNextStarStatements(int stmt){
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsBeforeStar(int stmt){
+	if (stmt == WILDCARD_INT) {
+		return getStatementsBefore(stmt);
+	}
+
 	Gnode* startNode = statementTable->getCFGNode(stmt);
 	queue<Gnode*> nodesToBeProcessed = queue<Gnode*>();
 	unordered_set<Gnode*> processedNodes = unordered_set<Gnode*>();
@@ -730,6 +801,37 @@ vector<int> ProgramKnowledgeBase::getStatementsBeforeStar(int stmt){
 }
 
 bool ProgramKnowledgeBase::affects(int s1, int s2){
+	DDGnode *wildCardNode;
+	if (s1 == WILDCARD_INT && s2 == WILDCARD_INT) {
+		for (int i = 1; i < statementTable->getSize(); i++) {
+			wildCardNode = statementTable->getDDGNode(i);
+			if (wildCardNode != NULL) {
+				if (wildCardNode->hasLinks()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	else if (s1 == WILDCARD_INT) {
+		wildCardNode = statementTable->getDDGNode(s2);
+		if (wildCardNode->hasFromLinks()) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	else if (s2 == WILDCARD_INT) {
+		wildCardNode = statementTable->getDDGNode(s1);
+		if (wildCardNode->hasToLinks()) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
 	DDGnode *node1, *node2;
 	node1 = statementTable->getDDGNode(s1);
 	node2 = statementTable->getDDGNode(s2);
@@ -740,9 +842,21 @@ bool ProgramKnowledgeBase::affects(int s1, int s2){
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsAffectedBy(int stmt){
+	vector<int> list = vector<int>();
+	DDGnode *wildCardNode;
+	if (stmt == WILDCARD_INT) { //gets statements that are affected by something
+		for (int i = 1; i < statementTable->getSize(); i++) {
+			wildCardNode = statementTable->getDDGNode(i);
+			if (wildCardNode != NULL) {
+				if (wildCardNode->hasFromLinks()) {
+					list.push_back(wildCardNode->getStatementNumber());
+				}
+			}
+		}
+		return list;
+	}
 	DDGnode *stmtNode;
 	stmtNode = statementTable->getDDGNode(stmt);
-	vector<int> list = vector<int>();
 	vector<DDGnode*> DDGlist = stmtNode->listOfLinkedToDDG();
 	for (auto i = DDGlist.begin(); i != DDGlist.end(); i++) {
 		list.push_back((*i)->getStatementNumber());
@@ -751,9 +865,21 @@ vector<int> ProgramKnowledgeBase::getStatementsAffectedBy(int stmt){
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsThatAffect(int stmt){
+	vector<int> list = vector<int>();
+	DDGnode *wildCardNode;
+	if (stmt == WILDCARD_INT) { //gets statements that affect something
+		for (int i = 1; i < statementTable->getSize(); i++) {
+			wildCardNode = statementTable->getDDGNode(i);
+			if (wildCardNode != NULL) {
+				if (wildCardNode->hasToLinks()) {
+					list.push_back(wildCardNode->getStatementNumber());
+				}
+			}
+		}
+		return list;
+	}
 	DDGnode *stmtNode;
 	stmtNode = statementTable->getDDGNode(stmt);
-	vector<int> list = vector<int>();
 	vector<DDGnode*> DDGlist = stmtNode->listOfLinkedFromDDG();
 	for (auto i = DDGlist.begin(); i != DDGlist.end(); i++) {
 		list.push_back((*i)->getStatementNumber());
@@ -762,6 +888,10 @@ vector<int> ProgramKnowledgeBase::getStatementsThatAffect(int stmt){
 }
 
 bool ProgramKnowledgeBase::affectsStar(int s1, int s2){
+	if (s1 == WILDCARD_INT || s2 == WILDCARD_INT) {
+		return affects(s1, s2);
+	}
+
 	if (affects(s1, s2)) {
 		return true;
 	}
@@ -777,6 +907,9 @@ bool ProgramKnowledgeBase::affectsStar(int s1, int s2){
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsAffectStarredBy(int stmt){
+	if (stmt == WILDCARD_INT) {
+		return getStatementsAffectedBy(stmt);
+	}
 	vector<int> list = vector<int>(), stmtProcessed = vector<int>(), tempVec = vector<int>();
 	queue<int> toProcess = queue<int>();
 	int currProcessingStmt = stmt;
@@ -807,6 +940,9 @@ vector<int> ProgramKnowledgeBase::getStatementsAffectStarredBy(int stmt){
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsThatAffectStar(int stmt){
+	if (stmt == WILDCARD_INT) {
+		return getStatementsThatAffect(stmt);
+	}
 	vector<int> list = vector<int>(), stmtProcessed = vector<int>(), tempVec = vector<int>();
 	queue<int> toProcess = queue<int>();
 	int currProcessingStmt = stmt;

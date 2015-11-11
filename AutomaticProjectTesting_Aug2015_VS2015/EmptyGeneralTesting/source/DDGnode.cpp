@@ -24,6 +24,40 @@ bool DDGnode::linkedTo(DDGnode* node)
 	return false;
 }
 
+bool DDGnode::linkedFrom(DDGnode * node)
+{
+	for (auto it = edgesFrom->begin(); it != edgesFrom->end(); it++) {
+		if ((*it).first == node) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool DDGnode::hasToLinks()
+{
+	if (edgesTo->empty()) {
+		return false;
+	}
+	return true;
+}
+
+bool DDGnode::hasFromLinks()
+{
+	if (edgesFrom->empty()) {
+		return false;
+	}
+	return true;
+}
+
+bool DDGnode::hasLinks()
+{
+	if (!hasToLinks() && !hasFromLinks()) {
+		return false;
+	}
+	return true;
+}
+
 vector<DDGnode*> DDGnode::listOfLinkedToDDG()
 {
 	vector<DDGnode*> list = vector<DDGnode*>();
