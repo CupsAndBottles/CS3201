@@ -500,6 +500,8 @@ pair<bool, vector<string>> QueryEvaluator::patternAssign_AssignAndVariableSynony
 	if (encounteredAssign && encounteredVariable) {
 		unordered_set<QueryNode*> assignNodes = getQNodes(assign);
 		unordered_set<QueryNode*> variableNodes = getQNodes(variable);
+		unordered_set<QueryNode*> validVariableNodes = unordered_set<QueryNode*>();
+
 		for (QueryNode* assignNode : assignNodes) {
 			try {
 				assignNode->getSynonym();
@@ -507,30 +509,38 @@ pair<bool, vector<string>> QueryEvaluator::patternAssign_AssignAndVariableSynony
 				continue;
 			}
 
+			bool assignIsValid = false;
 			for (QueryNode* variableNode : variableNodes) {
 				try {
 					variableNode->getSynonym();
 				} catch (bad_alloc) {
 					continue;
 				}
-
-				bool result = false;
+				bool variableIsValid = false;
 				if (isSubexpression) {
-					result = database->patternAssignContain(stoi(assignNode->getValue()), variableNode->getValue(), subexpression);
+					variableIsValid = database->patternAssignContain(stoi(assignNode->getValue()), variableNode->getValue(), subexpression);
 				} else if (isWildcardExpression) {
-					result = true;
+					variableIsValid = true;
 				} else {
-					result = database->patternAssignMatch(stoi(assignNode->getValue()), variableNode->getValue(), expression);
+					variableIsValid = database->patternAssignMatch(stoi(assignNode->getValue()), variableNode->getValue(), expression);
 				}
 
-				if (result) {
+				if (variableIsValid) {
 					atLeastOneResult = true;
+					assignIsValid = true;
 					variableNode->insertParent(assignNode);
 					assignNode->insertParent(variableNode);
-				} else {
-					variableNode->destroy(&encounteredEntities);
-					assignNode->destroy(&encounteredEntities);
+					validVariableNodes.insert(variableNode);
 				}
+			}
+			if (!assignIsValid) {
+				assignNode->destroy(&encounteredEntities);
+			}
+		}
+
+		for (QueryNode* variableNode : variableNodes) {
+			if (validVariableNodes.count(variableNode) == 0) {
+				variableNode->destroy(&encounteredEntities);
 			}
 		}
 	} else if (encounteredAssign) {
@@ -579,20 +589,22 @@ pair<bool, vector<string>> QueryEvaluator::patternAssign_AssignAndVariableSynony
 				continue;
 			}
 
-			bool result = false;
+			bool variableIsValid = false;
 			vector<string> assignValues = formatter.integerVectorToStringVector(database->getStatementsThatModify(variableNode->getValue()));
 			assignValues = filterStatementsByTargetType(assignValues, getEntityType(assign));
 			for (string assignValue : assignValues) {
+				bool assignIsValid = false;
 				if (isSubexpression) {
-					result = database->patternAssignContain(stoi(assignValue), variableNode->getValue(), subexpression);
+					assignIsValid = database->patternAssignContain(stoi(assignValue), variableNode->getValue(), subexpression);
 				} else if (isWildcardExpression) {
-					result = true;
+					assignIsValid = true;
 				} else {
-					result = database->patternAssignMatch(stoi(assignValue), variableNode->getValue(), expression);
+					assignIsValid = database->patternAssignMatch(stoi(assignValue), variableNode->getValue(), expression);
 				}
 
-				if (result) {
+				if (assignIsValid) {
 					atLeastOneResult = true;
+					variableIsValid = true;
 					QueryNode* assignNode = NULL;
 					if (assignNodes.count(assignValue) == 0) {
 						assignNode = QueryNode::createQueryNode(assign, assignValue);
@@ -601,9 +613,10 @@ pair<bool, vector<string>> QueryEvaluator::patternAssign_AssignAndVariableSynony
 						assignNode = assignNodes.at(assignValue);
 					}
 					variableNode->insertParent(assignNode);
-				} else {
-					variableNode->destroy(&encounteredEntities);
 				}
+			}
+			if (!variableIsValid) {
+				variableNode->destroy(&encounteredEntities);
 			}
 		}
 	} else {
