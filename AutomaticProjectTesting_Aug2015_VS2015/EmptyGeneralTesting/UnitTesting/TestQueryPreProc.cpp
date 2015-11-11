@@ -52,7 +52,8 @@ namespace UnitTesting
 			//Test combination of such that, and, pattern
 			Assert::IsTrue(qpp.query("assign a; Select a such that Modifies (a, \"y\") and Pattern a (\"m\", _)")); qpp.clearAll();
 			Assert::IsTrue(qpp.query("assign a; stmt s; Select s such that Parent(s, 6) and pattern a(_, \"d\")")); qpp.clearAll();
-			
+
+			Assert::IsFalse(qpp.query("assign a; select a such that")); qpp.clearAll();
 			//Assert::AreEqual("true", "true");
 		}
 
@@ -144,5 +145,7 @@ namespace UnitTesting
 			Assert::IsTrue(qList.at(7).getRelation() == "Affects*");
 
 		}
+
+
 	};
 }

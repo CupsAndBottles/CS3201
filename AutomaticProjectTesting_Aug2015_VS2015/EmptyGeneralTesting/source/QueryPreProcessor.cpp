@@ -498,6 +498,9 @@ bool QueryPreProcessor::query(string s) {
 				i++;
 				if (toLowerCase(selectCl.at(i)).compare("that") == 0) {
 					i++;
+					if (selectCl.size() == i) {
+						return false; // cater for 'assign a; Select a such that' being a valid when it should be invalid
+					}
 					//extract relCond
 					while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0
 						|| toLowerCase(selectCl.at(i)).compare("and") == 0 || toLowerCase(selectCl.at(i)).compare("with") == 0)) {
@@ -507,6 +510,7 @@ bool QueryPreProcessor::query(string s) {
 							break;
 						}
 					}
+
 					queryVector = checkForBracketsAndComma(argVector);
 					if (verifySuchThatQuery(queryVector)) {
 						addQueryObject(queryVector);
@@ -551,6 +555,9 @@ bool QueryPreProcessor::query(string s) {
 			//find pattern-cl
 			else if (toLowerCase(selectCl.at(i)).compare("pattern") == 0) {
 				i++;
+				if (selectCl.size() == i) {
+					return false; // cater for 'assign a; Select a pattern' being a valid when it should be invalid
+				}
 				//extract patternCond
 				while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0
 					|| toLowerCase(selectCl.at(i)).compare("and") == 0 || toLowerCase(selectCl.at(i)).compare("with") == 0)) {
@@ -577,6 +584,9 @@ bool QueryPreProcessor::query(string s) {
 			//find with-cl
 			else if (toLowerCase(selectCl.at(i)).compare("with") == 0) {
 				i++;
+				if (selectCl.size() == i) {
+					return false; // cater for 'assign a; Select a with' being a valid when it should be invalid
+				}
 				while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0
 					|| toLowerCase(selectCl.at(i)).compare("and") == 0 || toLowerCase(selectCl.at(i)).compare("with") == 0)) {
 					argVector.push_back(selectCl.at(i));
@@ -602,9 +612,15 @@ bool QueryPreProcessor::query(string s) {
 			//"and" is present, next clause can be a suchthat-cl or pattern-cl
 			else if (toLowerCase(selectCl.at(i)).compare("and") == 0) {
 				i++;
+				if (selectCl.size() == i) {
+					return false; // cater for 'assign a; Select a and' being a valid when it should be invalid
+				}
 				//i.e. and Pattern a(...
 				if (toLowerCase(selectCl.at(i)).compare("pattern") == 0) {
 					i++;
+					if (selectCl.size() == i) {
+						return false; // cater for 'assign a; Select a and pattern' being a valid when it should be invalid
+					}
 					//extract patternCond
 					while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0
 						|| toLowerCase(selectCl.at(i)).compare("and") == 0 || toLowerCase(selectCl.at(i)).compare("with") == 0)) {
@@ -633,7 +649,9 @@ bool QueryPreProcessor::query(string s) {
 					i++;
 					if (toLowerCase(selectCl.at(i)).compare("that") == 0) {
 						i++;
-
+						if (selectCl.size() == i) {
+							return false; // cater for 'assign a; Select a and such that' being a valid when it should be invalid
+						}
 						//extract relCond
 						while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0
 							|| toLowerCase(selectCl.at(i)).compare("and") == 0 || toLowerCase(selectCl.at(i)).compare("with") == 0)) {
