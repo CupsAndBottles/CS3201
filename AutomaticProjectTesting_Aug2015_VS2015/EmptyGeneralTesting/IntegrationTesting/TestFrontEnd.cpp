@@ -33,6 +33,17 @@ namespace IntegrationTesting
 			db->buildDatabase(parsedProgram);
 		}
 
+		TEST_METHOD(testParserDatabaseIntegrationWithSource4) {
+			string fileName = "../../../Tests08/valid/04-Source-Calls.txt";
+			
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = (*parse).parseSimpleProgram(fileName);
+			Assert::AreNotEqual(0, (int)parsedProgram.size());
+
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+		}
+
 		TEST_METHOD(testParserDatabasePKBIntegration) {
 			string fileName = "testParserDatabasePKBIntegration.txt";
 			ofstream outputFile(fileName, ofstream::trunc);
