@@ -416,6 +416,7 @@ namespace UnitTesting
 			outputFile << "y = 4;";
 			outputFile << "z = x;";
 			outputFile << "z = y;";
+			outputFile << "a = x + y;";
 			outputFile << "}";
 			outputFile.close();
 
@@ -443,6 +444,10 @@ namespace UnitTesting
 			list<string> query4 = qe.getResults("assign a; variable v; Select a pattern a (v,\"y\") and modifies(\"6\", v)");
 			Assert::AreEqual(1, (int)query4.size());
 			Assert::IsTrue(find(query4.begin(), query4.end(), string("6")) != query4.end());
+
+			list<string> query5 = qe.getResults("assign a; Select a pattern a (_,\"_x_\")");
+			Assert::AreEqual(1, (int)query5.size());
+			Assert::IsTrue(find(query5.begin(), query5.end(), string("7")) != query5.end());
 		}
 
 		TEST_METHOD(testAffects) {
