@@ -493,6 +493,8 @@ pair<bool, vector<string>> QueryEvaluator::patternAssign_AssignAndVariableSynony
 	string subexpression = "";
 	if (isSubexpression) {
 		subexpression = formatter.removeUnderscores(expression);
+	} else if (isWildCard(expression)) {
+		expression = ProgramKnowledgeBase::WILDCARD_STRING;
 	}
 
 	if (encounteredAssign && encounteredVariable) {
