@@ -92,7 +92,7 @@ namespace UnitTesting
 
 			//Select p such that Calls(p, "water") and modifies(p, "x");
 			list<string> ans3 = qe.getResults("procedure p; Select p such that calls(p, \"water\") and modifies(p, \"x\")");
-			Assert::AreEqual(1, (int)ans3.size()); //ans kitkat, err0r gives 0
+			Assert::AreEqual(1, (int)ans3.size()); //ans kitkat
 			Assert::IsTrue(find(ans3.begin(), ans3.end(), string("kitkat")) != ans3.end());
 			Assert::IsFalse(find(ans3.begin(), ans3.end(), string("snickers")) != ans3.end());
 			Assert::IsFalse(find(ans3.begin(), ans3.end(), string("water")) != ans3.end());
@@ -125,6 +125,18 @@ namespace UnitTesting
 			list<string> ans9 = qe.getResults("procedure p, q; Select p such that calls(p, q) with q.procName = \"kitkat\"");
 			Assert::AreEqual(1, (int)ans9.size());
 			Assert::IsTrue(find(ans9.begin(), ans9.end(), string("snickers")) != ans9.end());
+
+			//Remove this afer it is fixed - from here onwards
+			list<string> ans10 = qe.getResults("while w; if ifstat; variable v; stmt s, s1; Select s pattern w(v,_) and modifies(s, v) and parent*(s,s1)");
+			Assert::AreEqual(3, (int)ans10.size());
+			Assert::IsTrue(find(ans10.begin(), ans10.end(), string("4")) != ans10.end());
+			Assert::IsTrue(find(ans10.begin(), ans10.end(), string("7")) != ans10.end());
+			Assert::IsTrue(find(ans10.begin(), ans10.end(), string("20")) != ans10.end());
+
+			//after affect*(a,a1) and follows*(a2,a), a=10
+			list<string> ans11 = qe.getResults("assign a, a1, a2; stmt s; select s such that affects*(a, a1) and follows*(a2, a) and parent*(s, a)");
+			Assert::IsTrue(find(ans11.begin(), ans11.end(), string("2")) != ans11.end());
+			Assert::IsTrue(find(ans11.begin(), ans11.end(), string("4")) != ans11.end());
 		}
 	};
 }

@@ -1,149 +1,79 @@
-1 - Test if SPA tool returns all if statements
-if ifstat;
-Select ifstat
-2, 7, 16
-5000
-1 - Test if SPA tool returns all while statements
-while w;
-Select w
-4, 20
-5000
-2 - Parent 
-assign a;
-Select a such that Parent(a, 9)
-none
-5000
-3 - Parent
-variable v;
-Select v such that Parent(2, 10)
-none
-5000
-4 - Parent
-variable v;
-Select v such that Parent(2, 3)
-x, y, z, d, i, q
-5000
-5 - Parent*
-prog_line n;
-Select n such that Parent*(2, n)
-3, 4, 5, 6, 7, 8, 9, 10, 11, 12
-5000
-6 - Parent*
-stmt s;
-Select s such that Parent*(s, 12)
-2
-5000
-7 - Parent*
-procedure p;
-Select p such that Parent*(16, 19)
-none
-5000
-8 - Return all Follows
-variable v;
-Select v such that Follows(4, 11)
-x, y, z, d, i, q
-5000
-9 - Follows
-procedure p;
-Select p such that Follows(2, 3)
-none
-5000
-10 - Follows
-stmt s;
-Select s such that Follows(s, 4)
-3
-5000
-11 - Return all Follows*
-assign a;
-Select a such that Follows*(a, 13)
-1
-5000
-12 - Follows*
-procedure p;
-Select p such that Follows*(14, 15)
-none
-5000
-13 - Follows*
-stmt s;
-Select s such that Follows*(21, s)
-none
-5000
-14 - Modifies
+1 - Modifies
 stmt s;
 Select s such that Modifies(8, "q")
 19
 5000
-15 - Modifies
+2 - Modifies
 assign a;
 Select a such that Modifies(1, "x")
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
 5000
-16 - Modifies
+3 - Modifies
 stmt s;
 Select s such that Modifies(s, "q")
 19, 20, 21
 5000
-17 - Uses
+4 - Uses
 variable v;
 Select v such that Uses(2, "x")
 x, y, z, d, i, q
 5000
-18 - Uses
+5 - Uses
 stmt s;
 Select s such that Uses(s, "x")
 2, 4, 5
 5000
-19 - Uses
+6 - Uses
 prog_line n;
 Select n such that Uses(7, "d")
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
 5000
-20 - pattern and modifies
+7 - pattern and modifies
 stmt s; assign a;
 Select s pattern a("y", _) and such that Modifies(s, "y")
 3, 8, 9, 10
 5000
-21 - pattern and modifies
+8 - pattern and modifies
 variable v; assign a;
 Select v pattern a(_, _"y"_) such that Modifies(a, v)
 y
 5000
-22 - Uses and pattern
+9 - Uses and pattern
 assign a, a1; variable v;
 Select a such that Uses(a, "x") and pattern a1(_, "y")
 none
 5000
-23 - Uses and pattern
+10 - Uses and pattern
 assign a;
 Select a such that Uses(a, "y") and pattern a("y" , _)
 8, 9, 10
 5000
-24 - Uses pattern
+11 - Uses and pattern
 assign a; variable v;
 Select a such that Uses(a, "x") pattern a(v,_)
 2, 5
 5000
-25 - Uses pattern
+12 - Uses and pattern
 assign a; variable v;
 Select a such that Uses(a, v) pattern a(v, _)
 8, 9, 10, 21
 5000
-26 - Uses pattern
+13 - Uses and pattern
 assign a, a1; variable v;
 Select a such that Uses(a, v) and pattern a1(v, _)
 1, 3, 5, 6, 8, 9, 10, 11, 12, 13, 15, 19, 21
 5000
-27 - Parent pattern
+14 - Parent and pattern
 stmt s; assign a;
 Select s such that Parent(s, 5) and pattern a(_, _"y"_)
 none
 5000
-28 - follows pattern
+15 - follows and pattern
 assign a, a1;
 Select a pattern a1("x", _) such that Follows(a, a1)
 none
 5000
-30 - follows pattern
+16 - follows and pattern
 assign a, a1;
 Select a pattern a1("d", _) such that Follows(a, a1)
 5, 6

@@ -19,8 +19,6 @@ public:
 	bool isSynAssign(string s, EntTable et);
 	bool isExpressionSpec(string s);
 	bool initSemanticsCheck(string s, string argType, EntTable et);
-
-	//Iteration 2 onwards
 	bool isLineRef(string s, EntTable et);
 	bool isVarRef(string s, EntTable et);
 	bool isStmtOrEntRef(string s, EntTable et);
@@ -41,8 +39,6 @@ private:
 	bool isLetter(char c);
 	bool isDigit(char c);
 	bool isExpression(char c);
-
-	//Iteration 2 onwards
 	vector<string> split(string s, string delim);
 };
 

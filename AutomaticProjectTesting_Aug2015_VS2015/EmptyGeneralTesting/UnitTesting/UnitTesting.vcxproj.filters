@@ -44,16 +44,10 @@
     <ClCompile Include="TestInputFormatter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestQueryEvaluator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TestProgramKnowledgeBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestCfg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestQueryEvaluator2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

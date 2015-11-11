@@ -4,7 +4,7 @@
 
 SemanticsCheck sCheck;
 EntTable entityTable;
-vector<string> entityList;
+vector<string> resultList;
 vector<QueryObject> queryList;
 RelationshipTable relTable;
 
@@ -85,9 +85,8 @@ bool QueryPreProcessor::inputEntitiesIntoTable(vector<string> v) {
 	for (vector<string>::iterator it = v.begin(); it != v.end(); ++it) {
 		string line = *it;
 		vector<string> wordVector = split(line, " ,");
-		//if first vector of line is equals to stmt, assign, while..proceed to add subsequent vectors into entity table
+		//if first vector of line is equals to stmt, assign, while..proceed to add subsequent variables into entity table
 		if (find(designEntities.begin(), designEntities.end(), wordVector[0]) != designEntities.end()) {
-			//cout << wordVector[0] << endl;
 			for (size_t i = 1; i < wordVector.size(); i++) {
 				if (sCheck.isIdent(wordVector[i])) {
 					if (entityTable.exist(wordVector[i])) {
@@ -104,16 +103,12 @@ bool QueryPreProcessor::inputEntitiesIntoTable(vector<string> v) {
 }
 
 bool QueryPreProcessor::verifySuchThatQuery(vector<string> temp) {
-	//check that this vector is of size 3
 	if (temp.size() != 3) {
 		cout << "querySTObj does not have 3 arguments" << endl;
-		//cout << temp[0] + temp[1] << endl;
 		return false;
 	}
 
-	//check first argument
 	vector<string> definedArg = relTable.getArguments(toLowerCase(temp[0]));
-	//check arg1 and arg2
 	if (sCheck.initSemanticsCheck((temp[1]), definedArg[0], entityTable) && sCheck.initSemanticsCheck(temp[2], definedArg[1], entityTable)) {
 		string relType = toLowerCase(temp[0]);
 		string arg1 = temp[1];
@@ -159,10 +154,8 @@ bool QueryPreProcessor::verifySuchThatQuery(vector<string> temp) {
 }
 
 bool QueryPreProcessor::verifyPatternQuery(vector<string> temp) {
-	//check that this vector is of size 3
 	if (temp.size() != 3) {
 		cout << "queryPatternObj does not have 3 argument:";
-		//cout << temp[3] << endl;
 		return false;
 	}
 
@@ -197,18 +190,17 @@ bool QueryPreProcessor::verifyPatternQuery(vector<string> temp) {
 void QueryPreProcessor::addQueryObject(vector<string> temp) {
 
 	int numUnknowns;
-	//find number of unknowns in this object (either 1 or 2)
 	if ((entityTable.exist(temp[1]) || temp[1] == "_") && (entityTable.exist(temp[2]) || temp[2] == "_")) {
 		numUnknowns = 2;
 	}
-	else {
+	else if ((entityTable.exist(temp[1]) || temp[1] == "_") || (entityTable.exist(temp[2]) || temp[2] == "_")) {
 		numUnknowns = 1;
 	}
+	else {
+		numUnknowns = 0;
+	}
 
-	//make into query object
 	QueryObject qo = QueryObject(temp[0], temp[1], temp[2], numUnknowns);
-
-	//add into queryList
 	queryList.push_back(qo);
 }
 
@@ -235,7 +227,7 @@ vector<string> QueryPreProcessor::mergeQuotations(vector<string> temp) {
 				combine = combine + temp[i];
 				flag = true;
 			}
-			//found the next \"
+			//found the next quotation:"
 			else {
 				combine = combine + temp[i];
 				newVect.push_back(combine);
@@ -266,7 +258,6 @@ vector<string> QueryPreProcessor::checkForBracketsAndComma(vector<string> argVec
 	while (start != end) {
 		string it = start->str();
 		checkVector.push_back(it);
-		//cout << it << endl;
 		++start;
 	}
 
@@ -276,7 +267,7 @@ vector<string> QueryPreProcessor::checkForBracketsAndComma(vector<string> argVec
 			argVector.push_back(checkVector[0]);
 			argVector.push_back(checkVector[2]);
 			argVector.push_back(checkVector[4]);
-			//cout << "brackets and commas in place" << endl;
+			//cout << "Brackets and commas in place" << endl;
 		}
 		else {
 			cout << "missing brackets or commas" << endl;
@@ -288,7 +279,7 @@ vector<string> QueryPreProcessor::checkForBracketsAndComma(vector<string> argVec
 			argVector.push_back(checkVector[0]);
 			argVector.push_back(checkVector[2]);
 			argVector.push_back(checkVector[4]);
-			//cout << "brackets and commas in place" << endl;
+			//cout << "Brackets and commas in place" << endl;
 		}
 		else {
 			cout << "missing brackets or commas" << endl;
@@ -406,7 +397,7 @@ bool QueryPreProcessor::addEntities(vector<string> entities) {
 	vector<string> filteredEntities = split(mergedString, "<>, ");
 	if (filteredEntities.size() == 1) {
 		if (sCheck.isSynonym(filteredEntities.at(0), entityTable) || (toLowerCase(filteredEntities.at(0)).compare("boolean") == 0)) {
-			entityList.push_back(filteredEntities.at(0));
+			resultList.push_back(filteredEntities.at(0));
 		}
 		else {
 			return false;
@@ -415,7 +406,7 @@ bool QueryPreProcessor::addEntities(vector<string> entities) {
 	else {
 		for (size_t i = 0; i<filteredEntities.size(); i++) {
 			if (sCheck.isSynonym(filteredEntities.at(i), entityTable)) {
-				entityList.push_back(filteredEntities.at(i));
+				resultList.push_back(filteredEntities.at(i));
 			}
 			else {
 				return false;
@@ -452,34 +443,23 @@ void QueryPreProcessor::optimizeWithClause(vector<string> temp) {
 }
 
 bool QueryPreProcessor::query(string s) {
-	//initialize relationship table
+	//Initialize relationship table
 	relTable.initRelTable();
 	clearAll();
 
-	//cout << s << endl; cout << endl;
-
-	//create design entity table
-	//Create the design-entity(s) by tokenizing string with delimiter ; and \n. Make sure that all subsequent synonyms used in a query are being declared.
+	//Create the design-entity(s) table by tokenizing string with delimiter ; and \n. Make sure that all subsequent synonyms used in a query are being declared.
 	vector<string> temp;
 	temp = split(s, ";\n");
 	if (!inputEntitiesIntoTable(temp)) {
 		return false;
 	}
-	//cout << "parsed design-entities into table" << endl;
+	//cout << "Parsed design-entities into table" << endl;
 
 	//Work on relationship Query. Focusing on the 'Select...' line
 	//cout << "Verify line: " + v.back() << endl;
 	string newS = temp.back();
 	vector<string> tempSelectCl = split(newS, " ");
-	/*for (vector<string>::iterator it = selectCl.begin(); it != selectCl.end(); ++it) {
-	cout << *it << endl;
-	}
-	for (size_t i = 0; i < selectCl.size(); i++) {
-	cout << selectCl.at(i) << endl;
-	}*/
 
-	//vector<string> tempSelectCl2 = removeAndTokens(tempSelectCl);
-	//vector<string> selectCl = mergeQuotations(tempSelectCl2);
 	vector<string> selectCl = mergeQuotations(tempSelectCl);
 	vector<string> entities;
 	//first must be a Select, else return false
@@ -488,16 +468,13 @@ bool QueryPreProcessor::query(string s) {
 		size_t i = 1;
 
 		//second phase must be a result-clause synonym (<tuple>, boolean), verify synonym, else false
-		//cout << "result-clause: ";
 		while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0 || toLowerCase(selectCl.at(i)).compare("with") == 0)) {
-			//cout << selectCl.at(i) + " ";
 			entities.push_back(selectCl.at(i));
 			i++;
 			if (selectCl.size() == i) {
 				break;
 			}
 		}
-		//cout << endl;
 		if (i == 1) {
 			cout << "no result-clause found" << endl;
 			return false;
@@ -515,18 +492,15 @@ bool QueryPreProcessor::query(string s) {
 		vector<string> queryVector;
 		vector<string> queryVectorForWith;
 		while (i < selectCl.size()) {
-			//cout << selectCl.at(i) << endl;
 
 			//find suchthat-cl
 			if (toLowerCase(selectCl.at(i)).compare("such") == 0) {
 				i++;
 				if (toLowerCase(selectCl.at(i)).compare("that") == 0) {
 					i++;
-					//cout << "suchthat-cl: ";
 					//extract relCond
 					while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0
 						|| toLowerCase(selectCl.at(i)).compare("and") == 0 || toLowerCase(selectCl.at(i)).compare("with") == 0)) {
-						//cout << selectCl.at(i) + " ";
 						argVector.push_back(selectCl.at(i));
 						i++;
 						if (selectCl.size() == i) {
@@ -541,7 +515,7 @@ bool QueryPreProcessor::query(string s) {
 					}
 					else {
 						//i.e. "... such that a.stmt#=7..."
-						//if '=' is find in a such that clause, check if it is a witch clause
+						//if '=' is find in a such that clause, check if it is a with clause
 						bool equalSignFound = false;
 						for (size_t i = 0; i < argVector.size(); i++) {
 							size_t found = argVector[i].find('=');
@@ -577,11 +551,9 @@ bool QueryPreProcessor::query(string s) {
 			//find pattern-cl
 			else if (toLowerCase(selectCl.at(i)).compare("pattern") == 0) {
 				i++;
-				//cout << "pattern-cl: ";
 				//extract patternCond
 				while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0
 					|| toLowerCase(selectCl.at(i)).compare("and") == 0 || toLowerCase(selectCl.at(i)).compare("with") == 0)) {
-					//cout << selectCl.at(i) + " ";
 					argVector.push_back(selectCl.at(i));
 					i++;
 					if (selectCl.size() == i) {
@@ -633,11 +605,9 @@ bool QueryPreProcessor::query(string s) {
 				//i.e. and Pattern a(...
 				if (toLowerCase(selectCl.at(i)).compare("pattern") == 0) {
 					i++;
-					//cout << "pattern-cl: ";
 					//extract patternCond
 					while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0
 						|| toLowerCase(selectCl.at(i)).compare("and") == 0 || toLowerCase(selectCl.at(i)).compare("with") == 0)) {
-						//cout << selectCl.at(i) + " ";
 						argVector.push_back(selectCl.at(i));
 						i++;
 						if (selectCl.size() == i) {
@@ -663,11 +633,10 @@ bool QueryPreProcessor::query(string s) {
 					i++;
 					if (toLowerCase(selectCl.at(i)).compare("that") == 0) {
 						i++;
-						//cout << "suchthat-cl: ";
+
 						//extract relCond
 						while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0
 							|| toLowerCase(selectCl.at(i)).compare("and") == 0 || toLowerCase(selectCl.at(i)).compare("with") == 0)) {
-							//cout << selectCl.at(i) + " ";
 							argVector.push_back(selectCl.at(i));
 							i++;
 							if (selectCl.size() == i) {
@@ -697,7 +666,6 @@ bool QueryPreProcessor::query(string s) {
 					//i.e. and a2( , )
 					while (!(toLowerCase(selectCl.at(i)).compare("such") == 0 || toLowerCase(selectCl.at(i)).compare("pattern") == 0
 						|| toLowerCase(selectCl.at(i)).compare("and") == 0 || toLowerCase(selectCl.at(i)).compare("with") == 0)) {
-						//cout << selectCl.at(i) + " ";
 						argVector.push_back(selectCl.at(i));
 						i++;
 						if (selectCl.size() == i) {
@@ -746,7 +714,7 @@ EntTable QueryPreProcessor::getEntityTable() {
 }
 
 vector<string> QueryPreProcessor::getSelectEntities() {
-	return entityList;
+	return resultList;
 }
 
 vector<QueryObject> QueryPreProcessor::getQueries() {
@@ -755,6 +723,6 @@ vector<QueryObject> QueryPreProcessor::getQueries() {
 
 void QueryPreProcessor::clearAll() {
 	entityTable.clear();
-	entityList.clear();
+	resultList.clear();
 	queryList.clear();
 }

@@ -102,6 +102,8 @@ namespace UnitTesting
 			Assert::IsTrue(qpp.query("assign a, a1; prog_line n, n1; procedure p, q; if ifstat; while w; Select a pattern a(_,_) and ifstat(\"x\",_,_) and w(\"y\",_) and Next(20, n)")); qpp.clearAll();
 			Assert::IsTrue(qpp.query("assign a, a1; stmt s; prog_line n, n1; procedure p, q; if ifstat; while w; Select a pattern a(_,_) and ifstat(\"x\",_,_) and w(\"y\",_) such that Next(20, n) and Parent*(s,6) and Calls(p,q)")); qpp.clearAll();
 			Assert::IsTrue(qpp.query("assign a, a1; stmt s; prog_line n, n1; procedure p, q; if ifstat; while w; Select a pattern a(_,_) and ifstat(\"x\",_,_) and w(\"y\",_) such that Next(20, n) and Parent*(s,6) and Calls(p,q) with q.procName = \"Second\"")); qpp.clearAll();
+
+			Assert::IsTrue(qpp.query("prog_line n,n1,n2; while w; assign a; Select n1 such that Next(n, n1) and Parent(n1, w) and Parent*(n1, a) and next*(n2,13)")); qpp.clearAll();
 		}
 
 		TEST_METHOD(testWithClauses) {
