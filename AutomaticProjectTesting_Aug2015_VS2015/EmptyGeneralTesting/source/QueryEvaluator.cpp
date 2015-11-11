@@ -4,17 +4,20 @@
 using namespace std;
 
 QueryEvaluator::QueryEvaluator() {
-	//default constructor
+	database = NULL;
 }
 
 QueryEvaluator::QueryEvaluator(ProgramKnowledgeBase* pkb) {
-	database = *pkb;
+	database = pkb;
 }
 
 //Autotester test driver function
 list<string> QueryEvaluator::getResults (string inputQuery) {
 	list<string> results = list<string>();
 	bool isValidQuery = preprocessor.query(inputQuery);
+	if (database == NULL) {
+		return list<string>();
+	}
 	if (isValidQuery) {
 		getQueryData();
 		flushQueryTree();
@@ -82,43 +85,43 @@ list<string> QueryEvaluator::evaluateSelect(bool shortcircuited) {
 list<string> QueryEvaluator::selectAll(string entityType) {
 	list<string> results;
 	if (entityType == EntTable::PROCEDURE) {
-		results = Helpers::stringVectorToStringList(database.getProcedureNames());
+		results = Helpers::stringVectorToStringList(database->getProcedureNames());
 	} else if (entityType == EntTable::VARIABLE) {
-		results = Helpers::stringVectorToStringList(database.getVariableNames());
+		results = Helpers::stringVectorToStringList(database->getVariableNames());
 	} else if (entityType == EntTable::STATEMENT_ASSIGN) {
-		results = Helpers::intVectorToStringList(database.getStatementsOfType(Tnode::STMT_ASSIGN));
+		results = Helpers::intVectorToStringList(database->getStatementsOfType(Tnode::STMT_ASSIGN));
 	} else if (entityType == EntTable::STATEMENT_WHILE) {
-		results = Helpers::intVectorToStringList(database.getStatementsOfType(Tnode::STMT_WHILE));
+		results = Helpers::intVectorToStringList(database->getStatementsOfType(Tnode::STMT_WHILE));
 	} else if (entityType == EntTable::STATEMENT_IF) {
-		results = Helpers::intVectorToStringList(database.getStatementsOfType(Tnode::STMT_IF));
+		results = Helpers::intVectorToStringList(database->getStatementsOfType(Tnode::STMT_IF));
 	} else if (entityType == EntTable::STATEMENT || entityType == EntTable::PROGRAM_LINE) {
 		results = formatter.integerVectorToStringList(generateVectorOfStatementNumbers());
 	} else if (entityType == EntTable::CONSTANT) {
-		vector<int> constants = database.getConstants();
+		vector<int> constants = database->getConstants();
 		results = Helpers::intVectorToStringList(constants);
 	}
 	return results;
 }
 
 vector<int> QueryEvaluator::generateVectorOfStatementNumbers() {
-	vector<int> statements(database.getNumberOfStatements());
+	vector<int> statements(database->getNumberOfStatements());
 	iota(statements.begin(), statements.end(), 1);
 	return statements;
 }
 
 vector<string> QueryEvaluator::generatePossiblities(string argument) {
 	if (isVariable(argument)) {
-		return database.getVariableNames();
+		return database->getVariableNames();
 	} else if (isProcedure(argument)) {
-		return  database.getProcedureNames();
+		return  database->getProcedureNames();
 	} else if (isWhile(argument)) {
-		return formatter.integerVectorToStringVector(database.getStatementsOfType(Tnode::Type::STMT_WHILE));
+		return formatter.integerVectorToStringVector(database->getStatementsOfType(Tnode::Type::STMT_WHILE));
 	} else if (isIf(argument)) {
-		return formatter.integerVectorToStringVector(database.getStatementsOfType(Tnode::Type::STMT_IF));
+		return formatter.integerVectorToStringVector(database->getStatementsOfType(Tnode::Type::STMT_IF));
 	} else if (isAssign(argument)) {
-		return formatter.integerVectorToStringVector(database.getStatementsOfType(Tnode::Type::STMT_ASSIGN));
+		return formatter.integerVectorToStringVector(database->getStatementsOfType(Tnode::Type::STMT_ASSIGN));
 	} else if (isCall(argument)) {
-		return formatter.integerVectorToStringVector(database.getStatementsOfType(Tnode::Type::STMT_CALL));
+		return formatter.integerVectorToStringVector(database->getStatementsOfType(Tnode::Type::STMT_CALL));
 	} else {
 		return formatter.integerVectorToStringVector(generateVectorOfStatementNumbers());
 	}
@@ -288,7 +291,7 @@ pair<bool, vector<string>> QueryEvaluator::processClause(QueryObject clause) {
 
 	if (!leftSynonym) {
 		lhs = formatter.removeQuotes(lhs);
-	} 
+	}
 
 	if (!rightSynonym) {
 		rhs = formatter.removeQuotes(rhs);
@@ -503,11 +506,11 @@ pair<bool, vector<string>> QueryEvaluator::patternAssign_AssignAndVariableSynony
 
 				bool result = false;
 				if (isSubexpression) {
-					result = database.patternAssignContain(stoi(assignNode->getValue()), variableNode->getValue(), subexpression);
+					result = database->patternAssignContain(stoi(assignNode->getValue()), variableNode->getValue(), subexpression);
 				} else if (isWildcardExpression) {
 					result = true;
 				} else {
-					result = database.patternAssignMatch(stoi(assignNode->getValue()), variableNode->getValue(), expression);
+					result = database->patternAssignMatch(stoi(assignNode->getValue()), variableNode->getValue(), expression);
 				}
 
 				if (result) {
@@ -531,14 +534,14 @@ pair<bool, vector<string>> QueryEvaluator::patternAssign_AssignAndVariableSynony
 				continue;
 			}
 
-			string variableValue = database.getVariablesModifiedBy(stoi(assignNode->getValue()))[0];
+			string variableValue = database->getVariablesModifiedBy(stoi(assignNode->getValue()))[0];
 			bool result = false;
 			if (isSubexpression) {
-				result = database.patternAssignContain(stoi(assignNode->getValue()), variableValue, subexpression);
+				result = database->patternAssignContain(stoi(assignNode->getValue()), variableValue, subexpression);
 			} else if (isWildcardExpression) {
 				result = true;
 			} else {
-				result = database.patternAssignMatch(stoi(assignNode->getValue()), variableValue, expression);
+				result = database->patternAssignMatch(stoi(assignNode->getValue()), variableValue, expression);
 			}
 
 			if (result) {
@@ -567,15 +570,15 @@ pair<bool, vector<string>> QueryEvaluator::patternAssign_AssignAndVariableSynony
 			}
 
 			bool result = false;
-			vector<string> assignValues = formatter.integerVectorToStringVector(database.getStatementsThatModify(variableNode->getValue()));
+			vector<string> assignValues = formatter.integerVectorToStringVector(database->getStatementsThatModify(variableNode->getValue()));
 			assignValues = filterStatementsByTargetType(assignValues, getEntityType(assign));
 			for (string assignValue : assignValues) {
 				if (isSubexpression) {
-					result = database.patternAssignContain(stoi(assignValue), variableNode->getValue(), subexpression);
+					result = database->patternAssignContain(stoi(assignValue), variableNode->getValue(), subexpression);
 				} else if (isWildcardExpression) {
 					result = true;
 				} else {
-					result = database.patternAssignMatch(stoi(assignValue), variableNode->getValue(), expression);
+					result = database->patternAssignMatch(stoi(assignValue), variableNode->getValue(), expression);
 				}
 
 				if (result) {
@@ -612,15 +615,15 @@ pair<bool, vector<string>> QueryEvaluator::patternAssign_AssignAndVariableSynony
 				continue;
 			}
 
-			vector<string> variableValues = database.getVariablesModifiedBy(stoi(assignNode->getValue()));
+			vector<string> variableValues = database->getVariablesModifiedBy(stoi(assignNode->getValue()));
 			for (string variableValue : variableValues) {
 				bool result = false;
 				if (isWildcardExpression) {
 					result = true;
 				} else if (isSubexpression) {
-					result = database.patternAssignContain(stoi(assignNode->getValue()), variableValue, subexpression);
+					result = database->patternAssignContain(stoi(assignNode->getValue()), variableValue, subexpression);
 				} else {
-					result = database.patternAssignMatch(stoi(assignNode->getValue()), variableValue, expression);
+					result = database->patternAssignMatch(stoi(assignNode->getValue()), variableValue, expression);
 				}
 
 				if (result) {
@@ -756,7 +759,7 @@ pair<bool, vector<string>> QueryEvaluator::genericHandler_BothSynonyms(string le
 
 			vector<string> results = genericEvaluator_LeftValue(rightNode->getValue(), whichRelation, leftNumber);
 			results = filterStatementsByTargetType(results, getEntityType(leftArgument));
-			
+
 			if (results.empty()) {
 				rightNode->destroy(&encounteredEntities);
 			}
@@ -777,7 +780,7 @@ pair<bool, vector<string>> QueryEvaluator::genericHandler_BothSynonyms(string le
 
 		// generate all possible values for leftArgument
 		vector<string> leftPossibilities = generatePossiblities(leftArgument);
-		
+
 		// create nodes for all possible values of leftArgument, add them to root
 		unordered_set<QueryNode*> leftNodes = unordered_set<QueryNode*>();
 		for (size_t i = 0; i < leftPossibilities.size(); i++) {
@@ -801,7 +804,7 @@ pair<bool, vector<string>> QueryEvaluator::genericHandler_BothSynonyms(string le
 
 			vector<string> results = genericEvaluator_RightValue(leftNode->getValue(), whichRelation, leftNumber);
 			results = filterStatementsByTargetType(results, getEntityType(rightArgument));
-			
+
 			if (results.empty()) {
 				leftNode->destroy(&encounteredEntities, true);
 			} else {
@@ -911,69 +914,69 @@ bool QueryEvaluator::genericEvaluator_BothValues(string leftValue, string rightV
 		// right must be variable, so right must be a string
 		// left is statement number or procedure
 		if (leftNumber) {
-			result = database.modifies(stoi(leftValue), rightValue);
+			result = database->modifies(stoi(leftValue), rightValue);
 		} else {
-			result = database.modifies(leftValue, rightValue);
+			result = database->modifies(leftValue, rightValue);
 		}
 		break;
 	case USES:
 		// right must be variable, so right must be a string
 		// left is statement number or procedure
 		if (leftNumber) {
-			result = database.uses(stoi(leftValue), rightValue);
+			result = database->uses(stoi(leftValue), rightValue);
 		} else {
-			result = database.uses(leftValue, rightValue);
+			result = database->uses(leftValue, rightValue);
 		}
 		break;
 	case CALLS:
 		// both must be procedures, so both must be strings
-		result = database.calls(leftValue, rightValue);
+		result = database->calls(leftValue, rightValue);
 		break;
 	case CALLSSTAR:
 		// both must be procedures, so both must be strings
-		result = database.callsStar(leftValue, rightValue);
+		result = database->callsStar(leftValue, rightValue);
 		break;
 	case PARENT:
 		// both must be statement numbers
-		result = database.isParent(stoi(leftValue), stoi(rightValue));
+		result = database->isParent(stoi(leftValue), stoi(rightValue));
 		break;
 	case PARENTSTAR:
 		// both must be statement numbers
-		result = database.isParentStar(stoi(leftValue), stoi(rightValue));
+		result = database->isParentStar(stoi(leftValue), stoi(rightValue));
 		break;
 	case FOLLOWS:
 		// both must be statement numbers
-		result = database.isFollows(stoi(leftValue), stoi(rightValue));
+		result = database->isFollows(stoi(leftValue), stoi(rightValue));
 		break;
 	case FOLLOWSSTAR:
 		// both must be statement numbers
-		result = database.followsStar(stoi(leftValue), stoi(rightValue));
+		result = database->followsStar(stoi(leftValue), stoi(rightValue));
 		break;
 	case AFFECTS:
 		// both must be statement numbers
-		result = database.affects(stoi(leftValue), stoi(rightValue));
+		result = database->affects(stoi(leftValue), stoi(rightValue));
 		break;
 	case AFFECTSSTAR:
 		// both must be statement numbers
-		result = database.affectsStar(stoi(leftValue), stoi(rightValue));
+		result = database->affectsStar(stoi(leftValue), stoi(rightValue));
 		break;
 	case NEXT:
 		// both must be statement numbers
-		result = database.next(stoi(leftValue), stoi(rightValue));
+		result = database->next(stoi(leftValue), stoi(rightValue));
 		break;
 	case NEXTSTAR:
 		// both must be statement numbers
-		result = database.nextStar(stoi(leftValue), stoi(rightValue));
+		result = database->nextStar(stoi(leftValue), stoi(rightValue));
 		break;
 	case PATTERN_IF:
 		// left must be statement number
 		// right must be variable
-		result = database.patternIf(stoi(leftValue), rightValue);
+		result = database->patternIf(stoi(leftValue), rightValue);
 		break;
 	case PATTERN_WHILE:
 		// left must be statement number
 		// right must be variable
-		result = database.patternWhile(stoi(leftValue), rightValue);
+		result = database->patternWhile(stoi(leftValue), rightValue);
 		break;
 	}
 
@@ -988,69 +991,69 @@ vector<string> QueryEvaluator::genericEvaluator_LeftValue(string rightValue, int
 		// right must be variable, so right must be a string
 		// left is statement number or procedure
 		if (leftNumber) {
-			results = formatter.integerVectorToStringVector(database.getStatementsThatModify(rightValue));
+			results = formatter.integerVectorToStringVector(database->getStatementsThatModify(rightValue));
 		} else {
-			results = database.getProceduresThatModify(rightValue);
+			results = database->getProceduresThatModify(rightValue);
 		}
 		break;
 	case USES:
 		// right must be variable, so right must be a string
 		// left is statement number or procedure
 		if (leftNumber) {
-			results = formatter.integerVectorToStringVector(database.getStatementsThatUse(rightValue));
+			results = formatter.integerVectorToStringVector(database->getStatementsThatUse(rightValue));
 		} else {
-			results = database.getProceduresThatUse(rightValue);
+			results = database->getProceduresThatUse(rightValue);
 		}
 		break;
 	case CALLS:
 		// both must be procedures, so both must be strings
-		results = database.getProceduresThatCall(rightValue);
+		results = database->getProceduresThatCall(rightValue);
 		break;
 	case CALLSSTAR:
 		// both must be procedures, so both must be strings
-		results = database.getProceduresThatCallStar(rightValue);
+		results = database->getProceduresThatCallStar(rightValue);
 		break;
 	case PARENT:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database.getParentOf(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database->getParentOf(stoi(rightValue)));
 		break;
 	case PARENTSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database.getParentsStarOf(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database->getParentsStarOf(stoi(rightValue)));
 		break;
 	case FOLLOWS:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database.getStatementFollowedBy(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database->getStatementFollowedBy(stoi(rightValue)));
 		break;
 	case FOLLOWSSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database.getStatementsFollowStarredBy(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database->getStatementsFollowStarredBy(stoi(rightValue)));
 		break;
 	case AFFECTS:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database.getStatementsThatAffect(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database->getStatementsThatAffect(stoi(rightValue)));
 		break;
 	case AFFECTSSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database.getStatementsThatAffectStar(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database->getStatementsThatAffectStar(stoi(rightValue)));
 		break;
 	case NEXT:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database.getStatementsBefore(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database->getStatementsBefore(stoi(rightValue)));
 		break;
 	case NEXTSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database.getStatementsBeforeStar(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database->getStatementsBeforeStar(stoi(rightValue)));
 		break;
 	case PATTERN_IF:
 		// left must be statement number
 		// right must be variable
-		results = formatter.integerVectorToStringVector(database.getStatementsThatMatchPattern(Tnode::Type::STMT_IF, rightValue, ProgramKnowledgeBase::WILDCARD_STRING));
+		results = formatter.integerVectorToStringVector(database->getStatementsThatMatchPattern(Tnode::Type::STMT_IF, rightValue, ProgramKnowledgeBase::WILDCARD_STRING));
 		break;
 	case PATTERN_WHILE:
 		// left must be statement number
 		// right must be variable
-		results = formatter.integerVectorToStringVector(database.getStatementsThatMatchPattern(Tnode::Type::STMT_WHILE, rightValue, ProgramKnowledgeBase::WILDCARD_STRING));
+		results = formatter.integerVectorToStringVector(database->getStatementsThatMatchPattern(Tnode::Type::STMT_WHILE, rightValue, ProgramKnowledgeBase::WILDCARD_STRING));
 		break;
 	}
 
@@ -1065,69 +1068,69 @@ vector<string> QueryEvaluator::genericEvaluator_RightValue(string leftValue, int
 		// right must be variable, so right must be a string
 		// left is statement number or procedure
 		if (leftNumber) {
-			results = database.getVariablesModifiedBy(stoi(leftValue));
+			results = database->getVariablesModifiedBy(stoi(leftValue));
 		} else {
-			results = database.getVariablesModifiedBy(leftValue);
+			results = database->getVariablesModifiedBy(leftValue);
 		}
 		break;
 	case USES:
 		// right must be variable, so right must be a string
 		// left is statement number or procedure
 		if (leftNumber) {
-			results = database.getVariablesUsedBy(stoi(leftValue));
+			results = database->getVariablesUsedBy(stoi(leftValue));
 		} else {
-			results = database.getVariablesUsedBy(leftValue);
+			results = database->getVariablesUsedBy(leftValue);
 		}
 		break;
 	case CALLS:
 		// both must be procedures, so both must be strings
-		results = database.getProceduresCalledBy(leftValue);
+		results = database->getProceduresCalledBy(leftValue);
 		break;
 	case CALLSSTAR:
 		// both must be procedures, so both must be strings
-		results = database.getProceduresCallStarredBy(leftValue);
+		results = database->getProceduresCallStarredBy(leftValue);
 		break;
 	case PARENT:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database.getChildrenOf(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database->getChildrenOf(stoi(leftValue)));
 		break;
 	case PARENTSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database.getChildrenStarOf(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database->getChildrenStarOf(stoi(leftValue)));
 		break;
 	case FOLLOWS:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database.getStatementThatFollows(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database->getStatementThatFollows(stoi(leftValue)));
 		break;
 	case FOLLOWSSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database.getStatementsThatFollowStar(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database->getStatementsThatFollowStar(stoi(leftValue)));
 		break;
 	case AFFECTS:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database.getStatementsAffectedBy(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database->getStatementsAffectedBy(stoi(leftValue)));
 		break;
 	case AFFECTSSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database.getStatementsAffectStarredBy(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database->getStatementsAffectStarredBy(stoi(leftValue)));
 		break;
 	case NEXT:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database.getNextStatements(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database->getNextStatements(stoi(leftValue)));
 		break;
 	case NEXTSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database.getNextStarStatements(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database->getNextStarStatements(stoi(leftValue)));
 		break;
 	case PATTERN_IF:
 		// left must be statement number
 		// right must be variable
-		results = database.getConditionalVariableOfIf(stoi(leftValue));
+		results = database->getConditionalVariableOfIf(stoi(leftValue));
 		break;
 	case PATTERN_WHILE:
 		// left must be statement number
 		// right must be variable
-		results = database.getConditionalVariableOfWhile(stoi(leftValue));
+		results = database->getConditionalVariableOfWhile(stoi(leftValue));
 		break;
 	}
 
@@ -1135,32 +1138,32 @@ vector<string> QueryEvaluator::genericEvaluator_RightValue(string leftValue, int
 }
 
 vector<string> QueryEvaluator::filterStatementsByTargetType(vector<string> input, string targetType) {
-	if (targetType != EntTable::STATEMENT_ASSIGN && 
-		targetType != EntTable::STATEMENT_WHILE && 
-		targetType != EntTable::STATEMENT_IF && 
+	if (targetType != EntTable::STATEMENT_ASSIGN &&
+		targetType != EntTable::STATEMENT_WHILE &&
+		targetType != EntTable::STATEMENT_IF &&
 		targetType != EntTable::STATEMENT_CALL) {
 		return input;
 	}
 
 	vector<int> targetStatements;
 	if (targetType == EntTable::STATEMENT_ASSIGN) {
-		targetStatements = database.getStatementsOfType(Tnode::Type::STMT_ASSIGN);
+		targetStatements = database->getStatementsOfType(Tnode::Type::STMT_ASSIGN);
 	} else if (targetType == EntTable::STATEMENT_WHILE) {
-		targetStatements = database.getStatementsOfType(Tnode::Type::STMT_WHILE);
+		targetStatements = database->getStatementsOfType(Tnode::Type::STMT_WHILE);
 	} else if (targetType == EntTable::STATEMENT_IF) {
-		targetStatements = database.getStatementsOfType(Tnode::Type::STMT_IF);
+		targetStatements = database->getStatementsOfType(Tnode::Type::STMT_IF);
 	} else if (targetType == EntTable::STATEMENT_CALL) {
-		targetStatements = database.getStatementsOfType(Tnode::Type::STMT_CALL);
+		targetStatements = database->getStatementsOfType(Tnode::Type::STMT_CALL);
 	}
 
 	vector<int> inputInt = formatter.stringVectorToIntegerVector(input);
 	sort(inputInt.begin(), inputInt.end());
 	sort(targetStatements.begin(), targetStatements.end());
-	
+
 	vector<int> resultsInt(max(inputInt.size(), targetStatements.size()));
 	auto it = set_intersection(inputInt.begin(),
 							   inputInt.begin() + inputInt.size(),
-							   targetStatements.begin(), 
+							   targetStatements.begin(),
 							   targetStatements.begin() + targetStatements.size(),
 							   resultsInt.begin());
 	resultsInt.resize(it - resultsInt.begin());

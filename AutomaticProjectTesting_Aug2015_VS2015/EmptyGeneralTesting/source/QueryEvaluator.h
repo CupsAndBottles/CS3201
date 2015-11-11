@@ -96,7 +96,7 @@ private:
 	vector<string> selectClause;
 	vector<QueryObject> clauses;
 	vector<vector<string>> finalResult;
-	ProgramKnowledgeBase database;
+	ProgramKnowledgeBase* database;
 	QueryPreProcessor preprocessor;
 	EntTable declaration;
 	InputFormatter formatter;
