@@ -917,6 +917,7 @@ pair<bool, vector<string>> QueryEvaluator::genericHandler_NoSynonym(string leftA
 
 bool QueryEvaluator::genericEvaluator_BothValues(string leftValue, string rightValue, int whichRelation, bool leftNumber) {
 	bool result = false;
+
 	switch (whichRelation) {
 	case MODIFIES:
 		// right must be variable, so right must be a string
@@ -946,35 +947,35 @@ bool QueryEvaluator::genericEvaluator_BothValues(string leftValue, string rightV
 		break;
 	case PARENT:
 		// both must be statement numbers
-		result = database->isParent(stoi(leftValue), stoi(rightValue));
+		result = database->isParent(convertToInteger(leftValue), convertToInteger(rightValue));
 		break;
 	case PARENTSTAR:
 		// both must be statement numbers
-		result = database->isParentStar(stoi(leftValue), stoi(rightValue));
+		result = database->isParentStar(convertToInteger(leftValue), convertToInteger(rightValue));
 		break;
 	case FOLLOWS:
 		// both must be statement numbers
-		result = database->isFollows(stoi(leftValue), stoi(rightValue));
+		result = database->isFollows(convertToInteger(leftValue), convertToInteger(rightValue));
 		break;
 	case FOLLOWSSTAR:
 		// both must be statement numbers
-		result = database->followsStar(stoi(leftValue), stoi(rightValue));
+		result = database->followsStar(convertToInteger(leftValue), convertToInteger(rightValue));
 		break;
 	case AFFECTS:
 		// both must be statement numbers
-		result = database->affects(stoi(leftValue), stoi(rightValue));
+		result = database->affects(convertToInteger(leftValue), convertToInteger(rightValue));
 		break;
 	case AFFECTSSTAR:
 		// both must be statement numbers
-		result = database->affectsStar(stoi(leftValue), stoi(rightValue));
+		result = database->affectsStar(convertToInteger(leftValue), convertToInteger(rightValue));
 		break;
 	case NEXT:
 		// both must be statement numbers
-		result = database->next(stoi(leftValue), stoi(rightValue));
+		result = database->next(convertToInteger(leftValue), convertToInteger(rightValue));
 		break;
 	case NEXTSTAR:
 		// both must be statement numbers
-		result = database->nextStar(stoi(leftValue), stoi(rightValue));
+		result = database->nextStar(convertToInteger(leftValue), convertToInteger(rightValue));
 		break;
 	case PATTERN_IF:
 		// left must be statement number
@@ -1023,35 +1024,35 @@ vector<string> QueryEvaluator::genericEvaluator_LeftValue(string rightValue, int
 		break;
 	case PARENT:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database->getParentOf(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database->getParentOf(convertToInteger(rightValue)));
 		break;
 	case PARENTSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database->getParentsStarOf(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database->getParentsStarOf(convertToInteger(rightValue)));
 		break;
 	case FOLLOWS:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database->getStatementFollowedBy(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database->getStatementFollowedBy(convertToInteger(rightValue)));
 		break;
 	case FOLLOWSSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database->getStatementsFollowStarredBy(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database->getStatementsFollowStarredBy(convertToInteger(rightValue)));
 		break;
 	case AFFECTS:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database->getStatementsThatAffect(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database->getStatementsThatAffect(convertToInteger(rightValue)));
 		break;
 	case AFFECTSSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database->getStatementsThatAffectStar(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database->getStatementsThatAffectStar(convertToInteger(rightValue)));
 		break;
 	case NEXT:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database->getStatementsBefore(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database->getStatementsBefore(convertToInteger(rightValue)));
 		break;
 	case NEXTSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database->getStatementsBeforeStar(stoi(rightValue)));
+		results = formatter.integerVectorToStringVector(database->getStatementsBeforeStar(convertToInteger(rightValue)));
 		break;
 	case PATTERN_IF:
 		// left must be statement number
@@ -1100,35 +1101,35 @@ vector<string> QueryEvaluator::genericEvaluator_RightValue(string leftValue, int
 		break;
 	case PARENT:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database->getChildrenOf(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database->getChildrenOf(convertToInteger(leftValue)));
 		break;
 	case PARENTSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database->getChildrenStarOf(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database->getChildrenStarOf(convertToInteger(leftValue)));
 		break;
 	case FOLLOWS:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database->getStatementThatFollows(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database->getStatementThatFollows(convertToInteger(leftValue)));
 		break;
 	case FOLLOWSSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database->getStatementsThatFollowStar(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database->getStatementsThatFollowStar(convertToInteger(leftValue)));
 		break;
 	case AFFECTS:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database->getStatementsAffectedBy(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database->getStatementsAffectedBy(convertToInteger(leftValue)));
 		break;
 	case AFFECTSSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database->getStatementsAffectStarredBy(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database->getStatementsAffectStarredBy(convertToInteger(leftValue)));
 		break;
 	case NEXT:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database->getNextStatements(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database->getNextStatements(convertToInteger(leftValue)));
 		break;
 	case NEXTSTAR:
 		// both must be statement numbers
-		results = formatter.integerVectorToStringVector(database->getNextStarStatements(stoi(leftValue)));
+		results = formatter.integerVectorToStringVector(database->getNextStarStatements(convertToInteger(leftValue)));
 		break;
 	case PATTERN_IF:
 		// left must be statement number
