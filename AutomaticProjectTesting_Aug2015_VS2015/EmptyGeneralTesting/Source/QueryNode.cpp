@@ -58,6 +58,7 @@ void QueryNode::destroy(unordered_map<string, unordered_set<QueryNode*>>* encoun
 				currentChild->addParent(parents[0]);
 			}
 		}
+		parents[0]->removeChild(this);
 		encounteredEntities->at(this->getSynonym()).erase(this);
 		return;
 	}
