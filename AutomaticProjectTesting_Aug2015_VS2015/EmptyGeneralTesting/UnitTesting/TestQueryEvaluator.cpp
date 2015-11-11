@@ -373,7 +373,7 @@ namespace UnitTesting
 		}
 	
 		TEST_METHOD(testSimpleModify) {
-			string fileName = "programSimpleModify.txt";
+			string fileName = "programQESimpleModify.txt";
 			ofstream outputFile(fileName, ofstream::trunc);
 			outputFile << "procedure Proc {";
 			outputFile << "x = 1;";
