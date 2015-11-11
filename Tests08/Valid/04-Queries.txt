@@ -21,7 +21,7 @@ Proc1, Proc2, Proc3
 5 - Test for Calls* with other clause
 procedure p;
 Select p such that Calls*(p,_) and Uses(12, "z")
-Proc1, Proc2, Proc3
+none
 5000
 6 - Test for Next
 prog_line n;
@@ -31,12 +31,12 @@ Select n such that Next(9, n)
 7 - Test for Next with '_'
 prog_line n;
 Select n such that Next(_, n)
-2,3,4,5,6,7,8,9,10
+2,3,4,5,6,7,8,9,10,12,13,14,15
 5000
 8 - Test for BOOLEAN and Next
 prog_line n;
 Select BOOLEAN such that Next(9,10)
-True
+true
 5000
 9 - Test for multiple Next clauses
 prog_line n;
@@ -51,7 +51,7 @@ Select n such that Next*(n,4)
 11 - Test for multiple Next* clauses
 prog_line n;
 Select n such that Next*(5,n) and Next*(n,10)
-6,7,8,9
+5,6,7,8,9
 5000
 12 - Test 'With' clauses with prog_line synonym
 prog_line n; stmt s;
@@ -66,7 +66,7 @@ Select s1 such that Follows*(s,s1) with s.stmt#=2
 14 - Test 'With" clauses with variable synonym
 variable v; stmt s;
 Select s such that Modifies(s, v) with v.varName="z"
-12
+2,9,11,12,13,14,15
 5000
 15 - Test 'With' clauses with constant synonym
 constant c; variable v;
