@@ -559,12 +559,20 @@ vector<int> ProgramKnowledgeBase::getStatementFollowedBy(int stmt){
 
 bool ProgramKnowledgeBase::followsStar(int s1, int s2)
 {
+	if (s1 == WILDCARD_INT || s2 == WILDCARD_INT) {
+		return isFollows(s1, s2);
+	} 
+
 	vector<int> nodesThatFollow = getStatementsThatFollowStar(s1);
 	return find(nodesThatFollow.begin(), nodesThatFollow.end(), s2) != nodesThatFollow.end();
 }
 
 vector<int> ProgramKnowledgeBase::getStatementsThatFollowStar(int stmt)
 {
+	if (stmt == WILDCARD_INT) {
+		return getStatementThatFollows(stmt);
+	}
+
 	Tnode* node = getNodeWithStatementNumber(stmt);
 	if (node == NULL) {
 		return vector<int>();
@@ -585,6 +593,10 @@ vector<int> ProgramKnowledgeBase::getStatementsThatFollowStar(int stmt)
 
 vector<int> ProgramKnowledgeBase::getStatementsFollowStarredBy(int stmt)
 {
+	if (stmt == WILDCARD_INT) {
+		return getStatementFollowedBy(stmt);
+	}
+
 	Tnode* node = getNodeWithStatementNumber(stmt);
 	if (node == NULL) {
 		return vector<int>();
