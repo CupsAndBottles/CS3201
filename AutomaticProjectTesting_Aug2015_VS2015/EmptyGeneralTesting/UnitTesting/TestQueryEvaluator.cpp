@@ -427,26 +427,27 @@ namespace UnitTesting
 			db->buildDatabase(parsedProgram);
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 			QueryEvaluator qe = QueryEvaluator(&pkb);
-
+			
 			list<string> query1 = qe.getResults("assign a; Select a pattern a (\"x\",_)");
 			Assert::AreEqual(2, (int)query1.size());
 			Assert::IsTrue(find(query1.begin(), query1.end(), string("1")) != query1.end());
 			Assert::IsTrue(find(query1.begin(), query1.end(), string("2")) != query1.end());
-
+			
 			list<string> query2 = qe.getResults("assign a; Select a pattern a (_,\"x\")");
 			Assert::AreEqual(1, (int)query2.size());
-			Assert::IsTrue(find(query2.begin(), query2.end(), string("5")) != query1.end());
-
+			Assert::IsTrue(find(query2.begin(), query2.end(), string("5")) != query2.end());
+			
 			list<string> query3 = qe.getResults("assign a; Select a pattern a (\"z\",\"y\")");
 			Assert::AreEqual(1, (int)query3.size());
-			Assert::IsTrue(find(query3.begin(), query3.end(), string("5")) != query3.end());
+			Assert::IsTrue(find(query3.begin(), query3.end(), string("6")) != query3.end());
 			
-			list<string> query4 = qe.getResults("assign a; variable v; Select a pattern a (v,\"y\") and modifies(\"6\", v)");
+			list<string> query4 = qe.getResults("assign a; variable v; Select a pattern a (v,\"y\") and modifies(6, v)");
 			Assert::AreEqual(1, (int)query4.size());
 			Assert::IsTrue(find(query4.begin(), query4.end(), string("6")) != query4.end());
-
-			list<string> query5 = qe.getResults("assign a; Select a pattern a (_,\"_x_\")");
-			Assert::AreEqual(1, (int)query5.size());
+			
+			list<string> query5 = qe.getResults("assign a; Select a pattern a (_, _\"x\"_)");
+			Assert::AreEqual(2, (int)query5.size());
+			Assert::IsTrue(find(query5.begin(), query5.end(), string("5")) != query5.end());
 			Assert::IsTrue(find(query5.begin(), query5.end(), string("7")) != query5.end());
 		}
 
