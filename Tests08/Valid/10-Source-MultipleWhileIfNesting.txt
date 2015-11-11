@@ -1,0 +1,21 @@
+procedure brown {
+	while x {
+		x = x + 1;
+		if x then {
+			if y then {
+				if z then {
+					a = x + y - z;}
+				else {
+					a = x + y + z;}}
+			else {
+				x = 0;}}
+		else {
+			x = 8 * z;}
+		while y {
+			if y then {
+				y = y * z;}
+			else {
+				y = x * z;}
+		}
+	}
+}
