@@ -763,6 +763,8 @@ pair<bool, vector<string>> QueryEvaluator::genericHandler_BothSynonyms(string le
 	if (leftEncountered && rightEncountered) {
 		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
 		unordered_set<QueryNode*> rightNodes = getQNodes(rightArgument);
+		unordered_set<QueryNode*> validRightNodes = unordered_set<QueryNode*>();
+
 		for (QueryNode* leftNode : leftNodes) {
 			try {
 				leftNode->getSynonym();
@@ -770,6 +772,7 @@ pair<bool, vector<string>> QueryEvaluator::genericHandler_BothSynonyms(string le
 				continue;
 			}
 
+			bool leftIsValid = false;
 			for (QueryNode* rightNode : rightNodes) {
 				try {
 					rightNode->getSynonym();
@@ -777,18 +780,26 @@ pair<bool, vector<string>> QueryEvaluator::genericHandler_BothSynonyms(string le
 					continue;
 				}
 
-				bool result = genericEvaluator_BothValues(leftNode->getValue(), rightNode->getValue(), whichRelation, leftNumber);
-				if (result) {
+				bool rightIsValid = genericEvaluator_BothValues(leftNode->getValue(), rightNode->getValue(), whichRelation, leftNumber);
+				if (rightIsValid) {
 					atLeastOneResult = true;
+					leftIsValid = true;
 					leftNode->insertParent(rightNode);
 					rightNode->insertParent(leftNode);
-				}
-				else {
-					leftNode->destroy(&encounteredEntities);
-					rightNode->destroy(&encounteredEntities);
+					validRightNodes.insert(rightNode);
 				}
 			}
+			if (!leftIsValid) {
+				leftNode->destroy(&encounteredEntities);
+			}
 		}
+
+		for (QueryNode* rightNode : rightNodes) {
+			if (validRightNodes.count(rightNode) == 0) {
+				rightNode->destroy(&encounteredEntities);
+			}
+		}
+
 	} else if (leftEncountered) {
 		discoveredSynonyms.push_back(rightArgument);
 		unordered_set<QueryNode*> leftNodes = getQNodes(leftArgument);
