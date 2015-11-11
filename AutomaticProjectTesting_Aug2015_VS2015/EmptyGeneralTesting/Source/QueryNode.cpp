@@ -45,6 +45,10 @@ void QueryNode::removeParent(QueryNode* node) {
 	}
 }
 
+vector<QueryNode*> QueryNode::getParents() {
+	return parents;
+}
+
 void QueryNode::destroy(unordered_map<string, unordered_set<QueryNode*>>* encounteredEntities, bool rootSetOperation) {
 	if (rootSetOperation) {
 		int numChildren = (int)children.size();

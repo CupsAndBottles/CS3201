@@ -19,6 +19,7 @@ public:
 	void insertParent(QueryNode* node);
 	void addParent(QueryNode* node);
 	void removeParent(QueryNode* node);
+	vector<QueryNode*> getParents();
 
 	void removeChild(QueryNode * node);
 	void addChild(QueryNode* node);
