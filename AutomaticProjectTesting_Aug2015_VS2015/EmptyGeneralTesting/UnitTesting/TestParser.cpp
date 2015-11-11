@@ -612,5 +612,23 @@ namespace UnitTesting
 			remove(fileName.c_str());
 			Assert::AreNotEqual(0, (int)parsedProgram.size());
 		}
+
+		TEST_METHOD(testProceduresWithoutSpace) {
+			string fileName = "source.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure " << endl;
+			outputFile << "Proc{" << endl;
+			outputFile << "e = a + b;" << endl;
+			outputFile << "}procedure " << endl;
+			outputFile << "Proc2{" << endl;
+			outputFile << "e = a + b;" << endl;
+			outputFile << "}" << endl;
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			remove(fileName.c_str());
+			Assert::AreNotEqual(0, (int)parsedProgram.size());
+		}
 	};
 }
