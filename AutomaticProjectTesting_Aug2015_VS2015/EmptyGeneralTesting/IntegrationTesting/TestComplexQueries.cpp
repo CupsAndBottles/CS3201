@@ -25,12 +25,12 @@ namespace UnitTesting
 			db->buildDatabase(parsedProgram);
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 			QueryEvaluator qe = QueryEvaluator(&pkb);
-
+			
 			list<string> ans1 = qe.getResults("if ifstat; Select ifstat such that Modifies(ifstat, \"x\")");
 			Assert::AreEqual(string("10"), ans1.front());
-
+			
 			list<string> ans26 = qe.getResults("assign a; variable v; Select a such that Uses(a, \"x\") and pattern a(v, _)");
-			Assert::AreEqual(5, (int)ans26.size());
+			Assert::AreEqual(4, (int)ans26.size());
 		}
 
 		TEST_METHOD(testComplexQueriesWithSource3) {
