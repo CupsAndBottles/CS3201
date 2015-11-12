@@ -1,14 +1,14 @@
 procedure simple {
 	if x then {
 		drink = tea;
-		tea = 10 * sugar + oolong_leaves + hot_water;
+		tea = 10 * sugar + oolongLeaves + hotWater;
 		if sweet then {
 			sweet = sugar - 1;
 			if hot then {
-				temp = tea + cold_water;
+				temp = tea + coldWater;
 				temp = temp - 10;}
 			else {
-				temp = tea + hot_water;
+				temp = tea + hotWater;
 				temp = temp + 10;}
 			tea = tea + sweet; }
 		else {
