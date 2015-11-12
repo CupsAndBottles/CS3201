@@ -178,7 +178,9 @@ namespace UnitTesting
 			QueryEvaluator qe = QueryEvaluator(&pkb);
 			
 			list<string> ans9 = qe.getResults("prog_line n; Select n such that Next(n,4) and Next(2, n)");
-			Assert::AreEqual(5, (int)ans9.size());
+			Assert::AreEqual(1, (int)ans9.size());
+			Assert::AreEqual(string("3"), ans9.front());
+
 		}
 	};
 }
