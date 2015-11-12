@@ -140,7 +140,7 @@ vector<string> Parser::parseSimpleProgram(string file)
 	// Output file
 	string fileName = "testDelimiters.txt";
 	ofstream outputFile(fileName, ofstream::trunc);
-	for (int i = 0; i < tokenizedProgram.size(); i++) {
+	for (int i = 0; i < (int)tokenizedProgram.size(); i++) {
 		outputFile << tokenizedProgram[i] << endl;
 	}
 	outputFile.close();

@@ -265,7 +265,7 @@ bool SemanticsCheck::isExpressionSpec(string s) {
 			return true;
 		}
 		if (substring.size() > 1) {
-			for (int i = 1; i < substring.size()-1; i++) {
+			for (int i = 1; i < (int)substring.size()-1; i++) {
 				if (substring.at(i) == '+' || substring.at(i) == '*' || substring.at(i) == '-' || substring.at(i) == '/') {
 					if (!(isDigit(substring.at(i - 1)) || isLetter(substring.at(i - 1))) || !(isDigit(substring.at(i + 1)) || isLetter(substring.at(i + 1))) ) {
 						cout << "invalid expression-spec" << endl;
@@ -287,7 +287,7 @@ bool SemanticsCheck::isExpressionSpec(string s) {
 				return true;
 			}
 			if (substring.size() > 1) {
-				for (int i = 1; i < substring.size() - 1; i++) {
+				for (int i = 1; i < (int)substring.size() - 1; i++) {
 					if (substring.at(i) == '+' || substring.at(i) == '*' || substring.at(i) == '-' || substring.at(i) == '/') {
 						if (!(isDigit(substring.at(i - 1)) || isLetter(substring.at(i - 1))) || !(isDigit(substring.at(i + 1)) || isLetter(substring.at(i + 1)))) {
 							cout << "invalid expression-spec" << endl;

@@ -437,7 +437,7 @@ void Database::buildControlFlowGraph()
 		cfgRootNode = createControlFlowGraphLinks(listOfCfgNodes, 1);
 	}
 	else {
-		for (int i = 1; i < listOfCfgNodes.size(); i++) {
+		for (int i = 1; i < (int) listOfCfgNodes.size(); i++) {
 			Gnode *currNode = listOfCfgNodes.at(i);
 			string currProcName = currNode->getItsProcedure();
 			if (currProcName.compare(prevProcName) != 0) {
@@ -487,7 +487,7 @@ Gnode* Database::createControlFlowGraphLinks(vector<Gnode*> listOfCfgNodes, int 
 	Gnode *endNode = Gnode::createGnode(-1);
 
 	Gnode* cfgRoot = listOfCfgNodes.at(cfgRootIndex);
-	Gnode *next = (cfgRootIndex+1 >= listOfCfgNodes.size()) ? endNode : listOfCfgNodes.at(cfgRootIndex+1);
+	Gnode *next = (cfgRootIndex+1 >= (int)listOfCfgNodes.size()) ? endNode : listOfCfgNodes.at(cfgRootIndex+1);
 	Gnode::setNext(cfgRoot, next);
 
 	for (int i=cfgRootIndex; i<stmtTable->getSize(); i++) {
