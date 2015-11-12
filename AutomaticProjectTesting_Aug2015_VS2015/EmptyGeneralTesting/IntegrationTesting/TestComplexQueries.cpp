@@ -165,5 +165,20 @@ namespace UnitTesting
 			Assert::IsTrue(find(ans11.begin(), ans11.end(), string("2")) != ans11.end());
 			Assert::IsTrue(find(ans11.begin(), ans11.end(), string("4")) != ans11.end());
 		}
+	
+		TEST_METHOD(testComplexQueriesWithSource4) {
+			string fileName = "04-Source-Calls.txt";
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			Assert::AreNotEqual(0, (int)parsedProgram.size());
+
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+			QueryEvaluator qe = QueryEvaluator(&pkb);
+			
+			list<string> ans9 = qe.getResults("prog_line n; Select n such that Next(n,4) and Next(2, n)");
+			Assert::AreEqual(5, (int)ans9.size());
+		}
 	};
 }
