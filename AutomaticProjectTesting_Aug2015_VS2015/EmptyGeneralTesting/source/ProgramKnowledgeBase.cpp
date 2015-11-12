@@ -904,7 +904,7 @@ vector<int> ProgramKnowledgeBase::getStatementsAffectStarredBy(int stmt){
 	stmtProcessed.push_back(currProcessingStmt);
 
 	tempVec = getStatementsAffectedBy(currProcessingStmt);
-	for (int i = 0; i < tempVec.size(); i++) {
+	for (size_t i = 0; i < tempVec.size(); i++) {
 		toProcess.push(tempVec[i]);
 	}
 	list = tempVec;
@@ -914,7 +914,7 @@ vector<int> ProgramKnowledgeBase::getStatementsAffectStarredBy(int stmt){
 		stmtProcessed.push_back(currProcessingStmt);
 		toProcess.pop();
 		tempVec = getStatementsAffectedBy(currProcessingStmt);
-		for (int i = 0; i < tempVec.size(); i++) {
+		for (size_t i = 0; i < tempVec.size(); i++) {
 			if (find(stmtProcessed.begin(), stmtProcessed.end(), tempVec[i]) == stmtProcessed.end()) {
 				toProcess.push(tempVec[i]);
 				if (find(list.begin(), list.end(), tempVec[i]) == list.end()) {
@@ -937,7 +937,7 @@ vector<int> ProgramKnowledgeBase::getStatementsThatAffectStar(int stmt){
 	stmtProcessed.push_back(currProcessingStmt);
 
 	tempVec = getStatementsThatAffect(currProcessingStmt);
-	for (int i = 0; i < tempVec.size(); i++) {
+	for (size_t i = 0; i < tempVec.size(); i++) {
 		toProcess.push(tempVec[i]);
 	}
 	list = tempVec;
@@ -947,7 +947,7 @@ vector<int> ProgramKnowledgeBase::getStatementsThatAffectStar(int stmt){
 		stmtProcessed.push_back(currProcessingStmt);
 		toProcess.pop();
 		tempVec = getStatementsThatAffect(currProcessingStmt);
-		for (int i = 0; i < tempVec.size(); i++) {
+		for (size_t i = 0; i < tempVec.size(); i++) {
 			if (find(stmtProcessed.begin(), stmtProcessed.end(), tempVec[i]) == stmtProcessed.end()) {
 				toProcess.push(tempVec[i]);
 				if (find(list.begin(), list.end(), tempVec[i]) == list.end()) {
