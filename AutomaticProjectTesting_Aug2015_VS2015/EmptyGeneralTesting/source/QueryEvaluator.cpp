@@ -963,6 +963,8 @@ pair<bool, vector<string>> QueryEvaluator::genericHandler_RightSynonym(string le
 			bool result = genericEvaluator_BothValues(leftArgument, rightNode->getValue(), whichRelation, leftNumber);
 			if (!result) {
 				rightNode->destroy(&encounteredEntities);
+			} else {
+				atLeastOneResult = true;
 			}
 		}
 	} else {
