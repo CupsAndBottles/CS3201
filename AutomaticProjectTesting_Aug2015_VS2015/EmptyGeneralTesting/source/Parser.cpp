@@ -102,7 +102,7 @@ vector<string> Parser::splitByDelimiters(vector<string> program) {
 vector<string> Parser::readProgram(string file) {
 	ifstream fileReader;
 	string line = "";
-	vector<string> temp, program;
+	vector<string> program;
 
 	fileReader.open(file);
 	if (fileReader.is_open()) {
