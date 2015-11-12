@@ -557,16 +557,17 @@ Gnode* Database::createControlFlowGraphLinks(vector<Gnode*> listOfCfgNodes, int 
 				}
 				Gnode::setNextEndIf(lastIfChild, lastElseChild, other);
 			} else if (stmtTable->getASTNode(i)->isWhile()) {
+				Tnode* whileNode = stmtTable->getASTNode(i);
 				Gnode *parent = listOfCfgNodes.at(i);
 				Gnode *next = (i+1 >= (int) listOfCfgNodes.size()) ? endNode : listOfCfgNodes.at(i+1);
-				int lastChildNum = stmtTable->getASTNode(i)->getLastContainedStatement()->getStatementNumber();
+				int lastChildNum = whileNode->getLastContainedStatement()->getStatementNumber();
 				Gnode *lastChild = listOfCfgNodes.at(lastChildNum);
 				Gnode *other;
 				bool isEnd = false;
-				if (stmtTable->getASTNode(i)->getRightSibling() == NULL) {
-					if (stmtTable->getASTNode(i)->getSPAParent() != NULL) {
-						if (stmtTable->getASTNode(i)->getSPAParent()->getType() == Tnode::STMT_IF) {
-							Tnode* parent = stmtTable->getASTNode(i)->getSPAParent();
+				if (whileNode->getRightSibling() == NULL) {
+					if (whileNode->getSPAParent() != NULL) {
+						if (whileNode->getSPAParent()->getType() == Tnode::STMT_IF) {
+							Tnode* parent = whileNode->getSPAParent();
 							while (parent->getRightSibling() == NULL) {
 								Tnode* grandparent = parent->getSPAParent();
 								if (grandparent == NULL) {
@@ -586,7 +587,7 @@ Gnode* Database::createControlFlowGraphLinks(vector<Gnode*> listOfCfgNodes, int 
 							}
 						}
 						else {
-							int otherNum = stmtTable->getASTNode(i)->getSPAParent()->getStatementNumber();
+							int otherNum = whileNode->getSPAParent()->getStatementNumber();
 							other = listOfCfgNodes.at(otherNum);
 						}
 					}
@@ -595,7 +596,7 @@ Gnode* Database::createControlFlowGraphLinks(vector<Gnode*> listOfCfgNodes, int 
 					}
 				}
 				else {
-					int otherNum = stmtTable->getASTNode(i)->getRightSibling()->getStatementNumber();
+					int otherNum = whileNode->getRightSibling()->getStatementNumber();
 					other = listOfCfgNodes.at(otherNum);
 				}
 				Gnode::setNext(parent, next);
