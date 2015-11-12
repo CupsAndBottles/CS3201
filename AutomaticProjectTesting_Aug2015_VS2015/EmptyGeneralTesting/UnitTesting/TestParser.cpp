@@ -493,7 +493,7 @@ namespace UnitTesting
 			int procedures = 1;
 			int nesting = 2;
 			int assign = 1;
-			int brackets = 0;
+			int brackets = 3;
 			bool isCall = true;
 
 			generateProgram(procedures, nesting, assign, brackets, isCall);

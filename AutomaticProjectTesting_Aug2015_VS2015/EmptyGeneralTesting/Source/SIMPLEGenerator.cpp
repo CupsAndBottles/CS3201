@@ -31,6 +31,9 @@ vector<string> generateAssigns(int assign, int brackets) {
 	for (int i = 0; i < assign; i++) {
 		string assign_stmt;
 
+		assign_stmt += letters[rand() % (letters.size())/2];
+		assign_stmt += "=";
+
 		for (int j = 0; j < brackets; j++) {
 			// Select variable
 			currLetter = letters[rand() % letters.size()];
