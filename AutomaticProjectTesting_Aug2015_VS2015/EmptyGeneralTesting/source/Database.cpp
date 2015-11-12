@@ -495,19 +495,25 @@ Gnode* Database::createControlFlowGraphLinks(vector<Gnode*> listOfCfgNodes, int 
 		if (node->getRight() == NULL) {
 			if (stmtTable->getASTNode(i)->isIf()) {
 				// Link the head of if
-				int firstIfChildNum = stmtTable->getASTNode(i)->getFirstChild()->getRightSibling()->getFirstChild()->getStatementNumber();
-				int firstElseChildNum = stmtTable->getASTNode(i)->getFirstChild()->getRightSibling()->getRightSibling()->getFirstChild()->getStatementNumber();
+				Tnode* ifNode = stmtTable->getASTNode(i);
+				Tnode* thenNode = ifNode->getFirstChild()->getRightSibling();
+				Tnode* firstIfChildNode = thenNode->getFirstChild();
+				int firstIfChildNum = firstIfChildNode->getStatementNumber();
+				Tnode* elseNode = thenNode->getRightSibling();
+				Tnode* firstElseChildNode = elseNode->getFirstChild();
+				int firstElseChildNum = firstElseChildNode->getStatementNumber();
+
 				Gnode *curr = listOfCfgNodes.at(i);
 				Gnode *firstIfChild = listOfCfgNodes.at(firstIfChildNum);
 				Gnode *firstElseChild = listOfCfgNodes.at(firstElseChildNum);
 				Gnode::setNextIf(curr, firstIfChild, firstElseChild);
 				// Link the tail of if
-				int lastIfChildNum = stmtTable->getASTNode(i)->getFirstChild()->getRightSibling()->getLastContainedStatement()->getStatementNumber();
-				int lastElseChildNum = stmtTable->getASTNode(i)->getFirstChild()->getRightSibling()->getRightSibling()->getLastContainedStatement()->getStatementNumber();
+				int lastIfChildNum = thenNode->getLastContainedStatement()->getStatementNumber();
+				int lastElseChildNum = elseNode->getLastContainedStatement()->getStatementNumber();
 				Gnode *lastIfChild   = listOfCfgNodes.at(lastIfChildNum);
 				Gnode *lastElseChild = listOfCfgNodes.at(lastElseChildNum);
 				Gnode *other;
-				if (stmtTable->getASTNode(i)->getRightSibling() == NULL) {
+				if (ifNode->getRightSibling() == NULL) {
 					other = endNode;
 				} else {
 					other = (lastElseChildNum+1 >= (int) listOfCfgNodes.size()) ? endNode : listOfCfgNodes.at(lastElseChildNum+1);
