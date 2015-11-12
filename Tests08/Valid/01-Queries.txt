@@ -26,7 +26,7 @@ Select s such that Follows(s, 4)
 6 - Test definition of Follows*
 stmt s;
 Select s such that Follows*(s, 4)
-3
+1,2,3
 5000
 7 - Test if first stmt of a procedure follows last stmt of the previous procedure
 stmt s;
@@ -61,7 +61,7 @@ Index, Example
 13 - Test for stmtRef definition using Modifies
 variable v;
 Select v such that Modifies("Index", v)
-none
+x,z,y,d
 5000
 14 - Test for modified variables in a call stmt
 variable v;
@@ -71,7 +71,7 @@ x, y, z, d
 15 - Test for pattern in LHS assignment
 prog_line n; assign a;
 Select n pattern a(_, "2")
-1
+1,2,3,4,5,6,7,8,9,10,11
 5000
 16 - Test for pattern in RHS assignment
 assign a;
@@ -131,7 +131,7 @@ Select a such that Uses(a, "d")
 27 - Test for Follows and Pattern
 assign a;
 Select a such that Follows(a, 4) and pattern a(_, "3")
-3
+none
 5000
 28 - Test for Follows and Pattern
 assign a;
@@ -141,7 +141,7 @@ Select a such that Follows(a, 8) and pattern a("x",_)
 29 - Test for Follows and Pattern
 variable v; assign a;
 Select v such that Follows(3, 4) and pattern a(_,"x+y*13")
-d
+x,y,d,z,j,i
 5000
 30 - Test for Uses and pattern
 assign a; variable v;
@@ -151,12 +151,12 @@ Select a such that Uses(a, "x") and pattern a(v, _)
 31 - Test for Uses and pattern
 assign a, a1, a2;
 Select a such that Uses(a2, "y") and pattern a1("d", _)
-3
+1,2,3,4,5,6,7,8,10,11
 5000
 32 - Test for Uses and pattern
 assign a, a1; 
 Select a such that Uses(a, "x") and pattern a1("x", _)
-none
+3,4,10
 5000
 33 - Undeclared pattern synonym
 variable v;
