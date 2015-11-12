@@ -46,8 +46,13 @@ void Gnode::setNextIf(Gnode *curr, Gnode *ifNode, Gnode *elseNode) {
 }
 
 void Gnode::setNextEndIf(Gnode *lastChildThen, Gnode *lastChildElse, Gnode *other) {
-	lastChildThen->right = other;
-	lastChildElse->right = other;
+	if (other->getValue() == -1) {
+		lastChildThen->left = other;
+		lastChildElse->left = other;
+	} else {
+		lastChildThen->right = other;
+		lastChildElse->right = other;
+	}
 	other->prev.push_back(lastChildElse);
 	other->otherPrev = lastChildThen;
 }
