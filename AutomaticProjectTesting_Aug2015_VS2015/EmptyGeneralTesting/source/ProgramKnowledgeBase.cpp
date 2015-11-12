@@ -19,8 +19,12 @@ ProgramKnowledgeBase::ProgramKnowledgeBase(Database* db) {
 	varTable = db->getVariableTable();
 	constantTable = db->getConstantTable();
 	initializeTables();
+	cout << "Building of Modifies, Uses, and Calls Relation tables." << endl;
 	calculateRelations(abstractSyntaxTree);
+	cout << "Modifies, Uses, and Calls Relation tables successfully built." << endl;
+	cout << "Building of Data Dependency Graph." << endl;
 	buildDataDependencyGraph();
+	cout << "Data Dependency Graph successfully built." << endl;
 }
 
 void ProgramKnowledgeBase::initializeTables() {
