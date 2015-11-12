@@ -515,27 +515,42 @@ Gnode* Database::createControlFlowGraphLinks(vector<Gnode*> listOfCfgNodes, int 
 				Gnode *other;
 				bool isEnd = false;
 				if (ifNode->getRightSibling() == NULL) {
-					if (ifNode->getSPAParent() != NULL) {
-						if (ifNode->getSPAParent()->getType() == Tnode::STMT_WHILE) {
-							Tnode *parent = ifNode->getSPAParent();
-							while (parent->getRightSibling() == NULL) {
-								Tnode* grandparent = parent->getSPAParent();
+					Tnode* ifSPAParent = ifNode->getSPAParent();
+					if (ifSPAParent!= NULL) {
+						if (ifSPAParent->getType() == Tnode::STMT_WHILE) {
+							while (ifSPAParent->getRightSibling() == NULL) {
+								Tnode* grandparent = ifSPAParent->getSPAParent();
 								if (grandparent == NULL) {
 									isEnd = true;
 									break;
 								}
 								else {
-									parent = grandparent;
+									ifSPAParent = grandparent;
 								}
 							}
 							if (isEnd) {
 								other = endNode;
 							}
 							else {
-								int otherNum = parent->getRightSibling()->getStatementNumber();
+								if (ifSPAParent->getRightSibling() == NULL) {
+									other = endNode;
+								} else {
+									int otherNum = ifSPAParent->getRightSibling()->getStatementNumber();
+									other = listOfCfgNodes.at(otherNum);
+								}
+							}
+						}
+						else {
+							if (ifSPAParent->getRightSibling() == NULL) {
+								other = endNode;
+							} else {
+								int otherNum = ifSPAParent->getRightSibling()->getStatementNumber();
 								other = listOfCfgNodes.at(otherNum);
 							}
 						}
+					}
+					else {
+						other = endNode;
 					}
 				} else {
 					other = (lastElseChildNum+1 >= (int) listOfCfgNodes.size()) ? endNode : listOfCfgNodes.at(lastElseChildNum+1);
