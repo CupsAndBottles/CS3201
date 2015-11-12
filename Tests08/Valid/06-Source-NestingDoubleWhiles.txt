@@ -12,7 +12,7 @@ procedure intermediate {
 	while bulb {
 		colour = yellow;
 		while yellow {
-			colour = yellow - 0.2;}}
+			colour = yellow - 2;}}
 	hue = colour;
 }
 
