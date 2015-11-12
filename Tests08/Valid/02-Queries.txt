@@ -141,7 +141,7 @@ Select a such that Uses(a, "z") and pattern a1("z", _)
 29 - Combine parent* and pattern
 assign a, a1;
 Select a such that parent*(6, a) and pattern a1("x", _)
-7,8,9
+7,9
 5000
 30 - Combine follows and pattern
 stmt s; assign a;
