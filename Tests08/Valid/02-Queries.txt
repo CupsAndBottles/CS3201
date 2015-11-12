@@ -36,7 +36,7 @@ Select s such that Follows(s, 2)
 8 - Test for invalid procedure Follows
 variable v;
 Select v such that Follows("First", "Second")
-invalid
+none
 5000
 9 - Test if Follows considers statements in different nesting level
 procedure p;
@@ -76,17 +76,17 @@ Select w such that Modifies(w, "x")
 16 - Test basic function of Uses
 stmt s;
 Select s such that Uses(s, "x")
-7, 10, 11, 13, 15
+7, 10, 11, 13, 15,3, 6
 5000
 17 - Test if Uses considers container statements
 while w;
 Select w such that Uses(w, "i")
-3
+6
 5000
 18 - Test if Uses considers procedures
 procedure p;
 Select p such that Uses(p,"i")
-Second
+Second, First
 5000
 19 - Test basic function of Pattern
 assign a;
@@ -101,7 +101,7 @@ Select a pattern a(_ , _"y"_)
 21 - Test if Pattern recognizes lhs 
 assign a;
 Select a pattern a("x" , _ )
-5
+1,4,7,11,15
 5000
 22 - Combine Modifies and not-existent pattern
 stmt s; assign a;
@@ -111,7 +111,7 @@ none
 23 - Combine Modifies and pattern
 stmt s; assign a;
 Select s such that Modifies(s, "x") and pattern a("x", _) 
-1, 4, 7, 11, 15
+1, 4, 3, 6, 7, 10, 11, 15
 5000
 24 - Combine Parent and pattern
 stmt s; assign a;
@@ -121,17 +121,17 @@ Select s such that Parent(s, 7) and pattern a(_, _)
 25 - Combine Uses and pattern
 stmt s; assign a;
 Select s such that Uses(s, "i") and pattern a("i", _)
-9
+3,6,9,13
 5000
 26 - Combine Uses and pattern with same assignment stmt
 assign a; variable v;
 Select a such that Uses(a, "x") and pattern a(v, _)
-7, 10, 11, 13, 15
+7, 11, 13, 15
 5000
 27 - Combine Uses and pattern with different assignment stmt and variables
 assign a, a1, a2;
 Select a such that Uses(a2, "z") and pattern a1(_ , _)
-1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ,17
+1,2,4,5,7,9,11,12,13,14,15,16,17
 5000
 28 - Combine Uses and pattern with different assignment stmt and variables variation
 assign a, a1;
@@ -141,7 +141,7 @@ Select a such that Uses(a, "z") and pattern a1("z", _)
 29 - Combine parent* and pattern
 assign a, a1;
 Select a such that parent*(6, a) and pattern a1("x", _)
-7,8,9
+7,9
 5000
 30 - Combine follows and pattern
 stmt s; assign a;
@@ -151,5 +151,5 @@ Select s such that follows(1, s) and pattern a("z", "3")
 31 - combine pattern and follows*
 stmt s; assign a;
 Select s pattern a("x",_) such that follows*(s,6)
-4
+4,5
 5000

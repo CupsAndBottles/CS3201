@@ -15,6 +15,24 @@ namespace UnitTesting
 	TEST_CLASS(TestComplexQueries)
 	{
 	public:
+		TEST_METHOD(testComplexQueriesWithSource2) {
+			string fileName = "02-Source-Containers.txt";
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			Assert::AreNotEqual(0, (int)parsedProgram.size());
+
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+			QueryEvaluator qe = QueryEvaluator(&pkb);
+
+			list<string> ans1 = qe.getResults("if ifstat; Select ifstat such that Modifies(ifstat, \"x\")");
+			Assert::AreEqual(string("10"), ans1.front());
+
+			list<string> ans26 = qe.getResults("assign a; variable v; Select a such that Uses(a, \"x\") and pattern a(v, _)");
+			Assert::AreEqual(5, (int)ans26.size());
+		}
+
 		TEST_METHOD(testComplexQueriesWithSource3) {
 			string fileName = "test.txt";
 			ofstream outputFile(fileName, ofstream::trunc);

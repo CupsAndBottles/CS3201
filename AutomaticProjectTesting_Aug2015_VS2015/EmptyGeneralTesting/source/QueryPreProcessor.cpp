@@ -284,6 +284,9 @@ vector<string> QueryPreProcessor::checkForBracketsAndComma(vector<string> argVec
 		else {
 			cout << "missing brackets or commas" << endl;
 		}
+		if (!(checkVector[6].compare("_") == 0) || !(checkVector[4].compare("_") == 0)) {
+			argVector.clear();
+		}
 	}
 	else {
 		cout << "num arguments invalid (or) missing brackets/commas" << endl;

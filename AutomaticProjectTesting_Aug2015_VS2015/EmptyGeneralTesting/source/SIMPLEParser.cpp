@@ -423,6 +423,7 @@ bool simpleParser::checkProcedureExistence() {
 				}
 				else {
 					if (j == (int) procList.size() - 1) {
+						cout << "Error: procedure " << called[i] << " does not exist.\n";
 						return false;
 					}
 				}
@@ -488,13 +489,11 @@ bool simpleParser::parseProgram() {
 
 			if (!parseProcedure()) {
 				cout << "Error parsing procedure.\n";
-				tokenizedProgram.clear();
 				return false;
 			};
 		}
 		else {
 			cout << "Cannot continue parsing because no procedure was found.\n";
-			tokenizedProgram.clear();
 			return false;
 		}
 	}

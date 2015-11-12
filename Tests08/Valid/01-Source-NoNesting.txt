@@ -9,6 +9,6 @@ procedure Index {
 procedure Example {
 	x = 18;
 	j = 1;
-	call index;
+	call Index;
 	i = x * 1 + 394 - 230 * x;
 	j = d - j;}

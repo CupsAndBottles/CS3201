@@ -264,6 +264,16 @@ bool SemanticsCheck::isExpressionSpec(string s) {
 		if (isName(substring) || isInteger(substring)) {
 			return true;
 		}
+		if (substring.size() > 1) {
+			for (int i = 1; i < (int)substring.size()-1; i++) {
+				if (substring.at(i) == '+' || substring.at(i) == '*' || substring.at(i) == '-' || substring.at(i) == '/') {
+					if (!(isDigit(substring.at(i - 1)) || isLetter(substring.at(i - 1))) || !(isDigit(substring.at(i + 1)) || isLetter(substring.at(i + 1))) ) {
+						cout << "invalid expression-spec" << endl;
+						return false;
+					}
+				}
+			}
+		}
 		else {
 			cout << "invalid expression-spec" << endl;
 			return false;
@@ -275,6 +285,16 @@ bool SemanticsCheck::isExpressionSpec(string s) {
 			string substring2 = substring.substr(1, substring.length() - 2);
 			if (isName(substring2) || isInteger(substring2)) {
 				return true;
+			}
+			if (substring.size() > 1) {
+				for (int i = 1; i < (int)substring.size() - 1; i++) {
+					if (substring.at(i) == '+' || substring.at(i) == '*' || substring.at(i) == '-' || substring.at(i) == '/') {
+						if (!(isDigit(substring.at(i - 1)) || isLetter(substring.at(i - 1))) || !(isDigit(substring.at(i + 1)) || isLetter(substring.at(i + 1)))) {
+							cout << "invalid expression-spec" << endl;
+							return false;
+						}
+					}
+				}
 			}
 			else {
 				cout << "invalid expression-spec2" << endl;
