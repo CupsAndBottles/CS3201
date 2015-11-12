@@ -137,14 +137,6 @@ vector<string> Parser::parseSimpleProgram(string file)
 	}
 	cout << "Successfully tokenized program\n";
 
-	// Output file
-	string fileName = "testDelimiters.txt";
-	ofstream outputFile(fileName, ofstream::trunc);
-	for (int i = 0; i < tokenizedProgram.size(); i++) {
-		outputFile << tokenizedProgram[i] << endl;
-	}
-	outputFile.close();
-
 	simpleParser *parser = new simpleParser(tokenizedProgram);
 
 	if (!(*parser).parseProgram()) {
@@ -152,6 +144,7 @@ vector<string> Parser::parseSimpleProgram(string file)
 		tokenizedProgram.clear();
 	}
 
+	cout << "Returning parsed program to main controller.\n";
 	return tokenizedProgram;
 }
 
