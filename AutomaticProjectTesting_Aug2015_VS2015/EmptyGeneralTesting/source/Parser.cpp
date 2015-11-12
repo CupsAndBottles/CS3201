@@ -33,7 +33,7 @@ vector<string> Parser::split(string str, char delimiter) {
 			return splitString;
 		}
 	}
-	
+
 	int startIndex = -1;
 	int length = 0;
 
@@ -77,7 +77,7 @@ vector<string> Parser::splitByDelimiter(vector<string> original, char delimiter)
 			final.push_back(temp[j]);
 		}
 	}
-	
+
 	return final;
 }
 
@@ -102,7 +102,7 @@ vector<string> Parser::splitByDelimiters(vector<string> program) {
 vector<string> Parser::readProgram(string file) {
 	ifstream fileReader;
 	string line = "";
-	vector<string> temp, program;
+	vector<string> program;
 
 	fileReader.open(file);
 	if (fileReader.is_open()) {
@@ -137,14 +137,6 @@ vector<string> Parser::parseSimpleProgram(string file)
 	}
 	cout << "Successfully tokenized program\n";
 
-	// Output file
-	string fileName = "testDelimiters.txt";
-	ofstream outputFile(fileName, ofstream::trunc);
-	for (int i = 0; i < (int)tokenizedProgram.size(); i++) {
-		outputFile << tokenizedProgram[i] << endl;
-	}
-	outputFile.close();
-
 	simpleParser *parser = new simpleParser(tokenizedProgram);
 
 	if (!(*parser).parseProgram()) {
@@ -152,6 +144,7 @@ vector<string> Parser::parseSimpleProgram(string file)
 		tokenizedProgram.clear();
 	}
 
+	cout << "Returning parsed program to main controller.\n";
 	return tokenizedProgram;
 }
 
