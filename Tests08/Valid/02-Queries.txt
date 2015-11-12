@@ -126,7 +126,7 @@ Select s such that Uses(s, "i") and pattern a("i", _)
 26 - Combine Uses and pattern with same assignment stmt
 assign a; variable v;
 Select a such that Uses(a, "x") and pattern a(v, _)
-7, 10, 11, 13, 15
+7, 11, 13, 15
 5000
 27 - Combine Uses and pattern with different assignment stmt and variables
 assign a, a1, a2;
