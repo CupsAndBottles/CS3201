@@ -166,7 +166,7 @@ none
 34 - Test for Modifies and pattern
 procedure p; assign a;
 Select p such that Modifies(p, "x") and pattern a(_, "2")
-Index
+Index, Example
 5000
 35 - Test for Modifies and pattern
 assign a; stmt s;
@@ -181,7 +181,7 @@ Select a pattern a1("x", _) and such that Modifies(a, "x")
 37 - Test for Modifies and pattern
 assign a, a1;
 Select a such that Modifies(a1, "x") and pattern a("x", _)
-none
+1,5,7
 5000
 38 - Test for Parent and pattern
 stmt s; assign a;

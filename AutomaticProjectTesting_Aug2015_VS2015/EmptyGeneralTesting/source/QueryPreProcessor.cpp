@@ -145,6 +145,14 @@ bool QueryPreProcessor::verifySuchThatQuery(vector<string> temp) {
 				return false;
 			}
 		}
+		else if (relType.compare("parent") == 0 || relType.compare("parent*") == 0 || relType.compare("follows") == 0 || relType.compare("follows*") == 0) {
+			if (sCheck.isSynonym(arg1, entityTable) && sCheck.isSynProcedure(arg1, entityTable)) {
+				return false;
+			}
+			if (sCheck.isSynonym(arg2, entityTable) && sCheck.isSynProcedure(arg2, entityTable)) {
+				return false;
+			}
+		}
 		return true;
 	}
 	else {
@@ -161,7 +169,7 @@ bool QueryPreProcessor::verifyPatternQuery(vector<string> temp) {
 
 	//assign pattern
 	if (sCheck.isSynAssign(temp[0], entityTable)) {
-		if (sCheck.isEntRef(temp[1], entityTable)) {
+		if (sCheck.isVarRef(temp[1], entityTable)) {
 			if (sCheck.isExpressionSpec(temp[2])) {
 				return true;
 			}
