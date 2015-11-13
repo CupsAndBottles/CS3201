@@ -81,43 +81,38 @@ void generateProgram(int procedures, int nesting, int assign, int brackets, bool
 		}
 
 		for (int j = 0; j < nesting; j++) {
-			outputFile << "if a then {" << endl;
-			for (int k = 0; k < assign; k++) {
-				assigns = generateAssigns(assign, brackets);
-				outputFile << assigns[k] << endl;
+			if (j % 2 == 0) {
+				outputFile << "if a then {" << endl;
+				for (int k = 0; k < assign; k++) {
+					assigns = generateAssigns(assign, brackets);
+					outputFile << assigns[k] << endl;
+				}
 			}
-				
-			if (j < nesting - 1) {
-				// Nested while
+			else {
 				outputFile << "while a {" << endl;
+				for (int k = 0; k < assign; k++) {
+					assigns = generateAssigns(assign, brackets);
+					outputFile << assigns[k] << endl;
+				}
+			}
+		}
+
+		for (int j = nesting - 1; j >= 0; j--) {
+			if (j % 2 == 0) {
+				outputFile << "} else {" << endl;
 				for (int k = 0; k < assign; k++) {
 					assigns = generateAssigns(assign, brackets);
 					outputFile << assigns[k] << endl;
 				}
 				outputFile << "}" << endl;
 			}
-
-			outputFile << "}" << endl;
-
-			outputFile << "else {" << endl;
-
-			if (j < nesting - 1) {
-				// Nested while
-				outputFile << "while a {" << endl;
+			else {
+				outputFile << "}" << endl;
 				for (int k = 0; k < assign; k++) {
 					assigns = generateAssigns(assign, brackets);
 					outputFile << assigns[k] << endl;
 				}
-				outputFile << "}" << endl;
 			}
-
-			for (int k = 0; k < assign; k++) {
-				assigns = generateAssigns(assign, brackets);
-				outputFile << assigns[k] << endl;
-			}
-			outputFile << "}" << endl;
-
-			j += 2;
 		}
 
 		for (int k = 0; k < assign; k++) {

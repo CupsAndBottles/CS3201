@@ -491,7 +491,7 @@ namespace UnitTesting
 
 		TEST_METHOD(testGenerator) {
 			int procedures = 1;
-			int nesting = 2;
+			int nesting = 4;
 			int assign = 1;
 			int brackets = 3;
 			bool isCall = true;
