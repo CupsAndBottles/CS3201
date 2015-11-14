@@ -62,7 +62,7 @@ vector<string> generateAssigns(int assign, int brackets) {
 }
 
 void generateProgram(int procedures, int nesting, int assign, int brackets, bool isCall) {
-	string fileName = "generatedSIMPLE.txt";
+	string fileName = "generatedSIMPLE_" + to_string(procedures) + "_" + to_string(nesting) + "_" + to_string(assign) + "_" + to_string(brackets) + ".txt";
 	ofstream outputFile(fileName, ofstream::trunc);
 	vector<string> assigns;
 
