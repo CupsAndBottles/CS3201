@@ -475,7 +475,7 @@ vector<Tnode*> ProgramKnowledgeBase::getAssignsThatContainPattern(string var, st
 }
 
 bool ProgramKnowledgeBase::isFollows(int s1, int s2){
-	if (s1 == WILDCARD_INT || s2 == WILDCARD_INT) {
+	if (s1 == WILDCARD_INT && s2 == WILDCARD_INT) {
 		vector<int> possibleLefts(getNumberOfStatements());
 		iota(possibleLefts.begin(), possibleLefts.end(), 1);
 		for (int left : possibleLefts) {
@@ -1439,19 +1439,22 @@ void ProgramKnowledgeBase::calculateRelations(Tnode* currNode, vector<Tnode*>* p
 		updateUses(*parents, assignLeft->getRightSibling());
 		parents->pop_back(); // remove assignment node that was just added
 	}
-	if (currNode->isLastChild()){
-		Tnode* nextNode = NULL;
-		while (nextNode == NULL && !parents->empty()) {
-			currNode = parents->back();
-			parents->pop_back();
-			nextNode = currNode->getRightSibling();
+
+	if (parents->empty()){
+		if (currNode->isLastChild()){
+			Tnode* nextNode = NULL;
+			while (nextNode == NULL && !parents->empty()) {
+				currNode = parents->back();
+				parents->pop_back();
+				nextNode = currNode->getRightSibling();
+			}
+			if (nextNode != NULL){
+				calculateRelations(nextNode, parents, processedProcedures);
+			}
+			//else parents empty, no more nodes.
+		} else {
+			calculateRelations(currNode->getRightSibling(), parents, processedProcedures);
 		}
-		if (nextNode != NULL){
-			calculateRelations(nextNode, parents, processedProcedures);
-		}
-		//else parents empty, no more nodes.
-	} else {
-		calculateRelations(currNode->getRightSibling(), parents, processedProcedures);
 	}
 }
 
