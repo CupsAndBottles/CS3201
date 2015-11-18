@@ -27,7 +27,7 @@ namespace UnitTesting
 			QueryEvaluator qe = QueryEvaluator(&pkb);
 			
 			list<string> ans09_16 = qe.getResults("stmt s1, s2; Select <s1, s2> such that Follows(s1, s2) and Follows*(s1, s2)");
-			Assert::AreEqual(string("1 14"), ans09_16.front());
+			Assert::AreEqual(5, (int)ans09_16.size());
 		}
 
 		TEST_METHOD(testComplexQueriesWithSource2) {
