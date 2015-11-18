@@ -1,0 +1,395 @@
+1 - Test for Follows
+stmt s1, s2; 
+Select <s1, s2> such that Follows(s1, s2)
+None
+5000
+2 - Test for Follows*
+stmt s1, s2;
+Select <s1, s2> such that Follows*(s1, s2)
+None
+5000
+3 - Test for Parent
+stmt s1, s2;
+Select <s1, s2> such that Parent(s1, s2)
+None
+5000
+4 - Test for Parent*
+stmt s1, s2;
+Select <s1, s2> such that Parent*(s1, s2)
+None
+5000
+5 - Test for Modifies
+assign a; variable v;
+Select <a, v> such that Modifies(a, v)
+None
+5000
+6 - Test for Modifies
+stmt s; variable v;
+Select <s, v> such that Modifies(s, v)
+None
+5000
+7 - Test for Modifies
+procedure p; variable v;
+Select <p, v> such that Modifies(p, v)
+None
+5000
+8 - Test for Uses
+assign a; variable v;
+Select <a, v> such that Uses(a, v)
+None
+5000
+9 - Test for Uses
+stmt s; variable v;
+Select <s, v> such that Uses(s, v)
+None
+5000
+10 - Test for Uses
+procedure p; variable v;
+Select <p, v> such that Uses(p, v)
+None
+5000
+11 - Test for Next
+prog_line n1, n2;
+Select <n1, n2> such that Next(n1, n2)
+None
+5000
+12 - Test for Next*
+prog_line n1, n2;
+Select <n1, n2> such that Next*(n1, n2)
+None
+5000
+13 - Test for Affects
+assign a1, a2;
+Select <a1, a2> such that Affects(a1, a2)
+None
+5000
+14 - Test for Affects*
+assign a1, a2;
+Select <a1, a2> such that Affects*(a1, a2)
+None
+5000
+15 - Test for pattern
+assign a; variable v;
+Select <a, v> such that a(v, _)
+None
+5000
+16 - Test for Follows and Follows*
+stmt s1, s2; 
+Select <s1, s2> such that Follows(s1, s2) and Follows*(s1, s2)
+None
+5000
+17 - Test for Follows and Parent
+stmt s1, s2;
+Select <s1, s2> such that Follows(s1, s2) and Parent(s1, s2)
+None 
+5000
+18 - Test for Follows and Parent*
+stmt s1, s2;
+Select <s1, s2> such that Follows(s1, s2) and Parent*(s1, s2)
+None
+5000
+19 - Test for Follows and Modifies
+stmt s1, s2; variable v;
+Select <s1, s2> such that Follows(s1, s2) and Modifies(s1, v)
+None
+5000
+20 - Test for Follows and Uses
+stmt s1, s2; variable v;
+Select <s1, s2> such that Follows(s1, s2) and Uses(s1, v)
+None
+5000
+21 - Test for Follows and Next
+prog_line n1, n2;
+Select <n1, n2> such that Follows(n1, n2) and Next(n1, n2)
+None 
+5000
+22 - Test for Follows and Next*
+prog_line n1, n2;
+Select <n1, n2> such that Follows(n1, n2) and Next*(n1, n2)
+None 
+5000
+23 - Test for Follows and Affects
+assign a1, a2;
+Select <a1, a2> such that Follows(a1, a2) and Affects(a1, a2)
+None
+5000
+24 - Test for Follows and Affects*
+assign a1, a2;
+Select <a1, a2> such that Follows(a1, a2) and Affects(a1, a2)
+None
+5000
+25 - Test for Follows* and Parent
+stmt s1, s2;
+Select <s1, s2> such that Follows*(s1, s2) and Parent(s1, s2)
+None
+5000
+26 - Test for Follows* and Parent*
+stmt s1, s2;
+Select <s1, s2> such that Follows*(s1, s2) and Parent*(s1, s2)
+None
+5000
+27 - Test for Follows* and Modifies
+stmt s1, s2; variable v;
+Select <s1, s2> such that Follows*(s1, s2) and Modifies(s1, v)
+None
+5000
+28 - Test for Follows* and Uses
+stmt s1, s2; variable v;
+Select <s1, s2> such that Follows*(s1, s2) and Uses(s1, v)
+None
+5000
+29 - Test for Follows* and Next
+prog_line n1, n2;
+Select <n1, n2> such that Follows*(n1, n2) and Next(n1, n2)
+None
+5000
+30 - Test for Follows* and Next*
+prog_line n1, n2;
+Select <n1, n2> such that Follows*(n1, n2) and Next(n1, n2)
+None
+5000
+31 - Test for Follows* and Affects
+assign a1, a2;
+Select <a1, a2> such that Follows*(a1, a2) and Affects(a1, a2)
+None
+5000
+32 - Test for Follows* and Affects*
+assign a1, a2;
+Select <a1, a2> such that Follows*(a1, a2) and Affects*(a1, a2)
+None
+5000
+33 - Test for Parent and Modifies
+stmt s1, s2; variable v;
+Select <s1, s2, v> such that Parent(s1, s2) and Modifies(s1, v)
+None
+5000
+34 - Test for Parent and Uses
+stmt s1, s2; variable v;
+Select <s1, s2, v> such that Parent(s1, s2) and Uses(s1, v)
+None
+5000
+35 - Test for Parent and Next
+prog_line n1, n2;
+Select <n1, n2> such that Parent(n1, n2) and Next(n1, n2)
+None
+5000
+36 - Test for Parent and Next*
+prog_line n1, n2;
+Select <n1, n2> such that Parent(n1, n2) and Next*(n1, n2)
+None
+5000
+37 - Test for Parent and Affects
+assign a1, s2;
+Select <a1, a2> such that Parent(a1, a2) and Affects(a1, a2)
+None
+5000
+38 - Test for Parent and Affects*
+assign a1, s2;
+Select <a1, a2> such that Parent(a1, a2) and Affects*(a1, a2)
+None
+5000
+39 - Test for Parent* and Modifies
+stmt s1, s2;
+Select <s1, s2, v> such that Parent*(s1, s2) and Modifies(s1, v)
+None
+5000
+40 - Test for Parent* and Uses
+stmt s1, s2;
+Select <s1, s2, v> such that Parent*(s1, s2) and Uses(s1, v)
+None
+5000 
+41 - Test for Parent* and Next
+prog_line n1, n2;
+Select <n1, n2> such that Parent*(n1, n2) and Next(n1, n2)
+None
+5000
+42 - Test for Parent* and Next*
+prog_line n1, n2;
+Select <n1, n2> such that Parent*(n1, n2) and Next*(n1, n2)
+None
+5000
+43 - Test for Parent* and Affects
+assign a1, a2;
+Select <a1, a2> such that Parent*(a1, a2) and Affects(a1, a2)
+None
+5000
+44 - Test for Parent* and Affects*
+assign a1, a2;
+Select <a1, a2> such that Parent*(a1, a2) and Affects*(a1, a2)
+None
+5000
+45 - Test for Modifies and Uses
+stmt s; variable v;
+Select <s, v> such that Modifies(s, v) and Uses(s, v)
+None
+5000
+46 - Test for Modifies and Next
+stmt s1, s2; variable v;
+Select <s1, s2, v> such that Modifies(s1, v) and Next(s1, s2)
+None
+5000
+47 - Test for Modifies and Next*
+stmt s1, s2; variable v;
+Select <s1, s2, v> such that Modifies(s1, v) and Next*(s1, s2)
+None
+5000
+48 - Test for Modifies and Affects
+assign a1, a2; variable v;
+Select <a1, a2, v> such that Modifies(a1, v) and Affects(a1, a2)
+None
+5000
+49 - Test for Modifies and Affects*
+assign a1, a2; variable v;
+Select <a1, a2, v> such that Modifies(a1, v) and Affects*(a1, a2)
+None
+5000
+50 - Test for Uses and Next
+prog_line n1, n2; variable v;
+Select <n1, n2, v> such that Uses(n1, v) and Next(n1, n2)
+None
+5000
+51 - Test for Uses and Next*
+prog_line n1, n2; variable v;
+Select <n1, n2, v> such that Uses(n1, v) and Next*(n1, n2)
+None
+5000
+52 - Test for Uses and Affects
+assign a1, a2; variable v;
+Select <a1, a2> such that Uses(a1, v) and Affects(a1, a2)
+None
+5000
+53 - Test for Uses and Affects*
+assign a1, a2; variable v;
+Select <a1, a2> such that Uses(a1, v) and Affects*(a1, a2)
+None
+5000
+54 - Test for Next and Affects
+prog_line n1, n2; assign a1, a2;
+Select <n1, n2> such that Next(n1, n2) and Affects(a1, a2)
+None
+5000
+55 - Test for Next and Affects*
+prog_line n1, n2; assign a1, a2;
+Select <n1, n2> such that Next(n1, n2) and Affects*(a1, a2)
+None
+5000
+56 - Test for Next* and Affects
+prog_line n1, n2; assign a1, a2;
+Select <n1, n2> such that Next*(n1, n2) and Affects(a1, a2)
+None
+5000
+57 - Test for Next* and Affects*
+prog_line n1, n2; assign a1, a2;
+Select <n1, n2> such that Next*(n1, n2) and Affects*(a1, a2)
+None
+5000
+58 - Test for Calls
+procedure p, q;
+Select <p, q> such that Calls(p, q)
+None
+5000
+59 - Test for Calls*
+procedure p,q;
+Select <p, q> such that Calls(p, q)
+None
+5000
+60 - Test for Calls and Follows
+procedure p, q;
+Select <p, q> such that Calls(p, q) and Follows(1, 2)
+None
+5000
+61 - Test for Calls and Follows*
+procedure p, q;
+Select <p, q> such that Calls(p, q) and Follows*(1, 20)
+None
+5000
+62 - Test for Calls and Parent
+procedure p, q;
+Select <p, q> such that Calls(p, q) and Parent(1, 2)
+None
+5000
+63 - Test for Calls and Parent*
+procedure p, q;
+Select <p, q> such that Calls(p, q) and Parent*(1, 6)
+None
+5000
+64 - Test for Calls and Modifies
+procedure p, q; variable v;
+Select <p, q> such that Calls(p, q) and Modifies(p, v)
+None
+5000
+65 - Test for Calls and Uses
+procedure p, q; variable v;
+Select <p, q> such that Calls(p, q) and Uses(p, v)
+None
+5000
+66 - Test for Calls and Next
+procedure p; prog_line n1, n2;
+Select <n1, n2> such that Next(n1, n2) and Calls("simple", q) with q.procName="inter"
+None
+5000
+67 - Test for Calls and Next*
+procedure p; prog_line n1, n2;
+Select <n1, n2> such that Next*(n1, n2) and Calls("inter", q) with q.procName="tedious"
+None
+5000
+68 - Test for Calls and Affects
+assign a1, a2; procedure p;
+Select <a1, a2> such that Affects(a1, a2) and Calls(p, "tedious")
+None
+5000
+69 - Test for Calls and Affects*
+assign a1, a2; procedure p;
+Select <a1, a2> such that Affects*(a1, a2) and Calls(p, "tedious")
+None
+5000
+70 - Test for Calls* and Follows
+assign a1, a2;
+Select <a1, a2> such that Calls*("simple", "tedious") and Follows(a1, a2)
+None
+5000
+71 - Test for Calls* and Follows*
+assign a1, a2;
+Select <a1, a2> such that Calls*("simple", "tedious") and Follows*(a1, a2)
+None
+5000
+72 - Test for Calls* and Parent
+assign s1, s2;
+Select <s1, s2> such that Calls*("simple", "inter") and Parent(s1, s2)
+None
+5000
+73 - Test for Calls* and Parent*
+assign s1, s2;
+Select <s1, s2> such that Calls*("simple", "inter") and Parent*(s1, s2)
+None
+5000
+74 - Test for Calls* and Modifies
+procedure p, q; variable v;
+Select <p, q> such that Modifies(p, v) and Calls*(p, q)
+None
+5000
+75 - Test for Calls* and Uses
+procedure p, q; variable v;
+Select <p, q> such that Uses(p, v) and Calls*(p, q)
+None
+5000
+76 - Test for Calls* and Next
+stmt s1, s2;
+Select <s1, s2> such that Next(s1, s2) and Calls*("simple", "tedious")
+None
+5000
+77 - Test for Calls* and Next*
+stmt s1, s2;
+Select <s1, s2> such that Next(s1, s2) and Calls*("simple", "tedious")
+None
+5000
+78 - Test for Calls* and Affects
+assign a1, a2;
+Select <a1, a2> such that Affects(a1, a2) and Calls*("simple", "tedious")
+None
+5000
+79 - Test for Calls* and Affects*
+assign a1, a2;
+Select <a1, a2> such that Affects(a1, a2) and Calls*("simple", "tedious")
+None
+5000
