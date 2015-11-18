@@ -64,7 +64,7 @@ Select v such that Modifies(1, v)
 x
 5000
 14 - Test basic function of Modifies for container statement, in this case it is "if" statement
-if ifstat
+if ifstat;
 Select ifstat such that Modifies(ifstat, "x")
 10
 5000

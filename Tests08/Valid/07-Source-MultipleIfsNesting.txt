@@ -2,34 +2,42 @@ procedure simple {
 	if x then {
 		drink = tea;
 		tea = 10 * sugar + oolongLeaves + hotWater;
+		call tedious;
 		if sweet then {
 			sweet = sugar - 1;
 			if hot then {
 				temp = tea + coldWater;
-				temp = temp - 10;}
+				temp = temp - 10;
+				call inter;}
 			else {
 				temp = tea + hotWater;
-				temp = temp + 10;}
+				temp = temp + 10;
+				call tedious;}
 			tea = tea + sweet; }
 		else {
 			sweet = sugar + 1;}
 		drink = 2 * tea;}
 	else {
-		drink = coffee;}
+		drink = coffee;
+		call inter;}
 	default = water;
+	call inter;
 }
 
 procedure inter {
 	if drink then {
 		if coffee then {
 			if spinelli then {
-				rating = 3;}
+				rating = 3;
+				call tedious;}
 			else {
 				rating = 0;}}
 		else {
 			drink = tea;}}
 	else {
-		drink = water;}
+		drink = water;
+		call tedious;}
+	call tedious;
 }
 
 procedure tedious {
