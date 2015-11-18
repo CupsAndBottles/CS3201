@@ -36,7 +36,7 @@ bobbi file,bobbi k,bobbi x,bobbi y,bobbi z
 8 - Test for Uses
 assign a; variable v;
 Select <a, v> such that Uses(a, v)
-10 x,12 y 14 k,14 x,14 y,4 x,4 y,8 x
+10 x,12 y, 14 k,14 x,14 y,4 x,4 y,8 x
 5000
 9 - Test for Uses
 stmt s; variable v;
