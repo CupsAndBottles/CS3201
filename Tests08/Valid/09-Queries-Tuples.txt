@@ -51,27 +51,27 @@ bobbi x, bobbi y, bobbi k
 11 - Test for Next
 prog_line n1, n2;
 Select <n1, n2> such that Next(n1, n2)
-1 2,2 3,3 4,3 6
+1 2,2 3,3 4,3 6,4 3,2 5,5 6,6 7,7 6,6 8,8 14,1 9,9 10,10 11,11 12,12 11,11 9,9 13,13 14
 5000
 12 - Test for Next*
 prog_line n1, n2;
 Select <n1, n2> such that Next*(n1, n2)
-None
+1 2,1 3,1 4,1 5,1 6,1 7,1 8,1 9,1 10,1 11,1 12,1 13,1 14,2 3,2 4,2 5,2 6,2 7,2 8,2 14,3 3,3 4,3 6,3 7,3 8,3 14,4 4,4 3,4 6,4 7,4 8,4 14,5 6,5 7,5 8,5 14,6 6,6 7,6 8,6 14,7 6,7 7,7 8,7 14,8 14,9 9,9 10,9 11,9 12,9 13,9 14,10 9,10 10,10 11,10 12,10 13,10 14,11 9,11 10,11 11,11 12,11 13,11 14,12 9,12 10,12 11,12 12,12 13,12 14,13 14
 5000
 13 - Test for Affects
 assign a1, a2;
 Select <a1, a2> such that Affects(a1, a2)
-None
+7 14,8 14,10 10,10 14,12 12,12 14,13 14
 5000
 14 - Test for Affects*
 assign a1, a2;
 Select <a1, a2> such that Affects*(a1, a2)
-None
+7 14,8 14,10 10,10 14,12 12,12 14,13 14
 5000
 15 - Test for pattern
 assign a; variable v;
 Select <a, v> such that pattern a(v, _)
-None
+4 z,5 z,7 y,8 x,10 x,12 y,13 k,14 file
 5000
 16 - Test for Follows and Follows*
 stmt s1, s2; 
@@ -91,22 +91,22 @@ None
 19 - Test for Follows and Modifies
 stmt s1, s2; variable v;
 Select <s1, s2> such that Follows(s1, s2) and Modifies(s1, v)
-None
+6 8,1 14,10 11,9 13,2 6
 5000
 20 - Test for Follows and Uses
 stmt s1, s2; variable v;
 Select <s1, s2> such that Follows(s1, s2) and Uses(s1, v)
-None
+6 8,1 14,10 11,9 13,2 6
 5000
 21 - Test for Follows and Next
 prog_line n1, n2;
 Select <n1, n2> such that Follows(n1, n2) and Next(n1, n2)
-None 
+10 11,9 13,6 8
 5000
 22 - Test for Follows and Next*
 prog_line n1, n2;
 Select <n1, n2> such that Follows(n1, n2) and Next*(n1, n2)
-None 
+10 11,9 13,6 8,2 6,1 14
 5000
 23 - Test for Follows and Affects
 assign a1, a2;
@@ -131,22 +131,22 @@ None
 27 - Test for Follows* and Modifies
 stmt s1, s2; variable v;
 Select <s1, s2> such that Follows*(s1, s2) and Modifies(s1, v)
-None
+6 8,1 14,10 11,9 13,2 6
 5000
 28 - Test for Follows* and Uses
 stmt s1, s2; variable v;
 Select <s1, s2> such that Follows*(s1, s2) and Uses(s1, v)
-None
+6 8,1 14,10 11,9 13,2 6
 5000
 29 - Test for Follows* and Next
 prog_line n1, n2;
 Select <n1, n2> such that Follows*(n1, n2) and Next(n1, n2)
-None
+10 11,9 13,6 8
 5000
 30 - Test for Follows* and Next*
 prog_line n1, n2;
 Select <n1, n2> such that Follows*(n1, n2) and Next(n1, n2)
-None
+10 11,9 13,6 8,2 6,1 14
 5000
 31 - Test for Follows* and Affects
 assign a1, a2;
@@ -161,12 +161,12 @@ None
 33 - Test for Parent and Modifies
 stmt s1, s2; variable v;
 Select <s1, s2, v> such that Parent(s1, s2) and Modifies(s1, v)
-None
+1 2 z,1 2 y,1 2 x,1 2 k,1 6 z,1 6 y,1 6 x,1 6 k,1 8 z,1 8 y,1 8 x,1 8 k,1 9 z,1 9 y,1 9 x,1 9 k,1 13 z,1 13 y,1 13 x,1 13 k,2 3 z,2 5 z,3 4 z,6 7 y,9 10 x,9 10 y,9 11 x,9 11 y,11 12 y
 5000
 34 - Test for Parent and Uses
 stmt s1, s2; variable v;
 Select <s1, s2, v> such that Parent(s1, s2) and Uses(s1, v)
-None
+1 2 x,1 2 y,1 6 x,1 6 y,1 8 x,1 8 y,1 9 x,1 9 y,1 13 x,1 13 y,2 3 y,2 3 x,2 5 y,2 5 x,3 4 x,3 4 y,6 7 x,9 10 x,9 10 y,9 11 x, 9 11 y,11 12 y
 5000
 35 - Test for Parent and Next
 prog_line n1, n2;
