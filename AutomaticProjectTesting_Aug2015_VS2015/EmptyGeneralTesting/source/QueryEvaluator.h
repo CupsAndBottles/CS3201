@@ -50,6 +50,9 @@ private:
 	bool evaluateQuery();
 	bool queryHasResult();
 	list<string> evaluateSelect(bool shortcircuited);
+	bool isInSelectClause(QueryNode* node);
+	list<string> evaluateTupleSelect(stack<pair<QueryNode*, unordered_map<string, QueryNode*>>>* currentPaths, list<string>* extractedPaths);
+	string extractString(unordered_map<string, QueryNode*> path);
 	list<string> selectAll(string entityType);
 	vector<int> generateVectorOfStatementNumbers();
 	vector<string> generatePossiblities(string argument);

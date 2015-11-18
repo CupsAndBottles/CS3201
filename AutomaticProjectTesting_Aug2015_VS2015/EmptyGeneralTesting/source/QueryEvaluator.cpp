@@ -66,20 +66,72 @@ list<string> QueryEvaluator::evaluateSelect(bool shortcircuited) {
 		return results;
 	}
 
-	for (string entity : selectClause) {
+	if (selectClause.size() == 1){
+		string entity = selectClause.front();
 		if (encountered(entity)) {
 			unordered_set<QueryNode*> entityResults = encounteredEntities.at(entity);
 			for (QueryNode* entityResult : entityResults) {
 				results.push_back(entityResult->getValue());
 			}
-		}
-		else {
+		} else {
 			string entityType = getEntityType(entity);
 			list<string> entityValues = selectAll(entityType);
 			results.splice(results.begin(), entityValues);
 		}
+	} else {
+		stack<pair<QueryNode*, unordered_map<string, QueryNode*>>> initialPath = stack<pair<QueryNode*, unordered_map<string, QueryNode*>>>();
+		initialPath.push({&queryTreeRoot, unordered_map<string, QueryNode*>()});
+		results = evaluateTupleSelect(&initialPath, &list<string>());
 	}
 	return results;
+}
+
+bool QueryEvaluator::isInSelectClause(QueryNode* node) {
+	return find(selectClause.begin(), selectClause.end(), node->getSynonym()) != selectClause.end();
+}
+
+string QueryEvaluator::extractString(unordered_map<string, QueryNode*> path) {
+	string result = "";
+	for (size_t i = 0; i < selectClause.size(); i++) {
+		try {
+			QueryNode* node = path.at(selectClause[i]);
+			if (i > 0){
+				result += " ";
+			}
+			result += node->getValue();
+		} catch (std::out_of_range) {
+			return "";
+		}
+	}
+	return result;
+}
+
+
+list<string> QueryEvaluator::evaluateTupleSelect(stack<pair<QueryNode*, unordered_map<string, QueryNode*>>>* currentPaths, list<string>* extractedPaths) {
+	if (currentPaths->empty()) {
+		return *extractedPaths;
+	}
+
+	QueryNode* currNode = currentPaths->top().first;
+	unordered_map<string, QueryNode*> currentPath = currentPaths->top().second;
+	currentPaths->pop();
+
+	if (currNode->hasNoChildren()) { // is leaf node
+		string resultPath = extractString(currentPath);
+		if (resultPath != "") {
+			extractedPaths->push_back(resultPath);
+		}
+	} else {
+		// add current node to path
+		currentPath.insert({currNode->getSynonym(), currNode});
+
+		// add all children to stack
+		for (QueryNode* child : currNode->getChildren()) {
+			currentPaths->push({child, currentPath});
+		}
+	}
+
+	return evaluateTupleSelect(currentPaths, extractedPaths);
 }
 
 list<string> QueryEvaluator::selectAll(string entityType) {
