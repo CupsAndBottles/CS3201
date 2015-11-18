@@ -17,6 +17,27 @@ namespace UnitTesting
 	TEST_CLASS(TestQueryEvaluator)
 	{
 	public:
+		TEST_METHOD(testTupleQueriesWithSource9) {
+			string fileName = "../../../Tests08/Valid/09-Source-MultipleIfWhileNesting.txt";
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
+			Assert::AreNotEqual(0, (int)parsedProgram.size());
+
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
+			QueryEvaluator qe = QueryEvaluator(&pkb);
+
+			list<string> ans1 = qe.getResults("stmt s1, s2; Select <s1, s2> such that Follows(s1, s2)");
+			Assert::AreEqual(5, (int)ans1.size());
+			Assert::AreEqual(string("3"), ans1.front());
+			Assert::IsTrue(find(ans1.begin(), ans1.end(), string("1 14")) != ans1.end());
+			Assert::IsTrue(find(ans1.begin(), ans1.end(), string("10 11")) != ans1.end());
+			Assert::IsTrue(find(ans1.begin(), ans1.end(), string("2 6")) != ans1.end());
+			Assert::IsTrue(find(ans1.begin(), ans1.end(), string("6 8")) != ans1.end());
+			Assert::IsTrue(find(ans1.begin(), ans1.end(), string("9 13")) != ans1.end());
+		}
+
 		TEST_METHOD(testSelectWithoutContainers) {
 			string fileName = "programSelectWithoutContainers.txt";
 			ofstream outputFile(fileName, ofstream::trunc);
