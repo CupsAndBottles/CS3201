@@ -487,8 +487,6 @@ Gnode* Database::createControlFlowGraphLinks(vector<Gnode*> listOfCfgNodes, int 
 	Gnode *endNode = Gnode::createGnode(-1);
 
 	Gnode* cfgRoot = listOfCfgNodes.at(cfgRootIndex);
-	Gnode *next = (cfgRootIndex+1 >= (int)listOfCfgNodes.size()) ? endNode : listOfCfgNodes.at(cfgRootIndex+1);
-	Gnode::setNext(cfgRoot, next);
 
 	for (int i=cfgRootIndex; i<stmtTable->getSize(); i++) {
 		Gnode *node = listOfCfgNodes.at(i);

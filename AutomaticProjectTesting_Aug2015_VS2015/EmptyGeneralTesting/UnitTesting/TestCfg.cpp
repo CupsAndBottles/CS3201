@@ -609,5 +609,50 @@ namespace UnitTesting
 
 		}
 
+
+		TEST_METHOD(TestLinkSourceNine) {
+			string fileName = "source9.txt";
+			ofstream outputFile(fileName, ofstream::trunc);
+			outputFile << "procedure bobbi {" << endl;
+			outputFile << "if x then {" << endl; // 1
+			outputFile << "if y then {" << endl; // 2
+			outputFile << "while y {" << endl; // 3
+			outputFile << "z = x + y;}}" << endl; // 4
+			outputFile << "else {";
+			outputFile << "z = 0;}" << endl; // 5
+			outputFile << "while x {" << endl; // 6
+			outputFile << "y = 1;}" << endl; // 7
+			outputFile << "x = x + 1;}" << endl; // 8
+			outputFile << "else {" << endl; 
+			outputFile << "while x {" << endl; // 9
+			outputFile << "x = x-1;" << endl; // 10
+			outputFile << "while y {" << endl; // 11
+			outputFile << "y = y - 1;}}" << endl; // 12
+			outputFile << "k = 1;}" << endl; // 13
+			outputFile << "file = k + y - x;" << endl;
+			outputFile << "}" << endl;
+			outputFile.close();
+
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = (*parse).parseSimpleProgram(fileName);
+			Assert::AreNotEqual(0, (int)parsedProgram.size());
+
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+			vector<Gnode*> vectornodes = db->getControlFlowGraphNodes();
+			vector<Gnode*> cfgRoots = db->getControlFlowGraphRootList();
+
+			Assert::AreEqual(1, cfgRoots.at(0)->getValue());
+
+			for (int i = 1; i < 4; i++) {
+				Assert::AreEqual(i + 1, vectornodes.at(i)->getNext().at(0)->getValue());
+			}
+
+			Assert::AreEqual(14, vectornodes.at(8)->getNext().at(0)->getValue());
+
+
+		}
+
+
 	};
 }
