@@ -1440,7 +1440,7 @@ void ProgramKnowledgeBase::calculateRelations(Tnode* currNode, vector<Tnode*>* p
 		parents->pop_back(); // remove assignment node that was just added
 	}
 
-	if (parents->empty()){
+	if (parents->empty() || !currNode->isProcedure()){
 		if (currNode->isLastChild()){
 			Tnode* nextNode = NULL;
 			while (nextNode == NULL && !parents->empty()) {
