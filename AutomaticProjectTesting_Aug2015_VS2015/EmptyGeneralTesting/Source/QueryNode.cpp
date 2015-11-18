@@ -21,7 +21,34 @@ QueryNode* QueryNode::createQueryNode(string syn, string val) {
 	return node;
 }
 
+// uses BFS to see if a path exists from node a to node b
+// (doesn't check from node b to node a)
+bool QueryNode::pathExists(QueryNode* a, QueryNode* b) {
+	queue<QueryNode*> q = queue<QueryNode*>();
+	for (QueryNode* child : a->getChildren()) {
+		q.push(child);
+	}
+
+	while (!q.empty()) {
+		QueryNode* currNode = q.front();
+		if (currNode == b) {
+			return true;
+		} else {
+			q.pop();
+			for (QueryNode* child : currNode->getChildren()) {
+				q.push(child);
+			}
+		}
+	}
+	return false;
+}
+
 void QueryNode::insertParent(QueryNode* node) {
+	bool connected = pathExists(this, node);
+	if (connected) {
+		return;
+	}
+
 	for (size_t i = 0; i < parents.size(); i++) {
 		if (parents[i]->getSynonym() != node->getSynonym()) {
 			parents[i]->removeChild(this);

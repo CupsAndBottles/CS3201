@@ -3,6 +3,7 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <string>
+#include <queue>
 
 using namespace std;
 
@@ -37,6 +38,8 @@ private:
 	vector<QueryNode*> parents;
 	string value;
 	string synonym;
+
+	static bool pathExists(QueryNode* a, QueryNode* b);
 };
 
 #endif
