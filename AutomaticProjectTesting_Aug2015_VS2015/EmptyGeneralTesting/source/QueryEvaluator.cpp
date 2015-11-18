@@ -79,13 +79,7 @@ list<string> QueryEvaluator::evaluateSelect(bool shortcircuited) {
 			results.splice(results.begin(), entityValues);
 		}
 	} else {
-		// seed with root's immediate children
-		stack<pair<QueryNode*, unordered_map<string, QueryNode*>>> initialPath = stack<pair<QueryNode*, unordered_map<string, QueryNode*>>>();
-		for (QueryNode* child : queryTreeRoot.getChildren()) {
-			initialPath.push({child, unordered_map<string, QueryNode*>()});
-		}
-
-		results = evaluateTupleSelect(&initialPath, &list<string>());
+		results = evaluateTupleSelect();
 	}
 	return results;
 }
@@ -111,31 +105,37 @@ string QueryEvaluator::extractString(unordered_map<string, QueryNode*> path) {
 }
 
 
-list<string> QueryEvaluator::evaluateTupleSelect(stack<pair<QueryNode*, unordered_map<string, QueryNode*>>>* currentPaths, list<string>* extractedPaths) {
-	if (currentPaths->empty()) {
-		return *extractedPaths;
+list<string> QueryEvaluator::evaluateTupleSelect() {
+	list<string> extractedPaths = list<string>();
+
+	// seed with root's immediate children
+	stack<pair<QueryNode*, unordered_map<string, QueryNode*>>> currentPaths = stack<pair<QueryNode*, unordered_map<string, QueryNode*>>>();
+	for (QueryNode* child : queryTreeRoot.getChildren()) {
+		currentPaths.push({ child, unordered_map<string, QueryNode*>() });
 	}
 
-	QueryNode* currNode = currentPaths->top().first;
-	unordered_map<string, QueryNode*> currentPath = currentPaths->top().second;
-	currentPaths->pop();
-	
-	// add current node to path
-	currentPath.insert({currNode->getSynonym(), currNode});
+	while (!currentPaths.empty()) {
+		QueryNode* currNode = currentPaths.top().first;
+		unordered_map<string, QueryNode*> currentPath = currentPaths.top().second;
+		currentPaths.pop();
 
-	if (currNode->hasNoChildren()) { // is leaf node
-		string resultPath = extractString(currentPath);
-		if (resultPath != "") {
-			extractedPaths->push_back(resultPath);
-		}
-	} else {
-		// add all children to stack
-		for (QueryNode* child : currNode->getChildren()) {
-			currentPaths->push({child, currentPath});
+		// add current node to path
+		currentPath.insert({ currNode->getSynonym(), currNode });
+
+		if (currNode->hasNoChildren()) { // is leaf node
+			string resultPath = extractString(currentPath);
+			if (resultPath != "") {
+				extractedPaths.push_back(resultPath);
+			}
+		} else {
+			// add all children to stack
+			for (QueryNode* child : currNode->getChildren()) {
+				currentPaths.push({ child, currentPath });
+			}
 		}
 	}
 
-	return evaluateTupleSelect(currentPaths, extractedPaths);
+	return extractedPaths;
 }
 
 list<string> QueryEvaluator::selectAll(string entityType) {

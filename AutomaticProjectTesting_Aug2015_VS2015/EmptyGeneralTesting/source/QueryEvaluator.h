@@ -51,7 +51,7 @@ private:
 	bool queryHasResult();
 	list<string> evaluateSelect(bool shortcircuited);
 	bool isInSelectClause(QueryNode* node);
-	list<string> evaluateTupleSelect(stack<pair<QueryNode*, unordered_map<string, QueryNode*>>>* currentPaths, list<string>* extractedPaths);
+	list<string> evaluateTupleSelect();
 	string extractString(unordered_map<string, QueryNode*> path);
 	list<string> selectAll(string entityType);
 	vector<int> generateVectorOfStatementNumbers();
