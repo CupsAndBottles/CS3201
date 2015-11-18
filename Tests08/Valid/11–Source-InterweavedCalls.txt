@@ -1,0 +1,33 @@
+procedure P {
+	call Q;
+}
+
+procedure Q {
+	a = 1 * b;
+}
+
+procedure R {
+	call Q;
+}
+
+procedure S {
+	call X;
+	call T;
+}
+
+procedure T {
+	call R;
+	call Q;
+	call U;
+}
+
+procedure U {
+	call X;
+}
+
+procedure X {
+	while a {
+		x = b;
+	}
+	a = 1;
+}

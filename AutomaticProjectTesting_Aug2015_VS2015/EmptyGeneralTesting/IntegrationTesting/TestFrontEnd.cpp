@@ -126,5 +126,17 @@ namespace IntegrationTesting
 			ProgramKnowledgeBase* pkbPointer = &ProgramKnowledgeBase(db);
 		}
 
+		TEST_METHOD(testParserDatabasePKBIntegrationWithManyCalls) {
+			string fileName = "../../../Tests08/Valid/11–Source-InterweavedCalls.txt";
+			Parser *parse = new Parser();
+			vector<string> parsedProgram = (*parse).parseSimpleProgram(fileName);
+
+			Assert::AreNotEqual(0, (int)parsedProgram.size());
+
+			Database* db = new Database();
+			db->buildDatabase(parsedProgram);
+
+			ProgramKnowledgeBase* pkbPointer = &ProgramKnowledgeBase(db);
+		}
 	};
 }
