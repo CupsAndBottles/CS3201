@@ -25,17 +25,9 @@ namespace UnitTesting
 			db->buildDatabase(parsedProgram);
 			ProgramKnowledgeBase pkb = ProgramKnowledgeBase(db);
 			QueryEvaluator qe = QueryEvaluator(&pkb);
-
-			list<string> ans09_16 = qe.getResults("stmt s1, s2; Select <s1, s2> such that Follows(s1, s2) and Follows(s1, s2)");
+			
+			list<string> ans09_16 = qe.getResults("stmt s1, s2; Select <s1, s2> such that Follows(s1, s2) and Follows*(s1, s2)");
 			Assert::AreEqual(string("1 14"), ans09_16.front());
-
-			list<string> ans09_16_2 = qe.getResults("stmt s1, s2; Select <s1, s2> such that Follows(s1, s2) and Follows*(s1, s2)");
-			Assert::AreEqual(string("1 14"), ans09_16_2.front());
-
-			list<string> ans09_2 = qe.getResults("stmt s1, s2; Select <s1, s2> such that Follows*(s1, s2) and Follows*(s1, s2)");
-			Assert::AreEqual(string("1 14"), ans09_16_2.front());
-
-
 		}
 
 		TEST_METHOD(testComplexQueriesWithSource2) {
