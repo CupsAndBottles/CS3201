@@ -79,8 +79,12 @@ list<string> QueryEvaluator::evaluateSelect(bool shortcircuited) {
 			results.splice(results.begin(), entityValues);
 		}
 	} else {
+		// seed with root's immediate children
 		stack<pair<QueryNode*, unordered_map<string, QueryNode*>>> initialPath = stack<pair<QueryNode*, unordered_map<string, QueryNode*>>>();
-		initialPath.push({&queryTreeRoot, unordered_map<string, QueryNode*>()});
+		for (QueryNode* child : queryTreeRoot.getChildren()) {
+			initialPath.push({child, unordered_map<string, QueryNode*>()});
+		}
+
 		results = evaluateTupleSelect(&initialPath, &list<string>());
 	}
 	return results;
@@ -115,6 +119,9 @@ list<string> QueryEvaluator::evaluateTupleSelect(stack<pair<QueryNode*, unordere
 	QueryNode* currNode = currentPaths->top().first;
 	unordered_map<string, QueryNode*> currentPath = currentPaths->top().second;
 	currentPaths->pop();
+	
+	// add current node to path
+	currentPath.insert({currNode->getSynonym(), currNode});
 
 	if (currNode->hasNoChildren()) { // is leaf node
 		string resultPath = extractString(currentPath);
@@ -122,9 +129,6 @@ list<string> QueryEvaluator::evaluateTupleSelect(stack<pair<QueryNode*, unordere
 			extractedPaths->push_back(resultPath);
 		}
 	} else {
-		// add current node to path
-		currentPath.insert({currNode->getSynonym(), currNode});
-
 		// add all children to stack
 		for (QueryNode* child : currNode->getChildren()) {
 			currentPaths->push({child, currentPath});
