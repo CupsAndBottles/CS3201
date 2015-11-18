@@ -16,7 +16,7 @@ namespace UnitTesting
 	{
 	public:
 		TEST_METHOD(testComplexQueriesWithSource2) {
-			string fileName = "02-Source-Containers.txt";
+			string fileName = "../../../Tests08/Valid/02-Source-Containers.txt";
 			Parser *parse = new Parser();
 			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
 			Assert::AreNotEqual(0, (int)parsedProgram.size());
@@ -167,7 +167,7 @@ namespace UnitTesting
 		}
 	
 		TEST_METHOD(testComplexQueriesWithSource4) {
-			string fileName = "04-Source-Calls.txt";
+			string fileName = "../../../Tests08/Valid/04-Source-Calls.txt";
 			Parser *parse = new Parser();
 			vector<string> parsedProgram = parse->parseSimpleProgram(fileName);
 			Assert::AreNotEqual(0, (int)parsedProgram.size());
