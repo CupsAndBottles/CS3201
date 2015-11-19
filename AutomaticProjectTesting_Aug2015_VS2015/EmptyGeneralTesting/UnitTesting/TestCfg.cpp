@@ -643,14 +643,7 @@ namespace UnitTesting
 			vector<Gnode*> cfgRoots = db->getControlFlowGraphRootList();
 
 			Assert::AreEqual(1, cfgRoots.at(0)->getValue());
-
-			for (int i = 1; i < 4; i++) {
-				Assert::AreEqual(i + 1, vectornodes.at(i)->getNext().at(0)->getValue());
-			}
-
 			Assert::AreEqual(14, vectornodes.at(8)->getNext().at(0)->getValue());
-
-
 		}
 
 
